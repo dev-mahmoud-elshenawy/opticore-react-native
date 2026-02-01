@@ -1,4 +1,5 @@
 # Spec Kit & Claude Agent Files
+.specify/memory/          # Keep memory files private
 # .specify/specs/         # Keep specs public (commented out to allow tracking)
 .claude/                  # Keep Claude config private
 
@@ -6,8 +7,9 @@
 EXPO_APP_GUIDE.md
 .history/
 
-# Node & Dependencies
+# Node modules & lockfiles
 node_modules/
+package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

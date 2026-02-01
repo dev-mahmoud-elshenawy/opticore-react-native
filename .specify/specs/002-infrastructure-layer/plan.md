@@ -13,6 +13,7 @@ The Infrastructure Layer provides foundational services that every React Native 
 
 **Language/Version**: TypeScript 5.9.2 (strict mode)
 **Primary Dependencies**:
+
 - Axios ^1.13.2 (HTTP client)
 - @react-native-async-storage/async-storage ^2.2.0 (local storage)
 - expo-secure-store ^15.0.8 (encrypted storage)
@@ -24,21 +25,22 @@ The Infrastructure Layer provides foundational services that every React Native 
 **Target Platform**: iOS 15+, Android 13+, Expo SDK 54+
 **Project Type**: npm package (library)
 **Performance Goals**:
+
 - API requests: < 50ms overhead for interceptors
 - Storage operations: < 100ms for reads/writes
 - Connectivity detection: < 1s to detect state change
-**Constraints**:
+  **Constraints**:
 - Zero dependencies on app-specific logic
 - Must work on both iOS and Android
 - SecureStore not available on web (fallback to AsyncStorage)
-**Scale/Scope**:
+  **Scale/Scope**:
 - 5 infrastructure modules
 - ~15 TypeScript files
 - 80%+ test coverage required
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - ✅ **Pure Infrastructure**: Only reusable utilities, no app-specific features
 - ✅ **TypeScript Strict Mode**: All types enforced, no `any` types
@@ -133,6 +135,7 @@ tests/
 **Goal**: Understand Axios interceptor patterns, Expo storage APIs, and React Native lifecycle
 
 **Deliverables**:
+
 - Research Axios interceptor execution order and configuration
 - Review expo-secure-store API and platform limitations (web fallback)
 - Study @react-native-community/netinfo reliability
@@ -146,6 +149,7 @@ tests/
 **Goal**: Implement ApiClient with interceptors for auth, logging, and error handling
 
 **Components**:
+
 1. **ApiClient.ts**: Axios wrapper with configurable baseURL, timeout, headers
 2. **NetworkConfig.ts**: TypeScript interface for configuration (baseURL, timeout, headers, auth callback)
 3. **ApiResponse.ts**: Generic type `ApiResponse<T>` with data, status, headers
@@ -156,12 +160,14 @@ tests/
    - ErrorInterceptor: Convert Axios errors to ApiError, classify error types
 
 **Key Decisions**:
+
 - Use singleton pattern for ApiClient (one instance per app)
 - Support multiple interceptor registration
 - Provide typed methods: `get<T>()`, `post<T>()`, `put<T>()`, `delete<T>()`, `patch<T>()`
 - Handle concurrent 401 errors (only one token refresh at a time)
 
 **Success Criteria**:
+
 - Developer can make typed API request in 5 lines
 - Auth token auto-injected in all requests
 - 401 triggers refresh callback and retry
@@ -172,6 +178,7 @@ tests/
 **Goal**: Implement unified storage interface with secure and local storage
 
 **Components**:
+
 1. **IStorage.ts**: Interface with `get<T>()`, `set<T>()`, `remove()`, `clear()` methods
 2. **SecureStorage.ts**: Implements IStorage using expo-secure-store
 3. **LocalStorage.ts**: Implements IStorage using AsyncStorage with JSON serialization
@@ -179,6 +186,7 @@ tests/
 5. **StorageKeys.ts**: Constants object (AUTH_TOKEN, USER_PREFS, THEME, etc.)
 
 **Key Decisions**:
+
 - Generic types for type-safe storage: `get<User>('user')`
 - Automatic JSON serialization/deserialization in LocalStorage
 - Fallback to AsyncStorage on web (SecureStore unavailable)
@@ -186,6 +194,7 @@ tests/
 - Error handling for quota exceeded, permission denied
 
 **Success Criteria**:
+
 - Developer can store/retrieve typed data with type safety
 - SecureStorage encrypts data (verified on device)
 - LocalStorage operations complete < 100ms
@@ -196,12 +205,14 @@ tests/
 **Goal**: Implement structured, colored logger with configurable levels
 
 **Components**:
+
 1. **ILogger.ts**: Interface with `debug()`, `info()`, `warn()`, `error()` methods
 2. **Logger.ts**: Singleton implementation with console output
 3. **LogLevel.ts**: Enum (DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3)
 4. **LoggerConfig.ts**: Configuration interface (level, enabled, timestamp)
 
 **Key Decisions**:
+
 - Use ANSI color codes for terminal colors (gray, blue, yellow, red)
 - Filter logs by level (e.g., production = ERROR only)
 - Include timestamps in ISO format
@@ -209,6 +220,7 @@ tests/
 - Support logging objects, arrays, errors with stack traces
 
 **Success Criteria**:
+
 - Logs appear colored in development console
 - Production config suppresses debug/info logs
 - Error logs include stack traces
@@ -219,10 +231,12 @@ tests/
 **Goal**: Monitor network connectivity with event listeners
 
 **Components**:
+
 1. **ConnectivityManager.ts**: NetInfo wrapper with listener registration
 2. **ConnectivityListener.ts**: Type definitions for callbacks
 
 **Key Decisions**:
+
 - Use @react-native-community/netinfo for accurate detection
 - Provide synchronous `isConnected` check and async listener registration
 - Support multiple listener registration
@@ -230,6 +244,7 @@ tests/
 - Detect connection type (wifi, cellular, none)
 
 **Success Criteria**:
+
 - Detects offline state within 1 second
 - Triggers callbacks on online/offline transitions
 - Multiple listeners work concurrently
@@ -240,16 +255,19 @@ tests/
 **Goal**: Monitor React Native AppState changes
 
 **Components**:
+
 1. **LifecycleManager.ts**: AppState wrapper with listener registration
 2. **LifecycleObserver.ts**: Type definitions for callbacks
 
 **Key Decisions**:
+
 - Use React Native AppState API
 - Map AppState to simpler events: onActive, onInactive, onBackground
 - Support multiple observer registration
 - Provide cleanup method for observers
 
 **Success Criteria**:
+
 - Triggers callbacks within 100ms of app state change
 - Multiple observers work concurrently
 - No memory leaks from observers
@@ -259,6 +277,7 @@ tests/
 **Goal**: Comprehensive testing and integration
 
 **Test Coverage**:
+
 - Unit tests for all modules (80%+ coverage)
 - Integration tests for ApiClient + Storage (save token, use in request)
 - Mock implementations for testing (MockStorage, MockLogger)
@@ -266,6 +285,7 @@ tests/
 - Error scenario tests (network timeout, storage quota, etc.)
 
 **Success Criteria**:
+
 - All tests passing
 - 80%+ code coverage
 - Zero TypeScript errors
@@ -276,6 +296,7 @@ tests/
 **Goal**: Comprehensive developer documentation
 
 **Deliverables**:
+
 - JSDoc comments for all public APIs
 - README with quick start examples
 - Example: Configure ApiClient and make request
@@ -283,6 +304,7 @@ tests/
 - Example: Setup logger for development vs production
 
 **Success Criteria**:
+
 - Developer can integrate infrastructure in < 10 minutes
 - All public APIs documented
 - Examples work without modification
@@ -294,6 +316,7 @@ No constitution violations. All infrastructure modules follow pure utility patte
 ## File Inventory
 
 ### Implementation Files (15 files)
+
 1. `src/infrastructure/network/ApiClient.ts`
 2. `src/infrastructure/network/NetworkConfig.ts`
 3. `src/infrastructure/network/ApiResponse.ts`
@@ -316,6 +339,7 @@ No constitution violations. All infrastructure modules follow pure utility patte
 20. `src/infrastructure/lifecycle/LifecycleObserver.ts`
 
 ### Test Files (8 files)
+
 1. `tests/infrastructure/network/ApiClient.test.ts`
 2. `tests/infrastructure/network/interceptors.test.ts`
 3. `tests/infrastructure/network/ApiError.test.ts`
@@ -327,6 +351,7 @@ No constitution violations. All infrastructure modules follow pure utility patte
 9. `tests/infrastructure/lifecycle/LifecycleManager.test.ts`
 
 ### Index Files (6 files)
+
 1. `src/infrastructure/network/index.ts`
 2. `src/infrastructure/storage/index.ts`
 3. `src/infrastructure/logger/index.ts`
@@ -339,6 +364,7 @@ No constitution violations. All infrastructure modules follow pure utility patte
 ## Dependencies
 
 ### Phase Dependencies
+
 - Phase 0 (Research): No dependencies
 - Phase 1 (Network): Depends on Phase 0
 - Phase 2 (Storage): Depends on Phase 0, parallel to Phase 1
@@ -349,6 +375,7 @@ No constitution violations. All infrastructure modules follow pure utility patte
 - Phase 7 (Docs): Depends on Phase 6
 
 ### Critical Path
+
 Phase 0 → Phase 1 (Network) → Phase 2 (Storage) → Phase 6 (Testing) → Phase 7 (Docs)
 
 Logger, Connectivity, and Lifecycle can be implemented in parallel with Network/Storage as they have no interdependencies.

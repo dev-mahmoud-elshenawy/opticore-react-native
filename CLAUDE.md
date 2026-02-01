@@ -9,11 +9,13 @@
 ## 🔄 Self-Updating Document
 
 **IMPORTANT**: This document (`CLAUDE.md`) MUST be kept in sync with:
+
 - [`.specify/memory/constitution.md`](.specify/memory/constitution.md) - Project constitution
 - All specifications in `.specify/specs/`
 - Actual project structure and patterns
 
 **Claude's Responsibility**:
+
 - ✅ **Automatically update** this file when making architectural changes
 - ✅ **Automatically update** when constitutional principles change
 - ✅ **Automatically update** when file structure changes
@@ -107,11 +109,13 @@ Constitution → Specify → Plan → Tasks → Implement → Verify
 ```
 
 #### 1. Constitution (Already Exists)
+
 - Read [.specify/memory/constitution.md](.specify/memory/constitution.md)
 - Understand project principles and constraints
 - Verify your proposed change aligns with constitutional principles
 
 #### 2. Specify (REQUIRED for ALL changes)
+
 - Create specification in `.specify/specs/[NNN]-[feature-name]/spec.md`
 - Use template: [.specify/templates/spec-template.md](.specify/templates/spec-template.md)
 - Define WHAT to build (user scenarios, requirements, success criteria)
@@ -119,24 +123,28 @@ Constitution → Specify → Plan → Tasks → Implement → Verify
 - **WAIT for user approval before proceeding**
 
 #### 3. Plan (REQUIRED for ALL changes)
+
 - Create plan in `.specify/specs/[NNN]-[feature-name]/plan.md`
 - Use template: [.specify/templates/plan-template.md](.specify/templates/plan-template.md)
 - Define HOW to build (technical approach, architecture, file structure)
 - Include test strategy and migration plan if needed
 
 #### 4. Tasks (REQUIRED for ALL changes)
+
 - Create tasks in `.specify/specs/[NNN]-[feature-name]/tasks.md`
 - Use template: [.specify/templates/tasks-template.md](.specify/templates/tasks-template.md)
 - Break plan into actionable checklist items
 - Each task should be < 30 minutes of work
 
 #### 5. Implement (Code Execution)
+
 - Follow Test-Driven Development (TDD)
 - Write tests FIRST, then implementation
 - Adhere to all code standards and quality gates
 - Update documentation as you go
 
 #### 6. Verify (Quality Gates)
+
 - Run all tests: `npm test`
 - Type check: `npm run type-check`
 - Lint: `npm run lint`
@@ -151,21 +159,25 @@ Constitution → Specify → Plan → Tasks → Implement → Verify
 ### Creating a New Specification
 
 **Step 1: Numbering**
+
 - List existing specs: `ls .specify/specs/`
 - Use next sequential number (e.g., if last is `012-*`, use `013-`)
 
 **Step 2: Create Directory**
+
 ```bash
 mkdir -p .specify/specs/013-feature-name
 ```
 
 **Step 3: Create spec.md**
+
 ```bash
 cp .specify/templates/spec-template.md .specify/specs/013-feature-name/spec.md
 ```
 
 **Step 4: Fill Out Specification**
 Include these sections:
+
 - **What**: Clear description of the feature
 - **Why**: Business/technical justification
 - **User Scenarios**: Real-world use cases
@@ -175,12 +187,14 @@ Include these sections:
 - **Risks**: Potential issues and mitigations
 
 **Step 5: Clarify if Needed**
+
 ```bash
 # Use if specification has ambiguities
 /speckit.clarify
 ```
 
 **Step 6: Submit for Review**
+
 - Present spec to user
 - **WAIT for approval**
 - Do NOT proceed to planning without approval
@@ -198,6 +212,7 @@ cp .specify/templates/tasks-template.md .specify/specs/013-feature-name/tasks.md
 ```
 
 Fill out plan with:
+
 - Technical approach
 - File structure changes
 - Test strategy
@@ -214,6 +229,7 @@ Fill out tasks with actionable items (< 30 min each).
 **Red-Green-Refactor cycle**:
 
 1. **Red**: Write a failing test
+
    ```typescript
    // src/utils/string/__tests__/capitalize.test.ts
    import { capitalize } from '../capitalize';
@@ -226,6 +242,7 @@ Fill out tasks with actionable items (< 30 min each).
    ```
 
 2. **Green**: Write minimal code to pass
+
    ```typescript
    // src/utils/string/capitalize.ts
    export function capitalize(str: string): string {
@@ -272,6 +289,7 @@ Fill out tasks with actionable items (< 30 min each).
 ```
 
 **Rules**:
+
 - ❌ NO `any` types without explicit justification in comments
 - ✅ Use type inference where possible
 - ✅ Explicit types for public APIs
@@ -279,6 +297,7 @@ Fill out tasks with actionable items (< 30 min each).
 - ✅ Discriminated unions for state machines
 
 **Example**:
+
 ```typescript
 // ❌ BAD
 function fetchData(url: any): any {
@@ -327,6 +346,7 @@ try {
 ```
 
 **Safe execution pattern**:
+
 ```typescript
 import { SafeCall } from 'opticore-react-native/utils/safe';
 
@@ -344,23 +364,39 @@ if (result.success) {
 ### SOLID Principles in Practice
 
 #### Single Responsibility
+
 Each module has ONE reason to change:
+
 ```typescript
 // ✅ GOOD: Separate concerns
-class ApiClient { /* network only */ }
-class Logger { /* logging only */ }
-class Storage { /* storage only */ }
+class ApiClient {
+  /* network only */
+}
+class Logger {
+  /* logging only */
+}
+class Storage {
+  /* storage only */
+}
 
 // ❌ BAD: Multiple responsibilities
 class Service {
-  async fetchData() { /* network */ }
-  logError() { /* logging */ }
-  saveToCache() { /* storage */ }
+  async fetchData() {
+    /* network */
+  }
+  logError() {
+    /* logging */
+  }
+  saveToCache() {
+    /* storage */
+  }
 }
 ```
 
 #### Open/Closed
+
 Extensible without modification:
+
 ```typescript
 // ✅ GOOD: Open for extension
 interface StorageAdapter {
@@ -368,20 +404,29 @@ interface StorageAdapter {
   set(key: string, value: string): Promise<void>;
 }
 
-class SecureStorageAdapter implements StorageAdapter { /* ... */ }
-class AsyncStorageAdapter implements StorageAdapter { /* ... */ }
+class SecureStorageAdapter implements StorageAdapter {
+  /* ... */
+}
+class AsyncStorageAdapter implements StorageAdapter {
+  /* ... */
+}
 
 // ❌ BAD: Requires modification to extend
 class Storage {
   async get(key: string, type: 'secure' | 'async') {
-    if (type === 'secure') { /* ... */ }
-    else if (type === 'async') { /* ... */ }
+    if (type === 'secure') {
+      /* ... */
+    } else if (type === 'async') {
+      /* ... */
+    }
   }
 }
 ```
 
 #### Liskov Substitution
+
 Base classes fully interchangeable:
+
 ```typescript
 // ✅ GOOD: Subtypes are substitutable
 interface Cache<T> {
@@ -389,17 +434,29 @@ interface Cache<T> {
   set(key: string, value: T): void;
 }
 
-class MemoryCache<T> implements Cache<T> { /* ... */ }
-class DiskCache<T> implements Cache<T> { /* ... */ }
+class MemoryCache<T> implements Cache<T> {
+  /* ... */
+}
+class DiskCache<T> implements Cache<T> {
+  /* ... */
+}
 ```
 
 #### Interface Segregation
+
 Small, focused interfaces:
+
 ```typescript
 // ✅ GOOD: Focused interfaces
-interface Readable { read(): Promise<string>; }
-interface Writable { write(data: string): Promise<void>; }
-interface Deletable { delete(): Promise<void>; }
+interface Readable {
+  read(): Promise<string>;
+}
+interface Writable {
+  write(data: string): Promise<void>;
+}
+interface Deletable {
+  delete(): Promise<void>;
+}
 
 // ❌ BAD: Fat interface
 interface Storage {
@@ -412,7 +469,9 @@ interface Storage {
 ```
 
 #### Dependency Inversion
+
 Depend on abstractions:
+
 ```typescript
 // ✅ GOOD: Depends on abstraction
 class UserService {
@@ -434,12 +493,14 @@ class UserService {
 Before committing ANY code:
 
 1. **TypeScript Compilation**
+
    ```bash
    npm run type-check
    # MUST show: 0 errors
    ```
 
 2. **All Tests Passing**
+
    ```bash
    npm test
    # MUST show: All tests passed
@@ -447,12 +508,14 @@ Before committing ANY code:
    ```
 
 3. **Linting**
+
    ```bash
    npm run lint
    # MUST show: 0 errors, 0 warnings
    ```
 
 4. **Formatting**
+
    ```bash
    npm run format
    # Auto-formats all code
@@ -476,12 +539,14 @@ Before committing ANY code:
 ### Test Coverage Requirements
 
 **Minimum 80% coverage for:**
+
 - Line coverage
 - Branch coverage
 - Function coverage
 - Statement coverage
 
 **View coverage report**:
+
 ```bash
 npm test -- --coverage
 open coverage/lcov-report/index.html
@@ -573,21 +638,21 @@ export class MockApiClient {
 
 ### Naming Conventions
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Files (classes) | PascalCase | `ApiClient.ts` |
-| Files (utilities) | camelCase | `formatPhone.ts` |
-| Functions | camelCase | `getUserProfile()` |
-| Types/Interfaces | PascalCase | `AsyncState<T>` |
-| Constants | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
-| Private members | _prefix | `_internalMethod()` |
-| React components | PascalCase | `ErrorBoundary.tsx` |
+| Type              | Convention       | Example             |
+| ----------------- | ---------------- | ------------------- |
+| Files (classes)   | PascalCase       | `ApiClient.ts`      |
+| Files (utilities) | camelCase        | `formatPhone.ts`    |
+| Functions         | camelCase        | `getUserProfile()`  |
+| Types/Interfaces  | PascalCase       | `AsyncState<T>`     |
+| Constants         | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT`   |
+| Private members   | \_prefix         | `_internalMethod()` |
+| React components  | PascalCase       | `ErrorBoundary.tsx` |
 
 ### Documentation Requirements
 
 **JSDoc on ALL public APIs**:
 
-```typescript
+````typescript
 /**
  * Formats a phone number to E.164 format
  *
@@ -604,15 +669,13 @@ export class MockApiClient {
  *
  * @public
  */
-export function formatPhone(
-  phoneNumber: string,
-  countryCode: string = 'US'
-): string {
+export function formatPhone(phoneNumber: string, countryCode: string = 'US'): string {
   // Implementation
 }
-```
+````
 
 **When to write inline comments**:
+
 - ✅ Complex algorithms that aren't self-evident
 - ✅ Non-obvious workarounds or bug fixes
 - ✅ Performance optimizations
@@ -884,27 +947,28 @@ opticore-react-native/
 
 ### Where to Put New Code
 
-| Type | Location | Example |
-|------|----------|---------|
-| Network client | `src/infrastructure/` | `ApiClient.ts` |
-| Storage abstraction | `src/infrastructure/` | `Storage.ts` |
-| Logger | `src/infrastructure/` | `Logger.ts` |
-| Zustand store | `src/state/stores/` | `createStore.ts` |
-| React Query hook | `src/state/hooks/` | `useAsyncQuery.ts` |
-| Error classes | `src/error/` | `RenderError.ts` |
-| String utilities | `src/utils/string/` | `capitalize.ts` |
-| Number utilities | `src/utils/number/` | `formatCurrency.ts` |
-| Array utilities | `src/utils/array/` | `chunk.ts` |
-| Date utilities | `src/utils/date/` | `formatDate.ts` |
-| Custom React hooks | `src/hooks/` | `useDebounce.ts` |
-| Navigation guards | `src/navigation/` | `AuthGuard.ts` |
-| React providers | `src/providers/` | `ApiProvider.tsx` |
-| Type definitions | `src/types/` | `common.ts` |
-| Config interfaces | `src/config/` | `AppConfig.ts` |
+| Type                | Location              | Example             |
+| ------------------- | --------------------- | ------------------- |
+| Network client      | `src/infrastructure/` | `ApiClient.ts`      |
+| Storage abstraction | `src/infrastructure/` | `Storage.ts`        |
+| Logger              | `src/infrastructure/` | `Logger.ts`         |
+| Zustand store       | `src/state/stores/`   | `createStore.ts`    |
+| React Query hook    | `src/state/hooks/`    | `useAsyncQuery.ts`  |
+| Error classes       | `src/error/`          | `RenderError.ts`    |
+| String utilities    | `src/utils/string/`   | `capitalize.ts`     |
+| Number utilities    | `src/utils/number/`   | `formatCurrency.ts` |
+| Array utilities     | `src/utils/array/`    | `chunk.ts`          |
+| Date utilities      | `src/utils/date/`     | `formatDate.ts`     |
+| Custom React hooks  | `src/hooks/`          | `useDebounce.ts`    |
+| Navigation guards   | `src/navigation/`     | `AuthGuard.ts`      |
+| React providers     | `src/providers/`      | `ApiProvider.tsx`   |
+| Type definitions    | `src/types/`          | `common.ts`         |
+| Config interfaces   | `src/config/`         | `AppConfig.ts`      |
 
 ### Export Strategy
 
 **Main entry point** (`src/index.ts`):
+
 ```typescript
 // Infrastructure
 export * from './infrastructure';
@@ -932,6 +996,7 @@ export * from './config';
 ```
 
 **Subpath exports** (`package.json`):
+
 ```json
 {
   "exports": {
@@ -950,6 +1015,7 @@ export * from './config';
 ### ✅ Build These (Infrastructure)
 
 **Network Layer**:
+
 - ✅ `ApiClient` with retry logic
 - ✅ Request/response interceptors
 - ✅ Token refresh mechanism
@@ -957,12 +1023,14 @@ export * from './config';
 - ✅ Request queueing for offline support
 
 **Storage Layer**:
+
 - ✅ `Storage` abstraction over AsyncStorage
 - ✅ `SecureStorage` abstraction over SecureStore
 - ✅ Cache management utilities
 - ✅ Storage migration helpers
 
 **State Management**:
+
 - ✅ `AsyncState<T>` generic type
 - ✅ Zustand store factory functions
 - ✅ React Query configuration helpers
@@ -970,6 +1038,7 @@ export * from './config';
 - ✅ State observers and middleware
 
 **Error Handling**:
+
 - ✅ `RenderError` class (shows to user)
 - ✅ `NonRenderError` class (logs only)
 - ✅ Error classification utilities
@@ -977,18 +1046,21 @@ export * from './config';
 - ✅ Global error handler setup
 
 **Logging**:
+
 - ✅ `Logger` class with levels (debug, info, warn, error)
 - ✅ Remote logging integration (e.g., Sentry)
 - ✅ Log formatting and filtering
 - ✅ Performance logging utilities
 
 **Navigation Utilities**:
+
 - ✅ Route helpers (type-safe navigation)
 - ✅ Navigation guards (auth, permission)
 - ✅ Deep linking utilities
 - ✅ Back handler utilities
 
 **Custom Hooks**:
+
 - ✅ `useDebounce`
 - ✅ `useThrottle`
 - ✅ `usePrevious`
@@ -998,6 +1070,7 @@ export * from './config';
 - ✅ `useKeyboard`
 
 **Utility Functions** (No prototype modifications):
+
 - ✅ String: `capitalize`, `truncate`, `slugify`, `formatPhone`
 - ✅ Number: `formatCurrency`, `clamp`, `round`
 - ✅ Array: `chunk`, `unique`, `groupBy`, `shuffle`
@@ -1006,11 +1079,13 @@ export * from './config';
 - ✅ Validation: `isEmail`, `isUrl`, `isUUID`
 
 **React Providers**:
+
 - ✅ `ApiProvider` (wraps ApiClient)
 - ✅ `LoggerProvider` (wraps Logger)
 - ✅ `ErrorProvider` (global error handling)
 
 **TypeScript Types**:
+
 - ✅ `AsyncState<T>`
 - ✅ `ApiResponse<T>`
 - ✅ `PaginatedResponse<T>`
@@ -1018,6 +1093,7 @@ export * from './config';
 - ✅ Common utility types
 
 **Configuration Interfaces**:
+
 - ✅ `ApiConfig`
 - ✅ `StorageConfig`
 - ✅ `LoggerConfig`
@@ -1026,6 +1102,7 @@ export * from './config';
 ### ❌ Do NOT Build These (Application Features)
 
 **Authentication Features**:
+
 - ❌ Login screens/forms
 - ❌ Registration flows
 - ❌ Password reset UI
@@ -1033,6 +1110,7 @@ export * from './config';
 - ❌ Biometric authentication setup
 
 **UI Components**:
+
 - ❌ Button components
 - ❌ Input/TextField components
 - ❌ Card components
@@ -1040,6 +1118,7 @@ export * from './config';
 - ❌ Any styled components
 
 **Theme/Styling**:
+
 - ❌ Color palettes
 - ❌ Theme configurations
 - ❌ Styled-components setup
@@ -1047,12 +1126,14 @@ export * from './config';
 - ❌ Typography scales
 
 **Internationalization (i18n)**:
+
 - ❌ Translation files
 - ❌ i18n library setup
 - ❌ Language switcher UI
 - ❌ Locale detection
 
 **Navigation Setup**:
+
 - ❌ Screen components
 - ❌ Tab navigators
 - ❌ Stack navigators
@@ -1060,6 +1141,7 @@ export * from './config';
 - ❌ Route definitions
 
 **Feature Modules**:
+
 - ❌ User profile features
 - ❌ Settings screens
 - ❌ Notification features
@@ -1068,12 +1150,14 @@ export * from './config';
 - ❌ Analytics dashboards
 
 **Form Schemas**:
+
 - ❌ Login form validation schemas
 - ❌ Registration form schemas
 - ❌ Profile edit schemas
 - ❌ Any domain-specific forms
 
 **API Endpoints**:
+
 - ❌ Specific API route definitions
 - ❌ API models for specific backends
 - ❌ GraphQL queries/mutations
@@ -1082,13 +1166,16 @@ export * from './config';
 ### Gray Areas (Ask First)
 
 **Potentially Acceptable** (if generic enough):
+
 - ⚠️ Form validation helpers (if completely generic)
 - ⚠️ Animation utilities (if not component-specific)
 - ⚠️ Image handling utilities (resize, compress)
 - ⚠️ Gesture handling utilities (if generic)
 
 **Decision Rule**:
+
 > "Can this be used in ANY React Native app without modification?"
+>
 > - If YES → Build it
 > - If NO → Don't build it
 
@@ -1101,6 +1188,7 @@ export * from './config';
 **Problem**: `Property 'X' does not exist on type 'Y'`
 
 **Solution**:
+
 1. Check type definitions in `src/types/`
 2. Ensure types are exported from index files
 3. Run `npm run type-check` to see all errors
@@ -1108,6 +1196,7 @@ export * from './config';
 **Problem**: `Type 'any' is not assignable to type 'T'`
 
 **Solution**:
+
 1. Remove `any` types
 2. Use proper type inference or explicit types
 3. If necessary, justify `any` with comment
@@ -1117,6 +1206,7 @@ export * from './config';
 **Problem**: Tests failing after code change
 
 **Solution**:
+
 1. Read error message carefully
 2. Check if test expectations match new behavior
 3. Update tests if behavior change is intentional
@@ -1125,6 +1215,7 @@ export * from './config';
 **Problem**: Tests passing locally but failing in CI
 
 **Solution**:
+
 1. Check for environment-specific issues
 2. Verify all dependencies are in `package.json`
 3. Check for test order dependencies (should be isolated)
@@ -1134,6 +1225,7 @@ export * from './config';
 **Problem**: `Cannot find module 'opticore-react-native/utils/string'`
 
 **Solution**:
+
 1. Ensure subpath exports are defined in `package.json`
 2. Rebuild package: `npm run build`
 3. Check export structure matches imports
@@ -1143,6 +1235,7 @@ export * from './config';
 **Problem**: Test coverage failing quality gate
 
 **Solution**:
+
 1. Run `npm test -- --coverage` to see report
 2. Open `coverage/lcov-report/index.html`
 3. Identify uncovered lines
@@ -1153,6 +1246,7 @@ export * from './config';
 **Problem**: ESLint warnings or errors
 
 **Solution**:
+
 1. Run `npm run lint -- --fix` to auto-fix
 2. Manually fix issues that can't be auto-fixed
 3. If rule is incorrect, discuss updating ESLint config
@@ -1162,6 +1256,7 @@ export * from './config';
 **Problem**: Implementation differs from spec
 
 **Solution**:
+
 1. **If spec is correct**: Update implementation to match
 2. **If implementation is correct**: Update spec and notify user
 3. **If requirements changed**: Create amendment to spec
@@ -1171,6 +1266,7 @@ export * from './config';
 **Problem**: Code violates constitutional principles
 
 **Solution**:
+
 1. **STOP implementation immediately**
 2. Review [.specify/memory/constitution.md](.specify/memory/constitution.md)
 3. Refactor to align with principles
@@ -1231,6 +1327,7 @@ export * from './config';
 ### Existing Specifications
 
 Browse `.specify/specs/` for examples of completed specs:
+
 - `001-npm-package-setup/` - Package initialization
 - `002-infrastructure-layer/` - Network, storage, logging
 - `003-state-management-core/` - Zustand + React Query

@@ -5,7 +5,7 @@
 **Status**: Draft
 **Input**: User description: "Initialize opticore-react-native as a standalone npm package with proper TypeScript, build configuration, and dependency management"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Developer Installs Package in Expo Project (Priority: P1)
 
@@ -82,7 +82,7 @@ A maintainer wants to publish a new version of opticore-react-native to npm so d
 - What happens when npm cache is corrupted during installation?
 - What happens when a developer accidentally imports internal utilities prefixed with underscore?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -104,7 +104,7 @@ A maintainer wants to publish a new version of opticore-react-native to npm so d
 - **FR-016**: Package MUST be configured as a library (not an executable app) with proper exports field in package.json
 - **FR-017**: Package MUST support tree-shaking through ES modules with "type": "module" or proper export conditions
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Package Metadata**: Name (opticore-react-native), version (1.0.0), description, keywords (react-native, expo, infrastructure, utilities), author, license, repository URL
 - **Exports Configuration**: Main entry point, subpath patterns, TypeScript type definitions, export conditions (import, require, types)
@@ -112,7 +112,7 @@ A maintainer wants to publish a new version of opticore-react-native to npm so d
 - **Build Artifacts**: Compiled JavaScript files, TypeScript declaration files (.d.ts), source maps (for debugging)
 - **Dependencies**: Peer dependencies (React Native, Expo, React, TypeScript), dev dependencies (testing, linting, building tools)
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

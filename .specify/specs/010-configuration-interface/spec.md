@@ -51,6 +51,7 @@ A developer wants to enable maintenance mode (show maintenance screen), offline 
 ### Functional Requirements
 
 **CoreConfig Interface**:
+
 - **FR-001**: System MUST provide CoreConfig TypeScript interface
 - **FR-002**: System MUST support apiBaseURL, timeout, headers configuration
 - **FR-003**: System MUST support authToken callback or static token
@@ -62,6 +63,7 @@ A developer wants to enable maintenance mode (show maintenance screen), offline 
 - **FR-009**: System MUST validate configuration on initialization
 
 **CoreSetup**:
+
 - **FR-010**: System MUST provide CoreSetup.init(config) method
 - **FR-011**: System MUST configure all modules from single config
 - **FR-012**: System MUST throw error if critical config missing

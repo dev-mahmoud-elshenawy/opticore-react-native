@@ -71,6 +71,7 @@ A developer wants route names and parameters to be type-checked at compile time,
 ### Functional Requirements
 
 **RouteHelper**:
+
 - **FR-001**: System MUST provide RouteHelper.push(route, params?) for navigation
 - **FR-002**: System MUST provide RouteHelper.replace(route, params?) for replacing screen
 - **FR-003**: System MUST provide RouteHelper.back() for going back
@@ -79,6 +80,7 @@ A developer wants route names and parameters to be type-checked at compile time,
 - **FR-006**: System MUST integrate with Expo Router
 
 **RouteGuard**:
+
 - **FR-007**: System MUST provide RouteGuard HOC/wrapper for protecting routes
 - **FR-008**: System MUST check authentication before rendering protected screen
 - **FR-009**: System MUST redirect to login on authentication failure
@@ -86,6 +88,7 @@ A developer wants route names and parameters to be type-checked at compile time,
 - **FR-011**: System MUST preserve intended route for post-login redirect
 
 **NavigationTypes**:
+
 - **FR-012**: System MUST define TypeScript types for all routes
 - **FR-013**: System MUST define types for route parameters
 - **FR-014**: System MUST provide type helpers for route definitions

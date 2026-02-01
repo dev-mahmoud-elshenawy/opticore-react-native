@@ -1,0 +1,45 @@
+# Development files
+src/
+test/
+tests/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Configuration
+.eslintrc.js
+.prettierrc
+jest.config.js
+babel.config.js
+tsconfig.json
+
+# Git
+.git/
+.gitignore
+
+# Node
+node_modules/
+
+# Build artifacts
+coverage/
+.history/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Spec Kit
+.specify/
+.claude/
+
+# Documentation source
+docs/
+examples/
+
+# CI/CD
+.github/
+.gitlab-ci.yml

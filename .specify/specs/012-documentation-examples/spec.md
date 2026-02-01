@@ -69,6 +69,7 @@ A developer learning opticore wants working example apps demonstrating common pa
 ### Functional Requirements
 
 **Core Documentation**:
+
 - **FR-001**: System MUST provide README with quick start guide
 - **FR-002**: System MUST provide API reference for all public APIs
 - **FR-003**: System MUST provide architecture overview
@@ -78,12 +79,14 @@ A developer learning opticore wants working example apps demonstrating common pa
 - **FR-007**: System MUST keep documentation in sync with code
 
 **API Documentation**:
+
 - **FR-008**: Every public function MUST have JSDoc comments
 - **FR-009**: Every hook MUST have usage examples
 - **FR-010**: Every type MUST have type definition docs
 - **FR-011**: Complex patterns MUST have detailed explanations
 
 **Examples**:
+
 - **FR-012**: System MUST provide example: Basic integration
 - **FR-013**: System MUST provide example: Authentication flow
 - **FR-014**: System MUST provide example: Data fetching with AsyncState

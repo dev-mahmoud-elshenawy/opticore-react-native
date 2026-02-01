@@ -5,7 +5,7 @@
 **Status**: Draft
 **Input**: User description: "Build core infrastructure layer providing network client (Axios wrapper), storage management (AsyncStorage + SecureStore), logger, lifecycle manager, and connectivity monitor"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Developer Makes API Calls with Auto Token Injection (Priority: P1)
 
@@ -102,11 +102,12 @@ A developer wants to pause timers when app goes to background, resume data sync 
 - What happens when Logger is called before initialization?
 - What happens when connectivity listener is registered but never unregistered (memory leak)?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
 **Network (ApiClient)**:
+
 - **FR-001**: System MUST provide configurable ApiClient class wrapping Axios with baseURL, timeout, and headers
 - **FR-002**: System MUST support request interceptors for automatic auth token injection
 - **FR-003**: System MUST support response interceptors for error handling and logging
@@ -117,6 +118,7 @@ A developer wants to pause timers when app goes to background, resume data sync 
 - **FR-008**: System MUST classify errors as network errors, timeout errors, or API errors
 
 **Storage (StorageManager)**:
+
 - **FR-009**: System MUST provide SecureStorage wrapper for expo-secure-store with encrypt/decrypt
 - **FR-010**: System MUST provide LocalStorage wrapper for AsyncStorage with JSON serialization
 - **FR-011**: System MUST support get, set, remove, clear operations for both storage types
@@ -125,6 +127,7 @@ A developer wants to pause timers when app goes to background, resume data sync 
 - **FR-014**: System MUST provide StorageKeys constants to prevent typos in storage keys
 
 **Logger**:
+
 - **FR-015**: System MUST provide Logger singleton with debug, info, warn, error methods
 - **FR-016**: System MUST support configurable log levels (debug, info, warn, error)
 - **FR-017**: System MUST colorize console output (gray=debug, blue=info, yellow=warn, red=error)
@@ -133,6 +136,7 @@ A developer wants to pause timers when app goes to background, resume data sync 
 - **FR-020**: System MUST handle circular references in logged objects
 
 **Connectivity (ConnectivityManager)**:
+
 - **FR-021**: System MUST provide real-time network connectivity status (online/offline)
 - **FR-022**: System MUST support registering listeners for connectivity changes
 - **FR-023**: System MUST trigger callbacks when network goes offline
@@ -140,6 +144,7 @@ A developer wants to pause timers when app goes to background, resume data sync 
 - **FR-025**: System MUST use NetInfo library for accurate connectivity detection
 
 **Lifecycle (LifecycleManager)**:
+
 - **FR-026**: System MUST monitor React Native AppState (active, inactive, background)
 - **FR-027**: System MUST trigger callbacks when app becomes active
 - **FR-028**: System MUST trigger callbacks when app becomes inactive
@@ -161,7 +166,7 @@ A developer wants to pause timers when app goes to background, resume data sync 
 - **ConnectivityManager**: Network status monitor with event listeners
 - **LifecycleManager**: App lifecycle monitor with event listeners
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

@@ -5,7 +5,7 @@
 **Status**: Draft
 **Input**: User description: "Build state management utilities providing AsyncState pattern (Loading/Success/Error), BaseStore for Zustand, StoreFactory for store creation, and StateObserver for global state listening (similar to Flutter BLoC pattern)"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Developer Handles Async Operations with Loading States (Priority: P1)
 
@@ -85,11 +85,12 @@ A developer creating multiple similar stores (products, categories, users) wants
 - What happens when developer forgets to cleanup StateObserver listeners?
 - What happens when store state exceeds memory limits (very large datasets)?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
 **AsyncState Pattern**:
+
 - **FR-001**: System MUST provide AsyncState<T> discriminated union type with states: idle, loading, success<T>, error
 - **FR-002**: System MUST provide type guards: isLoading, isSuccess, isError, isIdle
 - **FR-003**: System MUST provide transition functions: toLoading(), toSuccess(data), toError(error), reset()
@@ -98,6 +99,7 @@ A developer creating multiple similar stores (products, categories, users) wants
 - **FR-006**: System MUST support generic data types with full TypeScript inference
 
 **BaseStore**:
+
 - **FR-007**: System MUST provide BaseStore abstract class/pattern for Zustand stores
 - **FR-008**: System MUST include common store methods: reset(), hydrate(state), persist()
 - **FR-009**: System MUST support immer middleware for immutable updates with mutable syntax
@@ -107,6 +109,7 @@ A developer creating multiple similar stores (products, categories, users) wants
 - **FR-013**: System MUST prevent direct state mutation (enforce immutability)
 
 **StateObserver**:
+
 - **FR-014**: System MUST provide global StateObserver singleton for cross-store observation
 - **FR-015**: System MUST support registering listeners for specific stores
 - **FR-016**: System MUST trigger callbacks with old state and new state on updates
@@ -116,6 +119,7 @@ A developer creating multiple similar stores (products, categories, users) wants
 - **FR-020**: System MUST handle listener errors without breaking other listeners
 
 **StoreFactory**:
+
 - **FR-021**: System MUST provide factory function for creating stores with common patterns
 - **FR-022**: System MUST generate standard CRUD methods (fetch, create, update, delete)
 - **FR-023**: System MUST integrate AsyncState pattern automatically in generated stores
@@ -148,7 +152,7 @@ A developer creating multiple similar stores (products, categories, users) wants
   - `unwrap<T>(state): T | undefined` - safely extract data
   - `match<T, R>(state, handlers): R` - pattern matching for states
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

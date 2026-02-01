@@ -29,20 +29,24 @@ The Error Classification System provides systematic error handling by distinguis
 ## Implementation Phases
 
 ### Phase 1: ErrorType & Base Classes (P1)
+
 - ErrorType enum (RENDER, NON_RENDER, NONE)
 - BaseError abstract class
 - RenderError class
 - NonRenderError class
 
 ### Phase 2: ErrorClassifier (P2)
+
 - Automatic classification based on HTTP codes
 - Classification based on error type
 
 ### Phase 3: Recovery Strategies (P3)
+
 - Optional retry mechanisms
 - Recovery action patterns
 
 ### Phase 4: Testing & Documentation
+
 - Comprehensive tests
 - JSDoc and examples
 

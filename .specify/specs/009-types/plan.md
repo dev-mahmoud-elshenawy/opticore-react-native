@@ -22,15 +22,19 @@ Global TypeScript Types provide centralized type definitions used across all opt
 ## Implementation Phases
 
 ### Phase 1: API & State Types (P1)
+
 Core type definitions for API and state
 
 ### Phase 2: Error & Storage Types (P1)
+
 Error handling and storage types
 
 ### Phase 3: Navigation Types (P2)
+
 Navigation and routing types
 
 ### Phase 4: Type Testing
+
 Validate types with tsd tests
 
 ## File Inventory

@@ -20,7 +20,7 @@ A developer wants string utilities like notNull, capitalize, truncate, maskSensi
 1. **Given** string is null/undefined, **When** notNull(str, 'default') is called, **Then** 'default' is returned
 2. **Given** string is 'hello world', **When** capitalize(str) is called, **Then** 'Hello World' is returned
 3. **Given** string is long text, **When** truncate(str, 50) is called, **Then** string is cut to 50 chars with '...'
-4. **Given** string is '1234567890', **When** maskSensitive(str, 4) is called, **Then** '******7890' is returned
+4. **Given** string is '1234567890', **When** maskSensitive(str, 4) is called, **Then** '**\*\***7890' is returned
 
 ---
 
@@ -89,6 +89,7 @@ A developer wants formatters for phone numbers, currencies, and percentages, plu
 ### Functional Requirements
 
 **String Utilities**:
+
 - **FR-001**: System MUST provide notNull(str, fallback) for null coalescing
 - **FR-002**: System MUST provide capitalize, toUpperCase, toLowerCase utilities
 - **FR-003**: System MUST provide truncate(str, length, suffix) for text truncation
@@ -97,34 +98,40 @@ A developer wants formatters for phone numbers, currencies, and percentages, plu
 - **FR-006**: System MUST provide isEmpty, isEmail, isURL validation utilities
 
 **Number Utilities**:
+
 - **FR-007**: System MUST provide toInt(value, fallback) with safe parsing
 - **FR-008**: System MUST provide toDouble(value, fallback) with safe parsing
 - **FR-009**: System MUST provide clamp(value, min, max) for range limiting
 - **FR-010**: System MUST provide random(min, max) for random number generation
 
 **Date Utilities**:
+
 - **FR-011**: System MUST provide formatDate(date, format) with date-fns integration
 - **FR-012**: System MUST provide parseDate(str, format) with safe parsing
 - **FR-013**: System MUST provide timeAgo(date) for relative time formatting
 - **FR-014**: System MUST provide isToday, isYesterday, isSameDay utilities
 
 **Array Utilities**:
+
 - **FR-015**: System MUST provide filterNonNull(arr) to remove nulls/undefined
 - **FR-016**: System MUST provide groupBy(arr, key) for grouping
 - **FR-017**: System MUST provide unique(arr) for removing duplicates
 - **FR-018**: System MUST provide sortBy(arr, key) for sorting
 
 **Object Utilities**:
+
 - **FR-019**: System MUST provide get(obj, path, fallback) for safe nested access
 - **FR-020**: System MUST provide deepMerge(obj1, obj2) for merging
 - **FR-021**: System MUST provide pick(obj, keys) and omit(obj, keys) utilities
 
 **Formatters**:
+
 - **FR-022**: System MUST provide formatPhone(phone, format) for phone formatting
 - **FR-023**: System MUST provide formatCurrency(num, currency) for currency
 - **FR-024**: System MUST provide formatPercentage(num, decimals) for percentages
 
 **Helpers**:
+
 - **FR-025**: System MUST provide clipboard helpers (copy, paste)
 - **FR-026**: System MUST provide device info helpers (width, height, OS version)
 - **FR-027**: System MUST provide permission helpers (camera, location, etc.)
@@ -133,6 +140,7 @@ A developer wants formatters for phone numbers, currencies, and percentages, plu
 ### Key Entities
 
 All utilities are pure functions exported from respective modules:
+
 - String utilities: `src/utils/string/`
 - Number utilities: `src/utils/number/`
 - Date utilities: `src/utils/date/`

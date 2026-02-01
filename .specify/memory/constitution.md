@@ -10,6 +10,7 @@
 ## Core Principles
 
 ### I. Pure Infrastructure Library (NON-NEGOTIABLE)
+
 **OptiCore React Native is a CORE INFRASTRUCTURE package, NOT an application template**
 
 - Every module MUST be reusable across ANY React Native/Expo project
@@ -25,9 +26,11 @@
 - Mirrors the architecture of the Flutter `opticore` package
 
 ### II. Specification-First Development (MANDATORY)
+
 **ALL code changes MUST follow the Spec Kit workflow - NO EXCEPTIONS**
 
 **Workflow Order**:
+
 1. **Constitution** → Project principles (this document)
 2. **Specify** (`.specify/memory/*.md`) → Define WHAT to build (user scenarios, requirements)
 3. **Plan** → Create technical implementation plan
@@ -35,6 +38,7 @@
 5. **Implement** → Execute code
 
 **Rules**:
+
 - ❌ NO CODE WITHOUT APPROVED SPEC
 - ✅ ALL changes start with specification
 - ✅ User reviews and approves specs BEFORE implementation
@@ -44,6 +48,7 @@
 - ✅ Use `/speckit.checklist` to validate quality
 
 ### III. TypeScript Strict Mode (NON-NEGOTIABLE)
+
 **Zero tolerance for type errors - strict TypeScript throughout**
 
 - `strict: true` in tsconfig.json enforced at ALL times
@@ -55,6 +60,7 @@
 - ✅ Discriminated unions for state machines
 
 ### IV. Test-Driven Development (MANDATORY)
+
 **80%+ test coverage required for all utilities**
 
 - ✅ Unit tests for ALL utility functions
@@ -66,6 +72,7 @@
 - ❌ NO untested public APIs
 
 ### V. Zero Bugs Philosophy
+
 **Professional-grade quality with comprehensive error handling**
 
 - ✅ ALL errors MUST be classified (RenderError vs NonRenderError)
@@ -78,6 +85,7 @@
 - ❌ NO unhandled promise rejections
 
 ### VI. SOLID Principles (MANDATORY)
+
 **Architecture follows all SOLID principles**
 
 - **S - Single Responsibility**: Each module has ONE reason to change
@@ -87,6 +95,7 @@
 - **D - Dependency Inversion**: Depend on abstractions, not concretions
 
 ### VII. Extension Pattern Alternative
+
 **JavaScript doesn't support Dart-style extensions - use utility functions**
 
 - ✅ Export pure utility functions (NO prototype modifications)
@@ -100,6 +109,7 @@
 ## Technology Constraints
 
 ### Required Stack (Latest Stable - Feb 2026)
+
 - **React Native**: 0.81.5 (Expo SDK 54)
 - **TypeScript**: 5.9.2+ (strict mode)
 - **State**: Zustand ^5.0.10 + React Query ^5.90.18
@@ -110,6 +120,7 @@
 - **Testing**: Jest ^29.7.0 + React Native Testing Library ^12.4.3
 
 ### Dependency Policy
+
 - ✅ Use latest stable versions ONLY
 - ✅ Peer dependencies for React Native/Expo
 - ✅ Lock file (`package-lock.json`) MUST be committed
@@ -139,23 +150,28 @@ src/
 ### File vs Folder Organization Guidelines
 
 **Decision Rule**:
+
 > "Does this module have multiple related files with different responsibilities?"
+>
 > - **YES** → Use folder (e.g., `infrastructure/ApiClient/`)
 > - **NO** → Use file (e.g., `utils/string.ts`)
 
 **Use Folders When**:
+
 - ✅ Module has **internal structure** with private implementation files
 - ✅ Module has **multiple file types** (types, config, implementation, tests)
 - ✅ Module needs to **hide internal complexity** from public API
 - ✅ Example: `infrastructure/ApiClient/{index.ts, ApiClient.ts, types.ts, interceptors.ts}`
 
 **Use Files When**:
+
 - ✅ Related functions grouped by **category** (utilities)
 - ✅ All exports are **public API** with no private helpers
 - ✅ **Simple modules** with single responsibility
 - ✅ Example: `utils/string.ts` (all string functions), `hooks/useDebounce.ts`
 
 **Utils Organization** (React Native Best Practice):
+
 ```
 ✅ CORRECT (Flat structure):
 utils/
@@ -176,6 +192,7 @@ utils/
 ```
 
 **Why Flat Files for Utils**:
+
 - Follows React Native community standards (react-native-reanimated, zustand)
 - Easier navigation and discoverability
 - Better tree-shaking with modern bundlers
@@ -183,6 +200,7 @@ utils/
 - Mirrors how Dart/Flutter organizes utilities in single files
 
 ### Export Policy
+
 - ✅ Main export: `src/index.ts`
 - ✅ Subpath exports: `opticore-react-native/utils/string`
 - ✅ All public APIs exported from index files
@@ -193,6 +211,7 @@ utils/
 ## Development Workflow
 
 ### Specification Process (MANDATORY)
+
 1. Create spec in `.specify/memory/[feature-name].md`
 2. Follow spec template structure
 3. Run `/speckit.clarify` if needed
@@ -200,6 +219,7 @@ utils/
 5. **WAIT for approval before proceeding**
 
 ### Implementation Process
+
 1. Write tests first (TDD)
 2. Implement to pass tests
 3. Refactor for quality
@@ -209,6 +229,7 @@ utils/
 7. Commit with conventional commits
 
 ### Quality Gates (NON-NEGOTIABLE)
+
 - ✅ TypeScript compilation: ZERO errors
 - ✅ All tests passing (80%+ coverage)
 - ✅ ESLint: No warnings or errors
@@ -245,6 +266,7 @@ utils/
 ## Code Standards
 
 ### Naming Conventions
+
 - **Files**: PascalCase for classes (`ApiClient.ts`), camelCase for utilities (`formatPhone.ts`)
 - **Functions**: camelCase, descriptive (`getUserProfile`, `formatPhoneNumber`)
 - **Types/Interfaces**: PascalCase (`AsyncState<T>`, `StorageConfig`)
@@ -252,6 +274,7 @@ utils/
 - **Private members**: Prefix with underscore (`_internalMethod`)
 
 ### Documentation Requirements
+
 - ✅ JSDoc comments for ALL public APIs
 - ✅ README.md at root with quick start
 - ✅ API.md with complete API reference
@@ -260,6 +283,7 @@ utils/
 - ❌ NO obvious comments ("increment counter" for `count++`)
 
 ### Error Handling Standards
+
 - ✅ ALL async operations wrapped in try/catch
 - ✅ Errors classified as RenderError or NonRenderError
 - ✅ Meaningful error messages
@@ -305,12 +329,14 @@ utils/
 ## Governance
 
 ### Constitutional Authority
+
 - This constitution **SUPERSEDES** all other development practices
 - ALL PRs MUST verify compliance with these principles
 - Deviations require explicit justification and approval
 - Spec workflow is MANDATORY for all changes
 
 ### Amendment Process
+
 1. Propose amendment in `.specify/memory/constitution-amendment.md`
 2. Review and discussion
 3. User approval required
@@ -319,7 +345,9 @@ utils/
 6. Provide migration guide if needed
 
 ### Compliance Verification
+
 Every PR checklist:
+
 - [ ] Specification created and approved
 - [ ] Constitution principles followed
 - [ ] TypeScript strict mode passing
@@ -331,9 +359,9 @@ Every PR checklist:
 
 ## Amendment Log
 
-| Version | Date | Amendment | Reason |
-|---------|------|-----------|--------|
-| 1.0.0 | 2026-02-01 | Initial constitution | Project initialization |
+| Version | Date       | Amendment            | Reason                 |
+| ------- | ---------- | -------------------- | ---------------------- |
+| 1.0.0   | 2026-02-01 | Initial constitution | Project initialization |
 
 ---
 

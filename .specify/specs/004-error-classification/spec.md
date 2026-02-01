@@ -5,7 +5,7 @@
 **Status**: Draft
 **Input**: User description: "Build systematic error classification system distinguishing RenderErrors (UI-affecting errors requiring user action) from NonRenderErrors (background errors for logging only), with ErrorType enum, base error classes, and ErrorClassifier for automatic categorization"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Developer Distinguishes UI Errors from Background Errors (Priority: P1)
 
@@ -85,11 +85,12 @@ A developer wants errors to include suggested recovery actions - retry for netwo
 - What happens when error occurs in error serialization?
 - What happens when developer manually changes error type after classification?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
 **Error Types & Classification**:
+
 - **FR-001**: System MUST define ErrorType enum with values: RENDER, NON_RENDER, NONE
 - **FR-002**: System MUST provide RenderError base class for UI-affecting errors
 - **FR-003**: System MUST provide NonRenderError base class for background errors
@@ -98,6 +99,7 @@ A developer wants errors to include suggested recovery actions - retry for netwo
 - **FR-006**: System MUST support error metadata (context, user ID, request ID, etc.)
 
 **BaseError Class**:
+
 - **FR-007**: BaseError MUST include properties: code (string), message (string), stack (string), timestamp (Date)
 - **FR-008**: BaseError MUST support cause chain (original error that caused this error)
 - **FR-009**: BaseError MUST serialize to JSON without losing information
@@ -106,6 +108,7 @@ A developer wants errors to include suggested recovery actions - retry for netwo
 - **FR-012**: BaseError MUST be extensible for custom error types
 
 **RenderError Class**:
+
 - **FR-013**: RenderError MUST extend BaseError with errorType = RENDER
 - **FR-014**: RenderError MUST include userMessage property (user-friendly error message)
 - **FR-015**: RenderError MUST include severity level (warning, error, critical)
@@ -113,12 +116,14 @@ A developer wants errors to include suggested recovery actions - retry for netwo
 - **FR-017**: RenderError MUST include actionable flag (requires user action?)
 
 **NonRenderError Class**:
+
 - **FR-018**: NonRenderError MUST extend BaseError with errorType = NON_RENDER
 - **FR-019**: NonRenderError MUST include isSilent flag (suppress all notifications)
 - **FR-020**: NonRenderError MUST include monitoring flag (send to error tracking service)
 - **FR-021**: NonRenderError MUST support automatic retry configuration
 
 **ErrorClassifier**:
+
 - **FR-022**: System MUST provide ErrorClassifier.classify(error) method returning ErrorType
 - **FR-023**: Classifier MUST identify HTTP 4xx as RenderError (client errors)
 - **FR-024**: Classifier MUST identify HTTP 5xx as NonRenderError (server errors)
@@ -128,6 +133,7 @@ A developer wants errors to include suggested recovery actions - retry for netwo
 - **FR-028**: Classifier MUST allow custom classification rules
 
 **Error Handling Utilities**:
+
 - **FR-029**: System MUST provide SafeCall utility for exception-free execution
 - **FR-030**: System MUST provide error boundary component for React error catching
 - **FR-031**: System MUST provide global error handler registration
@@ -173,7 +179,7 @@ A developer wants errors to include suggested recovery actions - retry for netwo
   - CacheError (extends NonRenderError)
   - AnalyticsError (extends NonRenderError)
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

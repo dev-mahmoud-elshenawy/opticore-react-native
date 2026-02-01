@@ -7,9 +7,11 @@
 ## Phase 2: User Story 1 - QueryProvider (P1) 🎯
 
 ### Tests
+
 - [ ] T002 [P] [US1] Create `tests/providers/QueryProvider.test.tsx`
 
 ### Implementation
+
 - [ ] T003 [US1] Create `src/providers/QueryProvider.tsx` with React Query defaults
 - [ ] T004 [US1] Configure staleTime, cacheTime, retry, error handling
 - [ ] T005 [US1] Add DevTools integration (development only)
@@ -17,9 +19,11 @@
 ## Phase 3: User Story 2 - CoreProvider (P1) 🎯
 
 ### Tests
+
 - [ ] T006 [P] [US2] Create `tests/providers/CoreProvider.test.tsx`
 
 ### Implementation
+
 - [ ] T007 [US2] Create `src/providers/CoreProvider.tsx` combining:
   - QueryProvider
   - Connectivity initialization

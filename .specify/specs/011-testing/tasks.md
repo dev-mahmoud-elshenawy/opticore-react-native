@@ -10,6 +10,7 @@
 ## Phase 2: User Story 1 - Comprehensive Test Suite (P1) 🎯
 
 ### Implementation
+
 - [ ] T005 [P] Write unit tests for all infrastructure modules
 - [ ] T006 [P] Write unit tests for all state modules
 - [ ] T007 [P] Write unit tests for all error modules
@@ -22,9 +23,11 @@
 ## Phase 3: User Story 2 - Mock Implementations (P1) 🎯
 
 ### Tests
+
 - [ ] T013 [P] [US2] Create tests for mock implementations
 
 ### Implementation
+
 - [ ] T014 [P] [US2] Create `tests/mocks/MockApiClient.ts`
 - [ ] T015 [P] [US2] Create `tests/mocks/MockStorage.ts`
 - [ ] T016 [P] [US2] Create `tests/mocks/MockLogger.ts`
@@ -35,6 +38,7 @@
 ## Phase 4: User Story 3 - Test Helpers (P2)
 
 ### Implementation
+
 - [ ] T020 [P] [US3] Create `tests/helpers/renderHelpers.tsx`
 - [ ] T021 [P] [US3] Create `tests/helpers/storeHelpers.ts`
 - [ ] T022 [P] [US3] Create `tests/helpers/asyncHelpers.ts`

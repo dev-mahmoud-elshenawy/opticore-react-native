@@ -52,6 +52,7 @@ A developer wants to wrap their app with single CoreProvider that configures all
 ### Functional Requirements
 
 **QueryProvider**:
+
 - **FR-001**: System MUST provide QueryProvider wrapping QueryClientProvider
 - **FR-002**: System MUST configure default staleTime, cacheTime, retry logic
 - **FR-003**: System MUST support global error handling
@@ -59,6 +60,7 @@ A developer wants to wrap their app with single CoreProvider that configures all
 - **FR-005**: System MUST allow configuration override via props
 
 **CoreProvider**:
+
 - **FR-006**: System MUST provide CoreProvider combining all opticore providers
 - **FR-007**: System MUST initialize connectivity monitoring
 - **FR-008**: System MUST initialize lifecycle management

@@ -13,6 +13,7 @@ The State Management Core provides reusable patterns for managing application st
 
 **Language/Version**: TypeScript 5.9.2 (strict mode)
 **Primary Dependencies**:
+
 - Zustand ^5.0.10 (state management)
 - immer ^10.0.4 (immutable updates)
 - zustand/middleware (persist, devtools)
@@ -22,21 +23,22 @@ The State Management Core provides reusable patterns for managing application st
 **Target Platform**: React Native 0.81+, Expo SDK 54+
 **Project Type**: npm package (library)
 **Performance Goals**:
+
 - State updates: < 5ms for typical state changes
 - StateObserver notifications: < 10ms latency
 - Re-renders: Only components using specific state slice
-**Constraints**:
+  **Constraints**:
 - Zero dependencies on app-specific logic
 - Must work with or without React components
 - Full TypeScript type inference required
-**Scale/Scope**:
+  **Scale/Scope**:
 - 4 core patterns (AsyncState, BaseStore, StateObserver, StoreFactory)
 - ~10 TypeScript files
 - 80%+ test coverage required
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - ✅ **Pure Infrastructure**: Only reusable state patterns, no app features
 - ✅ **TypeScript Strict Mode**: Discriminated unions, generic types, full inference
@@ -98,6 +100,7 @@ tests/
 **Goal**: Understand Zustand patterns, TypeScript discriminated unions, and observer pattern
 
 **Deliverables**:
+
 - Research Zustand middleware (immer, devtools, persist)
 - Study TypeScript discriminated unions for type-safe state machines
 - Review observer pattern best practices for React
@@ -111,19 +114,22 @@ tests/
 **Goal**: Implement type-safe async state machine with loading/success/error states
 
 **Components**:
+
 1. **AsyncState.ts**: Discriminated union type with type guards
 2. **AsyncStateHelpers.ts**: Utility functions for working with AsyncState
 
 **Type Definition**:
+
 ```typescript
 type AsyncState<T> =
   | { type: 'idle' }
-  | { type: 'loading', previousData?: T }
-  | { type: 'success', data: T }
-  | { type: 'error', error: Error, previousData?: T };
+  | { type: 'loading'; previousData?: T }
+  | { type: 'success'; data: T }
+  | { type: 'error'; error: Error; previousData?: T };
 ```
 
 **Key Decisions**:
+
 - Use discriminated union for compile-time exhaustiveness checking
 - Include previousData for optimistic updates
 - Provide type guards: isLoading, isSuccess, isError, isIdle
@@ -132,6 +138,7 @@ type AsyncState<T> =
 - Helper function match<T, R>(state, handlers): R for pattern matching
 
 **Success Criteria**:
+
 - TypeScript infers data type in success branch
 - Exhaustiveness checking in switch statements
 - Zero runtime errors from state access
@@ -142,10 +149,12 @@ type AsyncState<T> =
 **Goal**: Provide reusable Zustand store pattern with common functionality
 
 **Components**:
+
 1. **BaseStore.ts**: Utility functions and patterns for Zustand stores
 2. **StoreConfig.ts**: Configuration interface for stores
 
 **Features**:
+
 - Immer middleware integration (mutable syntax, immutable updates)
 - Devtools middleware integration (Redux DevTools)
 - Reset method to return to initial state
@@ -154,6 +163,7 @@ type AsyncState<T> =
 - Support for computed values (selectors)
 
 **Key Decisions**:
+
 - NOT a class (use function pattern with Zustand create)
 - Provide createBaseStore<T>() utility function
 - Include common middleware by default
@@ -161,6 +171,7 @@ type AsyncState<T> =
 - Allow store access outside React components
 
 **Success Criteria**:
+
 - Type inference works for state and actions
 - Stores work outside React (API calls, navigation)
 - Immer middleware allows mutable syntax
@@ -172,10 +183,12 @@ type AsyncState<T> =
 **Goal**: Global state listener for cross-cutting concerns (like GlobalBlocListener)
 
 **Components**:
+
 1. **StateObserver.ts**: Singleton observer for all stores
 2. **ObserverTypes.ts**: Callback type definitions
 
 **Features**:
+
 - Subscribe to any Zustand store
 - Filter by state conditions (e.g., only errors)
 - Receive old state and new state in callback
@@ -184,6 +197,7 @@ type AsyncState<T> =
 - Error handling in callbacks (don't break other listeners)
 
 **Key Decisions**:
+
 - Use singleton pattern for global observer
 - Store listeners in WeakMap to prevent memory leaks
 - Execute listeners in registration order
@@ -191,6 +205,7 @@ type AsyncState<T> =
 - Provide filtering function for conditional observation
 
 **Success Criteria**:
+
 - Callbacks triggered within 10ms of state change
 - Multiple observers work concurrently
 - No memory leaks from forgotten listeners
@@ -201,9 +216,11 @@ type AsyncState<T> =
 **Goal**: Generate CRUD stores with common patterns
 
 **Components**:
+
 1. **StoreFactory.ts**: Factory functions for store generation
 
 **Features**:
+
 - Generate stores with AsyncState integration
 - Standard CRUD methods (fetch, create, update, delete)
 - Type inference for entity-specific methods
@@ -211,6 +228,7 @@ type AsyncState<T> =
 - Extensible for domain-specific logic
 
 **Key Decisions**:
+
 - Use TypeScript generics for entity types
 - Generate methods at runtime
 - Include AsyncState transitions automatically
@@ -218,6 +236,7 @@ type AsyncState<T> =
 - Provide opinionated defaults, allow overrides
 
 **Success Criteria**:
+
 - Generate fully-typed store in single call
 - TypeScript strict mode passes with zero errors
 - Custom actions integrate seamlessly
@@ -228,15 +247,18 @@ type AsyncState<T> =
 **Goal**: React provider wrappers for state management
 
 **Components**:
+
 1. **QueryProvider.tsx**: React Query provider setup
 2. **StoreProvider.tsx**: Optional Zustand provider wrapper
 
 **Features**:
+
 - Configure React Query defaults
 - Provide global error handling
 - Optional Zustand provider for isolated store scope
 
 **Success Criteria**:
+
 - Providers work with all state patterns
 - Easy integration in app root
 
@@ -245,6 +267,7 @@ type AsyncState<T> =
 **Goal**: Comprehensive testing and pattern validation
 
 **Test Coverage**:
+
 - AsyncState transitions and type guards
 - BaseStore with middleware
 - StateObserver with multiple listeners
@@ -252,6 +275,7 @@ type AsyncState<T> =
 - Integration tests: AsyncState + Zustand store + Observer
 
 **Success Criteria**:
+
 - All tests passing
 - 80%+ code coverage
 - No TypeScript errors
@@ -262,6 +286,7 @@ type AsyncState<T> =
 **Goal**: Complete developer documentation
 
 **Deliverables**:
+
 - JSDoc comments for all public APIs
 - README with pattern examples
 - Example: AsyncState with data fetching
@@ -270,6 +295,7 @@ type AsyncState<T> =
 - Example: StoreFactory for CRUD store
 
 **Success Criteria**:
+
 - Developer can implement patterns in < 15 minutes
 - All patterns documented
 - Examples work without modification
@@ -281,6 +307,7 @@ No constitution violations. All patterns are pure infrastructure utilities follo
 ## File Inventory
 
 ### Implementation Files (10 files)
+
 1. `src/state/AsyncState.ts`
 2. `src/state/AsyncStateHelpers.ts`
 3. `src/state/BaseStore.ts`
@@ -294,6 +321,7 @@ No constitution violations. All patterns are pure infrastructure utilities follo
 11. `src/state/index.ts`
 
 ### Test Files (6 files)
+
 1. `tests/state/AsyncState.test.ts`
 2. `tests/state/AsyncStateHelpers.test.ts`
 3. `tests/state/BaseStore.test.ts`
@@ -306,6 +334,7 @@ No constitution violations. All patterns are pure infrastructure utilities follo
 ## Dependencies
 
 ### Phase Dependencies
+
 - Phase 0 (Research): No dependencies
 - Phase 1 (AsyncState): Depends on Phase 0
 - Phase 2 (BaseStore): Depends on Phase 0, parallel to Phase 1
@@ -316,6 +345,7 @@ No constitution violations. All patterns are pure infrastructure utilities follo
 - Phase 7 (Docs): Depends on Phase 6
 
 ### Critical Path
+
 Phase 0 → Phase 1 (AsyncState) → Phase 2 (BaseStore) → Phase 6 (Testing) → Phase 7 (Docs)
 
 StateObserver and StoreFactory can be implemented after BaseStore in parallel.

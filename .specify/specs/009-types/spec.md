@@ -66,32 +66,38 @@ A developer navigating between screens wants type definitions for routes and rou
 ### Functional Requirements
 
 **API Types**:
+
 - **FR-001**: System MUST provide ApiResponse<T> generic type
 - **FR-002**: System MUST provide ApiError type with status, message, code
 - **FR-003**: System MUST provide PaginatedResponse<T> type
 - **FR-004**: System MUST provide RequestConfig type for API configuration
 
 **State Types**:
+
 - **FR-005**: System MUST provide LoadingState<T> type
 - **FR-006**: System MUST provide ErrorState type
 - **FR-007**: System MUST provide PaginationState type
 - **FR-008**: System MUST provide AsyncValue<T> discriminated union
 
 **Storage Types**:
+
 - **FR-009**: System MUST provide StorageConfig type
 - **FR-010**: System MUST provide StorageKeys type
 
 **Navigation Types**:
+
 - **FR-011**: System MUST provide RouteParams type
 - **FR-012**: System MUST provide NavigationOptions type
 
 **Error Types**:
+
 - **FR-013**: System MUST provide ErrorMetadata type
 - **FR-014**: System MUST provide RecoveryStrategy type
 
 ### Key Entities
 
 All type definitions in `src/types/`:
+
 - `Api.types.ts` - API-related types
 - `State.types.ts` - State management types
 - `Error.types.ts` - Error types

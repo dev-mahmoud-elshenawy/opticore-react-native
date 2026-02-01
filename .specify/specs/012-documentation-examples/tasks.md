@@ -8,6 +8,7 @@
 ## Phase 2: User Story 1 - Quick Start Documentation (P1) 🎯
 
 ### Implementation
+
 - [ ] T003 [US1] Create comprehensive `README.md` with:
   - Package overview
   - Installation instructions
@@ -21,6 +22,7 @@
 ## Phase 3: User Story 2 - API Documentation (P1) 🎯
 
 ### Implementation
+
 - [ ] T007 [P] [US2] Create `docs/api/INFRASTRUCTURE.md` documenting network, storage, logger
 - [ ] T008 [P] [US2] Create `docs/api/STATE.md` documenting AsyncState, BaseStore, etc.
 - [ ] T009 [P] [US2] Create `docs/api/ERRORS.md` documenting error classification
@@ -34,6 +36,7 @@
 ## Phase 4: User Story 3 - Working Examples (P2)
 
 ### Implementation
+
 - [ ] T016 [P] [US3] Create `examples/basic-integration/` - minimal setup
 - [ ] T017 [P] [US3] Create `examples/auth-flow/` - complete auth with login/logout
 - [ ] T018 [P] [US3] Create `examples/data-fetching/` - API calls with AsyncState
@@ -45,6 +48,7 @@
 ## Phase 5: Contributing & Migration Guides
 
 ### Implementation
+
 - [ ] T023 [P] Create `CONTRIBUTING.md` with:
   - Development setup
   - Coding standards
@@ -60,6 +64,7 @@
 ## Phase 6: Changelog & Versioning
 
 ### Implementation
+
 - [ ] T027 Create `CHANGELOG.md` following Keep a Changelog format
 - [ ] T028 Document versioning strategy (Semantic Versioning)
 - [ ] T029 Create release notes template
@@ -67,6 +72,7 @@
 ## Phase 7: Optional Documentation Site
 
 ### Implementation
+
 - [ ] T030 [P] Setup Docusaurus (if desired)
 - [ ] T031 [P] Configure documentation navigation
 - [ ] T032 [P] Deploy documentation site

@@ -22,12 +22,15 @@ Core Providers create React provider wrappers for easy app setup. QueryProvider 
 ## Implementation Phases
 
 ### Phase 1: QueryProvider (P1)
+
 React Query wrapper with defaults
 
 ### Phase 2: CoreProvider (P1)
+
 Combined provider for all utilities
 
 ### Phase 3: Testing & Documentation
+
 Provider tests and setup guide
 
 ## File Inventory
