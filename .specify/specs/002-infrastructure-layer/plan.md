@@ -278,6 +278,7 @@ class SecureStorage implements IStorage {
 
 - Use ANSI color codes for terminal colors (gray, blue, yellow, red)
 - Filter logs by level (e.g., production = ERROR only)
+- **STRICT REQUIREMENT**: In release mode (production), NO logs should be printed at all (unless explicitly overridden configuration)
 - Include timestamps in ISO format
 - Handle circular references with JSON.stringify replacer
 - Support logging objects, arrays, errors with stack traces

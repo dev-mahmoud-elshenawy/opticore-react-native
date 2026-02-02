@@ -4,6 +4,16 @@ module.exports = {
   testMatch: ['**/test/**/*.(test|spec).(ts|tsx|js)'],
   transform: {
     '^.+\\.(ts|tsx)$': 'babel-jest',
+    '^.+\\.(js|jsx)$': 'babel-jest',
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|expo-secure-store|expo-modules-core))'
+  ],
+  moduleNameMapper: {
+    '^expo-secure-store$': '<rootDir>/test/__mocks__/expo-secure-store.ts',
+    '^react-native$': '<rootDir>/test/__mocks__/react-native.ts',
+    '^@react-native-community/netinfo$': '<rootDir>/test/__mocks__/@react-native-community/netinfo.ts',
+    '^@react-native-async-storage/async-storage$': '<rootDir>/test/__mocks__/@react-native-async-storage/async-storage.ts',
   },
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
