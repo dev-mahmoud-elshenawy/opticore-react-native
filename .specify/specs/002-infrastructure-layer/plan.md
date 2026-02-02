@@ -14,14 +14,14 @@ The Infrastructure Layer provides foundational services that every React Native 
 **Language/Version**: TypeScript 5.9.2 (strict mode)
 **Primary Dependencies**:
 
-- Axios ^1.13.2 (HTTP client)
+- Axios ^1.13.4 (HTTP client) - Latest stable
 - @react-native-async-storage/async-storage ^2.2.0 (local storage)
 - expo-secure-store ^15.0.8 (encrypted storage)
-- @react-native-community/netinfo ^11.3.0 (connectivity monitoring)
-- React Native 0.81.5 (AppState for lifecycle)
+- @react-native-community/netinfo ^11.5.1 (connectivity monitoring) - Latest stable
+- React Native >=0.74.0 (AppState for lifecycle)
 
 **Storage**: SecureStore (iOS Keychain, Android Keystore), AsyncStorage (SQLite)
-**Testing**: Jest ^29.7.0, React Native Testing Library ^12.4.3
+**Testing**: Jest ^29.7.0, @testing-library/react-native ^13.3.3, @testing-library/jest-native ^5.4.3
 **Target Platform**: iOS 15+, Android 13+, Expo SDK 54+
 **Project Type**: npm package (library)
 **Performance Goals**:
@@ -108,7 +108,7 @@ src/
     │
     └── index.ts                       # Infrastructure public exports
 
-tests/
+test/
 └── infrastructure/
     ├── network/
     │   ├── ApiClient.test.ts
@@ -166,6 +166,33 @@ tests/
 - Provide typed methods: `get<T>()`, `post<T>()`, `put<T>()`, `delete<T>()`, `patch<T>()`
 - Handle concurrent 401 errors (only one token refresh at a time)
 
+**Token Refresh Queue Algorithm**:
+
+```typescript
+// Singleton pattern to prevent multiple concurrent token refreshes
+let refreshPromise: Promise<string> | null = null;
+
+async function handleTokenRefresh(onTokenRefresh: () => Promise<string>): Promise<string> {
+  // If refresh is already in progress, return existing promise
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  // Start new token refresh
+  refreshPromise = onTokenRefresh().finally(() => {
+    // Clear promise after completion (success or failure)
+    refreshPromise = null;
+  });
+
+  return refreshPromise;
+}
+
+// Usage in AuthInterceptor:
+// 1. First 401 error triggers handleTokenRefresh()
+// 2. Subsequent 401 errors while refresh is pending wait for same promise
+// 3. After refresh completes, all queued requests retry with new token
+```
+
 **Success Criteria**:
 
 - Developer can make typed API request in 5 lines
@@ -193,6 +220,42 @@ tests/
 - Validate data before storing (no undefined, null, or circular references)
 - Error handling for quota exceeded, permission denied
 
+**SecureStore Web Detection Strategy**:
+
+```typescript
+import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Check if SecureStore is available (not available on web)
+const isSecureStoreAvailable = Platform.OS !== 'web';
+
+class SecureStorage implements IStorage {
+  async set<T>(key: string, value: T): Promise<void> {
+    const stringValue = JSON.stringify(value);
+
+    if (isSecureStoreAvailable) {
+      // Use SecureStore on iOS/Android (encrypted)
+      await SecureStore.setItemAsync(key, stringValue);
+    } else {
+      // Fallback to AsyncStorage on web (not encrypted)
+      console.warn(
+        '[SecureStorage] SecureStore not available on web, falling back to AsyncStorage'
+      );
+      await AsyncStorage.setItem(key, stringValue);
+    }
+  }
+
+  async get<T>(key: string): Promise<T | null> {
+    const stringValue = isSecureStoreAvailable
+      ? await SecureStore.getItemAsync(key)
+      : await AsyncStorage.getItem(key);
+
+    return stringValue ? JSON.parse(stringValue) : null;
+  }
+}
+```
+
 **Success Criteria**:
 
 - Developer can store/retrieve typed data with type safety
@@ -218,6 +281,38 @@ tests/
 - Include timestamps in ISO format
 - Handle circular references with JSON.stringify replacer
 - Support logging objects, arrays, errors with stack traces
+
+**Circular Reference Handling Implementation**:
+
+```typescript
+// Safe JSON stringify that handles circular references
+function safeStringify(obj: any, indent: number = 2): string {
+  const seen = new WeakSet();
+
+  return JSON.stringify(
+    obj,
+    (key, value) => {
+      // Handle non-object values
+      if (typeof value !== 'object' || value === null) {
+        return value;
+      }
+
+      // Detect circular reference
+      if (seen.has(value)) {
+        return '[Circular Reference]';
+      }
+
+      // Mark object as seen
+      seen.add(value);
+      return value;
+    },
+    indent
+  );
+}
+
+// Usage in Logger:
+// logger.debug('User object:', safeStringify(userWithCircularRef));
+```
 
 **Success Criteria**:
 
@@ -340,15 +435,15 @@ No constitution violations. All infrastructure modules follow pure utility patte
 
 ### Test Files (8 files)
 
-1. `tests/infrastructure/network/ApiClient.test.ts`
-2. `tests/infrastructure/network/interceptors.test.ts`
-3. `tests/infrastructure/network/ApiError.test.ts`
-4. `tests/infrastructure/storage/SecureStorage.test.ts`
-5. `tests/infrastructure/storage/LocalStorage.test.ts`
-6. `tests/infrastructure/storage/StorageManager.test.ts`
-7. `tests/infrastructure/logger/Logger.test.ts`
-8. `tests/infrastructure/connectivity/ConnectivityManager.test.ts`
-9. `tests/infrastructure/lifecycle/LifecycleManager.test.ts`
+1. `test/infrastructure/network/ApiClient.test.ts`
+2. `test/infrastructure/network/interceptors.test.ts`
+3. `test/infrastructure/network/ApiError.test.ts`
+4. `test/infrastructure/storage/SecureStorage.test.ts`
+5. `test/infrastructure/storage/LocalStorage.test.ts`
+6. `test/infrastructure/storage/StorageManager.test.ts`
+7. `test/infrastructure/logger/Logger.test.ts`
+8. `test/infrastructure/connectivity/ConnectivityManager.test.ts`
+9. `test/infrastructure/lifecycle/LifecycleManager.test.ts`
 
 ### Index Files (6 files)
 
