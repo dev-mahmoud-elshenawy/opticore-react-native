@@ -187,7 +187,7 @@
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T036[P] [US4] Create `test/infrastructure/connectivity/ConnectivityManager.test.ts` with test cases for:
+- [x] T036[P] [US4] Create `test/infrastructure/connectivity/ConnectivityManager.test.ts` with test cases for:
   - isConnected returns correct status
   - addListener registers callback
   - onDisconnected callback triggered when offline
@@ -197,10 +197,10 @@
 
 ### Implementation for User Story 4
 
-- [ ] T037[P] [US4] Create `src/infrastructure/connectivity/ConnectivityListener.ts` type definitions:
+- [x] T037[P] [US4] Create `src/infrastructure/connectivity/ConnectivityListener.ts` type definitions:
   - ConnectivityCallback type: (isConnected: boolean) => void
   - ConnectivityState type: { isConnected: boolean, type: string }
-- [ ] T038[US4] Create `src/infrastructure/connectivity/ConnectivityManager.ts` singleton:
+- [x] T038[US4] Create `src/infrastructure/connectivity/ConnectivityManager.ts` singleton:
   - Initialize NetInfo listener
   - isConnected: boolean getter (synchronous current state)
   - addListener(callback: ConnectivityCallback): void
@@ -208,8 +208,8 @@
   - Private listeners array
   - Private notifyListeners() method
   - dispose() cleanup method
-- [ ] T039[US4] Create `src/infrastructure/connectivity/index.ts` exporting ConnectivityManager, ConnectivityListener
-- [ ] T040[US4] Verify tests pass and 80%+ coverage for connectivity module
+- [x] T039[US4] Create `src/infrastructure/connectivity/index.ts` exporting ConnectivityManager, ConnectivityListener
+- [x] T040[US4] Verify tests pass and 80%+ coverage for connectivity module
 
 **Checkpoint**: ConnectivityManager functional, can detect online/offline transitions
 
@@ -223,7 +223,7 @@
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T041[P] [US5] Create `test/infrastructure/lifecycle/LifecycleManager.test.ts` with test cases for:
+- [x] T041[P] [US5] Create `test/infrastructure/lifecycle/LifecycleManager.test.ts` with test cases for:
   - onActive callback triggered when app becomes active
   - onInactive callback triggered when app goes to background
   - Multiple observers work concurrently
@@ -232,18 +232,18 @@
 
 ### Implementation for User Story 5
 
-- [ ] T042[P] [US5] Create `src/infrastructure/lifecycle/LifecycleObserver.ts` type definitions:
+- [x] T042[P] [US5] Create `src/infrastructure/lifecycle/LifecycleObserver.ts` type definitions:
   - LifecycleCallback type: () => void
   - LifecycleState enum: ACTIVE, INACTIVE, BACKGROUND
-- [ ] T043[US5] Create `src/infrastructure/lifecycle/LifecycleManager.ts` singleton:
+- [x] T043[US5] Create `src/infrastructure/lifecycle/LifecycleManager.ts` singleton:
   - Initialize React Native AppState listener
   - addObserver(onActive?: LifecycleCallback, onInactive?: LifecycleCallback): void
   - removeObserver(callback: LifecycleCallback): void
   - Private observers array
   - Private handleAppStateChange() method
   - dispose() cleanup method
-- [ ] T044[US5] Create `src/infrastructure/lifecycle/index.ts` exporting LifecycleManager, LifecycleObserver
-- [ ] T045[US5] Verify tests pass and 80%+ coverage for lifecycle module
+- [x] T044[US5] Create `src/infrastructure/lifecycle/index.ts` exporting LifecycleManager, LifecycleObserver
+- [x] T045[US5] Verify tests pass and 80%+ coverage for lifecycle module
 
 **Checkpoint**: All user stories should now be independently functional
 

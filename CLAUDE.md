@@ -2,7 +2,7 @@
 
 **Package**: `opticore-react-native`
 **Version**: 1.0.0
-**Last Updated**: 2026-02-01
+**Last Updated**: 2026-02-02
 
 ---
 
@@ -26,18 +26,162 @@
 
 ## Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Constitutional Authority](#constitutional-authority)
-3. [Development Workflow](#development-workflow)
-4. [Specification-First Process](#specification-first-process)
-5. [Implementation Guidelines](#implementation-guidelines)
-6. [Quality Standards](#quality-standards)
-7. [Testing Requirements](#testing-requirements)
-8. [Code Standards](#code-standards)
-9. [Common Tasks & Commands](#common-tasks--commands)
-10. [File Organization](#file-organization)
-11. [What to Build vs. What NOT to Build](#what-to-build-vs-what-not-to-build)
-12. [Troubleshooting](#troubleshooting)
+1. [Completed Specifications](#completed-specifications)
+2. [Project Overview](#project-overview)
+3. [Constitutional Authority](#constitutional-authority)
+4. [Development Workflow](#development-workflow)
+5. [Specification-First Process](#specification-first-process)
+6. [Implementation Guidelines](#implementation-guidelines)
+7. [Quality Standards](#quality-standards)
+8. [Testing Requirements](#testing-requirements)
+9. [Code Standards](#code-standards)
+10. [Common Tasks & Commands](#common-tasks--commands)
+11. [File Organization](#file-organization)
+12. [What to Build vs. What NOT to Build](#what-to-build-vs-what-not-to-build)
+13. [Troubleshooting](#troubleshooting)
+
+---
+
+## Completed Specifications
+
+### ✅ Spec 001: NPM Package Setup (COMPLETED)
+
+**Status**: Fully Implemented
+**Branch**: `feature/001-npm-package-setup` (merged to develop)
+**Completion Date**: 2026-02-01
+
+**What Was Delivered**:
+
+- ✅ Package initialization with TypeScript 5.7+ strict mode
+- ✅ Jest testing framework with React Native Testing Library
+- ✅ ESLint + Prettier configuration
+- ✅ Build pipeline (TypeScript compilation to dist/)
+- ✅ Quality gates: type-check, lint, format, test scripts
+- ✅ Package.json with peer dependencies for React Native/Expo
+
+**Key Files**:
+
+- [`package.json`](package.json) - Package configuration with all dev dependencies
+- [`tsconfig.json`](tsconfig.json) - TypeScript strict mode configuration
+- [`jest.config.js`](jest.config.js) - Test configuration with 80% coverage threshold
+- [`.eslintrc.js`](.eslintrc.js) - Linting rules
+- [`.prettierrc.js`](.prettierrc.js) - Code formatting rules
+
+**Quality Metrics**:
+
+- TypeScript: Strict mode enabled ✓
+- Tests: All passing ✓
+- Coverage: 100% (initial package exports) ✓
+
+---
+
+### ✅ Spec 002: Infrastructure Layer (COMPLETED)
+
+**Status**: Partially Implemented (User Stories 1-3 Complete, 4-5 Pending)
+**Branch**: `feature/002-infrastructure-layer` (current)
+**Completion Date**: 2026-02-02
+
+**What Was Delivered**:
+
+#### User Story 1: Network Layer (P1) - COMPLETE ✓
+
+- ✅ **ApiClient** - Singleton Axios wrapper with interceptors
+  - Location: [`src/infrastructure/network/ApiClient.ts`](src/infrastructure/network/ApiClient.ts)
+  - Features: GET, POST, PUT, DELETE, PATCH with TypeScript generics
+  - Configuration: baseURL, timeout, headers, auth callbacks
+- ✅ **AuthInterceptor** - Automatic token injection and refresh
+  - Location: [`src/infrastructure/network/interceptors/AuthInterceptor.ts`](src/infrastructure/network/interceptors/AuthInterceptor.ts)
+  - Features: Bearer token injection, 401 auto-refresh with queue mechanism
+- ✅ **LoggingInterceptor** - Request/response logging
+  - Location: [`src/infrastructure/network/interceptors/LoggingInterceptor.ts`](src/infrastructure/network/interceptors/LoggingInterceptor.ts)
+  - Features: Integrated with Logger for structured logging
+- ✅ **ErrorInterceptor** - Error classification and handling
+  - Location: [`src/infrastructure/network/interceptors/ErrorInterceptor.ts`](src/infrastructure/network/interceptors/ErrorInterceptor.ts)
+  - Features: Network errors (status 0), timeouts (408), API errors, setup errors (-1)
+- ✅ **ApiError** - Custom error class with status, message, URL, data
+  - Location: [`src/infrastructure/network/ApiError.ts`](src/infrastructure/network/ApiError.ts)
+- ✅ **Tests**: 100% coverage with comprehensive scenarios
+
+#### User Story 2: Storage Layer (P1) - COMPLETE ✓
+
+- ✅ **SecureStorage** - iOS Keychain + Android Keystore encryption
+  - Location: [`src/infrastructure/storage/SecureStorage.ts`](src/infrastructure/storage/SecureStorage.ts)
+  - **Platform Support**: iOS and Android ONLY (throws error on web)
+  - Features: Key tracking for clear(), generic TypeScript types
+  - Security: Uses expo-secure-store for encrypted storage
+- ✅ **LocalStorage** - AsyncStorage wrapper with JSON serialization
+  - Location: [`src/infrastructure/storage/LocalStorage.ts`](src/infrastructure/storage/LocalStorage.ts)
+  - Features: Type-safe get/set, automatic JSON parsing
+- ✅ **StorageManager** - Unified facade for both storage types
+  - Location: [`src/infrastructure/storage/StorageManager.ts`](src/infrastructure/storage/StorageManager.ts)
+  - Features: Singleton instances, clearAll() method
+- ✅ **IStorage Interface** - Common storage contract
+  - Location: [`src/infrastructure/storage/interfaces/IStorage.ts`](src/infrastructure/storage/interfaces/IStorage.ts)
+- ✅ **StorageKeys** - Constants for storage key names
+  - Location: [`src/infrastructure/storage/StorageKeys.ts`](src/infrastructure/storage/StorageKeys.ts)
+- ✅ **Tests**: iOS/Android/Web platform coverage (web throws error)
+
+#### User Story 3: Logger (P2) - COMPLETE ✓
+
+- ✅ **Logger** - Singleton with colored console output
+  - Location: [`src/infrastructure/logger/Logger.ts`](src/infrastructure/logger/Logger.ts)
+  - Features: debug (gray), info (blue), warn (yellow), error (red)
+  - Levels: DEBUG, INFO, WARN, ERROR with filtering
+  - Production Mode: Suppresses ALL logs when `isProduction: true`
+  - Timestamps: ISO format timestamps
+- ✅ **LogLevel Enum**
+  - Location: [`src/infrastructure/logger/LogLevel.ts`](src/infrastructure/logger/LogLevel.ts)
+- ✅ **ILogger Interface**
+  - Location: [`src/infrastructure/logger/interfaces/ILogger.ts`](src/infrastructure/logger/interfaces/ILogger.ts)
+- ✅ **Tests**: All log levels, production mode, formatting
+
+#### User Story 4: Connectivity Manager (P2) - PENDING ⏳
+
+- ⏸️ **ConnectivityManager** - Network status monitoring
+  - Status: Not yet implemented
+  - Planned: NetInfo integration, online/offline callbacks
+  - Directory created: [`src/infrastructure/connectivity/`](src/infrastructure/connectivity/)
+
+#### User Story 5: Lifecycle Manager (P3) - PENDING ⏳
+
+- ⏸️ **LifecycleManager** - App state monitoring
+  - Status: Not yet implemented
+  - Planned: AppState integration, active/inactive callbacks
+  - Directory created: [`src/infrastructure/lifecycle/`](src/infrastructure/lifecycle/)
+
+**Infrastructure Exports**:
+
+- ✅ Main infrastructure index: [`src/infrastructure/index.ts`](src/infrastructure/index.ts)
+- ✅ Exported to main package: [`src/index.ts`](src/index.ts)
+
+**Dependencies Installed**:
+
+```json
+{
+  "axios": "^1.13.4",
+  "@react-native-async-storage/async-storage": "^2.2.0",
+  "expo-secure-store": "^15.0.8",
+  "expo-modules-core": "^3.0.29",
+  "@react-native-community/netinfo": "^11.5.1"
+}
+```
+
+**Quality Metrics**:
+
+- TypeScript: 0 errors, strict mode ✓
+- Tests: 47/47 passing ✓
+- Coverage: 88.35% (exceeds 80% requirement) ✓
+  - Statements: 88.35%
+  - Branches: 80.68%
+  - Functions: 81.81%
+  - Lines: 88.39%
+
+**Testing Approach**:
+
+- Mocked expo-secure-store and react-native for unit tests
+- Platform-specific tests for iOS, Android, and web
+- Comprehensive error scenarios for interceptors
+- Integration-ready with proper module boundaries
 
 ---
 

@@ -1,7 +1,6 @@
 import { InternalAxiosRequestConfig } from 'axios';
 import { ApiClient } from '../ApiClient';
 
-
 export class AuthInterceptor {
     private static refreshPromise: Promise<string | null> | null = null;
     private client: ApiClient;
@@ -26,7 +25,7 @@ export class AuthInterceptor {
         const config = error.config as InternalAxiosRequestConfig & { _retry?: boolean }; // eslint-disable-line @typescript-eslint/no-unsafe-member-access
         const networkConfig = this.client.config;
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-optional-chaining
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (error.response?.status === 401 && !config._retry && networkConfig?.onTokenRefresh) {
             config._retry = true;
 

@@ -6,7 +6,7 @@ export class LocalStorage implements IStorage {
         try {
             const value = await AsyncStorage.getItem(key);
             return value ? JSON.parse(value) : null;
-        } catch (error) {
+        } catch {
             return null;
         }
     }
