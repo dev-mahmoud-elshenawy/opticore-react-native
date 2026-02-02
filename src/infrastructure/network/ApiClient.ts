@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { NetworkConfig } from './NetworkConfig';
 import { ApiResponse } from './ApiResponse';
 import { AuthInterceptor } from './interceptors/AuthInterceptor';
@@ -35,21 +35,21 @@ export class ApiClient {
         const errorInterceptor = new ErrorInterceptor();
 
         this.client.interceptors.request.use(
-            (config) => authInterceptor.onRequest(config),
-            (error) => Promise.reject(error)
+            (config: InternalAxiosRequestConfig) => authInterceptor.onRequest(config),
+            (error: unknown) => Promise.reject(error)
         );
         this.client.interceptors.request.use(
-            (config) => loggingInterceptor.onRequest(config),
-            (error) => Promise.reject(error)
+            (config: InternalAxiosRequestConfig) => loggingInterceptor.onRequest(config),
+            (error: unknown) => Promise.reject(error)
         );
 
         this.client.interceptors.response.use(
-            (response) => loggingInterceptor.onResponse(response),
-            (error) => {
+            (response: AxiosResponse) => loggingInterceptor.onResponse(response),
+            (error: unknown) => {
                 // Chain error handling: Logging -> Auth (Refresh) -> Error Classification
-                return loggingInterceptor.onError(error)
-                    .catch(e => authInterceptor.onError(e))
-                    .catch(e => errorInterceptor.onError(e));
+                return loggingInterceptor.onError(error) // eslint-disable-line @typescript-eslint/no-unsafe-argument
+                    .catch((e: unknown) => authInterceptor.onError(e))
+                    .catch((e: unknown) => errorInterceptor.onError(e));
             }
         );
     }
@@ -64,7 +64,7 @@ export class ApiClient {
             this.client.defaults.headers.common = {
                 ...this.client.defaults.headers.common,
                 ...this._config.headers
-            } as any;
+            } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
         }
     }
 
@@ -73,27 +73,27 @@ export class ApiClient {
         return {
             data: response.data,
             status: response.status,
-            headers: response.headers,
+            headers: response.headers as Record<string, unknown>,
             config: response.config,
         };
     }
 
-    public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    public async post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
         const response = await this.client.post<T>(url, data, config);
         return {
             data: response.data,
             status: response.status,
-            headers: response.headers,
+            headers: response.headers as Record<string, unknown>,
             config: response.config,
         };
     }
 
-    public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    public async put<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
         const response = await this.client.put<T>(url, data, config);
         return {
             data: response.data,
             status: response.status,
-            headers: response.headers,
+            headers: response.headers as Record<string, unknown>,
             config: response.config,
         };
     }
@@ -103,17 +103,17 @@ export class ApiClient {
         return {
             data: response.data,
             status: response.status,
-            headers: response.headers,
+            headers: response.headers as Record<string, unknown>,
             config: response.config,
         };
     }
 
-    public async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    public async patch<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
         const response = await this.client.patch<T>(url, data, config);
         return {
             data: response.data,
             status: response.status,
-            headers: response.headers,
+            headers: response.headers as Record<string, unknown>,
             config: response.config,
         };
     }

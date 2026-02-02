@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ApiClient } from '../../../src/infrastructure/network/ApiClient';
 import { AuthInterceptor } from '../../../src/infrastructure/network/interceptors/AuthInterceptor';
-import { ApiError } from '../../../src/infrastructure/network/ApiError';
+
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -47,7 +47,7 @@ describe('Interceptors', () => {
             // For now, let's just ensure onTokenRefresh is called
             try {
                 await interceptor.onError(error);
-            } catch (e) {
+            } catch (_e) {
                 // Expected to throw/reject after retry attempt logic starts
             }
 
@@ -59,7 +59,7 @@ describe('Interceptors', () => {
 
     describe('ErrorInterceptor', () => {
         it('should classify network errors', () => {
-            const error = { message: 'Network Error' };
+            const _error = { message: 'Network Error' };
             // Logic to convert to ApiError
         });
     });

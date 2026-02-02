@@ -1,29 +1,36 @@
-
 import { ApiError } from '../ApiError';
 
 export class ErrorInterceptor {
     constructor() { }
 
-    public onError(error: any): Promise<any> {
+    public onError(error: any): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             const { status, data } = error.response;
-            const url = error.config?.url;
-            const message = data?.message || error.message || 'API Error';
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            const url = error.config?.url as string | undefined;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            const message = (data?.message as string) || (error.message as string) || 'API Error';
 
             return Promise.reject(new ApiError(status, message, url, data, error));
-        } else if (error.request) {
+        } else if (error.request) { // eslint-disable-line @typescript-eslint/no-unsafe-member-access
             // The request was made but no response was received
             // Network Error or Timeout
-            const message = error.message || 'Network Error';
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            const message = (error.message as string) || 'Network Error';
             const isTimeout = message.includes('timeout');
             const status = isTimeout ? 408 : 0;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            const url = error.config?.url as string | undefined;
 
-            return Promise.reject(new ApiError(status, message, error.config?.url, null, error));
+            return Promise.reject(new ApiError(status, message, url, null, error));
         } else {
             // Something happened in setting up the request that triggered an Error
-            return Promise.reject(new ApiError(-1, error.message, undefined, null, error));
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            return Promise.reject(new ApiError(-1, (error.message as string), undefined, null, error));
         }
     }
 }

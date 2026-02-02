@@ -1,9 +1,6 @@
-/**
- * Standard API Response structure
- */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T> {
     data: T;
     status: number;
-    headers: Record<string, any>;
-    config?: any;
+    headers: Record<string, unknown>;
+    config: unknown;
 }

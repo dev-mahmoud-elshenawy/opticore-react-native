@@ -1,5 +1,5 @@
 import { StorageManager } from '../../../src/infrastructure/storage/StorageManager';
-import { IStorage } from '../../../src/infrastructure/storage/interfaces/IStorage';
+
 
 describe('StorageManager', () => {
     let storageManager: StorageManager;
