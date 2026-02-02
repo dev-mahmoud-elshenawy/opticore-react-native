@@ -12,6 +12,7 @@ module.exports = {
   moduleNameMapper: {
     '^expo-secure-store$': '<rootDir>/test/__mocks__/expo-secure-store.ts',
     '^react-native$': '<rootDir>/test/__mocks__/react-native.ts',
+    '^@react-native-community/netinfo$': '<rootDir>/test/__mocks__/@react-native-community/netinfo.ts',
   },
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
