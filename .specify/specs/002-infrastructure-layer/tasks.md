@@ -270,11 +270,11 @@
 
 **Purpose**: Developer documentation and usage examples
 
-- [ ] T056[P] Document ApiClient usage in infrastructure README: configure, make request, handle errors
-- [ ] T057[P] Document StorageManager usage: save token, retrieve token, clear on logout
-- [ ] T058[P] Document Logger usage: configure for dev vs production, log levels
-- [ ] T059[P] Document ConnectivityManager usage: check connectivity, register listeners
-- [ ] T060[P] Document LifecycleManager usage: observe app state changes
+- [x] T056[P] Document ApiClient usage in infrastructure README: configure, make request, handle errors
+- [x] T057[P] Document StorageManager usage: save token, retrieve token, clear on logout
+- [x] T058[P] Document Logger usage: configure for dev vs production, log levels
+- [x] T059[P] Document ConnectivityManager usage: check connectivity, register listeners
+- [x] T060[P] Document LifecycleManager usage: observe app state changes
 - [ ] T061Create example in `examples/infrastructure/`: complete app setup with all infrastructure modules
 - [ ] T062Verify all examples run without errors
 
