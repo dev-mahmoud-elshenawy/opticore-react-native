@@ -1,5 +1,5 @@
 module.exports = {
-  testEnvironment: 'node',
+  preset: 'jest-expo',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   testMatch: ['**/test/**/*.(test|spec).(ts|tsx|js)'],
   transform: {
@@ -7,7 +7,7 @@ module.exports = {
     '^.+\\.(js|jsx)$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|expo-secure-store|expo-modules-core))'
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|expo-secure-store|expo-modules-core|zustand|immer))'
   ],
   moduleNameMapper: {
     '^expo-secure-store$': '<rootDir>/test/__mocks__/expo-secure-store.ts',

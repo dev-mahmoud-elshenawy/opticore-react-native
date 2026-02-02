@@ -1,0 +1,25 @@
+
+> opticore-react-native@1.0.0 lint
+> eslint . --ext .ts,.tsx
+
+
+/Users/elshenawy/StudioProjects/opticore-react-native/examples/infrastructure/complete-setup.ts
+  217:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  267:16  error  'login' is defined but never used         @typescript-eslint/no-unused-vars
+  272:70  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  291:16  error  'logout' is defined but never used        @typescript-eslint/no-unused-vars
+
+/Users/elshenawy/StudioProjects/opticore-react-native/test/performance/infrastructure.performance.test.ts
+   55:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   69:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   92:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   93:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  116:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  144:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  164:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  170:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  177:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  179:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+✖ 14 problems (4 errors, 10 warnings)
+

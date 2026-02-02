@@ -214,7 +214,7 @@ async function createPost() {
 // HELPER FUNCTIONS
 // =============================================================================
 
-const offlineQueue: Array<() => Promise<any>> = [];
+const offlineQueue: Array<() => Promise<unknown>> = [];
 
 async function syncOfflineData() {
     logger.info(`Syncing ${offlineQueue.length} queued requests...`);
@@ -264,12 +264,12 @@ async function saveAppState() {
 // LOGIN FLOW EXAMPLE
 // =============================================================================
 
-async function login(email: string, password: string) {
+export async function login(email: string, password: string) {
     try {
         logger.info('Logging in...');
 
         // In real app, this would call your auth endpoint
-        const response = await apiClient.post<{ token: string; user: any }>('/auth/login', {
+        const response = await apiClient.post<{ token: string; user: Record<string, unknown> }>('/auth/login', {
             email,
             password,
         });
@@ -288,7 +288,7 @@ async function login(email: string, password: string) {
     }
 }
 
-async function logout() {
+export async function logout() {
     logger.info('Logging out...');
 
     // Clear all stored data
