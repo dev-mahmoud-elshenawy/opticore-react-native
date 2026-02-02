@@ -54,10 +54,11 @@ describe('ApiClient', () => {
     });
 
     it('should update configuration when configure is called', () => {
-        const _newConfig: NetworkConfig = {
+        const newConfig: NetworkConfig = {
             baseURL: 'https://api2.example.com',
             headers: { 'X-Custom': 'value' },
         };
+        apiClient.configure(newConfig);
 
         // We can't easily test internal axios instance update without implementation details
         // But we can verify getInstance returns same instance

@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { NetworkConfig } from './NetworkConfig';
 import { ApiResponse } from './ApiResponse';
 import { AuthInterceptor } from './interceptors/AuthInterceptor';

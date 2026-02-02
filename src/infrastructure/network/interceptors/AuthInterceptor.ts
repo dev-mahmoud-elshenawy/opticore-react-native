@@ -1,6 +1,6 @@
 import { InternalAxiosRequestConfig } from 'axios';
 import { ApiClient } from '../ApiClient';
-import { NetworkConfig } from '../NetworkConfig';
+
 
 export class AuthInterceptor {
     private static refreshPromise: Promise<string | null> | null = null;
