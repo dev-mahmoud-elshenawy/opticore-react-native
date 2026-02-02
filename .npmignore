@@ -9,6 +9,7 @@ tests/
 
 # Configuration
 .eslintrc.js
+eslint.config.mjs
 .prettierrc
 jest.config.js
 babel.config.js
