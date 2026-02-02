@@ -54,7 +54,7 @@ export class ConnectivityManager {
             const wasConnected = this._isConnected;
             this._isConnected = state.isConnected ?? false;
 
-            // Only notify if状态changed
+            // Only notify if status changed
             if (wasConnected !== this._isConnected) {
                 this.notifyListeners();
             }

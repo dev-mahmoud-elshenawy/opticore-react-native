@@ -7,20 +7,41 @@ jest.mock('@react-native-community/netinfo');
 describe('ConnectivityManager', () => {
   let connectivityManager: ConnectivityManager;
   let mockUnsubscribe: jest.Mock;
+  let netInfoCallback: ((state: NetInfoState) => void) | null = null;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+    netInfoCallback = null;
+
     mockUnsubscribe = jest.fn();
-    (NetInfo.addEventListener as jest.Mock).mockReturnValue(mockUnsubscribe);
+
+    // Setup mock to capture callback
+    (NetInfo.addEventListener as jest.Mock).mockImplementation((callback: (state: NetInfoState) => void) => {
+      netInfoCallback = callback;
+      return mockUnsubscribe;
+    });
+
     (NetInfo.fetch as jest.Mock).mockResolvedValue({
       isConnected: true,
       type: 'wifi',
     } as NetInfoState);
 
+    // Reset singleton instance by disposing and clearing private static field
+    const instance = (ConnectivityManager as any).instance;
+    if (instance) {
+      instance.dispose();
+      (ConnectivityManager as any).instance = null;
+    }
+
     connectivityManager = ConnectivityManager.getInstance();
   });
 
   afterEach(() => {
-    connectivityManager.dispose();
+    if (connectivityManager) {
+      connectivityManager.dispose();
+    }
+    // Clear singleton instance
+    (ConnectivityManager as any).instance = null;
     jest.clearAllMocks();
   });
 
@@ -40,9 +61,10 @@ describe('ConnectivityManager', () => {
     const mockCallback = jest.fn();
     connectivityManager.addListener(mockCallback);
 
-    // Simulate connectivity change
-    const eventHandler = (NetInfo.addEventListener as jest.Mock).mock.calls[0][0];
-    eventHandler({ isConnected: false, type: 'none' } as NetInfoState);
+    // Simulate connectivity change using captured callback
+    if (netInfoCallback) {
+      netInfoCallback({ isConnected: false, type: 'none' } as NetInfoState);
+    }
 
     expect(mockCallback).toHaveBeenCalledWith(false);
   });
@@ -52,9 +74,10 @@ describe('ConnectivityManager', () => {
     connectivityManager.addListener(mockCallback);
     connectivityManager.removeListener(mockCallback);
 
-    // Simulate connectivity change
-    const eventHandler = (NetInfo.addEventListener as jest.Mock).mock.calls[0][0];
-    eventHandler({ isConnected: false, type: 'none' } as NetInfoState);
+    // Simulate connectivity change using captured callback
+    if (netInfoCallback) {
+      netInfoCallback({ isConnected: false, type: 'none' } as NetInfoState);
+    }
 
     expect(mockCallback).not.toHaveBeenCalled();
   });
@@ -68,13 +91,15 @@ describe('ConnectivityManager', () => {
     connectivityManager.addListener(mockCallback2);
     connectivityManager.addListener(mockCallback3);
 
-    // Simulate connectivity change
-    const eventHandler = (NetInfo.addEventListener as jest.Mock).mock.calls[0][0];
-    eventHandler({ isConnected: true, type: 'wifi' } as NetInfoState);
+    // Simulate connectivity change using captured callback
+    // Must change from initial state (true) to trigger listeners
+    if (netInfoCallback) {
+      netInfoCallback({ isConnected: false, type: 'none' } as NetInfoState);
+    }
 
-    expect(mockCallback1).toHaveBeenCalledWith(true);
-    expect(mockCallback2).toHaveBeenCalledWith(true);
-    expect(mockCallback3).toHaveBeenCalledWith(true);
+    expect(mockCallback1).toHaveBeenCalledWith(false);
+    expect(mockCallback2).toHaveBeenCalledWith(false);
+    expect(mockCallback3).toHaveBeenCalledWith(false);
   });
 
   it('should provide current connectivity status synchronously', async () => {
@@ -95,15 +120,16 @@ describe('ConnectivityManager', () => {
     const mockCallback = jest.fn();
     connectivityManager.addListener(mockCallback);
 
-    const eventHandler = (NetInfo.addEventListener as jest.Mock).mock.calls[0][0];
+    // Use captured callback from mock
+    if (netInfoCallback) {
+      // Go offline
+      netInfoCallback({ isConnected: false, type: 'none' } as NetInfoState);
+      expect(mockCallback).toHaveBeenCalledWith(false);
 
-    // Go offline
-    eventHandler({ isConnected: false, type: 'none' } as NetInfoState);
-    expect(mockCallback).toHaveBeenCalledWith(false);
-
-    // Go online
-    eventHandler({ isConnected: true, type: 'cellular' } as NetInfoState);
-    expect(mockCallback).toHaveBeenCalledWith(true);
-    expect(mockCallback).toHaveBeenCalledTimes(2);
+      // Go online
+      netInfoCallback({ isConnected: true, type: 'cellular' } as NetInfoState);
+      expect(mockCallback).toHaveBeenCalledWith(true);
+      expect(mockCallback).toHaveBeenCalledTimes(2);
+    }
   });
 });

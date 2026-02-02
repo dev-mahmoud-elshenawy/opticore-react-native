@@ -62,6 +62,7 @@ describe('Interceptors', () => {
 
     it('should handle API errors with response', async () => {
       const error = {
+        isAxiosError: true,
         response: {
           status: 404,
           data: { message: 'Not Found' },
@@ -82,6 +83,7 @@ describe('Interceptors', () => {
 
     it('should handle network errors without response', async () => {
       const error = {
+        isAxiosError: true,
         request: {},
         message: 'Network Error',
         config: { url: '/api/data' },
@@ -98,6 +100,7 @@ describe('Interceptors', () => {
 
     it('should handle timeout errors', async () => {
       const error = {
+        isAxiosError: true,
         request: {},
         message: 'timeout of 5000ms exceeded',
         config: { url: '/api/slow' },
@@ -113,9 +116,7 @@ describe('Interceptors', () => {
     });
 
     it('should handle request setup errors', async () => {
-      const error = {
-        message: 'Invalid request configuration',
-      };
+      const error = new Error('Invalid request configuration');
 
       await expect(errorInterceptor.onError(error)).rejects.toBeInstanceOf(ApiError);
       try {

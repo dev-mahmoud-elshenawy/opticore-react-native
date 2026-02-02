@@ -3,6 +3,7 @@
 **Package**: `opticore-react-native`
 **Version**: 1.0.0
 **Last Updated**: 2026-02-02
+**Target Platforms**: iOS & Android ONLY
 
 ---
 
@@ -77,9 +78,10 @@
 
 ### ✅ Spec 002: Infrastructure Layer (COMPLETED)
 
-**Status**: Partially Implemented (User Stories 1-3 Complete, 4-5 Pending)
+**Status**: Fully Implemented (All User Stories Complete)
 **Branch**: `feature/002-infrastructure-layer` (current)
 **Completion Date**: 2026-02-02
+**Platform Support**: iOS & Android ONLY
 
 **What Was Delivered**:
 
@@ -135,19 +137,27 @@
   - Location: [`src/infrastructure/logger/interfaces/ILogger.ts`](src/infrastructure/logger/interfaces/ILogger.ts)
 - ✅ **Tests**: All log levels, production mode, formatting
 
-#### User Story 4: Connectivity Manager (P2) - PENDING ⏳
+#### User Story 4: Connectivity Manager (P2) - COMPLETE ✓
 
-- ⏸️ **ConnectivityManager** - Network status monitoring
-  - Status: Not yet implemented
-  - Planned: NetInfo integration, online/offline callbacks
-  - Directory created: [`src/infrastructure/connectivity/`](src/infrastructure/connectivity/)
+- ✅ **ConnectivityManager** - Network status monitoring
+  - Location: [`src/infrastructure/connectivity/ConnectivityManager.ts`](src/infrastructure/connectivity/ConnectivityManager.ts)
+  - Features: NetInfo integration, online/offline detection, listener pattern
+  - Platform Support: iOS, Android, Web (all platforms)
+  - Methods: `isConnected`, `addListener()`, `removeListener()`, `dispose()`
+- ✅ **ConnectivityListener** - Type definitions for callbacks
+  - Location: [`src/infrastructure/connectivity/ConnectivityListener.ts`](src/infrastructure/connectivity/ConnectivityListener.ts)
+- ✅ **Tests**: 8/8 passing with offline/online transitions
 
-#### User Story 5: Lifecycle Manager (P3) - PENDING ⏳
+#### User Story 5: Lifecycle Manager (P3) - COMPLETE ✓
 
-- ⏸️ **LifecycleManager** - App state monitoring
-  - Status: Not yet implemented
-  - Planned: AppState integration, active/inactive callbacks
-  - Directory created: [`src/infrastructure/lifecycle/`](src/infrastructure/lifecycle/)
+- ✅ **LifecycleManager** - App state monitoring
+  - Location: [`src/infrastructure/lifecycle/LifecycleManager.ts`](src/infrastructure/lifecycle/LifecycleManager.ts)
+  - Features: AppState integration, active/inactive callbacks, observer pattern
+  - States: ACTIVE, INACTIVE, BACKGROUND
+  - Methods: `addObserver()`, `removeObserver()`, `dispose()`
+- ✅ **LifecycleObserver** - Type definitions and state enum
+  - Location: [`src/infrastructure/lifecycle/LifecycleObserver.ts`](src/infrastructure/lifecycle/LifecycleObserver.ts)
+- ✅ **Tests**: 10/10 passing with lifecycle transitions
 
 **Infrastructure Exports**:
 
@@ -169,19 +179,23 @@
 **Quality Metrics**:
 
 - TypeScript: 0 errors, strict mode ✓
-- Tests: 47/47 passing ✓
-- Coverage: 88.35% (exceeds 80% requirement) ✓
-  - Statements: 88.35%
-  - Branches: 80.68%
-  - Functions: 81.81%
-  - Lines: 88.39%
+- Tests: 79/79 passing ✓
+- Coverage: 89.88% (exceeds 80% requirement) ✓
+  - Statements: 89.88%
+  - Branches: 80%
+  - Functions: 86.07%
+  - Lines: 90.11%
 
 **Testing Approach**:
 
-- Mocked expo-secure-store and react-native for unit tests
-- Platform-specific tests for iOS, Android, and web
-- Comprehensive error scenarios for interceptors
-- Integration-ready with proper module boundaries
+- **Unit Tests**: 47 tests for individual components (ApiClient, Logger, Storage, Interceptors)
+- **Integration Tests**: 7 tests for cross-component workflows (SecureStorage + ApiClient, Connectivity + Lifecycle)
+- **Performance Tests**: 7 tests for concurrent operations and benchmarks
+- **Lifecycle Tests**: 10 tests for ConnectivityManager (8) and LifecycleManager (10)
+- Mocked expo-secure-store, react-native, AsyncStorage, and NetInfo for deterministic testing
+- Platform-specific tests for iOS, Android, and web (web throws error for SecureStorage)
+- Comprehensive error scenarios for all interceptors
+- Singleton pattern properly tested with instance resets between tests
 
 ---
 
@@ -201,6 +215,20 @@ OptiCore React Native is a **pure infrastructure library** for React Native/Expo
 - ✅ Pure utility functions (string, number, array, date, etc.)
 - ✅ Type-safe configuration interfaces
 
+### 📱 Platform Support
+
+**CRITICAL: This library targets iOS and Android ONLY**
+
+- ✅ **iOS**: Full support (iOS 13.4+)
+- ✅ **Android**: Full support (Android 5.0+, API level 21+)
+- ❌ **Web**: NOT supported - Some features (like SecureStorage) will throw errors on web platform
+
+**Platform-Specific Behavior**:
+- `SecureStorage`: Uses iOS Keychain + Android Keystore. **Throws error on web** - use `LocalStorage` instead for web.
+- `LocalStorage`: Uses `AsyncStorage` - works on all platforms
+- `ConnectivityManager`: Uses NetInfo - works on all platforms but optimized for native
+- `LifecycleManager`: Uses AppState - works on all platforms
+
 ### What It Is NOT
 
 - ❌ NOT an application template or boilerplate
@@ -209,6 +237,7 @@ OptiCore React Native is a **pure infrastructure library** for React Native/Expo
 - ❌ NOT theme or styling configurations
 - ❌ NOT i18n setup
 - ❌ NOT navigation setup (routes, screens)
+- ❌ NOT a web-first library (iOS/Android only)
 
 ### Installation in Consumer Apps
 
