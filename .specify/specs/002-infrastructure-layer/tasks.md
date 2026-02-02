@@ -15,11 +15,11 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create infrastructure directory structure: `src/infrastructure/{network,storage,logger,connectivity,lifecycle}`
-- [ ] T002 [P] Install production dependencies: `npm install axios@^1.13.4 @react-native-async-storage/async-storage@^2.2.0`
-- [ ] T003 [P] Install production dependencies: `npm install expo-secure-store@^15.0.8 @react-native-community/netinfo@^11.5.1`
-- [ ] T004 [P] Install dev dependencies: `npm install --save-dev @testing-library/react-native@^13.3.3 @testing-library/jest-native@^5.4.3`
-- [ ] T005 [P] Configure TypeScript for infrastructure module (ensure strict mode in tsconfig.json)
+- [x] T001 Create infrastructure directory structure: `src/infrastructure/{network,storage,logger,connectivity,lifecycle}`
+- [x] T002 [P] Install production dependencies: `npm install axios@^1.13.4 @react-native-async-storage/async-storage@^2.2.0`
+- [x] T003 [P] Install production dependencies: `npm install expo-secure-store@^15.0.8 @react-native-community/netinfo@^11.5.1`
+- [x] T004 [P] Install dev dependencies: `npm install --save-dev @testing-library/react-native@^13.3.3 @testing-library/jest-native@^5.4.3`
+- [x] T005 [P] Configure TypeScript for infrastructure module (ensure strict mode in tsconfig.json)
 
 ---
 
@@ -29,12 +29,12 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Create `src/infrastructure/storage/interfaces/IStorage.ts` with generic get/set/remove/clear methods
-- [ ] T007 [P] Create `src/infrastructure/logger/interfaces/ILogger.ts` with debug/info/warn/error methods
-- [ ] T008 [P] Create `src/infrastructure/logger/LogLevel.ts` enum (DEBUG=0, INFO=1, WARN=2, ERROR=3)
-- [ ] T009 [P] Create `src/infrastructure/network/ApiResponse.ts` with generic type definition
-- [ ] T010 [P] Create `src/infrastructure/network/ApiError.ts` custom error class
-- [ ] T012 [P] Create `src/infrastructure/storage/StorageKeys.ts` constants object
+- [x] T006 Create `src/infrastructure/storage/interfaces/IStorage.ts` with generic get/set/remove/clear methods
+- [x] T007 [P] Create `src/infrastructure/logger/interfaces/ILogger.ts` with debug/info/warn/error methods
+- [x] T008 [P] Create `src/infrastructure/logger/LogLevel.ts` enum (DEBUG=0, INFO=1, WARN=2, ERROR=3)
+- [x] T009 [P] Create `src/infrastructure/network/ApiResponse.ts` with generic type definition
+- [x] T010 [P] Create `src/infrastructure/network/ApiError.ts` custom error class
+- [x] T012 [P] Create `src/infrastructure/storage/StorageKeys.ts` constants object
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -50,40 +50,40 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T012 [P] [US1] Create `test/infrastructure/network/ApiClient.test.ts` with test cases for:
+- [x] T012 [P] [US1] Create `test/infrastructure/network/ApiClient.test.ts` with test cases for:
   - Configure ApiClient with baseURL
   - Make GET request returns typed response
   - Auth token auto-injected in headers
   - 401 triggers token refresh callback
   - Network timeout throws error after configured duration
-- [ ] T012 [P] [US1] Create `test/infrastructure/network/interceptors.test.ts` with test cases for:
+- [x] T012 [P] [US1] Create `test/infrastructure/network/interceptors.test.ts` with test cases for:
   - AuthInterceptor injects token
   - LoggingInterceptor logs requests
   - ErrorInterceptor classifies errors
 
 ### Implementation for User Story 1
 
-- [ ] T022[P] [US1] Create `src/infrastructure/network/NetworkConfig.ts` interface (baseURL, timeout, headers, onTokenRefresh callback)
-- [ ] T022[US1] Create `src/infrastructure/network/ApiClient.ts` singleton class with:
+- [x] T022[P] [US1] Create `src/infrastructure/network/NetworkConfig.ts` interface (baseURL, timeout, headers, onTokenRefresh callback)
+- [x] T022[US1] Create `src/infrastructure/network/ApiClient.ts` singleton class with:
   - Constructor accepts NetworkConfig
   - Axios instance with baseURL and timeout
   - Generic methods: get<T>(), post<T>(), put<T>(), delete<T>(), patch<T>()
   - configure() method to update config
-- [ ] T022[US1] Create `src/infrastructure/network/interceptors/AuthInterceptor.ts`:
+- [x] T022[US1] Create `src/infrastructure/network/interceptors/AuthInterceptor.ts`:
   - Request interceptor to inject Authorization header from config
   - Response interceptor to catch 401 and trigger onTokenRefresh callback
   - Queue mechanism to prevent multiple concurrent token refreshes
-- [ ] T022[P] [US1] Create `src/infrastructure/network/interceptors/LoggingInterceptor.ts`:
+- [x] T022[P] [US1] Create `src/infrastructure/network/interceptors/LoggingInterceptor.ts`:
   - Request interceptor logs method, URL, headers (if enabled)
   - Response interceptor logs status, duration, response size
   - Use Logger (integration with US3, but can use console.log initially)
-- [ ] T022[P] [US1] Create `src/infrastructure/network/interceptors/ErrorInterceptor.ts`:
+- [x] T022[P] [US1] Create `src/infrastructure/network/interceptors/ErrorInterceptor.ts`:
   - Response error interceptor converts AxiosError to ApiError
   - Extract status code, message, URL, response data
   - Classify error types (network, timeout, API)
-- [ ] T022[US1] Register all interceptors in ApiClient constructor
-- [ ] T022[US1] Create `src/infrastructure/network/index.ts` exporting ApiClient, NetworkConfig, ApiResponse, ApiError
-- [ ] T022[US1] Verify tests pass and 80%+ coverage for network module
+- [x] T022[US1] Register all interceptors in ApiClient constructor
+- [x] T022[US1] Create `src/infrastructure/network/index.ts` exporting ApiClient, NetworkConfig, ApiResponse, ApiError
+- [x] T022[US1] Verify tests pass and 80%+ coverage for network module
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - developer can make typed API calls with auto auth
 
@@ -97,44 +97,44 @@
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T022[P] [US2] Create `test/infrastructure/storage/SecureStorage.test.ts` with test cases for:
+- [x] T022[P] [US2] Create `test/infrastructure/storage/SecureStorage.test.ts` with test cases for:
   - Set and get encrypted data
   - Data persists after mock restart
   - Remove deletes data
   - Clear removes all data
   - Fallback to AsyncStorage on web platform
-- [ ] T023[P] [US2] Create `test/infrastructure/storage/LocalStorage.test.ts` with test cases for:
+- [x] T023[P] [US2] Create `test/infrastructure/storage/LocalStorage.test.ts` with test cases for:
   - Set and get JSON data
   - Type safety with generics
   - Data persists after mock restart
   - Remove deletes data
   - Clear removes all data
-- [ ] T024[P] [US2] Create `test/infrastructure/storage/StorageManager.test.ts` with test cases for:
+- [x] T024[P] [US2] Create `test/infrastructure/storage/StorageManager.test.ts` with test cases for:
   - Access both secure and local storage
   - clearAll() clears both storages
 
 ### Implementation for User Story 2
 
-- [ ] T025[P] [US2] Create `src/infrastructure/storage/SecureStorage.ts` implementing IStorage:
+- [x] T025[P] [US2] Create `src/infrastructure/storage/SecureStorage.ts` implementing IStorage:
   - get<T>(key): Promise<T | null> using SecureStore.getItemAsync()
   - set<T>(key, value): Promise<void> using SecureStore.setItemAsync()
   - remove(key): Promise<void>
   - clear(): Promise<void> (iterate and remove all keys)
   - JSON serialization for objects
   - Fallback to AsyncStorage on web with console warning
-- [ ] T026[P] [US2] Create `src/infrastructure/storage/LocalStorage.ts` implementing IStorage:
+- [x] T026[P] [US2] Create `src/infrastructure/storage/LocalStorage.ts` implementing IStorage:
   - get<T>(key): Promise<T | null> using AsyncStorage.getItem()
   - set<T>(key, value): Promise<void> using AsyncStorage.setItem()
   - remove(key): Promise<void>
   - clear(): Promise<void> using AsyncStorage.clear()
   - JSON.parse/stringify with error handling
   - Validate data before storing (no undefined, null, circular refs)
-- [ ] T027[US2] Create `src/infrastructure/storage/StorageManager.ts` facade:
+- [x] T027[US2] Create `src/infrastructure/storage/StorageManager.ts` facade:
   - Export singleton instances: secureStorage, localStorage
   - clearAll() method clears both storages
   - Type-safe getters for common keys (authToken, userPrefs, theme)
-- [ ] T028[US2] Create `src/infrastructure/storage/index.ts` exporting StorageManager, IStorage, StorageKeys
-- [ ] T029[US2] Verify tests pass and 80%+ coverage for storage module
+- [x] T028[US2] Create `src/infrastructure/storage/index.ts` exporting StorageManager, IStorage, StorageKeys
+- [x] T029[US2] Verify tests pass and 80%+ coverage for storage module
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently - API calls + storage
 
