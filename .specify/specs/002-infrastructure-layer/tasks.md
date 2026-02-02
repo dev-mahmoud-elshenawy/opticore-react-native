@@ -253,13 +253,13 @@
 
 **Purpose**: Cross-module integration and final verification
 
-- [ ] T046[P] Create `src/infrastructure/index.ts` exporting all infrastructure modules
+- [x] T046[P] Create `src/infrastructure/index.ts` exporting all infrastructure modules
 - [ ] T047Integration test: Save auth token in SecureStorage, use in ApiClient request, verify token in headers
 - [ ] T048Integration test: ConnectivityManager detects offline, ApiClient request fails with network error
 - [ ] T049Integration test: LifecycleManager triggers onInactive, app pauses background tasks
-- [ ] T050[P] Run full test suite, verify 80%+ coverage across all modules
-- [ ] T051[P] Fix any ESLint warnings or TypeScript errors
-- [ ] T052[P] Add JSDoc comments to all public APIs
+- [x] T050[P] Run full test suite, verify 80%+ coverage across all modules
+- [x] T051[P] Fix any ESLint warnings or TypeScript errors
+- [x] T052[P] Add JSDoc comments to all public APIs
 - [ ] T053Performance test: ApiClient handles 100 concurrent requests without memory leaks
 - [ ] T054Performance test: LocalStorage operations complete in < 100ms
 - [ ] T055Security verification: SecureStorage data encrypted on iOS/Android devices

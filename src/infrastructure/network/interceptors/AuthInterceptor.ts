@@ -22,10 +22,10 @@ export class AuthInterceptor {
     }
 
     public async onError(error: any): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
-        const config = error.config as InternalAxiosRequestConfig & { _retry?: boolean }; // eslint-disable-line @typescript-eslint/no-unsafe-member-access
+        const config = error.config as InternalAxiosRequestConfig & { _retry?: boolean };  
         const networkConfig = this.client.config;
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+         
         if (error.response?.status === 401 && !config._retry && networkConfig?.onTokenRefresh) {
             config._retry = true;
 
