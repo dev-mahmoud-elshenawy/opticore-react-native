@@ -1,3 +1,7 @@
+jest.mock('expo-router', () => ({
+  useRouter: jest.fn(),
+}), { virtual: true });
+
 import { VERSION } from '../src/index';
 
 describe('OptiCore Package', () => {

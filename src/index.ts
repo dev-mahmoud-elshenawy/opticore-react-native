@@ -12,3 +12,6 @@ export * from './infrastructure';
 
 // Error classification exports
 export * from './error';
+
+// Navigation utilities exports
+export * from './navigation';

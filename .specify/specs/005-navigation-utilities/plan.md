@@ -1,12 +1,12 @@
 # Implementation Plan: Navigation Utilities
 
-**Branch**: `005-navigation-utilities` | **Date**: 2026-02-01 | **Spec**: [spec.md](./spec.md)
+**Branch**: `005-navigation-utilities` | **Date**: 2026-02-02 | **Spec**: [spec.md](./spec.md)
 
 ## Summary
 
-Navigation Utilities provide type-safe programmatic navigation using Expo Router, route protection via RouteGuard HOC, and TypeScript type definitions for all routes. This phase creates RouteHelper for navigation functions (push, pop, replace, reset), RouteGuard for authentication/authorization checks, and NavigationTypes for compile-time route safety.
+Provide a `useRouteHelper` hook wrapping Expo Router's `useRouter` for programmatic navigation with plain string routes. No route path definitions, no route guards — this is a core library used across many projects.
 
-**Technical Approach**: Wrap Expo Router's useRouter hook, create HOC for route protection with auth checks, use TypeScript string literals for route names, and integrate with auth state from Zustand store.
+**Technical Approach**: Thin wrapper around Expo Router's `useRouter` hook. Accept plain `string` routes and optional `Record<string, string | number>` params. Use `dismissAll()` + `replace()` for reliable stack reset.
 
 ## Technical Context
 
@@ -19,42 +19,43 @@ Navigation Utilities provide type-safe programmatic navigation using Expo Router
 **Testing**: Jest ^29.7.0, React Native Testing Library ^12.4.3
 **Target Platform**: React Native 0.81+, Expo SDK 54+
 **Project Type**: npm package (library)
-**Performance Goals**: Navigation < 50ms latency
-**Constraints**: Must work with Expo Router file structure
+**Constraints**: Must work with Expo Router; must NOT define app-specific routes
 
 ## Constitution Check
 
-- ✅ **Pure Infrastructure**: Navigation utilities only, no app-specific routes
-- ✅ **TypeScript Strict Mode**: Type-safe routes
-- ✅ **SOLID Principles**: Single responsibility per utility
-- ✅ **Zero Bugs**: Comprehensive error handling
+- ✅ **Pure Infrastructure**: Navigation helper only, zero app-specific logic
+- ✅ **TypeScript Strict Mode**: All types clean
+- ✅ **SOLID Principles**: Single responsibility — navigation only
+- ✅ **Zero Bugs**: Safe back() at root, reliable reset()
 - ✅ **Test-Driven**: 80%+ coverage
 
 ## Implementation Phases
 
-### Phase 1: RouteHelper (P1)
+### Phase 1: RouteHelper Hook
 
-Create navigation utility functions wrapping Expo Router
+- Create `useRouteHelper` hook wrapping `useRouter`
+- `push(route: string, params?)` — navigate to route
+- `replace(route: string, params?)` — replace current screen
+- `back()` — safe back (no-op at root)
+- `reset(route: string, params?)` — `dismissAll()` + `replace()`
+- Export `NavigationParams` type
 
-### Phase 2: RouteGuard (P1)
+### Phase 2: Testing & Documentation
 
-Implement HOC for protecting routes with auth checks
-
-### Phase 3: NavigationTypes (P2)
-
-Define TypeScript types for type-safe routes
-
-### Phase 4: Testing & Documentation
-
-Comprehensive tests and examples
+- Unit tests for all 4 navigation functions
+- Edge case tests (back at root, reset empty stack, params/no params)
+- Usage example
 
 ## File Inventory
 
-1. `src/navigation/RouteHelper.ts`
-2. `src/navigation/NavigationTypes.ts`
-3. `src/navigation/RouteGuard.tsx`
-4. `src/navigation/index.ts`
-5. `tests/navigation/RouteHelper.test.ts`
-6. `tests/navigation/RouteGuard.test.tsx`
+| # | File | Action |
+|---|------|--------|
+| 1 | `src/navigation/RouteHelper.ts` | **Rewrite** — plain string routes, fix reset() |
+| 2 | `src/navigation/index.ts` | **Rewrite** — export RouteHelper only |
+| 3 | `test/navigation/RouteHelper.test.ts` | **Rewrite** — updated tests |
+| 4 | `examples/navigation/UsageExample.tsx` | **Rewrite** — simplified example |
+| 5 | `src/navigation/NavigationTypes.ts` | **Delete** |
+| 6 | `src/navigation/RouteGuard.tsx` | **Delete** |
+| 7 | `test/navigation/RouteGuard.test.tsx` | **Delete** |
 
-**Total**: 6 files
+**Total**: 4 files kept, 3 files deleted
