@@ -2,7 +2,7 @@
 
 **Package**: `opticore-react-native`
 **Version**: 1.0.0
-**Last Updated**: 2026-02-02
+**Last Updated**: 2026-02-03
 **Target Platforms**: iOS & Android ONLY
 
 ---
@@ -199,6 +199,89 @@
 
 ---
 
+### ✅ Spec 005: Navigation Utilities (COMPLETED)
+
+**Status**: Fully Implemented
+**Branch**: `feature/005-navigation-utilities` (current)
+**Completion Date**: 2026-02-02
+**Scope**: Core navigation helper — plain string routes, no route definitions
+
+**What Was Delivered**:
+
+#### User Story 1: Programmatic Navigation (P1) - COMPLETE ✓
+
+- ✅ **useRouteHelper** Hook - Programmatic navigation with Expo Router
+  - Location: [`src/navigation/RouteHelper.ts`](src/navigation/RouteHelper.ts)
+  - Features: `push()`, `replace()`, `back()`, `reset()` functions
+  - Route Paths: Accepts plain `string` routes — no route registration in library
+  - Parameters: Optional `NavigationParams` (Record<string, string | number>)
+  - Safety: `back()` is safe at root (no-op), `reset()` uses `dismissAll()`
+- ✅ **NavigationParams Type** - Type alias for navigation parameters
+- ✅ **Tests**: 10/10 passing, 100% coverage
+  - push() without/with params (string & numeric)
+  - replace() without/with params
+  - back() safe navigation (checks canGoBack)
+  - reset() with dismissAll() + replace()
+
+**Architecture**:
+
+- ✅ Pure infrastructure: No route paths defined
+  - Routes are app-level concern, defined by consuming apps
+  - Works with any routing structure (Expo Router, React Navigation, etc.)
+- ✅ Type-safe: All functions fully typed with TypeScript strict mode
+- ✅ Thin wrapper: Minimal abstraction over Expo Router's useRouter
+- ✅ No app-specific logic: No auth guards, route definitions, or business logic
+
+**Key Design Decisions**:
+
+- ❌ **Removed**: NavigationTypes.ts (no typed route registry)
+- ❌ **Removed**: RouteGuard.tsx (auth/authorization is app-level)
+- ✅ **Added**: Type declarations for expo-router in `src/types/expo-router.d.ts`
+- ✅ **Moved**: expo-router from dependencies → peerDependencies (consuming app provides it)
+
+**Exports**:
+
+- Main entry: [`src/index.ts`](src/index.ts) exports `useRouteHelper` and `NavigationParams`
+- Module entry: [`src/navigation/index.ts`](src/navigation/index.ts)
+- Usage example: [`examples/navigation/UsageExample.tsx`](examples/navigation/UsageExample.tsx)
+
+**Quality Metrics**:
+
+- TypeScript: 0 errors, strict mode ✓
+- Tests: 10/10 passing (all edge cases covered) ✓
+- Coverage: 100% for RouteHelper ✓
+- Full test suite: 176/176 passing, 92.12% coverage ✓
+
+**Testing Approach**:
+
+- Mock expo-router's useRouter hook
+- Test all 4 functions independently
+- Edge cases: back() at root, reset() with empty/full stack, params/no params
+- Integration: Tests verify main index.ts exports work correctly
+
+**How to Use in Consuming Apps**:
+
+```typescript
+// App defines its route paths
+import { useRouteHelper } from 'opticore-react-native';
+
+export const MyScreen = () => {
+  const { push, replace, back, reset } = useRouteHelper();
+
+  return (
+    <>
+      <Button onPress={() => push('/home')} title="Home" />
+      <Button onPress={() => push('/user/profile', { id: '123' })} title="User" />
+      <Button onPress={() => replace('/login')} title="Replace with Login" />
+      <Button onPress={() => back()} title="Go Back" />
+      <Button onPress={() => reset('/')} title="Reset to Root" />
+    </>
+  );
+};
+```
+
+---
+
 ## Project Overview
 
 ### What is OptiCore React Native?
@@ -210,7 +293,7 @@ OptiCore React Native is a **pure infrastructure library** for React Native/Expo
 - ✅ State management utilities (Zustand + React Query)
 - ✅ Error classification system (RenderError vs NonRenderError)
 - ✅ Logging infrastructure
-- ✅ Navigation utilities and guards
+- ✅ Navigation utilities (programmatic navigation with Expo Router)
 - ✅ Custom React hooks
 - ✅ Pure utility functions (string, number, array, date, etc.)
 - ✅ Type-safe configuration interfaces
