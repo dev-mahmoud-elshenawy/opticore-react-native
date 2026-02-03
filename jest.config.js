@@ -2,6 +2,7 @@ module.exports = {
   preset: 'jest-expo',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   testMatch: ['**/test/**/*.(test|spec).(ts|tsx|js)'],
+  setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
   transform: {
     '^.+\\.(ts|tsx)$': 'babel-jest',
     '^.+\\.(js|jsx)$': 'babel-jest',
@@ -14,6 +15,10 @@ module.exports = {
     '^react-native$': '<rootDir>/test/__mocks__/react-native.ts',
     '^@react-native-community/netinfo$': '<rootDir>/test/__mocks__/@react-native-community/netinfo.ts',
     '^@react-native-async-storage/async-storage$': '<rootDir>/test/__mocks__/@react-native-async-storage/async-storage.ts',
+    '^@react-native-clipboard/clipboard$': '<rootDir>/test/__mocks__/@react-native-clipboard/clipboard.ts',
+    '^react-native-device-info$': '<rootDir>/test/__mocks__/react-native-device-info.ts',
+    'expo/src': '<rootDir>/test/__mocks__/empty.ts',
+    'expo/virtual': '<rootDir>/test/__mocks__/empty.ts',
   },
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

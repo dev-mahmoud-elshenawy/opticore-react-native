@@ -15,3 +15,6 @@ export * from './error';
 
 // Navigation utilities exports
 export * from './navigation';
+
+// Utility functions exports
+export * from './utils';

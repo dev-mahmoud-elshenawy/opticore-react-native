@@ -1,6 +1,8 @@
 // Mock implementation of react-native for testing
-import { AppStateStatus } from 'react-native';
-import React from 'react';
+// Note: We can't import from react-native here as it would cause circular deps
+// Define AppStateStatus manually instead
+
+type AppStateStatus = 'active' | 'background' | 'inactive';
 
 const mockRemoveEventListener = jest.fn();
 const mockAddEventListener = jest.fn((_eventType: string, callback: (status: AppStateStatus) => void) => {
@@ -23,10 +25,10 @@ export const AppState = {
   removeEventListener: jest.fn(),
 };
 
-// Basic React Native components for testing
-export const View = (props: any) => React.createElement('View', props);
-export const Text = (props: any) => React.createElement('Text', props);
-export const TouchableOpacity = (props: any) => React.createElement('TouchableOpacity', props);
+// Basic React Native components for testing (simple mocks)
+export const View = (props: any) => ({ type: 'View', props });
+export const Text = (props: any) => ({ type: 'Text', props });
+export const TouchableOpacity = (props: any) => ({ type: 'TouchableOpacity', props });
 export const StyleSheet = {
   create: (styles: any) => styles,
   flatten: (style: any) => {
