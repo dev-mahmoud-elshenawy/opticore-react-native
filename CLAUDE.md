@@ -5,6 +5,8 @@
 **Last Updated**: 2026-02-03
 **Target Platforms**: iOS & Android ONLY
 
+> **📖 Spec Kit Reference**: See [speckit_guide.md](speckit_guide.md) for complete specification-driven development guide
+
 ---
 
 ## 🔄 Self-Updating Document
@@ -340,7 +342,10 @@ import { capitalize, formatPhone } from 'opticore-react-native/utils/string';
 
 ## Constitutional Authority
 
-**CRITICAL**: Before ANY development work, read [.specify/memory/constitution.md](.specify/memory/constitution.md)
+**CRITICAL**: Before ANY development work, read these foundational documents:
+
+1. **[.specify/memory/constitution.md](.specify/memory/constitution.md)** - Project constitution
+2. **[speckit_guide.md](speckit_guide.md)** - Complete Spec Kit guide (AI & human reference)
 
 The constitution is the **supreme authority** for this project and defines:
 
@@ -358,6 +363,8 @@ The constitution is the **supreme authority** for this project and defines:
 
 ## Development Workflow
 
+**📖 Reference**: For detailed Spec Kit setup and usage, see [speckit_guide.md](speckit_guide.md)
+
 ### The Mandatory Workflow Order
 
 ```
@@ -367,6 +374,7 @@ Constitution → Specify → Plan → Tasks → Implement → Verify
 #### 1. Constitution (Already Exists)
 
 - Read [.specify/memory/constitution.md](.specify/memory/constitution.md)
+- Read [speckit_guide.md](speckit_guide.md) for complete Spec Kit reference
 - Understand project principles and constraints
 - Verify your proposed change aligns with constitutional principles
 
@@ -1024,7 +1032,28 @@ npm run build
 npm run verify  # (if script exists)
 ```
 
-### Spec Kit Commands (via slash commands)
+### Spec Kit Commands
+
+**📖 Full Reference**: See [speckit_guide.md](speckit_guide.md) for complete Spec Kit documentation
+
+#### Helper Scripts (Available)
+
+```bash
+# List all specifications with status
+./.specify/scripts/list-specs.sh
+./.specify/scripts/list-specs.sh --detailed
+
+# Create new specification (auto-numbered)
+./.specify/scripts/create-spec.sh feature-name
+
+# Validate specification completeness
+./.specify/scripts/validate-spec.sh .specify/specs/NNN-feature/spec.md
+
+# Run all quality gates
+./.specify/scripts/check-quality.sh
+```
+
+#### Slash Commands (Optional)
 
 ```bash
 # Clarify ambiguities in specification
@@ -1039,6 +1068,8 @@ npm run verify  # (if script exists)
 # View constitution
 /speckit.constitution
 ```
+
+**Note**: Slash commands are optional. Helper scripts + Claude assistance provide full functionality.
 
 ### Git Workflow
 
@@ -1575,10 +1606,12 @@ export * from './config';
 
 ### Key Files to Reference
 
+- **[speckit_guide.md](speckit_guide.md)** - Complete Spec Kit guide (framework-agnostic, works with ANY project)
 - [.specify/memory/constitution.md](.specify/memory/constitution.md) - Project constitution
 - [.specify/templates/spec-template.md](.specify/templates/spec-template.md) - Spec template
 - [.specify/templates/plan-template.md](.specify/templates/plan-template.md) - Plan template
 - [.specify/templates/tasks-template.md](.specify/templates/tasks-template.md) - Tasks template
+- [.specify/scripts/](. specify/scripts/) - Helper scripts (create-spec.sh, validate-spec.sh, check-quality.sh, list-specs.sh)
 
 ### Existing Specifications
 
@@ -1610,8 +1643,10 @@ Browse `.specify/specs/` for examples of completed specs:
 
 ---
 
-**Last Updated**: 2026-02-01
+**Last Updated**: 2026-02-03
 **Version**: 1.0.0
 **Maintained By**: OptiCore Team
 
-**For questions or clarifications, always refer back to the constitution first.**
+**For questions or clarifications, always refer to:**
+1. **[speckit_guide.md](speckit_guide.md)** - Complete Spec Kit reference
+2. **[constitution.md](.specify/memory/constitution.md)** - Project constitution
