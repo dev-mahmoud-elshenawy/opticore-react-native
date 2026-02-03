@@ -3,7 +3,7 @@ import { render, screen, waitFor, cleanup } from '@testing-library/react-native'
 import { Text } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createStore } from 'zustand/vanilla';
-import { QueryProvider } from '../../../src/state/providers/QueryProvider';
+import { QueryProvider } from '../../../src/providers/QueryProvider';
 import { StoreProvider, createStoreHook } from '../../../src/state/providers/StoreProvider';
 
 afterEach(() => {

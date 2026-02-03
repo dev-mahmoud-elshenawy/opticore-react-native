@@ -6,5 +6,4 @@ export * from './StoreFactory';
 export * from './types/AsyncStateTypes';
 export * from './types/ObserverTypes';
 export * from './types/StoreConfig';
-export * from './providers/QueryProvider';
 export * from './providers/StoreProvider';

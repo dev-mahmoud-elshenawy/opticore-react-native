@@ -1,9 +1,6 @@
 import {
     formatDate,
     parseDate,
-    timeAgo,
-    isToday,
-    isYesterday,
     isSameDay,
 } from '../../src/utils/date';
 

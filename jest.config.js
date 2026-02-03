@@ -1,16 +1,18 @@
 module.exports = {
-  preset: 'jest-expo',
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  testEnvironment: 'node',
+  roots: ['<rootDir>/test'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   testMatch: ['**/test/**/*.(test|spec).(ts|tsx|js)'],
   setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
   transform: {
-    '^.+\\.(ts|tsx)$': 'babel-jest',
-    '^.+\\.(js|jsx)$': 'babel-jest',
+    '^.+\\.(ts|tsx)$': ['babel-jest', { configFile: './babel.config.js' }],
+    '^.+\\.(js|jsx)$': ['babel-jest', { configFile: './babel.config.js' }],
   },
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|expo-secure-store|expo-modules-core|zustand|immer))'
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|expo-secure-store|expo-modules-core|zustand|immer|@tanstack))',
   ],
   moduleNameMapper: {
+    '\\.(jpg|jpeg|png|gif|svg|ttf|woff|woff2)$': '<rootDir>/test/__mocks__/empty.ts',
     '^expo-secure-store$': '<rootDir>/test/__mocks__/expo-secure-store.ts',
     '^react-native$': '<rootDir>/test/__mocks__/react-native.ts',
     '^@react-native-community/netinfo$': '<rootDir>/test/__mocks__/@react-native-community/netinfo.ts',
@@ -36,4 +38,7 @@ module.exports = {
   },
   coverageDirectory: 'coverage',
   verbose: true,
+  globals: {
+    __DEV__: true,
+  },
 };

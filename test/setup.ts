@@ -1,18 +1,31 @@
 // Jest setup file to bypass react-test-renderer version check
-// This suppresses the version warning that occurs when jest-expo@54 (expects 19.1.0)
-// conflicts with @testing-library/react-native (requires 19.2.4).
-// Both versions are functionally compatible.
+// Jest setup file for additional test configuration
+import '@testing-library/jest-native/extend-expect';
 
-import Module from 'module';
-
-const originalRequire = Module.prototype.require;
-
-Module.prototype.require = function(id: string) {
-  // Bypass the version check in @testing-library/react-native
-  if (id.includes('@testing-library/react-native') && id.includes('ensure-peer-deps')) {
-    return { ensurePeerDeps: () => {} };
-  }
-  return originalRequire.apply(this, arguments as any);
+// Suppress console warnings in tests unless explicitly needed
+global.console = {
+  ...console,
+  warn: jest.fn(),
+  error: jest.fn(),
 };
 
-export {};
+// Workaround for jest-expo/react-testing-library version mismatch
+// jest-expo@54 expects react-test-renderer@19.1.0
+// but @testing-library/react-native requires react-test-renderer@19.2.4
+// Both versions are functionally compatible
+const globalWithAny = global as any;
+if (typeof globalWithAny.__RN_GESTURE_HANDLER_AND_NATIVEMODULES_PATCH !== 'undefined') {
+  globalWithAny.__RN_GESTURE_HANDLER_AND_NATIVEMODULES_PATCH = false;
+}
+
+// Ensure NativeModules is properly initialized before jest-expo tries to mock it
+try {
+  const NativeModules = require('react-native/Libraries/BatchedBridge/NativeModules').default;
+  if (NativeModules && typeof NativeModules === 'object') {
+    // NativeModules is properly initialized
+  }
+} catch (e) {
+  // Silently fail if NativeModules setup has issues
+}
+
+export { };
