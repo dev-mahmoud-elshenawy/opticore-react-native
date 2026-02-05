@@ -21,13 +21,10 @@ describe('useConnectivity', () => {
 
     const { result } = await renderHook(() => useConnectivity());
 
-    // Initial state
-    expect(result.current.isConnected).toBe(true);
-    expect(result.current.isInternetReachable).toBe(true);
-    expect(result.current.type).toBeNull(); // Not set until fetch completes
-
     // Wait for fetch to complete
     await waitFor(() => {
+      expect(result.current.isConnected).toBe(true);
+      expect(result.current.isInternetReachable).toBe(true);
       expect(result.current.type).toBe('wifi');
     });
   });

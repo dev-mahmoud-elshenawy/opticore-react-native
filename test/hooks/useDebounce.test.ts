@@ -18,12 +18,12 @@ describe('useDebounce', () => {
     // Should still be initial
     expect(result.current).toBe('initial');
 
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(250);
     });
     expect(result.current).toBe('initial');
 
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(250);
     });
     expect(result.current).toBe('updated');
