@@ -13,10 +13,10 @@
 
 **Purpose**: Create React 19 compatible test utilities
 
-- [ ] T014.1 Create `test/utils/react19Helpers.ts` with renderHook wrapper
-- [ ] T014.2 [P] Create act wrapper for async operations
-- [ ] T014.3 [P] Create test setup utilities (cleanup, mocks)
-- [ ] T014.4 Export all helpers from `test/utils/index.ts`
+- [x] T014.1 Create `test/utils/react19Helpers.ts` with renderHook wrapper
+- [x] T014.2 [P] Create act wrapper for async operations
+- [x] T014.3 [P] Create test setup utilities (cleanup, mocks)
+- [x] T014.4 Export all helpers from `test/utils/index.ts`
 
 **Checkpoint**: Test utilities ready for use in all tests
 
