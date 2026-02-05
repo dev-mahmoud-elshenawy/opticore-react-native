@@ -74,15 +74,15 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 1.4: Test Main Package Imports
-- [ ] Create test file: `/tmp/test-exports.ts`
-- [ ] Add imports:
+- [x] Create test file: `/tmp/test-exports.ts`
+- [x] Add imports:
   ```typescript
   import { AsyncState, BaseStore, StateObserver, StoreFactory } from 'opticore-react-native';
   import { useDebounce, useAsync, useConnectivity } from 'opticore-react-native';
   ```
-- [ ] Run TypeScript compiler on test file
-- [ ] Verify no import errors
-- [ ] Delete test file
+- [x] Run TypeScript compiler on test file
+- [x] Verify no import errors
+- [x] Delete test file
 
 **Expected Result**: All imports resolve without errors
 
@@ -91,15 +91,15 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 1.5: Test Subpath Imports
-- [ ] Create test file: `/tmp/test-subpaths.ts`
-- [ ] Add imports:
+- [x] Create test file: `/tmp/test-subpaths.ts`
+- [x] Add imports:
   ```typescript
   import { AsyncState } from 'opticore-react-native/state';
   import { useDebounce } from 'opticore-react-native/hooks';
   ```
-- [ ] Run TypeScript compiler on test file
-- [ ] Verify no import errors
-- [ ] Delete test file
+- [x] Run TypeScript compiler on test file
+- [x] Verify no import errors
+- [x] Delete test file
 
 **Expected Result**: Subpath imports work correctly
 
@@ -108,9 +108,9 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 1.6: Run Type Check
-- [ ] Run `npm run type-check`
-- [ ] Verify 0 TypeScript errors
-- [ ] If errors exist, fix them before proceeding
+- [x] Run `npm run type-check`
+- [x] Verify 0 TypeScript errors
+- [x] If errors exist, fix them before proceeding
 
 **Expected Result**: `npm run type-check` shows 0 errors
 
