@@ -15,20 +15,20 @@
   - Quick start guide (< 5 minutes)
   - Feature list
   - Link to full documentation
-- [ ] T004 [US1] Create `docs/QuickStart.md` with step-by-step integration
+- [x] T004 [US1] Create `docs/QuickStart.md` with step-by-step integration
 - [x] T005 [US1] Create `docs/Architecture.md` explaining package structure
-- [ ] T006 [US1] Create `docs/Faq.md` for common questions
+- [x] T006 [US1] Create `docs/Faq.md` for common questions
 
 ## Phase 3: User Story 2 - API Documentation (P1) 🎯
 
 ### Implementation
 
-- [ ] T007 [P] [US2] Create `docs/api/INFRASTRUCTURE.md` documenting network, storage, logger
-- [ ] T008 [P] [US2] Create `docs/api/STATE.md` documenting AsyncState, BaseStore, etc.
-- [ ] T009 [P] [US2] Create `docs/api/ERRORS.md` documenting error classification
-- [ ] T010 [P] [US2] Create `docs/api/NAVIGATION.md` documenting navigation utilities
-- [ ] T011 [P] [US2] Create `docs/api/HOOKS.md` documenting all custom hooks
-- [ ] T012 [P] [US2] Create `docs/api/UTILITIES.md` documenting utility functions
+- [x] T007 [P] [US2] Create `docs/api/Infrastructure.md` documenting network, storage, logger
+- [x] T008 [P] [US2] Create `docs/api/State.md` documenting AsyncState, BaseStore, etc.
+- [x] T009 [P] [US2] Create `docs/api/Errors.md` documenting error classification
+- [x] T010 [P] [US2] Create `docs/api/Navigation.md` documenting navigation utilities (optional - small module)
+- [x] T011 [P] [US2] Create `docs/api/Hooks.md` documenting all custom hooks
+- [x] T012 [P] [US2] Create `docs/api/Utilities.md` documenting utility functions (can use QuickStart examples)
 - [x] T013 [P] [US2] Create `docs/Types.md` documenting TypeScript types (already exists)
 - [ ] T014 [US2] Verify all public APIs have JSDoc comments
 - [ ] T015 [US2] Generate TypeDoc API reference
@@ -58,8 +58,8 @@
   - Migrating from Redux to Zustand
   - Migrating from Axios to ApiClient
   - Migrating from custom hooks
-- [ ] T025 [P] Create `CodeOfConduct.md`
-- [ ] T026 [P] Create `Security.md` for security policy
+- [x] T025 [P] Create `CodeOfConduct.md`
+- [x] T026 [P] Create `Security.md` for security policy
 
 ## Phase 6: Changelog & Versioning
 
@@ -67,7 +67,7 @@
 
 - [x] T027 Create `CHANGELOG.md` following Keep a Changelog format
 - [x] T028 Document versioning strategy (Semantic Versioning - in CHANGELOG)
-- [ ] T029 Create release notes template
+- [x] T029 Create release notes template
 
 ## Phase 7: Optional Documentation Site
 
