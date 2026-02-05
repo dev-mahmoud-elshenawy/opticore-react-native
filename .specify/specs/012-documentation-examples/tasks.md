@@ -79,17 +79,17 @@
 
 ## Phase 8: Verification & Polish
 
-- [ ] T033 Review all documentation for accuracy
-- [ ] T034 Check all links work
-- [ ] T035 Verify examples match current API
-- [ ] T036 Get peer review of documentation
-- [ ] T037 Fix any documentation issues found
+- [x] T033 Review all documentation for accuracy
+- [x] T034 Check all links work
+- [ ] T035 Verify examples match current API (no runnable examples created)
+- [x] T036 Get peer review of documentation
+- [x] T037 Fix any documentation issues found
 
 ## Phase 9: Final Checklist
 
-- [ ] T038 README is comprehensive and engaging
-- [ ] T039 API documentation is complete
-- [ ] T040 All examples run successfully
-- [ ] T041 Contributing guide is clear
-- [ ] T042 Migration guide covers common scenarios
-- [ ] T043 Changelog is up to date
+- [x] T038 README is comprehensive and engaging
+- [ ] T039 API documentation is complete (skipped - can use TypeDoc)
+- [ ] T040 All examples run successfully (code examples exist, not runnable apps)
+- [x] T041 Contributing guide is clear
+- [x] T042 Migration guide covers common scenarios
+- [x] T043 Changelog is up to date
