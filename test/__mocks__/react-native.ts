@@ -5,13 +5,15 @@
 type AppStateStatus = 'active' | 'background' | 'inactive';
 
 const mockRemoveEventListener = jest.fn();
-const mockAddEventListener = jest.fn((_eventType: string, callback: (status: AppStateStatus) => void) => {
-  // Store the callback for manual triggering in tests
-  (mockAddEventListener as any).lastCallback = callback;
-  return {
-    remove: mockRemoveEventListener,
-  };
-});
+const mockAddEventListener = jest.fn(
+  (_eventType: string, callback: (status: AppStateStatus) => void) => {
+    // Store the callback for manual triggering in tests
+    (mockAddEventListener as any).lastCallback = callback;
+    return {
+      remove: mockRemoveEventListener,
+    };
+  }
+);
 
 export const Platform = {
   OS: 'ios' as 'ios' | 'android' | 'web',

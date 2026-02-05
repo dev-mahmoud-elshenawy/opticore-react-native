@@ -6,114 +6,114 @@ import { CoreProvider } from '../../src/providers/CoreProvider';
 
 // Test component that uses React Query
 const TestQueryComponent: React.FC = () => {
-    const { data, isLoading } = useQuery({
-        queryKey: ['core-test'],
-        queryFn: async () => 'query-works',
-    });
+  const { data, isLoading } = useQuery({
+    queryKey: ['core-test'],
+    queryFn: async () => 'query-works',
+  });
 
-    if (isLoading) return <Text>Loading...</Text>;
-    return <Text>{data}</Text>;
+  if (isLoading) return <Text>Loading...</Text>;
+  return <Text>{data}</Text>;
 };
 
 describe('CoreProvider', () => {
-    it('should render children successfully', () => {
-        const { getByText } = render(
-            <CoreProvider>
-                <Text>Test Child</Text>
-            </CoreProvider>
-        );
+  it('should render children successfully', () => {
+    const { getByText } = render(
+      <CoreProvider>
+        <Text>Test Child</Text>
+      </CoreProvider>
+    );
 
-        expect(getByText('Test Child')).toBeTruthy();
+    expect(getByText('Test Child')).toBeTruthy();
+  });
+
+  it('should provide React Query context', async () => {
+    const { getByText } = render(
+      <CoreProvider>
+        <TestQueryComponent />
+      </CoreProvider>
+    );
+
+    await waitFor(() => {
+      expect(getByText('query-works')).toBeTruthy();
     });
+  });
 
-    it('should provide React Query context', async () => {
-        const { getByText } = render(
-            <CoreProvider>
-                <TestQueryComponent />
-            </CoreProvider>
-        );
+  it('should support custom configuration', async () => {
+    const { getByText } = render(
+      <CoreProvider
+        config={{
+          query: {
+            queryClientConfig: {
+              defaultOptions: {
+                queries: {
+                  staleTime: 1000,
+                },
+              },
+            },
+          },
+        }}
+      >
+        <TestQueryComponent />
+      </CoreProvider>
+    );
 
-        await waitFor(() => {
-            expect(getByText('query-works')).toBeTruthy();
-        });
+    await waitFor(() => {
+      expect(getByText('query-works')).toBeTruthy();
     });
+  });
 
-    it('should support custom configuration', async () => {
-        const { getByText } = render(
-            <CoreProvider
-                config={{
-                    query: {
-                        queryClientConfig: {
-                            defaultOptions: {
-                                queries: {
-                                    staleTime: 1000,
-                                },
-                            },
-                        },
-                    },
-                }}
-            >
-                <TestQueryComponent />
-            </CoreProvider>
-        );
+  it('should allow disabling features via config', () => {
+    const { getByText } = render(
+      <CoreProvider
+        config={{
+          enableConnectivity: false,
+          enableLifecycle: false,
+          enableDevTools: false,
+        }}
+      >
+        <Text>Config Test</Text>
+      </CoreProvider>
+    );
 
-        await waitFor(() => {
-            expect(getByText('query-works')).toBeTruthy();
-        });
+    expect(getByText('Config Test')).toBeTruthy();
+  });
+
+  it('should nest providers correctly', async () => {
+    const Component = () => {
+      const { data } = useQuery({
+        queryKey: ['nested-test'],
+        queryFn: async () => 'nested-works',
+      });
+
+      return (
+        <View>
+          <Text>{data || 'loading'}</Text>
+        </View>
+      );
+    };
+
+    const { getByText } = render(
+      <CoreProvider>
+        <Component />
+      </CoreProvider>
+    );
+
+    await waitFor(() => {
+      expect(getByText('nested-works')).toBeTruthy();
     });
+  });
 
-    it('should allow disabling features via config', () => {
-        const { getByText } = render(
-            <CoreProvider
-                config={{
-                    enableConnectivity: false,
-                    enableLifecycle: false,
-                    enableDevTools: false,
-                }}
-            >
-                <Text>Config Test</Text>
-            </CoreProvider>
-        );
+  it('should handle multiple children', () => {
+    const { getByText } = render(
+      <CoreProvider>
+        <Text>Child 1</Text>
+        <Text>Child 2</Text>
+        <Text>Child 3</Text>
+      </CoreProvider>
+    );
 
-        expect(getByText('Config Test')).toBeTruthy();
-    });
-
-    it('should nest providers correctly', async () => {
-        const Component = () => {
-            const { data } = useQuery({
-                queryKey: ['nested-test'],
-                queryFn: async () => 'nested-works',
-            });
-
-            return (
-                <View>
-                    <Text>{data || 'loading'}</Text>
-                </View>
-            );
-        };
-
-        const { getByText } = render(
-            <CoreProvider>
-                <Component />
-            </CoreProvider>
-        );
-
-        await waitFor(() => {
-            expect(getByText('nested-works')).toBeTruthy();
-        });
-    });
-
-    it('should handle multiple children', () => {
-        const { getByText } = render(
-            <CoreProvider>
-                <Text>Child 1</Text>
-                <Text>Child 2</Text>
-                <Text>Child 3</Text>
-            </CoreProvider>
-        );
-
-        expect(getByText('Child 1')).toBeTruthy();
-        expect(getByText('Child 2')).toBeTruthy();
-        expect(getByText('Child 3')).toBeTruthy();
-    });
+    expect(getByText('Child 1')).toBeTruthy();
+    expect(getByText('Child 2')).toBeTruthy();
+    expect(getByText('Child 3')).toBeTruthy();
+  });
 });

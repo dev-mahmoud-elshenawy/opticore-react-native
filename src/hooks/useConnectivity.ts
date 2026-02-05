@@ -11,27 +11,27 @@ import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
  * - type: string | null - Connection type (wifi, cellular, etc.)
  */
 export function useConnectivity() {
-    const [isConnected, setIsConnected] = useState<boolean | null>(true);
-    const [isInternetReachable, setIsInternetReachable] = useState<boolean | null>(true);
-    const [type, setType] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState<boolean | null>(true);
+  const [isInternetReachable, setIsInternetReachable] = useState<boolean | null>(true);
+  const [type, setType] = useState<string | null>(null);
 
-    useEffect(() => {
-        const unsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
-            setIsConnected(state.isConnected);
-            setIsInternetReachable(state.isInternetReachable);
-            setType(state.type);
-        });
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
+      setIsConnected(state.isConnected);
+      setIsInternetReachable(state.isInternetReachable);
+      setType(state.type);
+    });
 
-        NetInfo.fetch().then((state) => {
-            setIsConnected(state.isConnected);
-            setIsInternetReachable(state.isInternetReachable);
-            setType(state.type);
-        });
+    NetInfo.fetch().then((state) => {
+      setIsConnected(state.isConnected);
+      setIsInternetReachable(state.isInternetReachable);
+      setType(state.type);
+    });
 
-        return () => {
-            unsubscribe();
-        };
-    }, []);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
-    return { isConnected, isInternetReachable, type };
+  return { isConnected, isInternetReachable, type };
 }

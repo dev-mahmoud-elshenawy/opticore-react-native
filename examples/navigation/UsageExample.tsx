@@ -19,22 +19,13 @@ export const NavigationDemo = () => {
       <Text>Navigation Demo</Text>
 
       {/* Push a route (adds to stack) */}
-      <Button
-        title="Go to Search"
-        onPress={() => push('/search', { query: 'react-native' })}
-      />
+      <Button title="Go to Search" onPress={() => push('/search', { query: 'react-native' })} />
 
       {/* Push with numeric params */}
-      <Button
-        title="Go to Item"
-        onPress={() => push('/items/detail', { id: 42 })}
-      />
+      <Button title="Go to Item" onPress={() => push('/items/detail', { id: 42 })} />
 
       {/* Replace current screen (no back entry) */}
-      <Button
-        title="Replace with Dashboard"
-        onPress={() => replace('/dashboard')}
-      />
+      <Button title="Replace with Dashboard" onPress={() => replace('/dashboard')} />
 
       {/* Go back safely */}
       <Button title="Go Back" onPress={() => back()} />

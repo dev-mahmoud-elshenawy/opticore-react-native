@@ -9,6 +9,7 @@
 ## Executive Summary
 
 This specification addresses critical gaps discovered in architecture review of specs 001-010:
+
 1. **Export Gap**: State management and hooks not exported from main index
 2. **Documentation Gap**: 5 completed specs (003, 004, 007, 009, 010) not documented in CLAUDE.md
 3. **Configuration Clarity**: Dual configuration pattern (CoreSetup vs CoreProvider) needs documentation
@@ -39,6 +40,7 @@ A developer installing opticore wants to use `AsyncState`, `BaseStore`, `StateOb
 4. **Given** developer imports from subpath, **When** they use `import { AsyncState } from 'opticore-react-native/state'`, **Then** import works correctly
 
 **Current State**:
+
 ```typescript
 // ❌ FAILS - Not exported
 import { AsyncState, BaseStore } from 'opticore-react-native';
@@ -48,6 +50,7 @@ import { AsyncState } from 'opticore-react-native/dist/state/AsyncState';
 ```
 
 **Required State**:
+
 ```typescript
 // ✅ Should work from main package
 import { AsyncState, BaseStore, StateObserver, StoreFactory } from 'opticore-react-native';
@@ -76,6 +79,7 @@ A developer wants to use opticore's custom hooks (`useDebounce`, `useAsync`, `us
 4. **Given** developer imports from subpath, **When** they use `import { useDebounce } from 'opticore-react-native/hooks'`, **Then** import works
 
 **Current State**:
+
 ```typescript
 // ❌ FAILS - Not exported
 import { useDebounce, useAsync } from 'opticore-react-native';
@@ -85,6 +89,7 @@ import { useDebounce } from 'opticore-react-native/dist/hooks/useDebounce';
 ```
 
 **Required State**:
+
 ```typescript
 // ✅ Should work from main package
 import { useDebounce, useAsync, useConnectivity } from 'opticore-react-native';
@@ -113,26 +118,32 @@ A developer installing opticore sees both `CoreSetup.init()` and `<CoreProvider>
 4. **Given** developer uses both, **When** they follow documented order, **Then** both configurations apply without conflicts
 
 **Required Documentation**:
-```markdown
+
+````markdown
 ## Configuration Guide
 
 OptiCore provides two configuration mechanisms for different concerns:
 
 ### 1. CoreSetup (Infrastructure Layer)
+
 Call BEFORE React initialization to configure:
+
 - ApiClient (base URL, timeout, headers)
 - Logger (log level, production mode)
 - Global error handler
 - Feature flags (maintenance mode, debug mode)
 
 ### 2. CoreProvider (React Layer)
+
 Wrap your React component tree to configure:
+
 - React Query (caching, retry logic)
 - Connectivity monitoring
 - Lifecycle management
 - DevTools
 
 ### Recommended Pattern
+
 ```typescript
 // 1. Configure infrastructure (index.js/App.tsx top)
 CoreSetup.getInstance().init({
@@ -149,6 +160,8 @@ export default function App() {
   );
 }
 ```
+````
+
 ```
 
 ---
@@ -172,27 +185,31 @@ A developer cloning the repository and running `npm test` sees 12 test failures 
 
 **Current State**:
 ```
+
 Test Suites: 16 failed, 31 passed, 47 total
-Tests:       12 failed, 252 passed, 264 total
+Tests: 12 failed, 252 passed, 264 total
 
 Error: Incorrect version of "react-test-renderer" detected.
 Expected "18.3.1", but found "19.2.4".
 
 React: 18.3.1 (devDependency)
 react-test-renderer: 19.2.4 (devDependency) ❌ MISMATCH
+
 ```
 
 **Required State**:
 ```
+
 Test Suites: 47 passed, 47 total
-Tests:       264 passed, 264 total
-Coverage:    >80% (all categories)
+Tests: 264 passed, 264 total
+Coverage: >80% (all categories)
 
 React: 19.2.4 ✅
 React Native: 0.83.1 ✅
 test-renderer: 0.14.0 ✅ (modern replacement)
 @testing-library/react-native: 14.0.0-beta.0 ✅
-```
+
+````
 
 ---
 
@@ -228,13 +245,17 @@ abstract class BaseError extends Error {
 }
 
 // These are NOT compatible
-```
+````
 
 **Required Architecture**:
+
 ```typescript
 // ApiError extends RenderError (which extends BaseError)
 class ApiError extends RenderError {
-  constructor(public status: number, message: string) {
+  constructor(
+    public status: number,
+    message: string
+  ) {
     super(message, {
       code: `HTTP_${status}`,
       userMessage: message,
@@ -324,6 +345,7 @@ class ApiError extends RenderError {
 ### Key Entities
 
 **Files to Modify**:
+
 - `src/index.ts` - Add state and hooks exports
 - `package.json` - Add subpath exports, fix react-test-renderer version
 - `CLAUDE.md` - Add 5 missing spec documentations, add Configuration Guide
@@ -331,6 +353,7 @@ class ApiError extends RenderError {
 - `src/infrastructure/network/interceptors/ErrorInterceptor.ts` - Update to use new ApiError
 
 **Files to Create**:
+
 - `docs/Configuration.md` - Detailed configuration guide (optional, or inline in CLAUDE.md)
 
 ---
@@ -340,6 +363,7 @@ class ApiError extends RenderError {
 ### Measurable Outcomes
 
 **Export Gap Resolution**:
+
 - **SC-001**: `import { AsyncState } from 'opticore-react-native'` works without error
 - **SC-002**: `import { useDebounce } from 'opticore-react-native'` works without error
 - **SC-003**: `import { AsyncState } from 'opticore-react-native/state'` works without error
@@ -347,22 +371,26 @@ class ApiError extends RenderError {
 - **SC-005**: All exports are visible in IDE autocomplete
 
 **Documentation Gap Resolution**:
+
 - **SC-006**: CLAUDE.md "Completed Specifications" section lists 10 specs (currently lists 5)
 - **SC-007**: Each spec documentation includes all required sections (6 sections per spec)
 - **SC-008**: Configuration Guide exists with clear examples
 - **SC-009**: Developer reading docs can successfully configure package on first try
 
 **Test Environment Resolution**:
+
 - **SC-010**: `npm test` shows 264/264 tests passing (currently 252/264)
 - **SC-011**: Test coverage exceeds 80% in all categories (statements, branches, functions, lines)
 - **SC-012**: Zero test failures in CI/CD pipeline
 
 **Error Consistency**:
+
 - **SC-013**: `new ApiError(404, 'Not Found') instanceof RenderError` returns true
 - **SC-014**: `ErrorClassifier.classify(apiError)` returns `ErrorType.RENDER` for 4xx errors
 - **SC-015**: All existing error handling tests continue to pass (backward compatibility)
 
 **Overall Quality**:
+
 - **SC-016**: Package builds successfully with `npm run build`
 - **SC-017**: Quality gates pass: `npm run type-check && npm run lint && npm test`
 - **SC-018**: No regression in existing functionality (all original tests pass)
@@ -374,6 +402,7 @@ class ApiError extends RenderError {
 ## Dependencies
 
 ### Internal Dependencies
+
 - Spec 003 (State Management Core) - needs export
 - Spec 004 (Error Classification) - needs documentation + ApiError refactor
 - Spec 006 (Custom Hooks) - needs export
@@ -383,6 +412,7 @@ class ApiError extends RenderError {
 - Spec 010 (Configuration Interface) - needs configuration docs
 
 ### External Dependencies
+
 - react-test-renderer@18.3.1 (downgrade from 19.2.4)
 - No new packages required
 
@@ -391,30 +421,37 @@ class ApiError extends RenderError {
 ## Risks & Mitigations
 
 ### Risk 1: Breaking Existing Imports
+
 **Probability**: Low
 **Impact**: High
 **Mitigation**: All new exports are additive. Existing imports continue to work. Test thoroughly.
 
 ### Risk 2: ApiError Refactor Breaking Infrastructure
+
 **Probability**: Medium
 **Impact**: High
 **Mitigation**:
+
 - Update all ApiError usage in infrastructure
 - Ensure backward compatibility for error handling
 - Run full test suite to verify no regressions
 
 ### Risk 3: react-test-renderer Downgrade Causing New Issues
+
 **Probability**: Low
 **Impact**: Medium
 **Mitigation**:
+
 - Test all hooks after downgrade
 - Check peer dependency compatibility
 - Verify React 18.3.1 compatibility
 
 ### Risk 4: Documentation Taking Too Long
+
 **Probability**: Low
 **Impact**: Low
 **Mitigation**:
+
 - Follow existing spec documentation templates
 - Copy structure from completed specs
 - Estimated time: 2-3 hours total
@@ -424,17 +461,20 @@ class ApiError extends RenderError {
 ## Implementation Notes
 
 ### Phase 1: Critical Export Gap (30 minutes)
+
 1. Add exports to `src/index.ts`
 2. Add subpath exports to `package.json`
 3. Run build and verify exports
 4. Test imports in consuming app
 
 ### Phase 2: Test Environment Fix (10 minutes)
+
 1. Update react-test-renderer version in package.json
 2. Run `npm install`
 3. Run `npm test` to verify all pass
 
 ### Phase 3: Documentation Gap (2-3 hours)
+
 1. Document Spec 003 in CLAUDE.md
 2. Document Spec 004 in CLAUDE.md
 3. Document Spec 007 in CLAUDE.md
@@ -443,6 +483,7 @@ class ApiError extends RenderError {
 6. Add Configuration Guide section
 
 ### Phase 4: Error Consistency (1-2 hours)
+
 1. Refactor ApiError to extend RenderError
 2. Update ErrorInterceptor usage
 3. Run all tests to verify no regressions
@@ -455,6 +496,7 @@ class ApiError extends RenderError {
 ## Acceptance Testing Plan
 
 ### Test 1: State Management Import
+
 ```typescript
 import { AsyncState, BaseStore, StateObserver, StoreFactory } from 'opticore-react-native';
 
@@ -468,6 +510,7 @@ console.assert(AS === AsyncState, 'Subpath export should match main export');
 ```
 
 ### Test 2: Hooks Import
+
 ```typescript
 import { useDebounce, useAsync, useConnectivity } from 'opticore-react-native';
 
@@ -481,6 +524,7 @@ function MyComponent() {
 ```
 
 ### Test 3: Configuration Pattern
+
 ```typescript
 // Step 1: Infrastructure configuration
 CoreSetup.getInstance().init({
@@ -501,6 +545,7 @@ function App() {
 ```
 
 ### Test 4: Error Consistency
+
 ```typescript
 const apiError = new ApiError(404, 'Not Found');
 console.assert(apiError instanceof RenderError, 'ApiError should extend RenderError');
@@ -511,6 +556,7 @@ console.assert(classified === ErrorType.RENDER, 'API 4xx should be RenderError')
 ```
 
 ### Test 5: All Tests Pass
+
 ```bash
 npm test
 # Expected output: 264/264 tests passing

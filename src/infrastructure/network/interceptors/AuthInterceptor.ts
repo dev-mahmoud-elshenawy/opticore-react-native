@@ -2,47 +2,47 @@ import { InternalAxiosRequestConfig } from 'axios';
 import { ApiClient } from '../ApiClient';
 
 export class AuthInterceptor {
-    private static refreshPromise: Promise<string | null> | null = null;
-    private client: ApiClient;
+  private static refreshPromise: Promise<string | null> | null = null;
+  private client: ApiClient;
 
-    constructor(client: ApiClient) {
-        this.client = client;
+  constructor(client: ApiClient) {
+    this.client = client;
+  }
+
+  public async onRequest(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
+    const networkConfig = this.client.config;
+
+    if (networkConfig?.getAuthToken) {
+      const token = await networkConfig.getAuthToken();
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
+    return config;
+  }
 
-    public async onRequest(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
-        const networkConfig = this.client.config;
+  public async onError(error: any): Promise<any> {
+     
+    const config = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const networkConfig = this.client.config;
 
-        if (networkConfig?.getAuthToken) {
-            const token = await networkConfig.getAuthToken();
-            if (token && config.headers) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-        }
-        return config;
+    if (error.response?.status === 401 && !config._retry && networkConfig?.onTokenRefresh) {
+      config._retry = true;
+
+      if (!AuthInterceptor.refreshPromise) {
+        AuthInterceptor.refreshPromise = networkConfig.onTokenRefresh().finally(() => {
+          AuthInterceptor.refreshPromise = null;
+        });
+      }
+
+      const newToken = await AuthInterceptor.refreshPromise;
+
+      if (newToken && config.headers) {
+        config.headers.Authorization = `Bearer ${newToken}`;
+        // Retry request
+        return this.client.client.request(config);
+      }
     }
-
-    public async onError(error: any): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
-        const config = error.config as InternalAxiosRequestConfig & { _retry?: boolean };  
-        const networkConfig = this.client.config;
-
-         
-        if (error.response?.status === 401 && !config._retry && networkConfig?.onTokenRefresh) {
-            config._retry = true;
-
-            if (!AuthInterceptor.refreshPromise) {
-                AuthInterceptor.refreshPromise = networkConfig.onTokenRefresh().finally(() => {
-                    AuthInterceptor.refreshPromise = null;
-                });
-            }
-
-            const newToken = await AuthInterceptor.refreshPromise;
-
-            if (newToken && config.headers) {
-                config.headers.Authorization = `Bearer ${newToken}`;
-                // Retry request
-                return this.client.client.request(config);
-            }
-        }
-        return Promise.reject(error);
-    }
+    return Promise.reject(error);
+  }
 }

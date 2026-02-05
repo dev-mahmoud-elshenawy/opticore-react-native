@@ -3,8 +3,8 @@
  * @param arr - Input array
  */
 export function filterNonNull<T>(arr: (T | null | undefined)[]): T[] {
-    if (!arr) return [];
-    return arr.filter((item): item is T => item !== null && item !== undefined);
+  if (!arr) return [];
+  return arr.filter((item): item is T => item !== null && item !== undefined);
 }
 
 /**
@@ -12,14 +12,20 @@ export function filterNonNull<T>(arr: (T | null | undefined)[]): T[] {
  * @param arr - Input array
  * @param key - Key to group by
  */
-export function groupBy<T extends Record<string, any>>(arr: T[], key: keyof T): Record<string, T[]> {
-    if (!arr) return {};
-    return arr.reduce((acc, item) => {
-        const group = String(item[key]);
-        acc[group] = acc[group] || [];
-        acc[group].push(item);
-        return acc;
-    }, {} as Record<string, T[]>);
+export function groupBy<T extends Record<string, any>>(
+  arr: T[],
+  key: keyof T
+): Record<string, T[]> {
+  if (!arr) return {};
+  return arr.reduce(
+    (acc, item) => {
+      const group = String(item[key]);
+      acc[group] = acc[group] || [];
+      acc[group].push(item);
+      return acc;
+    },
+    {} as Record<string, T[]>
+  );
 }
 
 /**
@@ -27,8 +33,8 @@ export function groupBy<T extends Record<string, any>>(arr: T[], key: keyof T): 
  * @param arr - Input array
  */
 export function unique<T>(arr: T[]): T[] {
-    if (!arr) return [];
-    return Array.from(new Set(arr));
+  if (!arr) return [];
+  return Array.from(new Set(arr));
 }
 
 /**
@@ -38,17 +44,17 @@ export function unique<T>(arr: T[]): T[] {
  * @param order - Sort order ('asc' or 'desc', default: 'asc')
  */
 export function sortBy<T extends Record<string, any>>(
-    arr: T[],
-    key: keyof T,
-    order: 'asc' | 'desc' = 'asc'
+  arr: T[],
+  key: keyof T,
+  order: 'asc' | 'desc' = 'asc'
 ): T[] {
-    if (!arr) return [];
-    return [...arr].sort((a, b) => {
-        const valA = a[key];
-        const valB = b[key];
+  if (!arr) return [];
+  return [...arr].sort((a, b) => {
+    const valA = a[key];
+    const valB = b[key];
 
-        if (valA < valB) return order === 'asc' ? -1 : 1;
-        if (valA > valB) return order === 'asc' ? 1 : -1;
-        return 0;
-    });
+    if (valA < valB) return order === 'asc' ? -1 : 1;
+    if (valA > valB) return order === 'asc' ? 1 : -1;
+    return 0;
+  });
 }

@@ -10,31 +10,31 @@ import { Keyboard, Platform } from 'react-native';
  * - dismiss: function - Method to dismiss keyboard
  */
 export function useKeyboard() {
-    const [isVisible, setIsVisible] = useState(false);
-    const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-    useEffect(() => {
-        const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
-        const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
-        const onShow = (e: any) => {
-            setIsVisible(true);
-            setKeyboardHeight(e.endCoordinates.height);
-        };
+    const onShow = (e: any) => {
+      setIsVisible(true);
+      setKeyboardHeight(e.endCoordinates.height);
+    };
 
-        const onHide = () => {
-            setIsVisible(false);
-            setKeyboardHeight(0);
-        };
+    const onHide = () => {
+      setIsVisible(false);
+      setKeyboardHeight(0);
+    };
 
-        const showListener = Keyboard.addListener(showEvent, onShow);
-        const hideListener = Keyboard.addListener(hideEvent, onHide);
+    const showListener = Keyboard.addListener(showEvent, onShow);
+    const hideListener = Keyboard.addListener(hideEvent, onHide);
 
-        return () => {
-            showListener.remove();
-            hideListener.remove();
-        };
-    }, []);
+    return () => {
+      showListener.remove();
+      hideListener.remove();
+    };
+  }, []);
 
-    return { isVisible, keyboardHeight, dismiss: Keyboard.dismiss };
+  return { isVisible, keyboardHeight, dismiss: Keyboard.dismiss };
 }

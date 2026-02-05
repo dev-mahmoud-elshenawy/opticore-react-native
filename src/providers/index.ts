@@ -16,7 +16,10 @@ export { QueryProvider } from './QueryProvider';
 export type { QueryProviderProps, QueryProviderConfig } from './QueryProvider';
 
 // Configuration types
-export type { CoreProviderConfig, QueryProviderConfig as QueryConfig } from '../types/provider-types';
+export type {
+  CoreProviderConfig,
+  QueryProviderConfig as QueryConfig,
+} from '../types/provider-types';
 
 // Re-export useful React Query utilities
 export { useQueryClient } from './QueryProvider';

@@ -5,56 +5,55 @@ import { StoreConfig, BaseActions, AppStoreCreator } from './types/StoreConfig';
 
 /**
  * Creates a base store with immer and devtools middleware enabled by default.
- * 
+ *
  * @param config Configuration for the store (name, initial state)
  * @param stateCreator Zustand state creator function
  * @returns Zustand vanilla store
  */
 export function createBaseStore<T extends object>(
-    config: StoreConfig<T>,
-    stateCreator: AppStoreCreator<T>
+  config: StoreConfig<T>,
+  stateCreator: AppStoreCreator<T>
 ) {
-    // We need to cast the middleware chain to match TypeScript's expected types for Zustand
-    const storeCreator = (set: any, get: any, api: any) => {
-        // Inject reset and hydrate actions
-        const baseActions: BaseActions = {
-            reset: () => set(config.initialState, false, 'reset'),
-            hydrate: (newState: unknown) => set(newState, false, 'hydrate')
-        };
-
-        // Initialize with provided state + base actions
-        const initialState = {
-            ...config.initialState,
-            ...baseActions
-        };
-
-        // Call the user's state creator with the enhanced set
-        // We pass the base actions so they can be mixed in if needed, 
-        // although they are already in the initial state
-        const userState = stateCreator(set, get, api);
-
-        return {
-            ...initialState,
-            ...userState,
-            ...baseActions // Ensure base actions override if conflict (unlikely)
-        };
+  // We need to cast the middleware chain to match TypeScript's expected types for Zustand
+  const storeCreator = (set: any, get: any, api: any) => {
+    // Inject reset and hydrate actions
+    const baseActions: BaseActions = {
+      reset: () => set(config.initialState, false, 'reset'),
+      hydrate: (newState: unknown) => set(newState, false, 'hydrate'),
     };
 
-    // Configure middleware stack
-    // 1. Immer (allows mutable state updates)
-    // 2. DevTools (Redux devtools integration)
+    // Initialize with provided state + base actions
+    const initialState = {
+      ...config.initialState,
+      ...baseActions,
+    };
 
-    const enabledDevtools = config.devtools ?? (typeof __DEV__ !== 'undefined' ? __DEV__ : process.env.NODE_ENV !== 'production');
+    // Call the user's state creator with the enhanced set
+    // We pass the base actions so they can be mixed in if needed,
+    // although they are already in the initial state
+    const userState = stateCreator(set, get, api);
 
-    let store = createStore<T & BaseActions>()(
-        devtools(
-            immer(storeCreator),
-            {
-                name: config.name,
-                enabled: enabledDevtools,
-            }
-        )
-    );
+    return {
+      ...initialState,
+      ...userState,
+      ...baseActions, // Ensure base actions override if conflict (unlikely)
+    };
+  };
 
-    return store;
+  // Configure middleware stack
+  // 1. Immer (allows mutable state updates)
+  // 2. DevTools (Redux devtools integration)
+
+  const enabledDevtools =
+    config.devtools ??
+    (typeof __DEV__ !== 'undefined' ? __DEV__ : process.env.NODE_ENV !== 'production');
+
+  const store = createStore<T & BaseActions>()(
+    devtools(immer(storeCreator), {
+      name: config.name,
+      enabled: enabledDevtools,
+    })
+  );
+
+  return store;
 }

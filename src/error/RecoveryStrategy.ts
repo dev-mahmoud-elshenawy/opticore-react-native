@@ -2,14 +2,14 @@
  * Defines a recovery strategy that can be attached to an error.
  */
 export interface RecoveryStrategy {
-    /** Unique type identifier for the strategy */
-    readonly type: string;
+  /** Unique type identifier for the strategy */
+  readonly type: string;
 
-    /** User-facing label (e.g., "Retry", "Log In") */
-    readonly label: string;
+  /** User-facing label (e.g., "Retry", "Log In") */
+  readonly label: string;
 
-    /** Execute the recovery action */
-    execute(): Promise<void>;
+  /** Execute the recovery action */
+  execute(): Promise<void>;
 }
 
 /**
@@ -17,14 +17,14 @@ export interface RecoveryStrategy {
  * Re-executes a failed operation.
  */
 export class RetryStrategy implements RecoveryStrategy {
-    public readonly type = 'RETRY';
-    public readonly label = 'Retry';
+  public readonly type = 'RETRY';
+  public readonly label = 'Retry';
 
-    constructor(private action: () => Promise<unknown>) { }
+  constructor(private action: () => Promise<unknown>) {}
 
-    async execute(): Promise<void> {
-        await this.action();
-    }
+  async execute(): Promise<void> {
+    await this.action();
+  }
 }
 
 /**
@@ -32,14 +32,14 @@ export class RetryStrategy implements RecoveryStrategy {
  * Refreshes authentication token.
  */
 export class RefreshTokenStrategy implements RecoveryStrategy {
-    public readonly type = 'REFRESH_TOKEN';
-    public readonly label = 'Reconnect Session';
+  public readonly type = 'REFRESH_TOKEN';
+  public readonly label = 'Reconnect Session';
 
-    constructor(private refreshAction: () => Promise<unknown>) { }
+  constructor(private refreshAction: () => Promise<unknown>) {}
 
-    async execute(): Promise<void> {
-        await this.refreshAction();
-    }
+  async execute(): Promise<void> {
+    await this.refreshAction();
+  }
 }
 
 /**
@@ -47,12 +47,12 @@ export class RefreshTokenStrategy implements RecoveryStrategy {
  * Clears local data/cache.
  */
 export class ClearCacheStrategy implements RecoveryStrategy {
-    public readonly type = 'CLEAR_CACHE';
-    public readonly label = 'Clear Data';
+  public readonly type = 'CLEAR_CACHE';
+  public readonly label = 'Clear Data';
 
-    constructor(private clearAction: () => Promise<unknown>) { }
+  constructor(private clearAction: () => Promise<unknown>) {}
 
-    async execute(): Promise<void> {
-        await this.clearAction();
-    }
+  async execute(): Promise<void> {
+    await this.clearAction();
+  }
 }

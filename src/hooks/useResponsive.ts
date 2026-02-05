@@ -1,9 +1,9 @@
 import { useWindowDimensions } from 'react-native';
 
 export const breakpoints = {
-    small: 360,
-    medium: 768,
-    large: 1024,
+  small: 360,
+  medium: 768,
+  large: 1024,
 };
 
 /**
@@ -17,13 +17,13 @@ export const breakpoints = {
  * - width: number - Current window width
  */
 export function useResponsive() {
-    const { width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
-    return {
-        isSmall: width < breakpoints.small,
-        isMedium: width >= breakpoints.small && width < breakpoints.medium,
-        isLarge: width >= breakpoints.medium && width < breakpoints.large,
-        isXLarge: width >= breakpoints.large,
-        width,
-    };
+  return {
+    isSmall: width < breakpoints.small,
+    isMedium: width >= breakpoints.small && width < breakpoints.medium,
+    isLarge: width >= breakpoints.medium && width < breakpoints.large,
+    isXLarge: width >= breakpoints.large,
+    width,
+  };
 }

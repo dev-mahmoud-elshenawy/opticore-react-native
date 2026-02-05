@@ -16,10 +16,12 @@ describe('ConnectivityManager', () => {
     mockUnsubscribe = jest.fn();
 
     // Setup mock to capture callback
-    (NetInfo.addEventListener as jest.Mock).mockImplementation((callback: (state: NetInfoState) => void) => {
-      netInfoCallback = callback;
-      return mockUnsubscribe;
-    });
+    (NetInfo.addEventListener as jest.Mock).mockImplementation(
+      (callback: (state: NetInfoState) => void) => {
+        netInfoCallback = callback;
+        return mockUnsubscribe;
+      }
+    );
 
     (NetInfo.fetch as jest.Mock).mockResolvedValue({
       isConnected: true,

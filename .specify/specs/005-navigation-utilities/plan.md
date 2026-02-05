@@ -48,14 +48,14 @@ Provide a `useRouteHelper` hook wrapping Expo Router's `useRouter` for programma
 
 ## File Inventory
 
-| # | File | Action |
-|---|------|--------|
-| 1 | `src/navigation/RouteHelper.ts` | **Rewrite** — plain string routes, fix reset() |
-| 2 | `src/navigation/index.ts` | **Rewrite** — export RouteHelper only |
-| 3 | `test/navigation/RouteHelper.test.ts` | **Rewrite** — updated tests |
-| 4 | `examples/navigation/UsageExample.tsx` | **Rewrite** — simplified example |
-| 5 | `src/navigation/NavigationTypes.ts` | **Delete** |
-| 6 | `src/navigation/RouteGuard.tsx` | **Delete** |
-| 7 | `test/navigation/RouteGuard.test.tsx` | **Delete** |
+| #   | File                                   | Action                                         |
+| --- | -------------------------------------- | ---------------------------------------------- |
+| 1   | `src/navigation/RouteHelper.ts`        | **Rewrite** — plain string routes, fix reset() |
+| 2   | `src/navigation/index.ts`              | **Rewrite** — export RouteHelper only          |
+| 3   | `test/navigation/RouteHelper.test.ts`  | **Rewrite** — updated tests                    |
+| 4   | `examples/navigation/UsageExample.tsx` | **Rewrite** — simplified example               |
+| 5   | `src/navigation/NavigationTypes.ts`    | **Delete**                                     |
+| 6   | `src/navigation/RouteGuard.tsx`        | **Delete**                                     |
+| 7   | `test/navigation/RouteGuard.test.tsx`  | **Delete**                                     |
 
 **Total**: 4 files kept, 3 files deleted

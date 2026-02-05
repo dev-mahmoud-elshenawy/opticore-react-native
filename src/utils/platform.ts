@@ -7,14 +7,14 @@ import DeviceInfo from 'react-native-device-info';
  * @param text - Text to copy
  */
 export function copyToClipboard(text: string): void {
-    Clipboard.setString(text);
+  Clipboard.setString(text);
 }
 
 /**
  * Retrieves text from the system clipboard.
  */
 export async function getClipboard(): Promise<string> {
-    return await Clipboard.getString();
+  return await Clipboard.getString();
 }
 
 /**
@@ -22,7 +22,7 @@ export async function getClipboard(): Promise<string> {
  * @returns Width in pixels
  */
 export function getDeviceWidth(): number {
-    return Dimensions.get('window').width;
+  return Dimensions.get('window').width;
 }
 
 /**
@@ -30,7 +30,7 @@ export function getDeviceWidth(): number {
  * @returns Height in pixels
  */
 export function getDeviceHeight(): number {
-    return Dimensions.get('window').height;
+  return Dimensions.get('window').height;
 }
 
 /**
@@ -38,26 +38,26 @@ export function getDeviceHeight(): number {
  * @returns OS version string
  */
 export function getOSVersion(): string {
-    return DeviceInfo.getSystemVersion();
+  return DeviceInfo.getSystemVersion();
 }
 
 /**
  * Checks if current platform is iOS.
  */
 export function isIOS(): boolean {
-    return Platform.OS === 'ios';
+  return Platform.OS === 'ios';
 }
 
 /**
  * Checks if current platform is Android.
  */
 export function isAndroid(): boolean {
-    return Platform.OS === 'android';
+  return Platform.OS === 'android';
 }
 
 /**
  * Checks if current platform is Web.
  */
 export function isWeb(): boolean {
-    return Platform.OS === 'web';
+  return Platform.OS === 'web';
 }

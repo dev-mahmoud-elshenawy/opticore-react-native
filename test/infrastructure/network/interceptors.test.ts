@@ -126,6 +126,81 @@ describe('Interceptors', () => {
         expect((e as ApiError).message).toBe('Invalid request configuration');
       }
     });
+
+    it('should create ApiError that extends RenderError', async () => {
+      const { RenderError } = await import('../../../src/error/RenderError');
+      const { BaseError } = await import('../../../src/error/BaseError');
+
+      const error = {
+        isAxiosError: true,
+        response: { status: 404, data: { message: 'Not Found' } },
+        config: { url: '/users/999' },
+        message: 'Request failed',
+      };
+
+      try {
+        await errorInterceptor.onError(error);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ApiError);
+        expect(e).toBeInstanceOf(RenderError);
+        expect(e).toBeInstanceOf(BaseError);
+        expect((e as ApiError).userMessage).toBeDefined();
+        expect((e as ApiError).severity).toBeDefined();
+      }
+    });
+
+    it('should set correct severity for different status codes', async () => {
+      const testCases = [
+        { status: -1, expectedSeverity: 'critical' }, // Network failure
+        { status: 401, expectedSeverity: 'warning' }, // Auth
+        { status: 403, expectedSeverity: 'warning' }, // Auth
+        { status: 404, expectedSeverity: 'error' }, // Client error
+        { status: 500, expectedSeverity: 'critical' }, // Server error
+      ];
+
+      for (const { status, expectedSeverity } of testCases) {
+        const error = {
+          isAxiosError: true,
+          response: { status, data: { message: 'Error' } },
+          config: { url: '/test' },
+          message: 'Error',
+        };
+
+        try {
+          await errorInterceptor.onError(error);
+        } catch (e) {
+          expect((e as ApiError).severity).toBe(expectedSeverity);
+        }
+      }
+    });
+
+    it('should set isActionable for client errors', async () => {
+      const clientError = {
+        isAxiosError: true,
+        response: { status: 400, data: { message: 'Bad Request' } },
+        config: { url: '/test' },
+        message: 'Error',
+      };
+
+      const serverError = {
+        isAxiosError: true,
+        response: { status: 500, data: { message: 'Server Error' } },
+        config: { url: '/test' },
+        message: 'Error',
+      };
+
+      try {
+        await errorInterceptor.onError(clientError);
+      } catch (e) {
+        expect((e as ApiError).isActionable).toBe(true);
+      }
+
+      try {
+        await errorInterceptor.onError(serverError);
+      } catch (e) {
+        expect((e as ApiError).isActionable).toBe(false);
+      }
+    });
   });
 
   describe('LoggingInterceptor', () => {

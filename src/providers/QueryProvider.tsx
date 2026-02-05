@@ -1,25 +1,21 @@
 import React from 'react';
-import {
-    QueryClient,
-    QueryClientProvider,
-    QueryClientConfig,
-} from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, QueryClientConfig } from '@tanstack/react-query';
 
 /**
  * Configuration options for QueryProvider
  */
-export interface QueryProviderConfig extends QueryClientConfig { }
+export interface QueryProviderConfig extends QueryClientConfig {}
 
 /**
  * Props for QueryProvider component
  */
 export interface QueryProviderProps {
-    /** Child components to render within the provider */
-    children: React.ReactNode;
-    /** Optional custom QueryClient configuration */
-    config?: QueryProviderConfig;
-    /** Optional QueryClient instance (for testing or advanced use cases) */
-    queryClient?: QueryClient;
+  /** Child components to render within the provider */
+  children: React.ReactNode;
+  /** Optional custom QueryClient configuration */
+  config?: QueryProviderConfig;
+  /** Optional QueryClient instance (for testing or advanced use cases) */
+  queryClient?: QueryClient;
 }
 
 /**
@@ -31,28 +27,28 @@ export interface QueryProviderProps {
  * - Error handling: Console warnings in development
  */
 const defaultConfig: QueryClientConfig = {
-    defaultOptions: {
-        queries: {
-            // Consider data fresh for 5 minutes
-            staleTime: 5 * 60 * 1000,
-            // Keep unused data in cache for 10 minutes
-            gcTime: 10 * 60 * 1000,
-            // Retry failed queries 3 times
-            retry: 3,
-            // Exponential backoff for retries
-            retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-            // Refetch on window focus in production
-            refetchOnWindowFocus: __DEV__ ? false : true,
-            // Refetch on reconnect
-            refetchOnReconnect: true,
-        },
-        mutations: {
-            // Retry mutations once
-            retry: 1,
-            // Exponential backoff for mutation retries
-            retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-        },
+  defaultOptions: {
+    queries: {
+      // Consider data fresh for 5 minutes
+      staleTime: 5 * 60 * 1000,
+      // Keep unused data in cache for 10 minutes
+      gcTime: 10 * 60 * 1000,
+      // Retry failed queries 3 times
+      retry: 3,
+      // Exponential backoff for retries
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      // Refetch on window focus in production
+      refetchOnWindowFocus: __DEV__ ? false : true,
+      // Refetch on reconnect
+      refetchOnReconnect: true,
     },
+    mutations: {
+      // Retry mutations once
+      retry: 1,
+      // Exponential backoff for mutation retries
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    },
+  },
 };
 
 /**
@@ -88,36 +84,36 @@ const defaultConfig: QueryClientConfig = {
  * ```
  */
 export const QueryProvider: React.FC<QueryProviderProps> = ({
-    children,
-    config,
-    queryClient: customQueryClient,
+  children,
+  config,
+  queryClient: customQueryClient,
 }) => {
-    // Use provided QueryClient or create a new one with merged config
-    const queryClient = React.useMemo(() => {
-        if (customQueryClient) {
-            return customQueryClient;
-        }
+  // Use provided QueryClient or create a new one with merged config
+  const queryClient = React.useMemo(() => {
+    if (customQueryClient) {
+      return customQueryClient;
+    }
 
-        // Merge default config with custom config
-        const mergedConfig: QueryClientConfig = {
-            ...defaultConfig,
-            ...config,
-            defaultOptions: {
-                queries: {
-                    ...defaultConfig.defaultOptions?.queries,
-                    ...config?.defaultOptions?.queries,
-                },
-                mutations: {
-                    ...defaultConfig.defaultOptions?.mutations,
-                    ...config?.defaultOptions?.mutations,
-                },
-            },
-        };
+    // Merge default config with custom config
+    const mergedConfig: QueryClientConfig = {
+      ...defaultConfig,
+      ...config,
+      defaultOptions: {
+        queries: {
+          ...defaultConfig.defaultOptions?.queries,
+          ...config?.defaultOptions?.queries,
+        },
+        mutations: {
+          ...defaultConfig.defaultOptions?.mutations,
+          ...config?.defaultOptions?.mutations,
+        },
+      },
+    };
 
-        return new QueryClient(mergedConfig);
-    }, [config, customQueryClient]);
+    return new QueryClient(mergedConfig);
+  }, [config, customQueryClient]);
 
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 /**

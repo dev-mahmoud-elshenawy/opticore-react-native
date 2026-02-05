@@ -5,9 +5,11 @@ This directory contains working examples demonstrating how to use the OptiCore i
 ## Available Examples
 
 ### 1. Complete Setup
+
 **File:** `complete-setup.ts`
 
 Demonstrates complete infrastructure setup with all 5 modules working together:
+
 - ✅ ApiClient configuration with auth
 - ✅ StorageManager (secure + local)
 - ✅ Logger configuration
@@ -15,6 +17,7 @@ Demonstrates complete infrastructure setup with all 5 modules working together:
 - ✅ LifecycleManager integration
 
 **Features shown:**
+
 - Login/logout flow
 - Token storage and refresh
 - Offline data handling
@@ -41,6 +44,7 @@ npx ts-node examples/infrastructure/complete-setup.ts
 ```
 
 **Expected output:**
+
 ```
 ========================================
   INFRASTRUCTURE SETUP
@@ -123,9 +127,11 @@ Refer to `src/infrastructure/README.md` for detailed examples of each module:
 ## Best Practices
 
 ### 1. Initialize Early
+
 Setup infrastructure modules as early as possible in your app lifecycle, typically in `App.tsx` or your root component.
 
 ### 2. Production Configuration
+
 Always configure the Logger for production:
 
 ```typescript
@@ -137,6 +143,7 @@ logger.configure({
 ```
 
 ### 3. Error Handling
+
 Always handle errors from API calls and storage operations:
 
 ```typescript
@@ -151,13 +158,14 @@ try {
 ```
 
 ### 4. Memory Management
+
 Clean up managers when components unmount:
 
 ```typescript
 useEffect(() => {
   const lifecycle = LifecycleManager.getInstance();
   const onActive = () => console.log('Active');
-  
+
   lifecycle.addObserver(onActive);
 
   return () => {
@@ -167,6 +175,7 @@ useEffect(() => {
 ```
 
 ### 5. Offline-First
+
 Always implement offline-first strategies:
 
 ```typescript
@@ -197,7 +206,9 @@ npm test -- test/performance/infrastructure.performance.test.ts
 ## Troubleshooting
 
 ### Module Not Found
+
 Ensure you're importing from the correct path:
+
 ```typescript
 // Correct
 import { ApiClient } from '@opticore/react-native/infrastructure';
@@ -207,17 +218,21 @@ import { ApiClient } from '../../src/infrastructure';
 ```
 
 ### Axios Errors
+
 If you see axios-related errors, ensure axios is installed:
+
 ```bash
 npm install axios
 ```
 
 ### Storage Errors on Web
+
 SecureStorage falls back to AsyncStorage on web. For sensitive data, only use SecureStorage on native platforms.
 
 ## Support
 
 For more information, see:
+
 - Main README: `../../README.md`
 - Infrastructure README: `../../src/infrastructure/README.md`
 - Specification: `../../.specify/specs/002-infrastructure-layer/`

@@ -16,13 +16,13 @@ import MainNavigator from './navigation/MainNavigator';
  * before any navigation or other providers.
  */
 export default function App() {
-    return (
-        <CoreProvider>
-            <NavigationContainer>
-                <MainNavigator />
-            </NavigationContainer>
-        </CoreProvider>
-    );
+  return (
+    <CoreProvider>
+      <NavigationContainer>
+        <MainNavigator />
+      </NavigationContainer>
+    </CoreProvider>
+  );
 }
 
 /**
@@ -31,31 +31,31 @@ export default function App() {
  * You can customize the provider configuration based on your needs.
  */
 export function AppWithCustomConfig() {
-    return (
-        <CoreProvider
-            config={{
-                // Customize React Query behavior
-                query: {
-                    queryClientConfig: {
-                        defaultOptions: {
-                            queries: {
-                                staleTime: 10 * 60 * 1000, // 10 minutes
-                                retry: 5,
-                            },
-                        },
-                    },
-                },
-                // Toggle features
-                enableDevTools: __DEV__,
-                enableConnectivity: true,
-                enableLifecycle: true,
-            }}
-        >
-            <NavigationContainer>
-                <MainNavigator />
-            </NavigationContainer>
-        </CoreProvider>
-    );
+  return (
+    <CoreProvider
+      config={{
+        // Customize React Query behavior
+        query: {
+          queryClientConfig: {
+            defaultOptions: {
+              queries: {
+                staleTime: 10 * 60 * 1000, // 10 minutes
+                retry: 5,
+              },
+            },
+          },
+        },
+        // Toggle features
+        enableDevTools: __DEV__,
+        enableConnectivity: true,
+        enableLifecycle: true,
+      }}
+    >
+      <NavigationContainer>
+        <MainNavigator />
+      </NavigationContainer>
+    </CoreProvider>
+  );
 }
 
 /**
@@ -66,9 +66,9 @@ export function AppWithCustomConfig() {
 import { Slot } from 'expo-router';
 
 export function ExpoRouterApp() {
-    return (
-        <CoreProvider>
-            <Slot />
-        </CoreProvider>
-    );
+  return (
+    <CoreProvider>
+      <Slot />
+    </CoreProvider>
+  );
 }

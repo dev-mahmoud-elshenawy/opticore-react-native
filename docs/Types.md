@@ -29,7 +29,7 @@ import type { LoadingState, AsyncValue } from 'opticore-react-native';
 
 // Loading State Pattern
 const [userState, setUserState] = useState<LoadingState<User>>({
-  status: 'idle'
+  status: 'idle',
 });
 
 // Async Value Discriminated Union
@@ -49,8 +49,8 @@ import type { RouteParams } from 'opticore-react-native';
 // Extend RouteParams to define your app's routes
 declare module 'opticore-react-native' {
   interface RouteParams {
-    'home': undefined;
-    'profile': { userId: string };
+    home: undefined;
+    profile: { userId: string };
   }
 }
 ```
@@ -64,7 +64,7 @@ import type { StorageConfig, StorageKeys } from 'opticore-react-native';
 
 const config: StorageConfig = {
   provider: 'secure-store',
-  encrypted: true
+  encrypted: true,
 };
 ```
 
@@ -78,6 +78,6 @@ import type { ErrorState, ErrorSeverity } from 'opticore-react-native';
 const error: ErrorState = {
   message: 'Network failed',
   timestamp: Date.now(),
-  recoverable: true
+  recoverable: true,
 };
 ```

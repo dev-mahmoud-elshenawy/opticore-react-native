@@ -34,32 +34,35 @@ coreSetup.init({
   onError: (error) => {
     // Handle global errors (e.g., send to crash reporting)
     console.error('OptiCore Global Error:', error);
-  }
+  },
 });
 ```
 
 ## Configuration Options
 
 ### `api` (Required)
-| Property | Type | Description |
-|----------|------|-------------|
-| `baseURL` | `string` | Base URL for all API requests |
-| `timeout` | `number` | Request timeout in ms (default: 30000) |
-| `headers` | `object` | Default headers for all requests |
-| `getAuthToken` | `() => Promise<string\|null>` | Callback to retrieve auth token |
+
+| Property       | Type                          | Description                            |
+| -------------- | ----------------------------- | -------------------------------------- |
+| `baseURL`      | `string`                      | Base URL for all API requests          |
+| `timeout`      | `number`                      | Request timeout in ms (default: 30000) |
+| `headers`      | `object`                      | Default headers for all requests       |
+| `getAuthToken` | `() => Promise<string\|null>` | Callback to retrieve auth token        |
 
 ### `logger` (Optional)
-| Property | Type | Description |
-|----------|------|-------------|
-| `level` | `LogLevel` | Minimum log level (DEBUG, INFO, WARN, ERROR) |
-| `disabled` | `boolean` | Disable all logging |
+
+| Property   | Type       | Description                                  |
+| ---------- | ---------- | -------------------------------------------- |
+| `level`    | `LogLevel` | Minimum log level (DEBUG, INFO, WARN, ERROR) |
+| `disabled` | `boolean`  | Disable all logging                          |
 
 ### `features` (Optional)
-| Property | Type | Description |
-|----------|------|-------------|
-| `debugMode` | `boolean` | If true, forces Logger to DEBUG level |
-| `maintenanceMode` | `boolean` | Toggle maintenance state |
-| `offlineMode` | `boolean` | Toggle offline state |
+
+| Property          | Type      | Description                           |
+| ----------------- | --------- | ------------------------------------- |
+| `debugMode`       | `boolean` | If true, forces Logger to DEBUG level |
+| `maintenanceMode` | `boolean` | Toggle maintenance state              |
+| `offlineMode`     | `boolean` | Toggle offline state                  |
 
 ## Runtime Access
 

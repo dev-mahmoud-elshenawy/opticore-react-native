@@ -10,6 +10,7 @@
 ## Overview
 
 This plan addresses 5 critical gaps identified in architecture review:
+
 1. **Export Gap** - State and hooks not exported (BLOCKING)
 2. **Documentation Gap** - 5 specs undocumented (BLOCKING)
 3. **Configuration Clarity** - Dual pattern needs docs
@@ -25,6 +26,7 @@ This plan addresses 5 critical gaps identified in architecture review:
 **Problem**: State management and hooks are implemented but not exported from main package entry point.
 
 **Solution**:
+
 ```typescript
 // src/index.ts - ADD these lines:
 export * from './state';
@@ -32,6 +34,7 @@ export * from './hooks';
 ```
 
 **Package.json subpath exports**:
+
 ```json
 {
   "exports": {
@@ -52,6 +55,7 @@ export * from './hooks';
 ```
 
 **Verification**:
+
 ```typescript
 // Test these imports work:
 import { AsyncState, BaseStore } from 'opticore-react-native';
@@ -67,6 +71,7 @@ import { useDebounce as UD } from 'opticore-react-native/hooks';
 **Problem**: Version mismatch between React (18.3.1) and react-test-renderer (19.2.4)
 
 **Solution**: Upgrade to React 19 + React Native 0.83 + new testing library
+
 ```json
 // package.json devDependencies - UPGRADE
 {
@@ -85,12 +90,14 @@ import { useDebounce as UD } from 'opticore-react-native/hooks';
 ```
 
 **Why `test-renderer` instead of `react-test-renderer`?**
+
 - `test-renderer` is a modern, lightweight replacement for `react-test-renderer`
 - Specifically designed for React 19
 - Maintained by the same team as @testing-library/react-native
 - Smaller bundle size, better performance
 
 **Steps**:
+
 1. Update React, React Native, and type packages
 2. Replace react-test-renderer with test-renderer
 3. Upgrade @testing-library/react-native to beta (supports React 19)
@@ -107,6 +114,7 @@ import { useDebounce as UD } from 'opticore-react-native/hooks';
 **Solution**: Add detailed documentation for each spec using consistent template
 
 **Template Structure** (same as existing specs):
+
 ```markdown
 ### ✅ Spec NNN: Feature Name (COMPLETED)
 
@@ -115,19 +123,23 @@ import { useDebounce as UD } from 'opticore-react-native/hooks';
 **Completion Date**: YYYY-MM-DD
 
 **What Was Delivered**:
+
 - ✅ Feature 1 description
 - ✅ Feature 2 description
 
 **Key Files**:
+
 - [`src/module/File.ts`](src/module/File.ts) - Description
 
 **Quality Metrics**:
+
 - TypeScript: 0 errors ✓
 - Tests: XX/XX passing ✓
 - Coverage: XX% ✓
 ```
 
 **Specs to Document**:
+
 1. Spec 003: State Management Core
    - AsyncState pattern
    - BaseStore for Zustand
@@ -171,28 +183,36 @@ import { useDebounce as UD } from 'opticore-react-native/hooks';
 **Solution**: Add "Configuration Guide" section to CLAUDE.md
 
 **Content Structure**:
+
 ```markdown
 ## Configuration Guide
 
 ### Overview
+
 OptiCore provides two complementary configuration mechanisms:
+
 - **CoreSetup**: Infrastructure layer (API, Logger, Error Handling)
 - **CoreProvider**: React layer (Providers, State, Lifecycle)
 
 ### CoreSetup Usage
+
 [Detailed explanation with code examples]
 
 ### CoreProvider Usage
+
 [Detailed explanation with code examples]
 
 ### Recommended Pattern
+
 [Complete working example using both]
 
 ### Configuration Reference
+
 [Table of all config options]
 ```
 
 **Key Points to Document**:
+
 1. CoreSetup configures infrastructure BEFORE React
 2. CoreProvider wraps React component tree
 3. Both are optional but recommended together
@@ -206,6 +226,7 @@ OptiCore provides two complementary configuration mechanisms:
 **Problem**: ApiError extends native Error, not BaseError/RenderError
 
 **Current Implementation**:
+
 ```typescript
 // src/infrastructure/network/ApiError.ts
 export class ApiError extends Error {
@@ -213,7 +234,7 @@ export class ApiError extends Error {
     public status: number,
     message: string,
     public url: string,
-    public data?: unknown,
+    public data?: unknown
   ) {
     super(message);
     this.name = 'ApiError';
@@ -222,6 +243,7 @@ export class ApiError extends Error {
 ```
 
 **New Implementation**:
+
 ```typescript
 // src/infrastructure/network/ApiError.ts
 import { RenderError } from '../../error/RenderError';
@@ -232,7 +254,7 @@ export class ApiError extends RenderError {
     public status: number,
     message: string,
     public url: string,
-    public data?: unknown,
+    public data?: unknown
   ) {
     super(message, {
       code: `HTTP_${status}`,
@@ -263,18 +285,21 @@ function getSeverity(status: number): 'warning' | 'error' | 'critical' {
 ```
 
 **HTTP Status Classification**:
+
 - 4xx (Client Errors) → RenderError (show to user)
 - 5xx (Server Errors) → Should be NonRenderError? (debate)
   - Decision: Keep as RenderError with generic message
   - Rationale: User needs to know something failed even if not their fault
 
 **Files to Update**:
+
 - `src/infrastructure/network/ApiError.ts` - Extend RenderError
 - `src/infrastructure/network/interceptors/ErrorInterceptor.ts` - Verify still works
 - `test/infrastructure/network/ApiError.test.ts` - Update tests
 - `test/infrastructure/network/interceptors/ErrorInterceptor.test.ts` - Update tests
 
 **Backward Compatibility**:
+
 ```typescript
 // These should still work:
 catch (error) {
@@ -295,6 +320,7 @@ catch (error) {
 ## File Structure Changes
 
 ### Files to Modify
+
 ```
 src/
 ├── index.ts                                      # ADD state and hooks exports
@@ -314,6 +340,7 @@ test/
 ```
 
 ### No New Files Required
+
 All changes are updates to existing files.
 
 ---
@@ -321,6 +348,7 @@ All changes are updates to existing files.
 ## Testing Strategy
 
 ### 1. Unit Tests
+
 - **ApiError**: Test new inheritance hierarchy
   - `instanceof RenderError` should be true
   - `instanceof BaseError` should be true
@@ -334,7 +362,9 @@ All changes are updates to existing files.
   - Error metadata
 
 ### 2. Integration Tests
+
 - **Import Tests**: Verify all exports work
+
   ```typescript
   import { AsyncState, BaseStore } from 'opticore-react-native';
   import { useDebounce } from 'opticore-react-native';
@@ -352,7 +382,9 @@ All changes are updates to existing files.
   ```
 
 ### 3. Regression Tests
+
 Run full test suite to ensure no breaking changes:
+
 ```bash
 npm test          # All 264 tests should pass
 npm run type-check # Zero TypeScript errors
@@ -360,7 +392,9 @@ npm run lint      # Zero linting errors
 ```
 
 ### 4. Manual Testing
+
 Create test app to verify imports:
+
 ```typescript
 // test-app/App.tsx
 import { AsyncState, useDebounce, ApiError } from 'opticore-react-native';
@@ -374,9 +408,11 @@ import { BaseStore } from 'opticore-react-native/state';
 ## Migration Plan
 
 ### For Consuming Apps
+
 **No breaking changes** - all changes are additive or internal.
 
 Existing code continues to work:
+
 ```typescript
 // Still works
 catch (error) {
@@ -394,6 +430,7 @@ catch (error) {
 ```
 
 ### For Internal Code
+
 No migration needed - backward compatible.
 
 ---
@@ -403,6 +440,7 @@ No migration needed - backward compatible.
 If issues arise:
 
 ### Phase 1: Export Changes
+
 ```bash
 git revert <commit-hash>
 npm run build
@@ -410,16 +448,20 @@ npm publish
 ```
 
 ### Phase 2: Test Environment
+
 ```bash
 npm install -D react-test-renderer@19.2.4
 npm test
 ```
 
 ### Phase 3: Documentation
+
 Simply revert CLAUDE.md to previous version - no runtime impact.
 
 ### Phase 4: ApiError Refactor
+
 Most complex to rollback. Keep feature flag:
+
 ```typescript
 const USE_NEW_ERROR_HIERARCHY = false;
 
@@ -434,19 +476,20 @@ if (USE_NEW_ERROR_HIERARCHY) {
 
 ## Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Import breaking existing code | Low | High | All exports are additive. Test thoroughly. |
-| ApiError refactor breaking infrastructure | Medium | High | Comprehensive test suite. Feature flag if needed. |
-| react-test-renderer downgrade causing issues | Low | Medium | Test all hooks after downgrade. |
-| Documentation taking too long | Low | Low | Use templates. Estimated 2-3 hours. |
-| Performance regression from new exports | Very Low | Low | Tree-shaking handles this. Monitor bundle size. |
+| Risk                                         | Probability | Impact | Mitigation                                        |
+| -------------------------------------------- | ----------- | ------ | ------------------------------------------------- |
+| Import breaking existing code                | Low         | High   | All exports are additive. Test thoroughly.        |
+| ApiError refactor breaking infrastructure    | Medium      | High   | Comprehensive test suite. Feature flag if needed. |
+| react-test-renderer downgrade causing issues | Low         | Medium | Test all hooks after downgrade.                   |
+| Documentation taking too long                | Low         | Low    | Use templates. Estimated 2-3 hours.               |
+| Performance regression from new exports      | Very Low    | Low    | Tree-shaking handles this. Monitor bundle size.   |
 
 ---
 
 ## Success Metrics
 
 ### Before Implementation
+
 - ❌ State/hooks not importable from main package
 - ❌ 12 tests failing (environment issue)
 - ❌ 5 specs undocumented
@@ -454,6 +497,7 @@ if (USE_NEW_ERROR_HIERARCHY) {
 - ⚠️ ApiError not consistent with error hierarchy
 
 ### After Implementation
+
 - ✅ All exports work from main package
 - ✅ 264/264 tests passing
 - ✅ 10/10 specs documented
@@ -461,6 +505,7 @@ if (USE_NEW_ERROR_HIERARCHY) {
 - ✅ Consistent error hierarchy
 
 ### Quality Gates
+
 - ✅ TypeScript: 0 errors
 - ✅ Tests: 264/264 passing
 - ✅ Coverage: >80% all categories
@@ -473,20 +518,25 @@ if (USE_NEW_ERROR_HIERARCHY) {
 ## Implementation Phases
 
 ### Phase 1: Critical Blockers (30 minutes)
+
 **Priority**: P0 - CRITICAL
+
 1. Add exports to `src/index.ts`
 2. Update `package.json` exports
 3. Run build and verify
 4. Test imports manually
 
 **Exit Criteria**:
+
 ```typescript
 import { AsyncState, useDebounce } from 'opticore-react-native';
 // ✅ Works without error
 ```
 
 ### Phase 2: Version Upgrades (20 minutes)
+
 **Priority**: P0 - CRITICAL
+
 1. Upgrade React to 19.2.4
 2. Upgrade React Native to 0.83.1
 3. Update @types/react to 19.1.1
@@ -498,6 +548,7 @@ import { AsyncState, useDebounce } from 'opticore-react-native';
 9. Run npm test
 
 **Exit Criteria**:
+
 ```
 Test Suites: 47 passed, 47 total
 Tests:       264 passed, 264 total
@@ -508,7 +559,9 @@ test-renderer: 0.14.0 ✅
 ```
 
 ### Phase 3: Documentation (2-3 hours)
+
 **Priority**: P1 - HIGH
+
 1. Document Spec 003 (State Management)
 2. Document Spec 004 (Error Classification)
 3. Document Spec 007 (Utility Functions)
@@ -518,12 +571,15 @@ test-renderer: 0.14.0 ✅
 7. Update "Last Updated" date
 
 **Exit Criteria**:
+
 - CLAUDE.md lists 10 completed specs (not 5)
 - Configuration Guide section exists
 - All specs follow consistent template
 
 ### Phase 4: Error Consistency (1-2 hours)
+
 **Priority**: P2 - MEDIUM
+
 1. Refactor ApiError to extend RenderError
 2. Update ErrorInterceptor if needed
 3. Update all tests
@@ -531,6 +587,7 @@ test-renderer: 0.14.0 ✅
 5. Verify backward compatibility
 
 **Exit Criteria**:
+
 ```typescript
 const error = new ApiError(404, 'Not Found', '/api/users');
 console.assert(error instanceof RenderError);
@@ -542,19 +599,19 @@ console.assert(error instanceof BaseError);
 
 ## Estimated Timeline
 
-| Phase | Task | Time | Cumulative |
-|-------|------|------|------------|
-| 1 | Export gap resolution | 30 min | 30 min |
-| 2 | Upgrade to React 19 + React Native 0.83 | 20 min | 50 min |
-| 3 | Document Spec 003 | 30 min | 1h 20min |
-| 3 | Document Spec 004 | 30 min | 1h 50min |
-| 3 | Document Spec 007 | 30 min | 2h 20min |
-| 3 | Document Spec 009 | 20 min | 2h 40min |
-| 3 | Document Spec 010 | 20 min | 3h |
-| 3 | Configuration Guide | 30 min | 3h 30min |
-| 4 | Refactor ApiError | 1h | 4h 30min |
-| 4 | Update tests | 30 min | 5h |
-| 4 | Verification & testing | 30 min | 5h 30min |
+| Phase | Task                                    | Time   | Cumulative |
+| ----- | --------------------------------------- | ------ | ---------- |
+| 1     | Export gap resolution                   | 30 min | 30 min     |
+| 2     | Upgrade to React 19 + React Native 0.83 | 20 min | 50 min     |
+| 3     | Document Spec 003                       | 30 min | 1h 20min   |
+| 3     | Document Spec 004                       | 30 min | 1h 50min   |
+| 3     | Document Spec 007                       | 30 min | 2h 20min   |
+| 3     | Document Spec 009                       | 20 min | 2h 40min   |
+| 3     | Document Spec 010                       | 20 min | 3h         |
+| 3     | Configuration Guide                     | 30 min | 3h 30min   |
+| 4     | Refactor ApiError                       | 1h     | 4h 30min   |
+| 4     | Update tests                            | 30 min | 5h         |
+| 4     | Verification & testing                  | 30 min | 5h 30min   |
 
 **Total Estimated Time**: 5.5-6 hours
 
