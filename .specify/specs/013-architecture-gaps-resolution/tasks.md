@@ -12,12 +12,12 @@
 ### Phase 1: Critical Export Gap (30 minutes) - P0
 
 #### Task 1.1: Update Main Package Exports
-- [ ] Open `src/index.ts`
-- [ ] Add line: `export * from './state';` after utils exports
-- [ ] Add line: `export * from './hooks';` after state exports
-- [ ] Verify alphabetical order of exports
-- [ ] Add JSDoc comment explaining new exports
-- [ ] Save file
+- [x] Open `src/index.ts`
+- [x] Add line: `export * from './state';` after utils exports
+- [x] Add line: `export * from './hooks';` after state exports
+- [x] Verify alphabetical order of exports
+- [x] Add JSDoc comment explaining new exports
+- [x] Save file
 
 **Expected Result**:
 ```typescript
@@ -31,9 +31,9 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 1.2: Add Subpath Exports to package.json
-- [ ] Open `package.json`
-- [ ] Find `exports` field
-- [ ] Add state subpath export:
+- [x] Open `package.json`
+- [x] Find `exports` field
+- [x] Add state subpath export:
   ```json
   "./state": {
     "types": "./dist/state/index.d.ts",
@@ -41,7 +41,7 @@ export * from './hooks';    // ✅ NEW
     "require": "./dist/state/index.js"
   }
   ```
-- [ ] Add hooks subpath export:
+- [x] Add hooks subpath export:
   ```json
   "./hooks": {
     "types": "./dist/hooks/index.d.ts",
@@ -49,8 +49,8 @@ export * from './hooks';    // ✅ NEW
     "require": "./dist/hooks/index.js"
   }
   ```
-- [ ] Verify JSON syntax is valid
-- [ ] Save file
+- [x] Verify JSON syntax is valid
+- [x] Save file
 
 **Expected Result**: package.json exports field now includes 4 subpaths (., /utils, /state, /hooks)
 
@@ -59,12 +59,13 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 1.3: Build Package and Verify Exports
-- [ ] Run `npm run build`
-- [ ] Verify `dist/state/index.js` exists
-- [ ] Verify `dist/state/index.d.ts` exists
-- [ ] Verify `dist/hooks/index.js` exists
-- [ ] Verify `dist/hooks/index.d.ts` exists
-- [ ] Check build output for errors
+- [x] Run `npm run build`
+- [x] Verify `dist/state/index.js` exists
+- [x] Verify `dist/state/index.d.ts` exists
+- [x] Verify `dist/hooks/index.js` exists
+- [x] Verify `dist/hooks/index.d.ts` exists
+- [x] Check build output for errors
+- [x] Fix AsyncState naming collision (renamed hook type to UseAsyncStateReturn)
 
 **Expected Result**: Build succeeds, all export files present in dist/
 

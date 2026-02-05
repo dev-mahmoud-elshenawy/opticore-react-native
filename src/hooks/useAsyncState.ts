@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 
-export type AsyncState<T> = {
+export type UseAsyncStateReturn<T> = {
     isLoading: boolean;
     data: T | null;
     error: Error | null;
@@ -15,7 +15,7 @@ export type AsyncState<T> = {
  * Automatically handles component unmounting to prevent memory leaks.
  *
  * @param initialData - Initial data value (optional)
- * @returns AsyncState object containing:
+ * @returns UseAsyncStateReturn object containing:
  * - isLoading: boolean
  * - data: T | null
  * - error: Error | null
@@ -31,7 +31,7 @@ export type AsyncState<T> = {
  *   run(fetchUser(id));
  * }, [id]);
  */
-export function useAsyncState<T>(initialData: T | null = null): AsyncState<T> {
+export function useAsyncState<T>(initialData: T | null = null): UseAsyncStateReturn<T> {
     const [data, setData] = useState<T | null>(initialData);
     const [error, setError] = useState<Error | null>(null);
     const [isLoading, setIsLoading] = useState(false);

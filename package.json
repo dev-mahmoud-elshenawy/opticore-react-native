@@ -2,8 +2,8 @@
   "name": "opticore-react-native",
   "version": "1.0.0",
   "description": "Pure infrastructure library for React Native/Expo applications",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "files": [
     "dist",
     "README.md",
@@ -11,14 +11,24 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js"
     },
     "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.js",
-      "require": "./dist/utils/index.js"
+      "types": "./dist/src/utils/index.d.ts",
+      "import": "./dist/src/utils/index.js",
+      "require": "./dist/src/utils/index.js"
+    },
+    "./state": {
+      "types": "./dist/src/state/index.d.ts",
+      "import": "./dist/src/state/index.js",
+      "require": "./dist/src/state/index.js"
+    },
+    "./hooks": {
+      "types": "./dist/src/hooks/index.d.ts",
+      "import": "./dist/src/hooks/index.js",
+      "require": "./dist/src/hooks/index.js"
     }
   },
   "scripts": {
