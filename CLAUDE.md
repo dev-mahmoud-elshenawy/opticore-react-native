@@ -502,6 +502,28 @@ await waitFor(() => expect(getByText('John')).toBeTruthy());
 ```
 
 **Full Documentation**: See [`docs/Testing.md`](docs/Testing.md)
+
+### Documentation & Examples (Spec 012)
+
+**Core Documentation**:
+- [`README.md`](README.md) - Quick start guide, features, installation
+- [`docs/Architecture.md`](docs/Architecture.md) - System architecture, design patterns, data flow
+- [`docs/Migration.md`](docs/Migration.md) - Migration guide from Redux, MobX, Axios
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) - Development workflow, coding standards, PR process
+- [`CHANGELOG.md`](CHANGELOG.md) - Version history (v1.0.0)
+
+**Existing Documentation**:
+- [`docs/Configuration.md`](docs/Configuration.md) - CoreSetup configuration (Spec 010)
+- [`docs/Testing.md`](docs/Testing.md) - Testing infrastructure (Spec 011)
+- [`docs/Types.md`](docs/Types.md) - TypeScript type definitions (Spec 009)
+
+**Developer Experience**:
+- Comprehensive README enables integration in <15 minutes
+- Architecture docs explain system design with Mermaid diagrams
+- Migration guides cover common migration scenarios
+- Contributing guide includes Speckit workflow
+
+
 **Testing Approach**:
 
 - Unit tests for QueryProvider configuration and behavior

@@ -1,0 +1,346 @@
+# Migration Guide
+
+## Migrating to opticore-react-native
+
+This guide helps you migrate from other solutions to opticore.
+
+## Table of Contents
+
+- [From Vanilla React Native](#from-vanilla-react-native)
+- [From Redux](#from-redux)
+- [From MobX](#from-mobx)
+- [From Axios Directly](#from-axios-directly)
+- [From Custom Hooks](#from-custom-hooks)
+
+---
+
+## From Vanilla React Native
+
+### Before: Direct API Calls
+
+```typescript
+// ❌ Old approach
+const [data, setData] = useState(null);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState(null);
+
+useEffect(() => {
+  setLoading(true);
+  fetch('https://api.example.com/users')
+    .then(res => res.json())
+    .then(data => setData(data))
+    .catch(err => setError(err))
+    .finally(() => setLoading(false));
+}, []);
+```
+
+### After: useAsyncState
+
+```typescript
+// ✅ New approach
+import { useAsyncState } from 'opticore-react-native/hooks';
+import { ApiClient } from 'opticore-react-native';
+
+const fetchUsers = () => ApiClient.getInstance().get('/users');
+
+function MyComponent() {
+  const { data, loading, error, execute } = useAsyncState(fetchUsers);
+  
+  useEffect(() => {
+    execute();
+  }, []);
+  
+  // Automatic error handling, loading states, etc.
+}
+```
+
+**Benefits**:
+- Automatic error handling
+- Loading state management
+- Error classification
+- Retry logic built-in
+
+---
+
+## From Redux
+
+### Before: Redux Store
+
+```typescript
+// ❌ Old Redux approach
+// actions/users.js
+export const fetchUsers = () => async (dispatch) => {
+  dispatch({ type: 'FETCH_USERS_REQUEST' });
+  try {
+    const response = await fetch('/users');
+    const data = await response.json();
+    dispatch({ type: 'FETCH_USERS_SUCCESS', payload: data });
+  } catch (error) {
+    dispatch({ type: 'FETCH_USERS_FAILURE', error });
+  }
+};
+
+// reducers/users.js
+const initialState = { data: null, loading: false, error: null };
+
+export default function usersReducer(state = initialState, action) {
+  switch (action.type) {
+    case 'FETCH_USERS_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_USERS_SUCCESS':
+      return { data: action.payload, loading: false, error: null };
+    case 'FETCH_USERS_FAILURE':
+      return { ...state, loading: false, error: action.error };
+    default:
+      return state;
+  }
+}
+```
+
+### After: Zustand Store
+
+```typescript
+// ✅ New Zustand approach
+import { create } from 'zustand';
+import { ApiClient } from 'opticore-react-native';
+
+interface UserState {
+  users: User[];
+  loading: boolean;
+  error: Error | null;
+  fetchUsers: () => Promise<void>;
+}
+
+export const useUserStore = create<UserState>((set) => ({
+  users: [],
+  loading: false,
+  error: null,
+  
+  fetchUsers: async () => {
+    set({ loading: true });
+    try {
+      const response = await ApiClient.getInstance().get('/users');
+      set({ users: response.data, loading: false, error: null });
+    } catch (error) {
+      set({ loading: false, error: error as Error });
+    }
+  },
+}));
+
+// Usage
+function MyComponent() {
+  const { users, loading, fetchUsers } = useUserStore();
+  
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+}
+```
+
+**Benefits**:
+- Less boilerplate (no actions, reducers, types)
+- Better TypeScript support
+- Simpler API
+- Smaller bundle size
+
+**Migration Steps**:
+1. Replace Redux store with Zustand stores
+2. Convert actions to store methods
+3. Remove action types, reducers
+4. Update components to use Zustand hooks
+5. Remove Redux dependencies
+
+---
+
+## From MobX
+
+### Before: MobX Store
+
+```typescript
+// ❌ Old MobX approach
+import { makeObservable, observable, action } from 'mobx';
+
+class UserStore {
+  users = [];
+  loading = false;
+  error = null;
+
+  constructor() {
+    makeObservable(this, {
+      users: observable,
+      loading: observable,
+      error: observable,
+      fetchUsers: action,
+    });
+  }
+
+  async fetchUsers() {
+    this.loading = true;
+    try {
+      const response = await fetch('/users');
+      this.users = await response.json();
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loading = false;
+    }
+  }
+}
+```
+
+### After: Zustand Store
+
+```typescript
+// ✅ New Zustand approach
+import { create } from 'zustand';
+
+export const useUserStore = create((set) => ({
+  users: [],
+  loading: false,
+  error: null,
+  
+  fetchUsers: async () => {
+    set({ loading: true });
+    try {
+      const response = await ApiClient.getInstance().get('/users');
+      set({ users: response.data, loading: false });
+    } catch (error) {
+      set({ error, loading: false });
+    }
+  },
+}));
+```
+
+**Migration Steps**:
+1. Convert MobX stores to Zustand
+2. Remove `makeObservable`, decorators
+3. Use functional state updates
+4. Update components (observer → Zustand hook)
+
+---
+
+## From Axios Directly
+
+### Before: Custom Axios Instance
+
+```typescript
+// ❌ Old approach
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'https://api.example.com',
+  timeout: 10000,
+});
+
+// Manual interceptors
+api.interceptors.request.use((config) => {
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Manual error handling
+    return Promise.reject(error);
+  }
+);
+```
+
+### After: ApiClient
+
+```typescript
+// ✅ New approach
+import { CoreSetup, ApiClient } from 'opticore-react-native';
+
+CoreSetup.initialize({
+  apiBaseURL: 'https://api.example.com',
+  apiTimeout: 10000,
+});
+
+const apiClient = ApiClient.getInstance();
+
+// Auth, logging, error handling already configured!
+const response = await apiClient.get('/users');
+```
+
+**Benefits**:
+- Built-in auth interceptor with token refresh
+- Automatic error classification
+- Request/response logging
+- Retry logic
+- TypeScript support
+
+**Migration Steps**:
+1. Replace axios instance with ApiClient
+2. Move configuration to CoreSetup
+3. Remove manual interceptors
+4. Update API calls to use ApiClient methods
+
+---
+
+## From Custom Hooks
+
+### Before: Custom useDebounce
+
+```typescript
+// ❌ Old custom hook
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+```
+
+### After: Built-in useDebounce
+
+```typescript
+// ✅ Use built-in hook
+import { useDebounce } from 'opticore-react-native/hooks';
+
+function SearchComponent() {
+  const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 500);
+  
+  // Use debouncedQuery for API calls
+}
+```
+
+**Available Built-in Hooks**:
+- `useDebounce` - Debounced values
+- `useThrottle` - Throttled callbacks
+- `useAsyncState` - Async operation state
+- `useConnectivity` - Network status
+- `useKeyboard` - Keyboard state
+- `useOrientation` - Device orientation
+- `useAppState` - App lifecycle
+- `usePrevious` - Previous value
+
+---
+
+## Breaking Changes Between Versions
+
+### v1.0.0
+
+Initial release - no breaking changes.
+
+---
+
+## Need Help?
+
+- Check the [documentation](./docs/)
+- Open an [issue](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/issues)
+- Join [discussions](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/discussions)
