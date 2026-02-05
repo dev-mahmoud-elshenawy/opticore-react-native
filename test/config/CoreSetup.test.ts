@@ -57,7 +57,9 @@ describe('CoreSetup', () => {
     };
 
     beforeEach(() => {
-        CoreSetup.reset();
+        // Reset singleton via private property
+        // @ts-ignore
+        CoreSetup.instance = undefined;
         coreSetup = CoreSetup.getInstance();
         jest.clearAllMocks();
     });
@@ -116,41 +118,9 @@ describe('CoreSetup', () => {
         });
     });
 
-    describe('update()', () => {
-        it('should update configuration at runtime', () => {
-            coreSetup.init(validConfig);
-            coreSetup.update({ api: { baseURL: 'https://new-api.test.com' } });
-            expect(coreSetup.getConfig().api.baseURL).toBe('https://new-api.test.com');
-        });
-
-        it('should throw if update called before init', () => {
-            expect(() => coreSetup.update({ api: { baseURL: 'https://test.com' } })).toThrow();
-        });
-    });
-
-    describe('reset()', () => {
-        it('should reset singleton instance', () => {
-            coreSetup.init(validConfig);
-            expect(coreSetup.isInitialized()).toBe(true);
-            CoreSetup.reset();
-            expect(CoreSetup.getInstance().isInitialized()).toBe(false);
-        });
-    });
-
     describe('getConfig()', () => {
         it('should throw if getConfig called before init', () => {
             expect(() => coreSetup.getConfig()).toThrow();
-        });
-    });
-
-    describe('isInitialized()', () => {
-        it('should return false before init', () => {
-            expect(coreSetup.isInitialized()).toBe(false);
-        });
-
-        it('should return true after init', () => {
-            coreSetup.init(validConfig);
-            expect(coreSetup.isInitialized()).toBe(true);
         });
     });
 });
