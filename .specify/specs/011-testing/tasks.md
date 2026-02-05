@@ -44,15 +44,8 @@
 - [ ] T022 [P] [US3] Create `test/helpers/asyncHelpers.ts`
 - [ ] T023 [P] [US3] Create `test/helpers/dataGenerators.ts`
 
-## Phase 5: CI/CD Integration
+## Phase 5: Documentation
 
-- [ ] T024 Configure GitHub Actions workflow
-- [ ] T025 Add coverage upload to Codecov
-- [ ] T026 Add test failure notifications
-- [ ] T027 Configure test caching for faster CI
-
-## Phase 6: Documentation
-
-- [ ] T028 [P] Document testing guidelines
-- [ ] T029 [P] Document how to write tests
-- [ ] T030 [P] Document mock usage
+- [ ] T024 [P] Document testing guidelines
+- [ ] T025 [P] Document how to write tests
+- [ ] T026 [P] Document mock usage
