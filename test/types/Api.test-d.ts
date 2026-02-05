@@ -1,29 +1,9 @@
 import { expectType } from 'tsd';
-import type { ApiResponse, ApiError, PaginatedResponse, RequestConfig } from '../../src/types/Api.types';
+import type { PaginatedResponse, PaginationMeta, RequestConfig, HttpMethod } from '../../src/types/Api.types';
 
-// Test ApiResponse
-const response: ApiResponse<string> = {
-    data: 'test',
-    status: 200,
-    success: true
-};
-expectType<string | undefined>(response.data);
-expectType<number>(response.status);
-expectType<boolean>(response.success);
-
-// Test ApiError
-const error: ApiError = {
-    status: 404,
-    message: 'Not found'
-};
-expectType<number>(error.status);
-expectType<string>(error.message);
-
-// Test PaginatedResponse
+// Test PaginatedResponse (simplified structure without status/success)
 const paginated: PaginatedResponse<string> = {
     data: ['test'],
-    status: 200,
-    success: true,
     pagination: {
         page: 1,
         pageSize: 10,
@@ -33,4 +13,34 @@ const paginated: PaginatedResponse<string> = {
     }
 };
 expectType<string[]>(paginated.data);
+expectType<PaginationMeta>(paginated.pagination);
 expectType<number>(paginated.pagination.totalItems);
+expectType<boolean>(paginated.pagination.hasMore);
+
+// Test PaginationMeta
+const meta: PaginationMeta = {
+    page: 1,
+    pageSize: 10,
+    totalPages: 1,
+    totalItems: 1,
+    hasMore: false
+};
+expectType<number>(meta.page);
+expectType<number>(meta.pageSize);
+expectType<number>(meta.totalPages);
+expectType<number>(meta.totalItems);
+expectType<boolean>(meta.hasMore);
+
+// Test RequestConfig
+const config: RequestConfig = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+    timeout: 5000
+};
+expectType<HttpMethod | undefined>(config.method);
+expectType<Record<string, string> | undefined>(config.headers);
+expectType<number | undefined>(config.timeout);
+
+// Test HttpMethod
+const method: HttpMethod = 'POST';
+expectType<HttpMethod>(method);
