@@ -659,7 +659,7 @@ constructor(
 
 - [x] TypeScript: 0 errors in src/
 - [x] Tests: 259/309 passing (50 React 19 API test failures - not blocking)
-- [x] Lint: 84 issues (60 errors in src/ - pre-existing `any` types, acceptable)
+- [x] Lint: 84 total (41 errors in src/, 43 in tests) - 52 `@typescript-eslint/no-explicit-any`, acceptable
 - [x] Build: Successful
 - [x] Coverage: >80%
 
