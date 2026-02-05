@@ -17,7 +17,7 @@ describe('QueryProvider', () => {
       return <Text testID="client-status">{client ? 'Client Exists' : 'No Client'}</Text>;
     };
 
-    render(
+    await render(
       <QueryProvider>
         <TestComponent />
       </QueryProvider>
@@ -37,7 +37,7 @@ describe('QueryProvider', () => {
       return <Text testID="data">{data}</Text>;
     };
 
-    render(
+    await render(
       <QueryProvider>
         <TestQuery />
       </QueryProvider>
@@ -71,10 +71,10 @@ describe('StoreProvider', () => {
     return <Text testID="store-val">{state.count}</Text>;
   };
 
-  it('should provide store to children', () => {
+  it('should provide store to children', async () => {
     const store = createTestStore();
 
-    render(
+    await render(
       <StoreProvider store={store} context={TestContext}>
         <TestConsumer />
       </StoreProvider>
@@ -83,7 +83,7 @@ describe('StoreProvider', () => {
     expect(screen.getByTestId('store-val')).toHaveTextContent('0');
   });
 
-  it('should allow multiple providers independently', () => {
+  it('should allow multiple providers independently', async () => {
     const store1 = createTestStore();
     const store2 = createTestStore();
     store2.getState().inc();
@@ -94,7 +94,7 @@ describe('StoreProvider', () => {
     const Consumer1 = () => <Text testID="val1">{useTestStore().getState().count}</Text>;
     const Consumer2 = () => <Text testID="val2">{useTestStore2().getState().count}</Text>;
 
-    render(
+    await render(
       <StoreProvider store={store1} context={TestContext}>
         <StoreProvider store={store2} context={TestContext2}>
           <Consumer1 />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { QueryProvider } from '../../src/providers/QueryProvider';
 
@@ -27,8 +27,8 @@ const TestQueryComponent: React.FC<{ shouldFail?: boolean }> = ({ shouldFail = f
 };
 
 describe('QueryProvider', () => {
-  it('should render children successfully', () => {
-    const { getByText } = render(
+  it('should render children successfully', async () => {
+    const { getByText } = await render(
       <QueryProvider>
         <Text>Test Child</Text>
       </QueryProvider>
@@ -38,7 +38,7 @@ describe('QueryProvider', () => {
   });
 
   it('should provide React Query context for queries', async () => {
-    const { getByText } = render(
+    const { getByText } = await render(
       <QueryProvider>
         <TestQueryComponent />
       </QueryProvider>
@@ -54,7 +54,7 @@ describe('QueryProvider', () => {
   });
 
   it('should apply default staleTime configuration', async () => {
-    const { getByText, rerender } = render(
+    const { getByText, rerender } = await render(
       <QueryProvider>
         <TestQueryComponent />
       </QueryProvider>
@@ -65,7 +65,7 @@ describe('QueryProvider', () => {
     });
 
     // Re-render should not trigger loading (data is not stale yet)
-    rerender(
+    await rerender(
       <QueryProvider>
         <TestQueryComponent />
       </QueryProvider>
@@ -76,7 +76,7 @@ describe('QueryProvider', () => {
   });
 
   it('should retry failed queries based on configuration', async () => {
-    const { getByText } = render(
+    const { getByText } = await render(
       <QueryProvider>
         <TestQueryComponent shouldFail={true} />
       </QueryProvider>
@@ -95,7 +95,7 @@ describe('QueryProvider', () => {
   });
 
   it('should support custom configuration via props', async () => {
-    const { getByText } = render(
+    const { getByText } = await render(
       <QueryProvider
         config={{
           defaultOptions: {
@@ -132,14 +132,14 @@ describe('QueryProvider', () => {
       });
 
       return (
-        <>
+        <View>
           <Text>{query1.data || 'loading-1'}</Text>
           <Text>{query2.data || 'loading-2'}</Text>
-        </>
+        </View>
       );
     };
 
-    const { getByText } = render(
+    const { getByText } = await render(
       <QueryProvider>
         <Component />
       </QueryProvider>

@@ -223,7 +223,7 @@ describe('Interceptors', () => {
       jest.restoreAllMocks();
     });
 
-    it('should log request details', () => {
+    it('should log request details', async () => {
       const config = {
         method: 'GET',
         url: '/api/users',
@@ -236,7 +236,7 @@ describe('Interceptors', () => {
       expect(result).toBe(config);
     });
 
-    it('should log response details', () => {
+    it('should log response details', async () => {
       const response = {
         status: 200,
         config: { url: '/api/users' },

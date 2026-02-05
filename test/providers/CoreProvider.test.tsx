@@ -16,8 +16,8 @@ const TestQueryComponent: React.FC = () => {
 };
 
 describe('CoreProvider', () => {
-  it('should render children successfully', () => {
-    const { getByText } = render(
+  it('should render children successfully', async () => {
+    const { getByText } = await render(
       <CoreProvider>
         <Text>Test Child</Text>
       </CoreProvider>
@@ -27,7 +27,7 @@ describe('CoreProvider', () => {
   });
 
   it('should provide React Query context', async () => {
-    const { getByText } = render(
+    const { getByText } = await render(
       <CoreProvider>
         <TestQueryComponent />
       </CoreProvider>
@@ -39,7 +39,7 @@ describe('CoreProvider', () => {
   });
 
   it('should support custom configuration', async () => {
-    const { getByText } = render(
+    const { getByText } = await render(
       <CoreProvider
         config={{
           query: {
@@ -62,8 +62,8 @@ describe('CoreProvider', () => {
     });
   });
 
-  it('should allow disabling features via config', () => {
-    const { getByText } = render(
+  it('should allow disabling features via config', async () => {
+    const { getByText } = await render(
       <CoreProvider
         config={{
           enableConnectivity: false,
@@ -92,7 +92,7 @@ describe('CoreProvider', () => {
       );
     };
 
-    const { getByText } = render(
+    const { getByText } = await render(
       <CoreProvider>
         <Component />
       </CoreProvider>
@@ -103,8 +103,8 @@ describe('CoreProvider', () => {
     });
   });
 
-  it('should handle multiple children', () => {
-    const { getByText } = render(
+  it('should handle multiple children', async () => {
+    const { getByText } = await render(
       <CoreProvider>
         <Text>Child 1</Text>
         <Text>Child 2</Text>

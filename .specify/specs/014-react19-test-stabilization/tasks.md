@@ -48,10 +48,10 @@
 
 **Purpose**: Fix remaining failing tests
 
-- [ ] T014.16 Fix `test/providers/CoreProvider.test.tsx` - Wrap children in View
-- [ ] T014.17 Fix `test/providers/QueryProvider.test.tsx` - Wrap children in View
-- [ ] T014.18 Fix `test/navigation/RouteHelper.test.ts` - Update renderHook
-- [ ] T014.19 Fix `test/config/CoreSetup.test.ts` - Update any hooks
+- [x] T014.16 Fix `test/providers/CoreProvider.test.tsx` - Wrap children in View
+- [x] T014.17 Fix `test/providers/QueryProvider.test.tsx` - Wrap children in View
+- [x] T014.18 Fix `test/navigation/RouteHelper.test.ts` - Update renderHook
+- [x] T014.19 Fix `test/config/CoreSetup.test.ts` - Update any hooks
 
 **Verification**: `npm test` - 264/264 tests passing
 

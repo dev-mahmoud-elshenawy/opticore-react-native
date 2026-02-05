@@ -65,7 +65,7 @@ describe('CoreSetup', () => {
   });
 
   describe('init()', () => {
-    it('should configure ApiClient with provided config', () => {
+    it('should configure ApiClient with provided config', async () => {
       coreSetup.init(validConfig);
       expect(mockApiClientInstance.configure).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -76,7 +76,7 @@ describe('CoreSetup', () => {
       );
     });
 
-    it('should configure Logger with provided config', () => {
+    it('should configure Logger with provided config', async () => {
       coreSetup.init(validConfig);
       expect(mockLoggerInstance.configure).toHaveBeenCalledWith({
         level: 3,
@@ -84,12 +84,12 @@ describe('CoreSetup', () => {
       });
     });
 
-    it('should register global error handler', () => {
+    it('should register global error handler', async () => {
       coreSetup.init(validConfig);
       expect(coreSetup.getErrorHandler()).toBe(validConfig.onError);
     });
 
-    it('should force debug level when debugMode is true', () => {
+    it('should force debug level when debugMode is true', async () => {
       const debugConfig = {
         ...validConfig,
         logger: { ...validConfig.logger!, level: 3 },
@@ -104,7 +104,7 @@ describe('CoreSetup', () => {
       );
     });
 
-    it('should configure logger when debugMode is true but logger config is missing', () => {
+    it('should configure logger when debugMode is true but logger config is missing', async () => {
       const configWithoutLogger: CoreConfig = {
         api: { baseURL: 'https://api.test.com' },
         features: { debugMode: true },
@@ -116,14 +116,14 @@ describe('CoreSetup', () => {
       });
     });
 
-    it('should store the configuration', () => {
+    it('should store the configuration', async () => {
       coreSetup.init(validConfig);
       expect(coreSetup.getConfig()).toBe(validConfig);
     });
   });
 
   describe('getConfig()', () => {
-    it('should throw if getConfig called before init', () => {
+    it('should throw if getConfig called before init', async () => {
       expect(() => coreSetup.getConfig()).toThrow();
     });
   });
