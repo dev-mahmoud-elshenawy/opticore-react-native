@@ -466,6 +466,42 @@ useEffect(() => { search(debouncedSearch); }, [debouncedSearch]);
 - JSDoc: 100% coverage on all public APIs ✓
 - Constitutional Compliance: Full adherence ✓
 
+**## Testing Requirements
+
+### Coverage Standards
+
+- **Minimum Coverage**: 80% across all metrics (branches, functions, lines, statements)
+- **Current Coverage**: 83.73% ✅
+- **Test Framework**: Jest + React Native Testing Library
+
+### Test Infrastructure (Spec 011)
+
+**Mock Implementations** (`test/__mocks__/infrastructure/`):
+- `MockApiClient` - HTTP client for API testing
+- `MockStorage` - In-memory async storage
+- `MockLogger` - Silent log capture for assertions
+- `MockConnectivity` - Network state simulation
+- `MockLifecycle` - App lifecycle simulation
+
+**Test Helpers** (`test/helpers/`):
+- `renderWithProviders` - Render components with all providers
+- `createMockStore` - Generate Zustand stores with mock data
+- `waitForAsync` / `flushPromises` - Async operation helpers
+- `generateMockUser` / `generateMockApiResponse` - Test data generators
+
+**Usage Example**:
+```typescript
+import { MockApiClient } from '@test/__mocks__';
+import { renderWithProviders } from '@test/helpers';
+
+const mockApi = new MockApiClient();
+mockApi.mockGet('/users', { data: [{ id: 1, name: 'John' }] });
+
+const { getByText } = renderWithProviders(<UserList />);
+await waitFor(() => expect(getByText('John')).toBeTruthy());
+```
+
+**Full Documentation**: See [`docs/Testing.md`](docs/Testing.md)
 **Testing Approach**:
 
 - Unit tests for QueryProvider configuration and behavior

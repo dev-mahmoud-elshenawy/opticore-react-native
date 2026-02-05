@@ -47,6 +47,6 @@
 
 ## Phase 5: Documentation
 
-- [ ] T024 [P] Document testing guidelines
-- [ ] T025 [P] Document how to write tests
-- [ ] T026 [P] Document mock usage
+- [x] T024 [P] Document testing guidelines
+- [x] T025 [P] Document how to write tests
+- [x] T026 [P] Document mock usage
