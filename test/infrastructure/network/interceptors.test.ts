@@ -4,6 +4,8 @@ import { AuthInterceptor } from '../../../src/infrastructure/network/interceptor
 import { ErrorInterceptor } from '../../../src/infrastructure/network/interceptors/ErrorInterceptor';
 import { LoggingInterceptor } from '../../../src/infrastructure/network/interceptors/LoggingInterceptor';
 import { ApiError } from '../../../src/infrastructure/network/ApiError';
+import { RenderError } from '../../../src/error/RenderError';
+import { BaseError } from '../../../src/error/BaseError';
 import { Logger } from '../../../src/infrastructure/logger/Logger';
 
 jest.mock('axios');
@@ -128,9 +130,6 @@ describe('Interceptors', () => {
     });
 
     it('should create ApiError that extends RenderError', async () => {
-      const { RenderError } = await import('../../../src/error/RenderError');
-      const { BaseError } = await import('../../../src/error/BaseError');
-
       const error = {
         isAxiosError: true,
         response: { status: 404, data: { message: 'Not Found' } },
