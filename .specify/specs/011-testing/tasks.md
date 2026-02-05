@@ -39,10 +39,11 @@
 
 ### Implementation
 
-- [ ] T020 [P] [US3] Create `test/helpers/renderHelpers.tsx`
-- [ ] T021 [P] [US3] Create `test/helpers/storeHelpers.ts`
-- [ ] T022 [P] [US3] Create `test/helpers/asyncHelpers.ts`
-- [ ] T023 [P] [US3] Create `test/helpers/dataGenerators.ts`
+- [x] T020 [P] [US3] Create `test/helpers/renderHelpers.tsx`
+- [x] T021 [P] [US3] Create `test/helpers/storeHelpers.ts`
+- [x] T022 [P] [US3] Create `test/helpers/asyncHelpers.ts`
+- [x] T023 [P] [US3] Create `test/helpers/dataGenerators.ts`
+- [x] T024 [US3] Create `test/helpers/index.ts` export file
 
 ## Phase 5: Documentation
 
