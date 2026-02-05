@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-native';
+import { renderHook } from '../utils';
 import { useResponsive, breakpoints } from '../../src/hooks/useResponsive';
 import * as ReactNative from 'react-native';
 
@@ -12,13 +12,13 @@ describe('useResponsive', () => {
     jest.clearAllMocks();
   });
 
-  it('should return correct breakpoints for medium width', () => {
+  it('should return correct breakpoints for medium width', async () => {
     (ReactNative.useWindowDimensions as jest.Mock).mockReturnValue({
       width: 375,
       height: 812,
     });
 
-    const { result } = renderHook(() => useResponsive());
+    const { result } = await renderHook(() => useResponsive());
 
     // width: 375
     // small: < 360 => false
@@ -32,13 +32,13 @@ describe('useResponsive', () => {
     expect(result.current.width).toBe(375);
   });
 
-  it('should return correct breakpoints for small width', () => {
+  it('should return correct breakpoints for small width', async () => {
     (ReactNative.useWindowDimensions as jest.Mock).mockReturnValue({
       width: 300,
       height: 600,
     });
 
-    const { result } = renderHook(() => useResponsive());
+    const { result } = await renderHook(() => useResponsive());
 
     expect(result.current.isSmall).toBe(true);
     expect(result.current.isMedium).toBe(false);
@@ -46,13 +46,13 @@ describe('useResponsive', () => {
     expect(result.current.isXLarge).toBe(false);
   });
 
-  it('should return correct breakpoints for large width', () => {
+  it('should return correct breakpoints for large width', async () => {
     (ReactNative.useWindowDimensions as jest.Mock).mockReturnValue({
       width: 1200,
       height: 800,
     });
 
-    const { result } = renderHook(() => useResponsive());
+    const { result } = await renderHook(() => useResponsive());
 
     expect(result.current.isSmall).toBe(false);
     expect(result.current.isMedium).toBe(false);
@@ -60,7 +60,7 @@ describe('useResponsive', () => {
     expect(result.current.isXLarge).toBe(true);
   });
 
-  it('should have correct breakpoint constants', () => {
+  it('should have correct breakpoint constants', async () => {
     expect(breakpoints.small).toBe(360);
     expect(breakpoints.medium).toBe(768);
     expect(breakpoints.large).toBe(1024);

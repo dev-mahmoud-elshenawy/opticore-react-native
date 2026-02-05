@@ -1,9 +1,9 @@
-import { renderHook, act } from '@testing-library/react-native';
+import { renderHook, act } from '../utils';
 import { useAsyncState } from '../../src/hooks/useAsyncState';
 
 describe('useAsyncState', () => {
-  it('should initialize with default values', () => {
-    const { result } = renderHook(() => useAsyncState());
+  it('should initialize with default values', async () => {
+    const { result } = await renderHook(() => useAsyncState());
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toBeNull();
@@ -11,7 +11,7 @@ describe('useAsyncState', () => {
   });
 
   it('should handle successful async operation', async () => {
-    const { result } = renderHook(() => useAsyncState<string>());
+    const { result } = await renderHook(() => useAsyncState<string>());
     const mockAsync = jest.fn().mockResolvedValue('success data');
 
     await act(async () => {
@@ -24,7 +24,7 @@ describe('useAsyncState', () => {
   });
 
   it('should handle failed async operation', async () => {
-    const { result } = renderHook(() => useAsyncState<string>());
+    const { result } = await renderHook(() => useAsyncState<string>());
     const error = new Error('fail');
     const mockAsync = jest.fn().mockRejectedValue(error);
 
@@ -42,7 +42,7 @@ describe('useAsyncState', () => {
   });
 
   it('should set loading state while pending', async () => {
-    const { result } = renderHook(() => useAsyncState<string>());
+    const { result } = await renderHook(() => useAsyncState<string>());
     let resolvePromise: (val: string) => void;
     const promise = new Promise<string>((resolve) => {
       resolvePromise = resolve;
@@ -64,7 +64,7 @@ describe('useAsyncState', () => {
   });
 
   it('should not update state if unmounted', async () => {
-    const { result, unmount } = renderHook(() => useAsyncState<string>());
+    const { result, unmount } = await renderHook(() => useAsyncState<string>());
     let resolvePromise: (val: string) => void;
     const promise = new Promise<string>((resolve) => {
       resolvePromise = resolve;
@@ -76,7 +76,7 @@ describe('useAsyncState', () => {
     });
     expect(result.current.isLoading).toBe(true);
 
-    unmount();
+    await unmount();
 
     await act(async () => {
       resolvePromise!('done');

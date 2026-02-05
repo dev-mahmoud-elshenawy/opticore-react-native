@@ -1,25 +1,25 @@
-import { renderHook } from '@testing-library/react-native';
+import { renderHook } from '../utils';
 import { useThrottle } from '../../src/hooks/useThrottle';
 
 describe('useThrottle', () => {
   jest.useFakeTimers();
 
-  it('should update immediately first time', () => {
-    const { result } = renderHook(() => useThrottle('initial', 500));
+  it('should update immediately first time', async () => {
+    const { result } = await renderHook(() => useThrottle('initial', 500));
     expect(result.current).toBe('initial');
   });
 
   // Testing throttling requires changing props and advancing timers.
   // Basic test:
-  it('should throttle updates', () => {
-    const { result, rerender } = renderHook(({ val }: { val: any }) => useThrottle(val, 1000), {
+  it('should throttle updates', async () => {
+    const { result, rerender } = await renderHook(({ val }: { val: any }) => useThrottle(val, 1000), {
       initialProps: { val: 'start' },
     });
 
     expect(result.current).toBe('start');
 
     // Update immediately
-    rerender({ val: 'update1' });
+    await rerender({ val: 'update1' });
     // Should not update yet (assuming leading edge handling or lag)
     // Actually typical useThrottle (value-based) updates immediately on leading, delays trailing?
     // Or delays all?

@@ -1,21 +1,21 @@
-import { renderHook } from '@testing-library/react-native';
+import { renderHook } from '../utils';
 import { usePrevious } from '../../src/hooks/usePrevious';
 
 describe('usePrevious', () => {
-  it('should return undefined initially', () => {
-    const { result } = renderHook(() => usePrevious('initial'));
+  it('should return undefined initially', async () => {
+    const { result } = await renderHook(() => usePrevious('initial'));
     expect(result.current).toBeUndefined();
   });
 
-  it('should return previous value after update', () => {
-    const { result, rerender } = renderHook(({ val }: { val: any }) => usePrevious(val), {
+  it('should return previous value after update', async () => {
+    const { result, rerender } = await renderHook(({ val }: { val: any }) => usePrevious(val), {
       initialProps: { val: 'initial' },
     });
 
-    rerender({ val: 'updated' });
+    await rerender({ val: 'updated' });
     expect(result.current).toBe('initial');
 
-    rerender({ val: 'third' });
+    await rerender({ val: 'third' });
     expect(result.current).toBe('updated');
   });
 });

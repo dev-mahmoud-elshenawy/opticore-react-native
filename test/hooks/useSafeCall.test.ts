@@ -1,9 +1,9 @@
-import { renderHook, act } from '@testing-library/react-native';
+import { renderHook, act } from '../utils';
 import { useSafeCall } from '../../src/hooks/useSafeCall';
 
 describe('useSafeCall', () => {
   it('should execute function safely and return result', async () => {
-    const { result } = renderHook(() => useSafeCall());
+    const { result } = await renderHook(() => useSafeCall());
 
     const mockFn = jest.fn().mockResolvedValue('success');
 
@@ -17,7 +17,7 @@ describe('useSafeCall', () => {
   });
 
   it('should catch errors and update error state', async () => {
-    const { result } = renderHook(() => useSafeCall());
+    const { result } = await renderHook(() => useSafeCall());
     const error = new Error('oops');
     const mockFn = jest.fn().mockRejectedValue(error);
 

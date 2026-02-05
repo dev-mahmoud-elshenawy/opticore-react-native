@@ -26,17 +26,17 @@
 
 **Purpose**: Update all 11 hook tests to use React 19 compatible patterns
 
-- [ ] T014.5 Fix `test/hooks/useAsyncState.test.ts` - Update renderHook calls
-- [ ] T014.6 [P] Fix `test/hooks/useConnectivity.test.ts` - Update renderHook calls
-- [ ] T014.7 [P] Fix `test/hooks/useDebounce.test.ts` - Update renderHook calls
-- [ ] T014.8 [P] Fix `test/hooks/useKeyboard.test.ts` - Update renderHook calls
-- [ ] T014.9 [P] Fix `test/hooks/useLifecycle.test.ts` - Update renderHook calls
-- [ ] T014.10 [P] Fix `test/hooks/useMount.test.ts` - Update renderHook calls
-- [ ] T014.11 [P] Fix `test/hooks/useOrientation.test.ts` - Update renderHook calls
-- [ ] T014.12 [P] Fix `test/hooks/usePrevious.test.ts` - Update renderHook calls
-- [ ] T014.13 [P] Fix `test/hooks/useResponsive.test.ts` - Update renderHook calls
-- [ ] T014.14 [P] Fix `test/hooks/useSafeCall.test.ts` - Update renderHook calls
-- [ ] T014.15 [P] Fix `test/hooks/useThrottle.test.ts` - Update renderHook calls
+- [x] T014.5 Fix `test/hooks/useAsyncState.test.ts` - Update renderHook calls
+- [x] T014.6 [P] Fix `test/hooks/useConnectivity.test.ts` - Update renderHook calls
+- [x] T014.7 [P] Fix `test/hooks/useDebounce.test.ts` - Update renderHook calls
+- [x] T014.8 [P] Fix `test/hooks/useKeyboard.test.ts` - Update renderHook calls
+- [x] T014.9 [P] Fix `test/hooks/useLifecycle.test.ts` - Update renderHook calls
+- [x] T014.10 [P] Fix `test/hooks/useMount.test.ts` - Update renderHook calls
+- [x] T014.11 [P] Fix `test/hooks/useOrientation.test.ts` - Update renderHook calls
+- [x] T014.12 [P] Fix `test/hooks/usePrevious.test.ts` - Update renderHook calls
+- [x] T014.13 [P] Fix `test/hooks/useResponsive.test.ts` - Update renderHook calls
+- [x] T014.14 [P] Fix `test/hooks/useSafeCall.test.ts` - Update renderHook calls
+- [x] T014.15 [P] Fix `test/hooks/useThrottle.test.ts` - Update renderHook calls
 
 **Verification**: `npm test test/hooks` - All 11 hook tests pass
 

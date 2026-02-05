@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-native';
+import { renderHook } from '../utils';
 import { useOrientation } from '../../src/hooks/useOrientation';
 
 jest.mock('react-native', () => {
@@ -13,8 +13,8 @@ jest.mock('react-native', () => {
 });
 
 describe('useOrientation', () => {
-  it('should return initial orientation', () => {
-    const { result } = renderHook(() => useOrientation());
+  it('should return initial orientation', async () => {
+    const { result } = await renderHook(() => useOrientation());
     expect(result.current.orientation).toBe('portrait');
   });
 });

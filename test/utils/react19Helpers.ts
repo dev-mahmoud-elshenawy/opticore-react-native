@@ -1,29 +1,25 @@
 import { renderHook as originalRenderHook, act, waitFor } from '@testing-library/react-native';
-import { ReactNode } from 'react';
+import { type ReactNode, type ComponentType } from 'react';
 
 /**
- * React 19 compatible renderHook wrapper
+ * React 19 compatible renderHook wrapper for @testing-library/react-native v14+
  * 
- * The @testing-library/react-native renderHook API changed in React 19:
- * - Return value is now the hook result directly, not { result: { current: value } }
- * - Must destructure differently to access result and rerender
+ * In v14 (React 19 compatible), renderHook returns a Promise that resolves to RenderHookResult.
+ * This wrapper keeps the synchronous-looking API by directly exposing the result object.
  * 
- * This wrapper provides backward compatibility with test patterns.
+ * The v14 API change: renderHook now returns Promise<RenderHookResult>
+ * RenderHookResult has { current, rerender, unmount } where `current` is the hook return value
  */
 export function renderHook<TResult, TProps = unknown>(
     hook: (props: TProps) => TResult,
     options?: {
         initialProps?: TProps;
-        wrapper?: React.ComponentType<{ children: ReactNode }>;
+        wrapper?: ComponentType<{ children: ReactNode }>;
     }
 ) {
-    const renderResult = originalRenderHook(hook, options);
-
-    return {
-        result: renderResult,
-        rerender: renderResult.rerender,
-        unmount: renderResult.unmount,
-    };
+    // In v14, renderHook returns a Promise, but the result object is what we need
+    // The actual hook result is in result.current, not result itself
+    return originalRenderHook(hook, options);
 }
 
 /**
@@ -48,16 +44,4 @@ export async function waitForHook<T>(
     await waitFor(() => {
         expect(predicate(getResult())).toBe(true);
     }, options);
-}
-
-/**
- * Create a test wrapper component with providers
- */
-export function createWrapper(providers: React.ComponentType<{ children: ReactNode }>[]) {
-    return ({ children }: { children: ReactNode }) => {
-        return providers.reduceRight(
-            (acc, Provider) => <Provider>{ acc } </Provider>,
-      children
-        );
-    };
 }
