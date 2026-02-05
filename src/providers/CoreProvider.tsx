@@ -8,10 +8,10 @@ import { LifecycleManager } from '../infrastructure/lifecycle/LifecycleManager';
  * Props for CoreProvider component
  */
 export interface CoreProviderProps {
-    /** Child components to render within the provider */
-    children: React.ReactNode;
-    /** Optional configuration for CoreProvider and its sub-providers */
-    config?: CoreProviderConfig;
+  /** Child components to render within the provider */
+  children: React.ReactNode;
+  /** Optional configuration for CoreProvider and its sub-providers */
+  config?: CoreProviderConfig;
 }
 
 /**
@@ -53,58 +53,58 @@ export interface CoreProviderProps {
  * ```
  */
 export const CoreProvider: React.FC<CoreProviderProps> = ({ children, config = {} }) => {
-    const {
-        query,
-        enableDevTools = __DEV__,
-        enableConnectivity = true,
-        enableLifecycle = true,
-    } = config;
+  const {
+    query,
+    enableDevTools = __DEV__,
+    enableConnectivity = true,
+    enableLifecycle = true,
+  } = config;
 
-    // Initialize connectivity monitoring if enabled
-    React.useEffect(() => {
-        if (!enableConnectivity) return;
+  // Initialize connectivity monitoring if enabled
+  React.useEffect(() => {
+    if (!enableConnectivity) return;
 
-        const connectivityManager = ConnectivityManager.getInstance();
+    const connectivityManager = ConnectivityManager.getInstance();
 
-        // Connectivity manager is a singleton and automatically initializes
-        // It will monitor network status for all consumers
+    // Connectivity manager is a singleton and automatically initializes
+    // It will monitor network status for all consumers
 
-        return () => {
-            // Cleanup: dispose connectivity manager
-            connectivityManager.dispose();
-        };
-    }, [enableConnectivity]);
+    return () => {
+      // Cleanup: dispose connectivity manager
+      connectivityManager.dispose();
+    };
+  }, [enableConnectivity]);
 
-    // Initialize lifecycle management if enabled
-    React.useEffect(() => {
-        if (!enableLifecycle) return;
+  // Initialize lifecycle management if enabled
+  React.useEffect(() => {
+    if (!enableLifecycle) return;
 
-        const lifecycleManager = LifecycleManager.getInstance();
+    const lifecycleManager = LifecycleManager.getInstance();
 
-        // Lifecycle manager is a singleton and automatically initializes
-        // It will monitor app state for all consumers
+    // Lifecycle manager is a singleton and automatically initializes
+    // It will monitor app state for all consumers
 
-        return () => {
-            // Cleanup: dispose lifecycle manager
-            lifecycleManager.dispose();
-        };
-    }, [enableLifecycle]);
+    return () => {
+      // Cleanup: dispose lifecycle manager
+      lifecycleManager.dispose();
+    };
+  }, [enableLifecycle]);
 
-    // Initialize state observers
-    React.useEffect(() => {
-        if (!(__DEV__ && enableDevTools)) return;
+  // Initialize state observers
+  React.useEffect(() => {
+    if (!(__DEV__ && enableDevTools)) return;
 
-        // TODO: Initialize Zustand DevTools when state management is integrated
-        // For now, DevTools are enabled by default in Zustand stores
+    // TODO: Initialize Zustand DevTools when state management is integrated
+    // For now, DevTools are enabled by default in Zustand stores
 
-        return () => {
-            // Cleanup: disconnect DevTools when implemented
-        };
-    }, [enableDevTools]);
+    return () => {
+      // Cleanup: disconnect DevTools when implemented
+    };
+  }, [enableDevTools]);
 
-    // Wrap children with QueryProvider
-    // Future providers will be added here as they become available
-    return <QueryProvider config={query?.queryClientConfig}>{children}</QueryProvider>;
+  // Wrap children with QueryProvider
+  // Future providers will be added here as they become available
+  return <QueryProvider config={query?.queryClientConfig}>{children}</QueryProvider>;
 };
 
 /**

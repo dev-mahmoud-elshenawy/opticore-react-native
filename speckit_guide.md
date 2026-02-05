@@ -17,12 +17,12 @@
 
 This guide works with **any** technology stack. Examples include:
 
-| Category | Technologies |
-|----------|-------------|
-| **Web (JS/TS)** | React, Next.js, Vue, Angular, Svelte, Express, NestJS |
-| **Mobile** | React Native, Flutter, Swift (iOS), Kotlin (Android) |
-| **Backend** | Node.js, Django, Flask, Laravel, Spring Boot, Rails, Go, Rust |
-| **Languages** | JavaScript, TypeScript, Python, Go, Rust, PHP, Java, Ruby, Dart, Swift, Kotlin, C#, C++ |
+| Category        | Technologies                                                                            |
+| --------------- | --------------------------------------------------------------------------------------- |
+| **Web (JS/TS)** | React, Next.js, Vue, Angular, Svelte, Express, NestJS                                   |
+| **Mobile**      | React Native, Flutter, Swift (iOS), Kotlin (Android)                                    |
+| **Backend**     | Node.js, Django, Flask, Laravel, Spring Boot, Rails, Go, Rust                           |
+| **Languages**   | JavaScript, TypeScript, Python, Go, Rust, PHP, Java, Ruby, Dart, Swift, Kotlin, C#, C++ |
 
 **All commands and examples are provided with multi-framework alternatives.** Adapt quality gates, tools, and structure to your stack.
 
@@ -90,11 +90,13 @@ Traditional development treats specs as temporary scaffolding. Spec-Driven Devel
 ### The Inversion
 
 **Traditional Development:**
+
 ```
 Code → Documentation → Specs (if at all)
 ```
 
 **Spec-Driven Development:**
+
 ```
 Constitution → Specification → Plan → Tasks → Code
 ```
@@ -163,6 +165,7 @@ ls .specify/memory/ .specify/specs/ .specify/scripts/ .specify/templates/
 ```
 
 **Expected output:**
+
 ```
 .specify/memory/         ✅
 .specify/specs/          ✅
@@ -182,6 +185,7 @@ Test these commands work:
 ```
 
 **If commands don't work:**
+
 - Check `.claude/commands/` directory exists
 - Restart Claude Code
 - Reinstall if needed
@@ -209,6 +213,7 @@ Use the [Constitutional Template](#constitutional-template) below, filling in us
 4. `list-specs.sh` - [See Helper Scripts section](#list-specssh)
 
 **Make executable:**
+
 ```bash
 chmod +x .specify/scripts/*.sh
 ```
@@ -352,6 +357,7 @@ Which approach do you prefer?
 ### Prerequisites
 
 **Required:**
+
 - Python 3.11+
 - Git
 - `uv` package manager
@@ -476,12 +482,14 @@ ls .claude/commands/
 **Creates**: `.specify/memory/constitution.md`
 
 **Content**: Core articles defining:
+
 - Development standards
 - Quality requirements
 - Technology decisions
 - Non-negotiable rules
 
 **When to run:**
+
 - ✅ Once at project start
 - ✅ When changing fundamental principles
 - ❌ For individual features
@@ -492,12 +500,15 @@ ls .claude/commands/
 # Project Constitution
 
 ## Article I: Specification-First Development
+
 Every feature must have approved specification before implementation.
 
 ## Article II: Test-First Development
+
 Tests written BEFORE implementation code.
 
 ## Article III: Type Safety
+
 TypeScript strict mode. Zero 'any' types.
 ```
 
@@ -508,12 +519,14 @@ TypeScript strict mode. Zero 'any' types.
 **Creates**: `.specify/specs/NNN-feature-name/spec.md`
 
 **Focus on:**
+
 - **What**: Feature description
 - **Why**: Business justification
 - **Who**: User scenarios
 - **Success criteria**: Measurable outcomes
 
 **Do NOT include:**
+
 - ❌ Implementation details
 - ❌ Technology choices
 - ❌ Code structure
@@ -524,25 +537,31 @@ TypeScript strict mode. Zero 'any' types.
 # Spec 005: User Authentication
 
 ## Summary
+
 Implement user authentication with email/password and OAuth.
 
 ## Problem Statement
+
 Users need secure way to access protected features.
 
 ## User Scenarios
+
 **Scenario 1**: New user signs up with email
+
 - User enters email and password
 - System validates email format
 - System creates account
 - User receives confirmation email
 
 ## Requirements
+
 - REQ-1: Support email/password authentication
 - REQ-2: Support OAuth (Google, GitHub)
 - REQ-3: JWT tokens with 24h expiration
 - REQ-4: Secure password hashing (bcrypt)
 
 ## Success Criteria
+
 - [ ] User can register with email
 - [ ] User can login with email
 - [ ] User can login with OAuth
@@ -557,12 +576,14 @@ Users need secure way to access protected features.
 **Updates**: Current `spec.md`
 
 **Process:**
+
 1. Analyzes spec for ambiguities
 2. Asks clarifying questions
 3. Updates spec with answers
 4. Re-presents for approval
 
 **Example questions:**
+
 - "Should OAuth create local accounts automatically?"
 - "What happens to existing sessions after password change?"
 - "Do we support password reset via email?"
@@ -574,6 +595,7 @@ Users need secure way to access protected features.
 **Creates**: `.specify/specs/NNN-feature-name/plan.md`
 
 **Focus on:**
+
 - Architecture and design
 - Technology choices (with rationale)
 - Data models and API contracts
@@ -590,9 +612,11 @@ Users need secure way to access protected features.
 
 ### Architecture
 ```
+
 Client → Server → Authentication Module → Database
-                       ↓
-                  Token Manager
+↓
+Token Manager
+
 ```
 
 ### Technology Choices
@@ -606,18 +630,22 @@ Client → Server → Authentication Module → Database
 ### Data Model
 
 ```
+
 User:
-  - id (unique identifier)
-  - email (unique, indexed)
-  - password_hash
-  - oauth_providers (array)
-  - created_at
-  - last_login
+
+- id (unique identifier)
+- email (unique, indexed)
+- password_hash
+- oauth_providers (array)
+- created_at
+- last_login
 
 OAuthProvider:
-  - provider (google, github, etc.)
-  - provider_id
-  - email
+
+- provider (google, github, etc.)
+- provider_id
+- email
+
 ```
 
 ### File Structure
@@ -626,21 +654,25 @@ Adapt to your project structure. Examples:
 
 **For modular projects:**
 ```
+
 your-project/
 ├── auth/
-│   ├── auth_service
-│   ├── token_service
-│   ├── password_service
-│   └── tests/
+│ ├── auth_service
+│ ├── token_service
+│ ├── password_service
+│ └── tests/
+
 ```
 
 **For layered projects:**
 ```
+
 your-project/
 ├── services/auth/
 ├── controllers/auth/
 ├── models/user
 └── tests/auth/
+
 ```
 
 ### Test Strategy
@@ -657,6 +689,7 @@ your-project/
 **Creates**: `.specify/specs/NNN-feature-name/tasks.md`
 
 **Task characteristics:**
+
 - ✅ Small and focused
 - ✅ Independently completable
 - ✅ Clear acceptance criteria
@@ -714,6 +747,7 @@ your-project/
 **Process:**
 
 1. **Read context:**
+
    ```bash
    cat .specify/memory/constitution.md
    cat .specify/specs/NNN-feature/spec.md
@@ -730,6 +764,7 @@ your-project/
    - Mark task complete
 
 3. **Test-Driven Development cycle:**
+
    ```
    RED → GREEN → REFACTOR
 
@@ -739,6 +774,7 @@ your-project/
    ```
 
 4. **Commit format:**
+
    ```bash
    git commit -m "feat(auth): implement password hashing
 
@@ -756,16 +792,16 @@ your-project/
 
 ### Command Reference
 
-| Command | Purpose | Creates | Requires |
-|---------|---------|---------|----------|
-| `/speckit.constitution` | Define principles | `constitution.md` | None |
-| `/speckit.specify` | Create spec | `spec.md` | Constitution |
-| `/speckit.clarify` | Resolve ambiguities | Updates `spec.md` | Draft spec |
-| `/speckit.plan` | Technical approach | `plan.md` | Approved spec |
-| `/speckit.tasks` | Action items | `tasks.md` | Approved plan |
-| `/speckit.implement` | Execute | Code files | Tasks defined |
-| `/speckit.analyze` | Validate plan | Analysis report | Plan created |
-| `/speckit.checklist` | Quality check | Checklist results | Implementation |
+| Command                 | Purpose             | Creates           | Requires       |
+| ----------------------- | ------------------- | ----------------- | -------------- |
+| `/speckit.constitution` | Define principles   | `constitution.md` | None           |
+| `/speckit.specify`      | Create spec         | `spec.md`         | Constitution   |
+| `/speckit.clarify`      | Resolve ambiguities | Updates `spec.md` | Draft spec     |
+| `/speckit.plan`         | Technical approach  | `plan.md`         | Approved spec  |
+| `/speckit.tasks`        | Action items        | `tasks.md`        | Approved plan  |
+| `/speckit.implement`    | Execute             | Code files        | Tasks defined  |
+| `/speckit.analyze`      | Validate plan       | Analysis report   | Plan created   |
+| `/speckit.checklist`    | Quality check       | Checklist results | Implementation |
 
 ### Command Details
 
@@ -774,11 +810,13 @@ your-project/
 **Creates:** `.specify/memory/constitution.md`
 
 **Usage:**
+
 ```
 /speckit.constitution
 ```
 
 **Prompts for:**
+
 - Core development principles
 - Technology standards
 - Quality requirements
@@ -793,15 +831,18 @@ your-project/
 **Creates:** `.specify/specs/NNN-feature-name/spec.md`
 
 **Usage:**
+
 ```
 /speckit.specify
 ```
 
 **Auto-detects:**
+
 - Feature number (next sequential)
 - Feature name (from git branch or user input)
 
 **Template sections:**
+
 - Summary
 - Problem Statement (What, Why, Who)
 - User Scenarios
@@ -817,11 +858,13 @@ your-project/
 **Updates:** Current `spec.md`
 
 **Usage:**
+
 ```
 /speckit.clarify
 ```
 
 **Process:**
+
 1. Analyzes spec for ambiguities
 2. Identifies unclear sections
 3. Asks clarifying questions
@@ -835,6 +878,7 @@ your-project/
 **Creates:** `.specify/specs/NNN-feature-name/plan.md`
 
 **Usage:**
+
 ```
 /speckit.plan
 ```
@@ -842,6 +886,7 @@ your-project/
 **Requires:** Approved spec.md
 
 **Template sections:**
+
 - Technical Approach
 - Architecture Design
 - Technology Choices (with rationale)
@@ -859,6 +904,7 @@ your-project/
 **Creates:** `.specify/specs/NNN-feature-name/tasks.md`
 
 **Usage:**
+
 ```
 /speckit.tasks
 ```
@@ -866,6 +912,7 @@ your-project/
 **Requires:** Approved plan.md
 
 **Format:**
+
 ```markdown
 ## Phase N: Phase Name
 
@@ -882,11 +929,13 @@ your-project/
 **Action:** Begins code implementation
 
 **Usage:**
+
 ```
 /speckit.implement
 ```
 
 **Process:**
+
 1. Reads constitution, spec, plan, tasks
 2. Implements following TDD
 3. Runs quality gates after each task
@@ -900,11 +949,13 @@ your-project/
 **Action:** Validates implementation plan
 
 **Usage:**
+
 ```
 /speckit.analyze
 ```
 
 **Checks:**
+
 - Constitutional compliance
 - Spec-plan alignment
 - Technical feasibility
@@ -918,11 +969,13 @@ your-project/
 **Action:** Quality gate verification
 
 **Usage:**
+
 ```
 /speckit.checklist
 ```
 
 **Verifies:**
+
 - All tests passing
 - Type checking clean
 - Linting clean
@@ -938,7 +991,7 @@ your-project/
 
 **File:** `.specify/memory/constitution.md`
 
-```markdown
+````markdown
 # Project Constitution
 
 **Project**: [Project Name]
@@ -958,6 +1011,7 @@ your-project/
 **Rationale**: Specifications prevent scope creep and ensure alignment between stakeholders and implementation.
 
 **Compliance**:
+
 - ✅ All features have spec.md file in .specify/specs/
 - ✅ Specs approved before planning begins
 - ✅ No coding before spec approval
@@ -974,6 +1028,7 @@ your-project/
 **Rationale**: Tests define behavior, prevent regressions, enable confident refactoring.
 
 **Compliance**:
+
 - ✅ Test files created before implementation files
 - ✅ Minimum 80% code coverage
 - ✅ All edge cases and error scenarios tested
@@ -991,6 +1046,7 @@ your-project/
 **Rationale**: Type errors caught at compile time, not runtime. Self-documenting code.
 
 **Compliance**:
+
 - ✅ TypeScript strict mode: `true` in tsconfig.json
 - ✅ Zero `any` types without explicit justification in comments
 - ✅ All public APIs fully typed with explicit return types
@@ -1008,6 +1064,7 @@ your-project/
 **Rationale**: Prevents broken code in main branch, maintains professional standards.
 
 **Quality Gates**:
+
 1. **Type checking**: 0 errors (`npm run type-check`)
 2. **Tests**: All passing (`npm test`)
 3. **Coverage**: ≥ 80% (`npm test -- --coverage`)
@@ -1026,6 +1083,7 @@ your-project/
 **Rationale**: Each phase builds on previous, ensuring completeness and alignment.
 
 **Compliance**:
+
 - ✅ Specification written and approved first
 - ✅ Plan created only after spec approval
 - ✅ Tasks created only after plan approval
@@ -1044,6 +1102,7 @@ your-project/
 **Rationale**: Ensures consistent decision-making across time and contributors.
 
 **Compliance**:
+
 - ✅ All design decisions reference constitutional principles
 - ✅ Violations addressed immediately
 - ✅ Amendments require explicit approval and documentation
@@ -1059,6 +1118,7 @@ your-project/
 **Principle**: [Define your platform support here]
 
 **Examples:**
+
 - "Support iOS and Android ONLY (no web)"
 - "Support all platforms (iOS, Android, Web)"
 - "Web-first, mobile as progressive web app"
@@ -1066,6 +1126,7 @@ your-project/
 **Rationale**: [Why this platform choice?]
 
 **Compliance**:
+
 - ✅ [Platform-specific compliance]
 - ❌ [Platform violations]
 
@@ -1078,12 +1139,14 @@ your-project/
 **Principle**: [Define code review and ownership]
 
 **Example:**
+
 - "All code must be reviewed by at least one other developer"
 - "Solo developer: AI assistant acts as reviewer"
 
 **Rationale**: Multiple perspectives catch issues
 
 **Compliance**:
+
 - ✅ Pull requests reviewed before merge
 - ✅ Review checklist includes constitutional compliance
 - ❌ Direct commits to main branch
@@ -1099,6 +1162,7 @@ your-project/
 **Rationale**: Code is always current; comments become stale. Good names eliminate need for comments.
 
 **Compliance**:
+
 - ✅ Function/variable names explain purpose
 - ✅ JSDoc on all public APIs
 - ✅ Comments explain non-obvious decisions
@@ -1137,6 +1201,7 @@ To change constitutional principles:
 
 **Effective Date**: [Date]
 ```
+````
 
 ---
 
@@ -1148,6 +1213,7 @@ To change constitutional principles:
 ---
 
 **This constitution is the source of truth for all development decisions.**
+
 ```
 
 ### Customizing Your Constitution
@@ -1175,42 +1241,44 @@ To change constitutional principles:
 ### Official Layout
 
 ```
+
 your-project/
-├── .specify/                          # Spec Kit root (official)
-│   ├── memory/
-│   │   └── constitution.md            # Project principles
-│   ├── specs/                         # Feature specifications
-│   │   ├── 001-project-setup/
-│   │   │   ├── spec.md               # WHAT to build
-│   │   │   ├── plan.md               # HOW to build
-│   │   │   ├── tasks.md              # STEPS to implement
-│   │   │   └── notes.md              # Decisions & discussions
-│   │   ├── 002-authentication/
-│   │   │   ├── spec.md
-│   │   │   ├── plan.md
-│   │   │   ├── tasks.md
-│   │   │   └── notes.md
-│   │   └── NNN-feature-name/
-│   │       └── [same structure]
-│   ├── scripts/                       # Automation helpers
-│   │   ├── context.sh                # Official context script (POSIX)
-│   │   ├── context.ps1               # Official context script (PowerShell)
-│   │   ├── create-spec.sh            # Helper: Create new spec
-│   │   ├── validate-spec.sh          # Helper: Validate spec
-│   │   ├── check-quality.sh          # Helper: Quality gates
-│   │   └── list-specs.sh             # Helper: List all specs
-│   └── templates/                     # Reference templates
-│       ├── spec-template.md
-│       ├── plan-template.md
-│       └── tasks-template.md
-├── .claude/                           # Claude Code integration
-│   └── commands/                      # Slash commands
-│       ├── speckit-constitution.md
-│       ├── speckit-specify.md
-│       ├── speckit-plan.md
-│       └── ...
-├── src/                               # Your application code
+├── .specify/ # Spec Kit root (official)
+│ ├── memory/
+│ │ └── constitution.md # Project principles
+│ ├── specs/ # Feature specifications
+│ │ ├── 001-project-setup/
+│ │ │ ├── spec.md # WHAT to build
+│ │ │ ├── plan.md # HOW to build
+│ │ │ ├── tasks.md # STEPS to implement
+│ │ │ └── notes.md # Decisions & discussions
+│ │ ├── 002-authentication/
+│ │ │ ├── spec.md
+│ │ │ ├── plan.md
+│ │ │ ├── tasks.md
+│ │ │ └── notes.md
+│ │ └── NNN-feature-name/
+│ │ └── [same structure]
+│ ├── scripts/ # Automation helpers
+│ │ ├── context.sh # Official context script (POSIX)
+│ │ ├── context.ps1 # Official context script (PowerShell)
+│ │ ├── create-spec.sh # Helper: Create new spec
+│ │ ├── validate-spec.sh # Helper: Validate spec
+│ │ ├── check-quality.sh # Helper: Quality gates
+│ │ └── list-specs.sh # Helper: List all specs
+│ └── templates/ # Reference templates
+│ ├── spec-template.md
+│ ├── plan-template.md
+│ └── tasks-template.md
+├── .claude/ # Claude Code integration
+│ └── commands/ # Slash commands
+│ ├── speckit-constitution.md
+│ ├── speckit-specify.md
+│ ├── speckit-plan.md
+│ └── ...
+├── src/ # Your application code
 └── [your project files]
+
 ```
 
 ### Feature Numbering Convention
@@ -1227,13 +1295,15 @@ your-project/
 
 **Examples:**
 ```
+
 001-project-setup/
 002-user-authentication/
 003-payment-integration/
 004-notification-system/
 ...
 042-feature-name/
-```
+
+````
 
 ---
 
@@ -1265,7 +1335,7 @@ Four automation scripts to streamline Spec Kit workflow:
 
 # Multi-word name
 ./.specify/scripts/create-spec.sh "User Authentication System"
-```
+````
 
 **Code:**
 
@@ -1883,6 +1953,7 @@ chmod +x .specify/scripts/list-specs.sh
 **Purpose**: Catch type errors at compile time
 
 **Commands (by language):**
+
 - **TypeScript**: `npm run type-check` or `tsc --noEmit`
 - **Python**: `mypy .` or `pyright`
 - **Go**: `go vet ./...`
@@ -1898,6 +1969,7 @@ chmod +x .specify/scripts/list-specs.sh
 **Purpose**: Verify functionality, prevent regressions
 
 **Commands (by language):**
+
 - **JavaScript/TypeScript**: `npm test` (Jest, Vitest, etc.)
 - **Python**: `pytest` or `python -m unittest`
 - **Go**: `go test ./...`
@@ -1914,6 +1986,7 @@ chmod +x .specify/scripts/list-specs.sh
 **Purpose**: Ensure adequate test coverage
 
 **Commands (by language):**
+
 - **JavaScript**: `npm test -- --coverage`
 - **Python**: `pytest --cov` or `coverage run`
 - **Go**: `go test -cover ./...`
@@ -1923,6 +1996,7 @@ chmod +x .specify/scripts/list-specs.sh
 **Requirement:** ≥ 80% (or constitutional threshold)
 
 **View report:**
+
 ```bash
 # JavaScript
 open coverage/lcov-report/index.html
@@ -1941,6 +2015,7 @@ go tool cover -html=coverage.out
 **Purpose**: Enforce code quality standards
 
 **Commands (by language/framework):**
+
 - **JavaScript/TypeScript**: `npm run lint` (ESLint)
 - **Python**: `pylint .` or `ruff check`
 - **Go**: `golangci-lint run`
@@ -1959,6 +2034,7 @@ go tool cover -html=coverage.out
 **Purpose**: Consistent code style
 
 **Commands (by language/framework):**
+
 - **JavaScript/TypeScript**: `npm run format` (Prettier)
 - **Python**: `black .` or `ruff format`
 - **Go**: `gofmt -w .` or `goimports -w .`
@@ -2264,6 +2340,7 @@ footer
 ```
 
 **Types:**
+
 - `feat`: New feature (references spec)
 - `fix`: Bug fix (references spec)
 - `docs`: Documentation only
@@ -2330,7 +2407,7 @@ git push --tags
 
 **File:** `.github/pull_request_template.md`
 
-```markdown
+````markdown
 ## Specification
 
 - **Spec**: [NNN](link-to-spec.md)
@@ -2370,6 +2447,7 @@ npm test           # ✅ All passing
 npm run lint       # ✅ 0 errors
 ./.specify/scripts/check-quality.sh  # ✅ Passed
 ```
+````
 
 ## Spec Alignment
 
@@ -2380,7 +2458,8 @@ npm run lint       # ✅ 0 errors
 ## Notes
 
 [Implementation decisions, trade-offs, discussions]
-```
+
+````
 
 ---
 
@@ -2401,7 +2480,7 @@ brew install uv
 
 # Verify
 uv --version
-```
+````
 
 ---
 

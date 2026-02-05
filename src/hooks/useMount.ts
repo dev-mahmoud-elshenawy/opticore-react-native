@@ -6,8 +6,8 @@ import { useEffect } from 'react';
  * @param effect - Callback function to execute
  */
 export function useMount(effect: () => void | (() => void)) {
-    useEffect(() => {
-        return effect();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+  useEffect(() => {
+    return effect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 }

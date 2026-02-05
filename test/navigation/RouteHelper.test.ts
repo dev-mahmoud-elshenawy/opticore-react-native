@@ -1,8 +1,12 @@
 import { renderHook } from '@testing-library/react-native';
 
-jest.mock('expo-router', () => ({
-  useRouter: jest.fn(),
-}), { virtual: true });
+jest.mock(
+  'expo-router',
+  () => ({
+    useRouter: jest.fn(),
+  }),
+  { virtual: true }
+);
 
 import { useRouter } from 'expo-router';
 import { useRouteHelper } from '../../src/navigation/RouteHelper';

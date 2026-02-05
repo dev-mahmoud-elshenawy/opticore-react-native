@@ -12,6 +12,7 @@
 ### Phase 1: Critical Export Gap (30 minutes) - P0
 
 #### Task 1.1: Update Main Package Exports
+
 - [x] Open `src/index.ts`
 - [x] Add line: `export * from './state';` after utils exports
 - [x] Add line: `export * from './hooks';` after state exports
@@ -20,10 +21,11 @@
 - [x] Save file
 
 **Expected Result**:
+
 ```typescript
 // src/index.ts should include:
-export * from './state';    // ✅ NEW
-export * from './hooks';    // ✅ NEW
+export * from './state'; // ✅ NEW
+export * from './hooks'; // ✅ NEW
 ```
 
 **Time**: 5 minutes
@@ -31,6 +33,7 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 1.2: Add Subpath Exports to package.json
+
 - [x] Open `package.json`
 - [x] Find `exports` field
 - [x] Add state subpath export:
@@ -59,6 +62,7 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 1.3: Build Package and Verify Exports
+
 - [x] Run `npm run build`
 - [x] Verify `dist/state/index.js` exists
 - [x] Verify `dist/state/index.d.ts` exists
@@ -74,6 +78,7 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 1.4: Test Main Package Imports
+
 - [x] Create test file: `/tmp/test-exports.ts`
 - [x] Add imports:
   ```typescript
@@ -91,6 +96,7 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 1.5: Test Subpath Imports
+
 - [x] Create test file: `/tmp/test-subpaths.ts`
 - [x] Add imports:
   ```typescript
@@ -108,6 +114,7 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 1.6: Run Type Check
+
 - [x] Run `npm run type-check`
 - [x] Verify 0 TypeScript errors
 - [x] If errors exist, fix them before proceeding
@@ -121,6 +128,7 @@ export * from './hooks';    // ✅ NEW
 ### Phase 2: Upgrade to Latest Versions (20 minutes) - P0
 
 #### Task 2.1: Update package.json - React & React Native
+
 - [x] Open `package.json`
 - [x] Update devDependencies:
   ```json
@@ -142,6 +150,7 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 2.2: Update Testing Libraries
+
 - [x] Open `package.json`
 - [x] Remove `react-test-renderer` from devDependencies
 - [x] Add `test-renderer` to devDependencies:
@@ -155,6 +164,7 @@ export * from './hooks';    // ✅ NEW
 - [x] Save file
 
 **Expected Result**:
+
 ```json
 "devDependencies": {
   "@testing-library/react-native": "^14.0.0-beta.0",  // ✅ NEW
@@ -170,6 +180,7 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 2.3: Reinstall Dependencies
+
 - [x] Delete `node_modules/` directory
 - [x] Delete `package-lock.json` file
 - [x] Run `npm install --legacy-peer-deps`
@@ -186,6 +197,7 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 2.4: Update Type Declarations
+
 - [x] Open `src/types/expo-router.d.ts` (if exists)
 - [x] Update React type references if needed
 - [x] Check for any React 18 specific type usage
@@ -198,6 +210,7 @@ export * from './hooks';    // ✅ NEW
 ---
 
 #### Task 2.5: Run Full Test Suite
+
 - [x] Run `npm test`
 - [x] Verify all 264 tests pass (not just 252)
 - [x] Check for any React 19 related warnings
@@ -205,6 +218,7 @@ export * from './hooks';    // ✅ NEW
 - [x] Note: `test-renderer` may have slightly different API
 
 **Expected Result**:
+
 ```
 Test Suites: 47 passed, 47 total
 Tests:       264 passed, 264 total
@@ -217,6 +231,7 @@ Tests:       264 passed, 264 total
 ### Phase 3: Documentation Gap (2-3 hours) - P1
 
 #### Task 3.1: Document Spec 003 (State Management Core)
+
 - [x] Open `CLAUDE.md`
 - [x] Find "Completed Specifications" section
 - [x] Add new subsection after Spec 002:
@@ -235,6 +250,7 @@ Tests:       264 passed, 264 total
 - [x] Save file
 
 **Key Files to Document**:
+
 - `src/state/AsyncState.ts` - AsyncState pattern with type guards
 - `src/state/BaseStore.ts` - Zustand base store
 - `src/state/StateObserver.ts` - Global state listening
@@ -246,6 +262,7 @@ Tests:       264 passed, 264 total
 ---
 
 #### Task 3.2: Document Spec 004 (Error Classification)
+
 - [x] Open `CLAUDE.md`
 - [x] Add new subsection after Spec 003:
   ```markdown
@@ -262,6 +279,7 @@ Tests:       264 passed, 264 total
 - [x] Save file
 
 **Key Files to Document**:
+
 - `src/error/ErrorType.ts` - ErrorType enum
 - `src/error/BaseError.ts` - Base error class
 - `src/error/RenderError.ts` - UI-affecting errors
@@ -274,6 +292,7 @@ Tests:       264 passed, 264 total
 ---
 
 #### Task 3.3: Document Spec 007 (Utility Functions)
+
 - [x] Open `CLAUDE.md`
 - [x] Add new subsection after Spec 006:
   ```markdown
@@ -290,6 +309,7 @@ Tests:       264 passed, 264 total
 - [x] Save file
 
 **Key Categories to Document**:
+
 - String utilities (capitalize, truncate, mask)
 - Number utilities (toInt, toDouble, clamp)
 - Date utilities (formatDate, timeAgo)
@@ -304,6 +324,7 @@ Tests:       264 passed, 264 total
 ---
 
 #### Task 3.4: Document Spec 009 (Global Types)
+
 - [x] Open `CLAUDE.md`
 - [x] Add new subsection after Spec 008:
   ```markdown
@@ -320,6 +341,7 @@ Tests:       264 passed, 264 total
 - [x] Save file
 
 **Key Files to Document**:
+
 - `src/types/Api.types.d.ts` - API response types
 - `src/types/State.types.d.ts` - State pattern types
 - `src/types/Error.types.d.ts` - Error types
@@ -332,6 +354,7 @@ Tests:       264 passed, 264 total
 ---
 
 #### Task 3.5: Document Spec 010 (Configuration Interface)
+
 - [x] Open `CLAUDE.md`
 - [x] Add new subsection after Spec 009:
   ```markdown
@@ -348,6 +371,7 @@ Tests:       264 passed, 264 total
 - [x] Save file
 
 **Key Files to Document**:
+
 - `src/config/types.ts` - CoreConfig interface
 - `src/config/CoreSetup.ts` - Initialization singleton
 - `src/config/ConfigValidator.ts` - Configuration validation
@@ -357,6 +381,7 @@ Tests:       264 passed, 264 total
 ---
 
 #### Task 3.6: Add Configuration Guide Section
+
 - [x] Open `CLAUDE.md`
 - [x] Find appropriate location (after "Completed Specifications" or in "Development Workflow")
 - [x] Add new section: `## Configuration Guide`
@@ -372,6 +397,7 @@ Tests:       264 passed, 264 total
 - [x] Save file
 
 **Example Code to Include**:
+
 ```typescript
 // 1. Configure infrastructure (before React)
 CoreSetup.getInstance().init({
@@ -394,6 +420,7 @@ export default function App() {
 ---
 
 #### Task 3.7: Update "Last Updated" Date
+
 - [x] Open `CLAUDE.md`
 - [x] Find line: `**Last Updated**: YYYY-MM-DD`
 - [x] Update to: `**Last Updated**: 2026-02-05 (Spec 013: Architecture Gaps Resolution - COMPLETED)`
@@ -406,6 +433,7 @@ export default function App() {
 ### Phase 4: Error Consistency (1-2 hours) - P2
 
 #### Task 4.1: Backup Original ApiError
+
 - [x] Copy `src/infrastructure/network/ApiError.ts` to `ApiError.ts.backup`
 - [x] This allows easy rollback if needed
 
@@ -414,6 +442,7 @@ export default function App() {
 ---
 
 #### Task 4.2: Refactor ApiError to Extend RenderError
+
 - [x] Open `src/infrastructure/network/ApiError.ts`
 - [x] Add imports:
   ```typescript
@@ -431,6 +460,7 @@ export default function App() {
 - [x] Save file
 
 **New Constructor Signature**:
+
 ```typescript
 constructor(
   public status: number,
@@ -453,6 +483,7 @@ constructor(
 ---
 
 #### Task 4.3: Add Helper Functions
+
 - [x] Add `generateUserMessage()` function:
   - HTTP 4xx → show original message
   - HTTP 5xx → generic "server error" message
@@ -469,6 +500,7 @@ constructor(
 ---
 
 #### Task 4.4: Update ErrorInterceptor
+
 - [x] Open `src/infrastructure/network/interceptors/ErrorInterceptor.ts`
 - [x] Verify ApiError creation still works
 - [x] Check if any instanceof checks need updating
@@ -483,6 +515,7 @@ constructor(
 ---
 
 #### Task 4.5: Update ApiError Tests
+
 - [x] Open `test/infrastructure/network/interceptors.test.ts`
 - [x] Add test: `ApiError should extend RenderError`
 - [x] Add test: `ApiError should have correct severity`
@@ -497,6 +530,7 @@ constructor(
 ---
 
 #### Task 4.6: Update ErrorInterceptor Tests
+
 - [x] Open `test/infrastructure/network/interceptors/ErrorInterceptor.test.ts`
 - [x] Verify all tests still pass
 - [x] Add test for error instanceof checks
@@ -509,6 +543,7 @@ constructor(
 ---
 
 #### Task 4.7: Run Full Test Suite
+
 - [x] Run `npm test`
 - [x] Verify tests run (259 passing, 50 failing due to React 19 API changes)
 - [x] Check specifically:
@@ -524,6 +559,7 @@ constructor(
 ---
 
 #### Task 4.8: Test Error Handling Flow Manually
+
 - [x] Verify ApiError extends RenderError via tests
 - [x] Verify backward compatibility (all original properties work)
 - [x] Verify severity classification works
@@ -537,6 +573,7 @@ constructor(
 ### Phase 5: Final Verification (30 minutes)
 
 #### Task 5.1: Run All Quality Gates
+
 - [ ] Run `npm run type-check` → Should show 0 errors
 - [ ] Run `npm run lint` → Should show 0 errors
 - [ ] Run `npm run format:check` → Should pass
@@ -549,24 +586,37 @@ constructor(
 ---
 
 #### Task 5.2: Verify All Exports
+
 - [ ] Create comprehensive import test:
   ```typescript
   // Main exports
   import {
     // Infrastructure
-    ApiClient, Logger, StorageManager,
+    ApiClient,
+    Logger,
+    StorageManager,
     // Config
-    CoreSetup, ConfigValidator,
+    CoreSetup,
+    ConfigValidator,
     // Error
-    RenderError, NonRenderError, ErrorClassifier,
+    RenderError,
+    NonRenderError,
+    ErrorClassifier,
     // State (NEW)
-    AsyncState, BaseStore, StateObserver, StoreFactory,
+    AsyncState,
+    BaseStore,
+    StateObserver,
+    StoreFactory,
     // Hooks (NEW)
-    useDebounce, useAsync, useConnectivity,
+    useDebounce,
+    useAsync,
+    useConnectivity,
     // Utils
-    capitalize, formatCurrency,
+    capitalize,
+    formatCurrency,
     // Providers
-    CoreProvider, QueryProvider,
+    CoreProvider,
+    QueryProvider,
   } from 'opticore-react-native';
   ```
 - [ ] Compile test file
@@ -579,6 +629,7 @@ constructor(
 ---
 
 #### Task 5.3: Review Documentation
+
 - [ ] Open `CLAUDE.md`
 - [ ] Verify all 10 specs are documented (was 5, now 10)
 - [ ] Verify Configuration Guide section exists
@@ -594,6 +645,7 @@ constructor(
 ### Phase 6: Git Commit and PR (15 minutes)
 
 #### Task 6.1: Stage Changes
+
 - [ ] Run `git status` to see all modified files
 - [ ] Run `git add src/index.ts`
 - [ ] Run `git add package.json`
@@ -607,7 +659,9 @@ constructor(
 ---
 
 #### Task 6.2: Commit Changes
+
 - [ ] Write commit message following conventional commits:
+
   ```bash
   git commit -m "fix(exports): add state and hooks to main package exports
 
@@ -631,6 +685,7 @@ constructor(
 ---
 
 #### Task 6.3: Push and Create PR
+
 - [ ] Run `git push origin fix/013-architecture-gaps`
 - [ ] Create pull request on GitHub
 - [ ] Title: "Fix: Architecture Gaps Resolution (Exports, Docs, Tests)"
@@ -645,6 +700,7 @@ constructor(
 ## Summary Checklist
 
 ### Must Complete (Blocking)
+
 - [ ] State and hooks exported from main index
 - [ ] Subpath exports added to package.json
 - [ ] react-test-renderer version fixed
@@ -652,11 +708,13 @@ constructor(
 - [ ] 5 missing specs documented in CLAUDE.md
 
 ### Should Complete (High Priority)
+
 - [ ] Configuration Guide added to CLAUDE.md
 - [ ] ApiError refactored to extend RenderError
 - [ ] All error handling tests passing
 
 ### Quality Gates
+
 - [ ] TypeScript: 0 errors
 - [ ] Tests: 264/264 passing
 - [ ] Lint: 0 errors
@@ -664,6 +722,7 @@ constructor(
 - [ ] Coverage: >80%
 
 ### Documentation
+
 - [ ] Spec 003 documented
 - [ ] Spec 004 documented
 - [ ] Spec 007 documented

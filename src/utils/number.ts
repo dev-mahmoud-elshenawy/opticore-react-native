@@ -4,9 +4,9 @@
  * @param fallback - Fallback if parsing fails (default: 0)
  */
 export function toInt(value: any, fallback: number = 0): number {
-    if (value === null || value === undefined) return fallback;
-    const parsed = parseInt(value, 10);
-    return isNaN(parsed) ? fallback : parsed;
+  if (value === null || value === undefined) return fallback;
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? fallback : parsed;
 }
 
 /**
@@ -15,9 +15,9 @@ export function toInt(value: any, fallback: number = 0): number {
  * @param fallback - Fallback if parsing fails (default: 0)
  */
 export function toDouble(value: any, fallback: number = 0): number {
-    if (value === null || value === undefined) return fallback;
-    const parsed = parseFloat(value);
-    return isNaN(parsed) ? fallback : parsed;
+  if (value === null || value === undefined) return fallback;
+  const parsed = parseFloat(value);
+  return isNaN(parsed) ? fallback : parsed;
 }
 
 /**
@@ -27,7 +27,7 @@ export function toDouble(value: any, fallback: number = 0): number {
  * @param max - Maximum value
  */
 export function clamp(value: number, min: number, max: number): number {
-    return Math.min(Math.max(value, min), max);
+  return Math.min(Math.max(value, min), max);
 }
 
 /**
@@ -36,5 +36,5 @@ export function clamp(value: number, min: number, max: number): number {
  * @param max - Maximum value
  */
 export function random(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }

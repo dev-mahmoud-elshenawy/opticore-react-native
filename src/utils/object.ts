@@ -5,9 +5,11 @@
  * @param fallback - Fallback value if not found
  */
 export function get(obj: any, path: string, fallback?: any): any {
-    if (!obj || !path) return fallback;
-    const result = path.split('.').reduce((acc, part) => (acc && acc[part] !== undefined) ? acc[part] : undefined, obj);
-    return result !== undefined ? result : fallback;
+  if (!obj || !path) return fallback;
+  const result = path
+    .split('.')
+    .reduce((acc, part) => (acc && acc[part] !== undefined ? acc[part] : undefined), obj);
+  return result !== undefined ? result : fallback;
 }
 
 /**
@@ -16,29 +18,29 @@ export function get(obj: any, path: string, fallback?: any): any {
  * @param source - Source object
  */
 export function deepMerge(target: any, source: any): any {
-    if (!isObject(target) || !isObject(source)) {
-        return source;
+  if (!isObject(target) || !isObject(source)) {
+    return source;
+  }
+
+  const output = { ...target };
+
+  Object.keys(source).forEach((key) => {
+    if (isObject(source[key])) {
+      if (!(key in target)) {
+        Object.assign(output, { [key]: source[key] });
+      } else {
+        output[key] = deepMerge(target[key], source[key]);
+      }
+    } else {
+      Object.assign(output, { [key]: source[key] });
     }
+  });
 
-    const output = { ...target };
-
-    Object.keys(source).forEach((key) => {
-        if (isObject(source[key])) {
-            if (!(key in target)) {
-                Object.assign(output, { [key]: source[key] });
-            } else {
-                output[key] = deepMerge(target[key], source[key]);
-            }
-        } else {
-            Object.assign(output, { [key]: source[key] });
-        }
-    });
-
-    return output;
+  return output;
 }
 
 function isObject(item: any): boolean {
-    return (item && typeof item === 'object' && !Array.isArray(item));
+  return item && typeof item === 'object' && !Array.isArray(item);
 }
 
 /**
@@ -47,13 +49,13 @@ function isObject(item: any): boolean {
  * @param keys - Keys to pick
  */
 export function pick<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
-    const result = {} as Pick<T, K>;
-    keys.forEach((key) => {
-        if (key in obj) {
-            result[key] = obj[key];
-        }
-    });
-    return result;
+  const result = {} as Pick<T, K>;
+  keys.forEach((key) => {
+    if (key in obj) {
+      result[key] = obj[key];
+    }
+  });
+  return result;
 }
 
 /**
@@ -62,9 +64,9 @@ export function pick<T extends object, K extends keyof T>(obj: T, keys: K[]): Pi
  * @param keys - Keys to omit
  */
 export function omit<T extends object, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
-    const result = { ...obj };
-    keys.forEach((key) => {
-        delete result[key];
-    });
-    return result;
+  const result = { ...obj };
+  keys.forEach((key) => {
+    delete result[key];
+  });
+  return result;
 }

@@ -1,4 +1,12 @@
-import { format, parse, isValid, formatDistanceToNow, isToday as fnsIsToday, isYesterday as fnsIsYesterday, isSameDay as fnsIsSameDay } from 'date-fns';
+import {
+  format,
+  parse,
+  isValid,
+  formatDistanceToNow,
+  isToday as fnsIsToday,
+  isYesterday as fnsIsYesterday,
+  isSameDay as fnsIsSameDay,
+} from 'date-fns';
 
 /**
  * Formats a date object to a string.
@@ -8,10 +16,10 @@ import { format, parse, isValid, formatDistanceToNow, isToday as fnsIsToday, isY
  * @returns Formatted string or empty string if invalid
  */
 export function formatDate(date: Date | number, formatStr: string): string {
-    if (!date) return '';
-    const d = new Date(date);
-    if (!isValid(d)) return '';
-    return format(d, formatStr);
+  if (!date) return '';
+  const d = new Date(date);
+  if (!isValid(d)) return '';
+  return format(d, formatStr);
 }
 
 /**
@@ -21,9 +29,9 @@ export function formatDate(date: Date | number, formatStr: string): string {
  * @returns Date object or null if invalid
  */
 export function parseDate(dateStr: string, formatStr: string): Date | null {
-    if (!dateStr) return null;
-    const d = parse(dateStr, formatStr, new Date());
-    return isValid(d) ? d : null;
+  if (!dateStr) return null;
+  const d = parse(dateStr, formatStr, new Date());
+  return isValid(d) ? d : null;
 }
 
 /**
@@ -31,10 +39,10 @@ export function parseDate(dateStr: string, formatStr: string): Date | null {
  * @param date - Date object or timestamp
  */
 export function timeAgo(date: Date | number): string {
-    if (!date) return '';
-    const d = new Date(date);
-    if (!isValid(d)) return '';
-    return formatDistanceToNow(d, { addSuffix: true });
+  if (!date) return '';
+  const d = new Date(date);
+  if (!isValid(d)) return '';
+  return formatDistanceToNow(d, { addSuffix: true });
 }
 
 /**
@@ -42,8 +50,8 @@ export function timeAgo(date: Date | number): string {
  * @param date - Date object or timestamp
  */
 export function isToday(date: Date | number): boolean {
-    if (!date) return false;
-    return fnsIsToday(new Date(date));
+  if (!date) return false;
+  return fnsIsToday(new Date(date));
 }
 
 /**
@@ -51,8 +59,8 @@ export function isToday(date: Date | number): boolean {
  * @param date - Date object or timestamp
  */
 export function isYesterday(date: Date | number): boolean {
-    if (!date) return false;
-    return fnsIsYesterday(new Date(date));
+  if (!date) return false;
+  return fnsIsYesterday(new Date(date));
 }
 
 /**
@@ -61,6 +69,6 @@ export function isYesterday(date: Date | number): boolean {
  * @param date2 - Second date
  */
 export function isSameDay(date1: Date | number, date2: Date | number): boolean {
-    if (!date1 || !date2) return false;
-    return fnsIsSameDay(new Date(date1), new Date(date2));
+  if (!date1 || !date2) return false;
+  return fnsIsSameDay(new Date(date1), new Date(date2));
 }

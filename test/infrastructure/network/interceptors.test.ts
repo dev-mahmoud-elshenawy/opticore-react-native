@@ -154,7 +154,7 @@ describe('Interceptors', () => {
         { status: -1, expectedSeverity: 'critical' }, // Network failure
         { status: 401, expectedSeverity: 'warning' }, // Auth
         { status: 403, expectedSeverity: 'warning' }, // Auth
-        { status: 404, expectedSeverity: 'error' },   // Client error
+        { status: 404, expectedSeverity: 'error' }, // Client error
         { status: 500, expectedSeverity: 'critical' }, // Server error
       ];
 

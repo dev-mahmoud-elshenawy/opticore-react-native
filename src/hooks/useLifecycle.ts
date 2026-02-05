@@ -7,17 +7,17 @@ import { AppState, AppStateStatus } from 'react-native';
  * @returns Current AppStateStatus ('active', 'background', 'inactive')
  */
 export function useLifecycle() {
-    const [appState, setAppState] = useState<AppStateStatus>(AppState.currentState);
+  const [appState, setAppState] = useState<AppStateStatus>(AppState.currentState);
 
-    useEffect(() => {
-        const subscription = AppState.addEventListener('change', (nextAppState) => {
-            setAppState(nextAppState);
-        });
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      setAppState(nextAppState);
+    });
 
-        return () => {
-            subscription.remove();
-        };
-    }, []);
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
-    return appState;
+  return appState;
 }

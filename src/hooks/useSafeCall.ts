@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
 
 export type SafeCallResult<T> = {
-    execute: (fn: () => Promise<T>) => Promise<T | undefined>;
-    error: Error | null;
-    isLoading: boolean;
+  execute: (fn: () => Promise<T>) => Promise<T | undefined>;
+  error: Error | null;
+  isLoading: boolean;
 };
 
 /**
@@ -16,23 +16,23 @@ export type SafeCallResult<T> = {
  * - isLoading: boolean
  */
 export function useSafeCall<T>(): SafeCallResult<T> {
-    const [error, setError] = useState<Error | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const execute = useCallback(async (fn: () => Promise<T>): Promise<T | undefined> => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const result = await fn();
-            return result;
-        } catch (e: any) {
-            const err = e instanceof Error ? e : new Error(String(e));
-            setError(err);
-            return undefined;
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
+  const execute = useCallback(async (fn: () => Promise<T>): Promise<T | undefined> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await fn();
+      return result;
+    } catch (e: any) {
+      const err = e instanceof Error ? e : new Error(String(e));
+      setError(err);
+      return undefined;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-    return { execute, error, isLoading };
+  return { execute, error, isLoading };
 }

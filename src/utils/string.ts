@@ -4,10 +4,10 @@
  * @param fallback - Fallback value (default: '')
  */
 export function notNull(str: string | null | undefined, fallback: string = ''): string {
-    if (str === null || str === undefined) {
-        return fallback;
-    }
-    return str;
+  if (str === null || str === undefined) {
+    return fallback;
+  }
+  return str;
 }
 
 /**
@@ -15,8 +15,8 @@ export function notNull(str: string | null | undefined, fallback: string = ''): 
  * @param str - Input string
  */
 export function capitalize(str: string): string {
-    if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
 /**
@@ -26,8 +26,8 @@ export function capitalize(str: string): string {
  * @param suffix - Suffix to append if truncated (default: '...')
  */
 export function truncate(str: string, length: number = 50, suffix: string = '...'): string {
-    if (!str || str.length <= length) return str;
-    return str.substring(0, length) + suffix;
+  if (!str || str.length <= length) return str;
+  return str.substring(0, length) + suffix;
 }
 
 /**
@@ -37,10 +37,14 @@ export function truncate(str: string, length: number = 50, suffix: string = '...
  * @param visibleChars - Number of characters to keep visible at the end (default: 4)
  * @param maskChar - Character to use for masking (default: '*')
  */
-export function maskSensitive(str: string, visibleChars: number = 4, maskChar: string = '*'): string {
-    if (!str || str.length <= visibleChars) return str;
-    const maskedLength = str.length - visibleChars;
-    return maskChar.repeat(maskedLength) + str.slice(-visibleChars);
+export function maskSensitive(
+  str: string,
+  visibleChars: number = 4,
+  maskChar: string = '*'
+): string {
+  if (!str || str.length <= visibleChars) return str;
+  const maskedLength = str.length - visibleChars;
+  return maskChar.repeat(maskedLength) + str.slice(-visibleChars);
 }
 
 /**
@@ -48,10 +52,10 @@ export function maskSensitive(str: string, visibleChars: number = 4, maskChar: s
  * @param str - Input string (snake_case, kebab-case, or space separated)
  */
 export function toCamelCase(str: string): string {
-    if (!str) return '';
-    return str
-        .replace(/\s+/g, '_') // Convert spaces to underscores first
-        .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''));
+  if (!str) return '';
+  return str
+    .replace(/\s+/g, '_') // Convert spaces to underscores first
+    .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''));
 }
 
 /**
@@ -59,11 +63,11 @@ export function toCamelCase(str: string): string {
  * @param str - Input string
  */
 export function toSnakeCase(str: string): string {
-    if (!str) return '';
-    return str
-        .replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
-        .replace(/[\s\-]+/g, '_')
-        .replace(/^_/, ''); // Remove leading underscore if result of first capital
+  if (!str) return '';
+  return str
+    .replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
+    .replace(/[\s\-]+/g, '_')
+    .replace(/^_/, ''); // Remove leading underscore if result of first capital
 }
 
 /**
@@ -71,11 +75,11 @@ export function toSnakeCase(str: string): string {
  * @param str - Input string
  */
 export function toKebabCase(str: string): string {
-    if (!str) return '';
-    return str
-        .replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)
-        .replace(/[\s_]+/g, '-')
-        .replace(/^-/, ''); // Remove leading dash
+  if (!str) return '';
+  return str
+    .replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)
+    .replace(/[\s_]+/g, '-')
+    .replace(/^-/, ''); // Remove leading dash
 }
 
 /**
@@ -83,7 +87,7 @@ export function toKebabCase(str: string): string {
  * @param str - Input string
  */
 export function isEmpty(str: string | null | undefined): boolean {
-    return !str || str.trim().length === 0;
+  return !str || str.trim().length === 0;
 }
 
 /**
@@ -92,10 +96,10 @@ export function isEmpty(str: string | null | undefined): boolean {
  * @param str - Input string
  */
 export function isEmail(str: string): boolean {
-    if (!str) return false;
-    // Simple regex for basic validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(str);
+  if (!str) return false;
+  // Simple regex for basic validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(str);
 }
 
 /**
@@ -103,11 +107,11 @@ export function isEmail(str: string): boolean {
  * @param str - Input string
  */
 export function isURL(str: string): boolean {
-    if (!str) return false;
-    try {
-        new URL(str);
-        return true;
-    } catch {
-        return false;
-    }
+  if (!str) return false;
+  try {
+    new URL(str);
+    return true;
+  } catch {
+    return false;
+  }
 }

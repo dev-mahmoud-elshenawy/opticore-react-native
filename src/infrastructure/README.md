@@ -222,10 +222,10 @@ logger.error('Failed to fetch user', error);
 // In production (isProduction: true), ALL logs are suppressed
 logger.configure({ isProduction: true });
 
-logger.debug('Debug');  // ❌ Not logged
-logger.info('Info');    // ❌ Not logged
-logger.warn('Warn');    // ❌ Not logged
-logger.error('Error');  // ❌ Not logged
+logger.debug('Debug'); // ❌ Not logged
+logger.info('Info'); // ❌ Not logged
+logger.warn('Warn'); // ❌ Not logged
+logger.error('Error'); // ❌ Not logged
 
 // Console output in production: NOTHING
 ```

@@ -12,25 +12,29 @@ export type Orientation = 'portrait' | 'landscape';
  * - isLandscape: boolean
  */
 export function useOrientation() {
-    const [orientation, setOrientation] = useState<Orientation>(
-        isLandscape(Dimensions.get('window')) ? 'landscape' : 'portrait'
-    );
+  const [orientation, setOrientation] = useState<Orientation>(
+    isLandscape(Dimensions.get('window')) ? 'landscape' : 'portrait'
+  );
 
-    useEffect(() => {
-        const onChange = ({ window }: { window: ScaledSize }) => {
-            setOrientation(isLandscape(window) ? 'landscape' : 'portrait');
-        };
+  useEffect(() => {
+    const onChange = ({ window }: { window: ScaledSize }) => {
+      setOrientation(isLandscape(window) ? 'landscape' : 'portrait');
+    };
 
-        const subscription = Dimensions.addEventListener('change', onChange);
+    const subscription = Dimensions.addEventListener('change', onChange);
 
-        return () => {
-            subscription.remove();
-        };
-    }, []);
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
-    return { orientation, isPortrait: orientation === 'portrait', isLandscape: orientation === 'landscape' };
+  return {
+    orientation,
+    isPortrait: orientation === 'portrait',
+    isLandscape: orientation === 'landscape',
+  };
 }
 
 function isLandscape({ width, height }: { width: number; height: number }) {
-    return width > height;
+  return width > height;
 }

@@ -6,143 +6,148 @@ import { QueryProvider } from '../../src/providers/QueryProvider';
 
 // Test component that uses React Query
 const TestQueryComponent: React.FC<{ shouldFail?: boolean }> = ({ shouldFail = false }) => {
-    const { data, isLoading, error, failureCount } = useQuery({
-        queryKey: ['test-query'],
-        queryFn: async () => {
-            if (shouldFail) {
-                throw new Error('Test error');
-            }
-            return 'test-data';
-        },
-    });
+  const { data, isLoading, error, failureCount } = useQuery({
+    queryKey: ['test-query'],
+    queryFn: async () => {
+      if (shouldFail) {
+        throw new Error('Test error');
+      }
+      return 'test-data';
+    },
+  });
 
-    if (isLoading) return <Text>Loading...</Text>;
-    if (error) return <Text>Error: {error.message} (Retries: {failureCount})</Text>;
-    return <Text>{data}</Text>;
+  if (isLoading) return <Text>Loading...</Text>;
+  if (error)
+    return (
+      <Text>
+        Error: {error.message} (Retries: {failureCount})
+      </Text>
+    );
+  return <Text>{data}</Text>;
 };
 
 describe('QueryProvider', () => {
-    it('should render children successfully', () => {
-        const { getByText } = render(
-            <QueryProvider>
-                <Text>Test Child</Text>
-            </QueryProvider>
-        );
+  it('should render children successfully', () => {
+    const { getByText } = render(
+      <QueryProvider>
+        <Text>Test Child</Text>
+      </QueryProvider>
+    );
 
-        expect(getByText('Test Child')).toBeTruthy();
+    expect(getByText('Test Child')).toBeTruthy();
+  });
+
+  it('should provide React Query context for queries', async () => {
+    const { getByText } = render(
+      <QueryProvider>
+        <TestQueryComponent />
+      </QueryProvider>
+    );
+
+    // Should show loading initially
+    expect(getByText('Loading...')).toBeTruthy();
+
+    // Should show data after query completes
+    await waitFor(() => {
+      expect(getByText('test-data')).toBeTruthy();
+    });
+  });
+
+  it('should apply default staleTime configuration', async () => {
+    const { getByText, rerender } = render(
+      <QueryProvider>
+        <TestQueryComponent />
+      </QueryProvider>
+    );
+
+    await waitFor(() => {
+      expect(getByText('test-data')).toBeTruthy();
     });
 
-    it('should provide React Query context for queries', async () => {
-        const { getByText } = render(
-            <QueryProvider>
-                <TestQueryComponent />
-            </QueryProvider>
-        );
+    // Re-render should not trigger loading (data is not stale yet)
+    rerender(
+      <QueryProvider>
+        <TestQueryComponent />
+      </QueryProvider>
+    );
 
-        // Should show loading initially
-        expect(getByText('Loading...')).toBeTruthy();
+    // Should still show cached data without loading
+    expect(getByText('test-data')).toBeTruthy();
+  });
 
-        // Should show data after query completes
-        await waitFor(() => {
-            expect(getByText('test-data')).toBeTruthy();
-        });
-    });
+  it('should retry failed queries based on configuration', async () => {
+    const { getByText } = render(
+      <QueryProvider>
+        <TestQueryComponent shouldFail={true} />
+      </QueryProvider>
+    );
 
-    it('should apply default staleTime configuration', async () => {
-        const { getByText, rerender } = render(
-            <QueryProvider>
-                <TestQueryComponent />
-            </QueryProvider>
-        );
+    // Should eventually show error after retries
+    await waitFor(
+      () => {
+        const errorText = getByText(/Error:.*Test error/);
+        expect(errorText).toBeTruthy();
+        // Verify that retries occurred (failureCount > 1)
+        expect(getByText(/Retries: [1-9]/)).toBeTruthy();
+      },
+      { timeout: 5000 }
+    );
+  });
 
-        await waitFor(() => {
-            expect(getByText('test-data')).toBeTruthy();
-        });
-
-        // Re-render should not trigger loading (data is not stale yet)
-        rerender(
-            <QueryProvider>
-                <TestQueryComponent />
-            </QueryProvider>
-        );
-
-        // Should still show cached data without loading
-        expect(getByText('test-data')).toBeTruthy();
-    });
-
-    it('should retry failed queries based on configuration', async () => {
-        const { getByText } = render(
-            <QueryProvider>
-                <TestQueryComponent shouldFail={true} />
-            </QueryProvider>
-        );
-
-        // Should eventually show error after retries
-        await waitFor(
-            () => {
-                const errorText = getByText(/Error:.*Test error/);
-                expect(errorText).toBeTruthy();
-                // Verify that retries occurred (failureCount > 1)
-                expect(getByText(/Retries: [1-9]/)).toBeTruthy();
+  it('should support custom configuration via props', async () => {
+    const { getByText } = render(
+      <QueryProvider
+        config={{
+          defaultOptions: {
+            queries: {
+              retry: 1, // Custom retry count (instead of default 3)
+              retryDelay: 100, // Fast retry for testing
             },
-            { timeout: 5000 }
-        );
+          },
+        }}
+      >
+        <TestQueryComponent shouldFail={true} />
+      </QueryProvider>
+    );
+
+    // Should fail quickly with only 1 retry
+    await waitFor(
+      () => {
+        expect(getByText(/Error:/)).toBeTruthy();
+      },
+      { timeout: 2000 }
+    );
+  });
+
+  it('should handle multiple queries independently', async () => {
+    const Component = () => {
+      const query1 = useQuery({
+        queryKey: ['query-1'],
+        queryFn: async () => 'data-1',
+      });
+
+      const query2 = useQuery({
+        queryKey: ['query-2'],
+        queryFn: async () => 'data-2',
+      });
+
+      return (
+        <>
+          <Text>{query1.data || 'loading-1'}</Text>
+          <Text>{query2.data || 'loading-2'}</Text>
+        </>
+      );
+    };
+
+    const { getByText } = render(
+      <QueryProvider>
+        <Component />
+      </QueryProvider>
+    );
+
+    await waitFor(() => {
+      expect(getByText('data-1')).toBeTruthy();
+      expect(getByText('data-2')).toBeTruthy();
     });
-
-    it('should support custom configuration via props', async () => {
-        const { getByText } = render(
-            <QueryProvider
-                config={{
-                    defaultOptions: {
-                        queries: {
-                            retry: 1, // Custom retry count (instead of default 3)
-                            retryDelay: 100, // Fast retry for testing
-                        },
-                    },
-                }}
-            >
-                <TestQueryComponent shouldFail={true} />
-            </QueryProvider>
-        );
-
-        // Should fail quickly with only 1 retry
-        await waitFor(
-            () => {
-                expect(getByText(/Error:/)).toBeTruthy();
-            },
-            { timeout: 2000 }
-        );
-    });
-
-    it('should handle multiple queries independently', async () => {
-        const Component = () => {
-            const query1 = useQuery({
-                queryKey: ['query-1'],
-                queryFn: async () => 'data-1',
-            });
-
-            const query2 = useQuery({
-                queryKey: ['query-2'],
-                queryFn: async () => 'data-2',
-            });
-
-            return (
-                <>
-                    <Text>{query1.data || 'loading-1'}</Text>
-                    <Text>{query2.data || 'loading-2'}</Text>
-                </>
-            );
-        };
-
-        const { getByText } = render(
-            <QueryProvider>
-                <Component />
-            </QueryProvider>
-        );
-
-        await waitFor(() => {
-            expect(getByText('data-1')).toBeTruthy();
-            expect(getByText('data-2')).toBeTruthy();
-        });
-    });
+  });
 });

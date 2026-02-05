@@ -295,6 +295,7 @@ export const MyScreen = () => {
 #### 11 Production-Ready Hooks
 
 **Async Hooks (P1)**:
+
 - ✅ **useAsyncState** - Manage async operations with loading/data/error states
   - Location: [`src/hooks/useAsyncState.ts`](src/hooks/useAsyncState.ts)
   - Features: Prevents memory leaks with isMounted check, auto-cleanup on unmount
@@ -304,6 +305,7 @@ export const MyScreen = () => {
   - Features: Wraps promises with try/catch, returns success/error result
 
 **Device State Hooks (P1)**:
+
 - ✅ **useConnectivity** - Network status monitoring
   - Location: [`src/hooks/useConnectivity.ts`](src/hooks/useConnectivity.ts)
   - Features: NetInfo integration, online/offline detection, proper listener cleanup
@@ -326,6 +328,7 @@ export const MyScreen = () => {
   - Returns: `{ isSmall, isMedium, isLarge, isXLarge, width }`
 
 **Performance Hooks (P2)**:
+
 - ✅ **useDebounce** - Value debouncing for search/input
   - Location: [`src/hooks/useDebounce.ts`](src/hooks/useDebounce.ts)
   - Features: Reduces API calls by 90% during rapid input
@@ -340,15 +343,18 @@ export const MyScreen = () => {
   - Type-safe: `usePrevious<T>(value)`
 
 **Utility Hooks (P3)**:
+
 - ✅ **useMount** - Component mount/unmount callbacks
   - Location: [`src/hooks/useMount.ts`](src/hooks/useMount.ts)
   - Features: Cleanup on unmount, prevents memory leaks
 
 **Module Exports**:
+
 - Main entry: [`src/index.ts`](src/index.ts) exports all hooks
 - Module entry: [`src/hooks/index.ts`](src/hooks/index.ts)
 
 **Test Coverage**:
+
 - ✅ 24/24 tests passing (11 hook test files)
 - ✅ 87.06% statement coverage (exceeds 80%)
 - ✅ Comprehensive edge cases: unmount, offline/online transitions, breakpoint changes
@@ -562,11 +568,13 @@ import { QueryProvider } from 'opticore-react-native';
   - Supports custom action injection
 
 **Key Files**:
+
 - [`src/state/index.ts`](src/state/index.ts) - Main exports
 - [`src/state/types/`](src/state/types/) - Type definitions
 - [`src/state/providers/StoreProvider.tsx`](src/state/providers/StoreProvider.tsx) - React provider
 
 **Quality Metrics**:
+
 - TypeScript: Strict mode, 0 errors ✓
 - Tests: 80%+ coverage ✓
 - Reduces loading state boilerplate by 70% ✓
@@ -618,10 +626,12 @@ import { QueryProvider } from 'opticore-react-native';
 - ✅ **AnalyticsError** (extends NonRenderError)
 
 **Key Files**:
+
 - [`src/error/index.ts`](src/error/index.ts) - Main exports
 - [`src/types/Error.types.ts`](src/types/Error.types.ts) - Type definitions
 
 **Quality Metrics**:
+
 - TypeScript: Strict mode, 0 errors ✓
 - Tests: 80%+ coverage ✓
 - Error classification accuracy: 95%+ ✓
@@ -671,10 +681,12 @@ import { QueryProvider } from 'opticore-react-native';
   - Functions: Clipboard (copy, paste), Device info, Permissions, Platform checks (`isIOS()`, `isAndroid()`)
 
 **Key Files**:
+
 - [`src/utils/index.ts`](src/utils/index.ts) - Main exports (tree-shakable)
 - Tests: [`test/utils/`](test/utils/) - Comprehensive test suite
 
 **Quality Metrics**:
+
 - TypeScript: Strict mode, 0 errors ✓
 - Tests: 80%+ coverage ✓
 - Tree-shakable: Only bundled utilities used ✓
@@ -719,10 +731,12 @@ import { QueryProvider } from 'opticore-react-native';
   - Route types for Expo Router integration
 
 **Key Files**:
+
 - [`src/types/`](src/types/) - All type definition files
 - Main export: [`src/index.ts`](src/index.ts) - `export type * from './types'`
 
 **Quality Metrics**:
+
 - TypeScript: Strict mode, 0 errors ✓
 - Type safety: Compile-time route validation ✓
 - Generic types: Full TypeScript inference ✓
@@ -770,10 +784,12 @@ import { QueryProvider } from 'opticore-react-native';
   - Throws explicit errors for invalid configuration
 
 **Key Files**:
+
 - [`src/config/index.ts`](src/config/index.ts) - Main exports
 - [`docs/Configuration.md`](docs/Configuration.md) - Configuration guide
 
 **Usage Example**:
+
 ```typescript
 import { CoreSetup } from 'opticore-react-native';
 
@@ -781,11 +797,11 @@ CoreSetup.getInstance().init({
   api: {
     baseURL: 'https://api.example.com',
     timeout: 30000,
-    headers: { 'X-App-Version': '1.0.0' }
+    headers: { 'X-App-Version': '1.0.0' },
   },
   logger: {
     level: LogLevel.INFO,
-    disabled: false
+    disabled: false,
   },
   onError: (error) => {
     // Global error handling
@@ -794,12 +810,13 @@ CoreSetup.getInstance().init({
   features: {
     debugMode: __DEV__,
     maintenanceMode: false,
-    offlineMode: false
-  }
+    offlineMode: false,
+  },
 });
 ```
 
 **Quality Metrics**:
+
 - TypeScript: Strict mode, 0 errors ✓
 - Tests: 80%+ coverage ✓
 - Single object configuration ✓
@@ -833,6 +850,7 @@ OptiCore React Native is a **pure infrastructure library** for React Native/Expo
 - ❌ **Web**: NOT supported - Some features (like SecureStorage) will throw errors on web platform
 
 **Platform-Specific Behavior**:
+
 - `SecureStorage`: Uses iOS Keychain + Android Keystore. **Throws error on web** - use `LocalStorage` instead for web.
 - `LocalStorage`: Uses `AsyncStorage` - works on all platforms
 - `ConnectivityManager`: Uses NetInfo - works on all platforms but optimized for native
@@ -2172,5 +2190,6 @@ Browse `.specify/specs/` for examples of completed specs:
 **Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**
+
 1. **[speckit_guide.md](speckit_guide.md)** - Complete Spec Kit reference
 2. **[constitution.md](.specify/memory/constitution.md)** - Project constitution

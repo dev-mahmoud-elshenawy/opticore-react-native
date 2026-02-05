@@ -16,10 +16,12 @@ describe('LifecycleManager', () => {
     mockRemove = jest.fn();
 
     // Setup mock to capture callback
-    (AppState.addEventListener as jest.Mock).mockImplementation((_eventType: string, callback: (status: AppStateStatus) => void) => {
-      appStateCallback = callback;
-      return { remove: mockRemove };
-    });
+    (AppState.addEventListener as jest.Mock).mockImplementation(
+      (_eventType: string, callback: (status: AppStateStatus) => void) => {
+        appStateCallback = callback;
+        return { remove: mockRemove };
+      }
+    );
 
     // Reset singleton instance
     const instance = (LifecycleManager as any).instance;

@@ -32,8 +32,8 @@ export class ApiError extends RenderError {
       metadata: {
         status,
         url,
-        data
-      }
+        data,
+      },
     });
 
     this.status = status;
@@ -53,7 +53,7 @@ export class ApiError extends RenderError {
     if (status >= 400 && status < 500) {
       // Client errors - user can fix
       if (status === 401) return 'Please log in to continue.';
-      if (status === 403) return 'You don\'t have permission to access this resource.';
+      if (status === 403) return "You don't have permission to access this resource.";
       if (status === 404) return 'The requested resource was not found.';
       if (status === 422) return 'Please check your input and try again.';
       return 'There was a problem with your request. Please try again.';
@@ -76,4 +76,3 @@ export class ApiError extends RenderError {
     return 'error';
   }
 }
-
