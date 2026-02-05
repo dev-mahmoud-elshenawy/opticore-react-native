@@ -69,15 +69,19 @@ const loginSchema = createValidationSchema<LoginForm>((z) => ({
 }));
 ```
 
-### US-015.3: Input Masks (P2)
+### US-015.3: Input Masks (P2) - Phase B
 **As a** developer
 **I want** input masking utilities
 **So that** I can format user input automatically
 
+> **Implementation Note**: This user story can be implemented in a later phase.
+> Phase A (core form state + validators) should be completed first.
+> Masks add complexity and are not required for basic form functionality.
+
 **Acceptance Criteria**:
-- [ ] Phone mask with country format support
-- [ ] Currency mask with locale support
-- [ ] Credit card mask with card type detection
+- [ ] Phone mask with US format (international formats in future)
+- [ ] Currency mask with USD (locale support in future)
+- [ ] Credit card mask with basic card type detection (Visa, MC, Amex)
 - [ ] Pure functions (no side effects)
 - [ ] Unmask function to get raw value
 

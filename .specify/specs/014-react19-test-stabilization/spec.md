@@ -70,20 +70,50 @@ After upgrading to React 19 and React Native 0.83, 50 tests are failing due to b
 
 ## Technical Approach
 
+### Testing Library Compatibility
+
+**Required Versions**:
+- `@testing-library/react-native`: ^12.9.0 (React 19 compatible)
+- `react-test-renderer`: ^19.0.0 (matches React version)
+- `jest-expo`: ^52.0.0 (Expo SDK 52 compatible)
+
 ### Part A: Test Utility Creation
 
 Create `test/utils/react19Helpers.ts`:
 ```typescript
 import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { ReactNode } from 'react';
 
-// React 19 compatible renderHook wrapper
-export function renderHookCompat<T>(hook: () => T) {
-  // Handle React 19 API changes
+/**
+ * React 19 compatible renderHook wrapper
+ * Handles the updated return type and async behavior
+ */
+export function renderHookCompat<T>(
+  hook: () => T,
+  options?: { wrapper?: React.ComponentType<{ children: ReactNode }> }
+) {
+  return renderHook(hook, options);
 }
 
-// React 19 compatible act wrapper
-export async function actCompat(callback: () => Promise<void>) {
-  // Handle async act changes
+/**
+ * React 19 compatible act wrapper for async operations
+ * Ensures proper flush of React batched updates
+ */
+export async function actCompat(callback: () => Promise<void> | void) {
+  await act(async () => {
+    await callback();
+  });
+}
+
+/**
+ * Wait for hook to stabilize before assertions
+ */
+export async function waitForHook<T>(
+  getResult: () => T,
+  predicate: (result: T) => boolean,
+  timeout = 5000
+) {
+  await waitFor(() => expect(predicate(getResult())).toBe(true), { timeout });
 }
 ```
 

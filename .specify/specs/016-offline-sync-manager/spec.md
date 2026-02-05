@@ -22,7 +22,7 @@ Mobile apps frequently operate in unreliable network conditions. Users expect th
 
 ## User Stories
 
-### US-025.1: Request Queue (P1)
+### US-016.1: Request Queue (P1)
 **As a** developer
 **I want** to enqueue API requests when offline
 **So that** user actions aren't lost
@@ -54,7 +54,7 @@ console.log(`${pending.length} requests pending`);
 manager.dequeue(queueId);
 ```
 
-### US-025.2: Auto-Sync on Reconnect (P1)
+### US-016.2: Auto-Sync on Reconnect (P1)
 **As a** developer
 **I want** queued requests to automatically sync when online
 **So that** I don't have to manually trigger sync
@@ -81,7 +81,7 @@ manager.addSyncListener((event) => {
 });
 ```
 
-### US-025.3: Retry with Exponential Backoff (P2)
+### US-016.3: Retry with Exponential Backoff (P2)
 **As a** developer
 **I want** failed requests to retry with backoff
 **So that** temporary failures don't cause data loss
@@ -104,7 +104,7 @@ await manager.enqueue({
 });
 ```
 
-### US-025.4: Queue Persistence (P2)
+### US-016.4: Queue Persistence (P2)
 **As a** developer
 **I want** the queue to persist across app restarts
 **So that** requests aren't lost if app closes
@@ -116,7 +116,7 @@ await manager.enqueue({
 - [ ] Handles storage failures gracefully
 - [ ] Configurable persistence key
 
-### US-025.5: Conflict Resolution (P3)
+### US-016.5: Conflict Resolution (P3)
 **As a** developer
 **I want** to handle sync conflicts
 **So that** data integrity is maintained
@@ -138,7 +138,7 @@ manager.configure({
 });
 ```
 
-### US-025.6: React Hook (P1)
+### US-016.6: React Hook (P1)
 **As a** developer
 **I want** a `useOfflineSync` hook
 **So that** I can use offline sync in React components

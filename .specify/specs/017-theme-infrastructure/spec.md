@@ -22,7 +22,7 @@ Modern mobile apps are expected to support dark mode and theming. Users expect a
 
 ## User Stories
 
-### US-027.1: Theme Manager (P1)
+### US-017.1: Theme Manager (P1)
 **As a** developer
 **I want** a centralized theme manager
 **So that** I can control app theming from one place
@@ -53,7 +53,7 @@ manager.registerTheme('brand', {
 manager.setTheme('brand');
 ```
 
-### US-027.2: Light/Dark/System Modes (P1)
+### US-017.2: Light/Dark/System Modes (P1)
 **As a** developer
 **I want** to support light, dark, and system modes
 **So that** users can choose their preference
@@ -77,7 +77,7 @@ const activeMode = manager.getActiveMode(); // 'light' or 'dark'
 manager.setMode('dark');
 ```
 
-### US-027.3: Theme Persistence (P1)
+### US-017.3: Theme Persistence (P1)
 **As a** developer
 **I want** theme preference to persist
 **So that** users don't have to set it every session
@@ -101,7 +101,7 @@ manager.setMode('dark');
 // Mode is still 'dark'
 ```
 
-### US-027.4: Theme Provider & Hook (P1)
+### US-017.4: Theme Provider & Hook (P1)
 **As a** developer
 **I want** a React provider and hook for theming
 **So that** I can use themes in components
@@ -132,23 +132,29 @@ function MyComponent() {
 }
 ```
 
-### US-027.5: Color Utilities (P2)
+### US-017.5: Color Utilities (P2)
 **As a** developer
 **I want** color manipulation utilities
 **So that** I can derive colors from theme
 
+> **Note**: Some color utilities already exist in `src/utils/color.ts` from Spec 007.
+> This user story focuses on re-exporting and extending existing utilities for theme context.
+
 **Acceptance Criteria**:
-- [ ] lighten(color, amount)
-- [ ] darken(color, amount)
-- [ ] alpha(color, opacity)
-- [ ] contrast(color) → 'light' | 'dark'
+- [ ] Re-export existing: hexToRgb, rgbToHex from src/utils/color.ts
+- [ ] Add: lighten(color, amount)
+- [ ] Add: darken(color, amount)
+- [ ] Add: alpha(color, opacity)
+- [ ] Add: contrast(color) → 'light' | 'dark'
 - [ ] Works with hex, rgb, rgba
 
 **Example Usage**:
 ```typescript
 const { colors } = useTheme();
 
-// Derive colors
+// Derive colors (utilities available from theme exports)
+import { lighten, alpha, contrast } from 'opticore-react-native/theme';
+
 const hoverColor = lighten(colors.primary, 0.1);
 const disabledColor = alpha(colors.primary, 0.5);
 const textColor = contrast(colors.background) === 'dark'
@@ -156,7 +162,7 @@ const textColor = contrast(colors.background) === 'dark'
   : '#000000';
 ```
 
-### US-027.6: Default Themes (P2)
+### US-017.6: Default Themes (P2)
 **As a** developer
 **I want** sensible default light and dark themes
 **So that** I can start quickly without configuration
