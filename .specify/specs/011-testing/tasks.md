@@ -28,21 +28,21 @@
 
 ### Implementation
 
-- [ ] T014 [P] [US2] Create `tests/mocks/MockApiClient.ts`
-- [ ] T015 [P] [US2] Create `tests/mocks/MockStorage.ts`
-- [ ] T016 [P] [US2] Create `tests/mocks/MockLogger.ts`
-- [ ] T017 [P] [US2] Create `tests/mocks/MockConnectivity.ts`
-- [ ] T018 [P] [US2] Create `tests/mocks/MockLifecycle.ts`
+- [ ] T014 [P] [US2] Create `test/mocks/MockApiClient.ts`
+- [ ] T015 [P] [US2] Create `test/mocks/MockStorage.ts`
+- [ ] T016 [P] [US2] Create `test/mocks/MockLogger.ts`
+- [ ] T017 [P] [US2] Create `test/mocks/MockConnectivity.ts`
+- [ ] T018 [P] [US2] Create `test/mocks/MockLifecycle.ts`
 - [ ] T019 [US2] Verify mocks match real interfaces
 
 ## Phase 4: User Story 3 - Test Helpers (P2)
 
 ### Implementation
 
-- [ ] T020 [P] [US3] Create `tests/helpers/renderHelpers.tsx`
-- [ ] T021 [P] [US3] Create `tests/helpers/storeHelpers.ts`
-- [ ] T022 [P] [US3] Create `tests/helpers/asyncHelpers.ts`
-- [ ] T023 [P] [US3] Create `tests/helpers/dataGenerators.ts`
+- [ ] T020 [P] [US3] Create `test/helpers/renderHelpers.tsx`
+- [ ] T021 [P] [US3] Create `test/helpers/storeHelpers.ts`
+- [ ] T022 [P] [US3] Create `test/helpers/asyncHelpers.ts`
+- [ ] T023 [P] [US3] Create `test/helpers/dataGenerators.ts`
 
 ## Phase 5: CI/CD Integration
 

@@ -1878,7 +1878,7 @@ Browse `.specify/specs/` for examples of completed specs:
 
 **Last Updated**: 2026-02-03
 **Version**: 1.0.0
-**Maintained By**: OptiCore Team
+**Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**
 1. **[speckit_guide.md](speckit_guide.md)** - Complete Spec Kit reference

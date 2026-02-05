@@ -8,8 +8,8 @@
 
 ### Tests
 
-- [ ] T002 [P] [US1] Create `tests/config/CoreConfig.test.ts`
-- [ ] T003 [P] [US1] Create `tests/config/CoreSetup.test.ts`
+- [ ] T002 [P] [US1] Create `test/config/CoreConfig.test.ts`
+- [ ] T003 [P] [US1] Create `test/config/CoreSetup.test.ts`
 
 ### Implementation
 
@@ -34,7 +34,7 @@
 
 ### Tests
 
-- [ ] T012 [P] Create `tests/config/ConfigValidator.test.ts`
+- [ ] T012 [P] Create `test/config/ConfigValidator.test.ts`
 
 ### Implementation
 
