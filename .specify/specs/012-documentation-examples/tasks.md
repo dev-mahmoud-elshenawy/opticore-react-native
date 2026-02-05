@@ -15,9 +15,9 @@
   - Quick start guide (< 5 minutes)
   - Feature list
   - Link to full documentation
-- [ ] T004 [US1] Create `docs/QUICK_START.md` with step-by-step integration
-- [ ] T005 [US1] Create `docs/ARCHITECTURE.md` explaining package structure
-- [ ] T006 [US1] Create `docs/FAQ.md` for common questions
+- [ ] T004 [US1] Create `docs/QuickStart.md` with step-by-step integration
+- [x] T005 [US1] Create `docs/Architecture.md` explaining package structure
+- [ ] T006 [US1] Create `docs/Faq.md` for common questions
 
 ## Phase 3: User Story 2 - API Documentation (P1) 🎯
 
@@ -49,24 +49,24 @@
 
 ### Implementation
 
-- [ ] T023 [P] Create `CONTRIBUTING.md` with:
+- [x] T023 [P] Create `CONTRIBUTING.md` with:
   - Development setup
   - Coding standards
   - Testing requirements
   - PR process
-- [ ] T024 [P] Create `docs/MIGRATION.md` with:
+- [x] T024 [P] Create `docs/Migration.md` with:
   - Migrating from Redux to Zustand
   - Migrating from Axios to ApiClient
   - Migrating from custom hooks
-- [ ] T025 [P] Create `CODE_OF_CONDUCT.md`
-- [ ] T026 [P] Create `SECURITY.md` for security policy
+- [ ] T025 [P] Create `CodeOfConduct.md`
+- [ ] T026 [P] Create `Security.md` for security policy
 
 ## Phase 6: Changelog & Versioning
 
 ### Implementation
 
-- [ ] T027 Create `CHANGELOG.md` following Keep a Changelog format
-- [ ] T028 Document versioning strategy (Semantic Versioning)
+- [x] T027 Create `CHANGELOG.md` following Keep a Changelog format
+- [x] T028 Document versioning strategy (Semantic Versioning - in CHANGELOG)
 - [ ] T029 Create release notes template
 
 ## Phase 7: Optional Documentation Site
