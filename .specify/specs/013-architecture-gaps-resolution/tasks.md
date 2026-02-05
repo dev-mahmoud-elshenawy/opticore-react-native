@@ -246,20 +246,20 @@ Tests:       264 passed, 264 total
 ---
 
 #### Task 3.2: Document Spec 004 (Error Classification)
-- [ ] Open `CLAUDE.md`
-- [ ] Add new subsection after Spec 003:
+- [x] Open `CLAUDE.md`
+- [x] Add new subsection after Spec 003:
   ```markdown
   ### ✅ Spec 004: Error Classification (COMPLETED)
   ```
-- [ ] Fill in the following sections:
-  - [ ] Status: Fully Implemented
-  - [ ] Branch: `feature/004-error-classification` (merged to develop)
-  - [ ] Completion Date: [Check git log]
-  - [ ] **What Was Delivered**: List ErrorType, BaseError, RenderError, NonRenderError, ErrorClassifier
-  - [ ] **Key Files**: List all files in src/error/
-  - [ ] **Quality Metrics**: TypeScript errors, tests passing, coverage
-- [ ] Explain RenderError vs NonRenderError distinction
-- [ ] Save file
+- [x] Fill in the following sections:
+  - [x] Status: Fully Implemented
+  - [x] Branch: `feature/004-error-classification` (merged to develop)
+  - [x] Completion Date: [Check git log]
+  - [x] **What Was Delivered**: List ErrorType, BaseError, RenderError, NonRenderError, ErrorClassifier
+  - [x] **Key Files**: List all files in src/error/
+  - [x] **Quality Metrics**: TypeScript errors, tests passing, coverage
+- [x] Explain RenderError vs NonRenderError distinction
+- [x] Save file
 
 **Key Files to Document**:
 - `src/error/ErrorType.ts` - ErrorType enum
