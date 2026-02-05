@@ -9,6 +9,7 @@ export const VERSION = '1.0.0';
 
 // Infrastructure exports
 export * from './infrastructure';
+export * from './config';
 
 // Error classification exports
 export * from './error';
