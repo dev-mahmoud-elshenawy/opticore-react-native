@@ -1,0 +1,70 @@
+import { useState, useEffect, useCallback } from 'react';
+import { OfflineSyncManager } from './OfflineSyncManager';
+import { ConnectivityManager } from '../infrastructure/connectivity/ConnectivityManager';
+import { QueuedRequest } from './types';
+
+/**
+ * Hook to interact with the offline sync system
+ */
+export function useOfflineSync() {
+    const manager = OfflineSyncManager.getInstance();
+    const connectivity = ConnectivityManager.getInstance();
+
+    // Subscribe to manager state (pending count, syncing status, paused status)
+
+    const [state, setState] = useState({
+        isOnline: connectivity.isConnected,
+        isSyncing: manager.isSyncing(),
+        pendingCount: manager.getPendingCount(),
+    });
+
+    useEffect(() => {
+        const updateState = () => {
+            setState({
+                isOnline: connectivity.isConnected,
+                isSyncing: manager.isSyncing(),
+                pendingCount: manager.getPendingCount(),
+            });
+        };
+
+        const unsubscribeSync = manager.addListener(updateState);
+
+        // Connectivity listener
+        const handleConnectivity = () => updateState();
+        connectivity.addListener(handleConnectivity);
+
+        // Initial update in case state changed between render and effect
+        updateState();
+
+        return () => {
+            unsubscribeSync();
+            connectivity.removeListener(handleConnectivity);
+        };
+    }, []);
+
+    const enqueue = useCallback(async <T>(request: QueuedRequest<T>) => {
+        return manager.enqueue(request);
+    }, []);
+
+    const sync = useCallback(async () => {
+        return manager.sync();
+    }, []);
+
+    const remove = useCallback((id: string) => {
+        return manager.remove(id);
+    }, []);
+
+    const clearQueue = useCallback(() => {
+        manager.clearQueue();
+        // Force update state after clear since it might not emit event immediately
+        setState(prev => ({ ...prev, pendingCount: 0 }));
+    }, []);
+
+    return {
+        ...state,
+        enqueue,
+        sync,
+        remove,
+        clearQueue
+    };
+}

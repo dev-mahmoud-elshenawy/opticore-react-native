@@ -82,12 +82,12 @@
 
 ## Phase 6: React Hook (1-2 hours)
 
-- [ ] T016.11 Create `src/offline/useOfflineSync.ts`:
+- [x] T016.11 Create `src/offline/useOfflineSync.ts`:
   - Returns: isOnline, isSyncing, pendingCount, enqueue, sync, clearQueue
   - Uses useState for reactivity
   - Subscribes to manager events
   - Cleanup on unmount
-- [ ] T016.12 Write tests: `test/offline/useOfflineSync.test.ts`
+- [x] T016.12 Write tests: `test/offline/useOfflineSync.test.ts`
 
 ---
 
