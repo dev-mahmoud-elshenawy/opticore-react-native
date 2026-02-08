@@ -29,6 +29,11 @@
       "types": "./dist/src/hooks/index.d.ts",
       "import": "./dist/src/hooks/index.js",
       "require": "./dist/src/hooks/index.js"
+    },
+    "./forms": {
+      "types": "./dist/src/forms/index.d.ts",
+      "import": "./dist/src/forms/index.js",
+      "require": "./dist/src/forms/index.js"
     }
   },
   "scripts": {

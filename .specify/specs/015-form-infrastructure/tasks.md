@@ -83,17 +83,19 @@
 
 - [ ] T015.23 Create `src/forms/index.ts` - Export all public APIs
 - [ ] T015.24 Add forms exports to `src/index.ts`
-- [ ] T015.25 Add subpath export to package.json: `"./forms": "./dist/forms/index.js"`
-- [ ] T015.26 Create `examples/forms/FormExample.tsx` - Usage example
+- [x] T015.23 Create `src/forms/index.ts` - Export all public APIs
+- [x] T015.24 Add forms exports to `src/index.ts`
+- [x] T015.25 Add subpath export to package.json: `"./forms": "./dist/forms/index.js"`
+- [x] T015.26 Create `examples/forms/FormExample.tsx` - Usage example
 
 ---
 
 ## Final Verification
 
-- [ ] T015.27 Run tests: `npm test test/forms` (All passing)
-- [ ] T015.28 Run type-check: `npm run type-check` (0 errors)
-- [ ] T015.29 Check coverage: `npm test test/forms -- --coverage` (≥80%)
-- [ ] T015.30 Build: `npm run build` (Success)
-- [ ] T015.31 Update CLAUDE.md with Spec 015 completion
+- [x] T015.27 Run tests: `npm test test/forms` (All passing)
+- [x] T015.28 Run type-check: `npm run type-check` (0 errors)
+- [x] T015.29 Check coverage: `npm test test/forms -- --coverage` (≥80%)
+- [x] T015.30 Build: `npm run build` (Success)
+- [x] T015.31 Update CLAUDE.md with Spec 015 completion
 
 **Success Criteria**: All tasks completed ✓

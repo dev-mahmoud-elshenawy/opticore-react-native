@@ -797,8 +797,8 @@ import { QueryProvider } from 'opticore-react-native';
 
 - TypeScript: Strict mode, 0 errors ✓
 - Type safety: Compile-time route validation ✓
-### ✅ Spec 014: React 19 Test Stabilization (COMPLETED)
-
+### ✅- [Spec 014: React 19 Test Stabilization](./.specify/specs/014-react19-test-stabilization/spec.md) - Stabilized test suite for React 19 compatibility.
+- [Spec 015: Form Infrastructure](./.specify/specs/015-form-infrastructure/spec.md) - Implemented form state management, validation, and input masks.
 **Status**: Fully Implemented
 **Branch**: `feature/014-react19-test-stabilization` (merged to develop)
 **Completion Date**: 2026-02-08

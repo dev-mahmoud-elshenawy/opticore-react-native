@@ -31,3 +31,6 @@ export * from './providers';
 
 // Type definitions exports
 export type * from './types';
+
+// Form infrastructure exports
+export * from './forms';
