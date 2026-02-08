@@ -11,7 +11,6 @@ import {
     DefaultValues
 } from 'react-hook-form';
 import { ZodSchema, ZodType, ZodString, ZodRawShape } from 'zod';
-import * as zod from 'zod';
 
 export type Validator<T> = (value: T) => string | undefined | Promise<string | undefined>;
 
@@ -83,7 +82,7 @@ export type {
     ZodRawShape
 };
 
-export type SchemaBuilder = (z: typeof zod) => ZodRawShape;
+export type SchemaBuilder = (z: any) => ZodRawShape;
 
 export interface PhoneValidatorOptions {
     required?: boolean;

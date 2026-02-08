@@ -1,6 +1,5 @@
-
-import { applyCreditCardMask, unmaskCreditCard, detectCardType } from '../../src/forms/masks/creditCardMask';
-import { CardType } from '../../src/forms/types';
+import { applyCreditCardMask, unmaskCreditCard, detectCardType } from '@/forms/masks/creditCardMask';
+import { CardType } from '@/forms/types';
 
 describe('Credit Card Mask', () => {
     describe('detectCardType', () => {

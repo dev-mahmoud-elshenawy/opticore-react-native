@@ -54,8 +54,8 @@ describe('useFieldValidation', () => {
 
     test('should debounce validation calls', async () => {
         jest.useFakeTimers();
-        const { result, rerender } = await renderHook(
-            ({ value }) => useFieldValidation(value, validator, { debounceMs: 500 }),
+        const { rerender } = await renderHook(
+            (props: { value: string }) => useFieldValidation(props.value, validator, { debounceMs: 500 }),
             { initialProps: { value: 'initial' } }
         );
 
