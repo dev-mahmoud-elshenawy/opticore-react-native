@@ -26,7 +26,7 @@ export class StorageManager {
 
   private constructor() {
     this.secure = new SecureStorage();
-    this.local = new LocalStorage();
+    this.local = LocalStorage.getInstance();
   }
 
   public static getInstance(): StorageManager {

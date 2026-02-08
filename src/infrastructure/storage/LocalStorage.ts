@@ -2,6 +2,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IStorage } from './interfaces/IStorage';
 
 export class LocalStorage implements IStorage {
+  private static instance: LocalStorage;
+
+  private constructor() { }
+
+  public static getInstance(): LocalStorage {
+    if (!LocalStorage.instance) {
+      LocalStorage.instance = new LocalStorage();
+    }
+    return LocalStorage.instance;
+  }
+
   async get<T>(key: string): Promise<T | null> {
     try {
       const value = await AsyncStorage.getItem(key);

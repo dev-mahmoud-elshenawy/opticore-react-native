@@ -16,7 +16,7 @@
 
 ## Phase 2: Request Queue (2-3 hours)
 
-- [ ] T016.2 Create `src/offline/RequestQueue.ts`:
+- [x] T016.2 Create `src/offline/RequestQueue.ts`:
   - add(request) - Add to queue
   - remove(id) - Remove from queue
   - getAll() - Get all requests
@@ -24,9 +24,9 @@
   - persist() - Save to LocalStorage
   - restore() - Load from LocalStorage
   - Priority sorting (high → normal → low)
-- [ ] T016.3 Write tests: `test/offline/RequestQueue.test.ts`
+- [x] T016.3 Write tests: `test/offline/RequestQueue.test.ts`
 
-**Verification**: Queue persists/restores correctly
+**Verification**: Queue persists/restores correctly ✓
 
 ---
 

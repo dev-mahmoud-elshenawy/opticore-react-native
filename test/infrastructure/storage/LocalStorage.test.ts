@@ -8,7 +8,9 @@ describe('LocalStorage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    localStorage = new LocalStorage();
+    // Reset singleton for clean state
+    (LocalStorage as any).instance = null;
+    localStorage = LocalStorage.getInstance();
   });
 
   it('set should store stringified data', async () => {
