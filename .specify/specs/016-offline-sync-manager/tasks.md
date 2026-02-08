@@ -93,10 +93,10 @@
 
 ## Phase 7: Module Exports & Examples (1 hour)
 
-- [ ] T016.13 Create `src/offline/index.ts` - Export all public APIs
-- [ ] T016.14 Add offline exports to `src/index.ts`
-- [ ] T016.15 Add subpath export to package.json: `"./offline": "./dist/offline/index.js"`
-- [ ] T016.16 Create `examples/offline/OfflineSyncExample.tsx`
+- [x] T016.13 Create `src/offline/index.ts` - Export all public APIs
+- [x] T016.14 Add offline exports to `src/index.ts`
+- [x] T016.15 Add subpath export to package.json: `"./offline": "./dist/offline/index.js"`
+- [x] T016.16 Create `examples/offline/OfflineSyncExample.tsx`
 
 ---
 

@@ -54,7 +54,7 @@ describe('ConflictResolver', () => {
 
     describe('manual strategy', () => {
         it('should use the provided handler', async () => {
-            const handler = jest.fn().mockImplementation((local, server) => ({ ...server, merged: true }));
+            const handler = jest.fn().mockImplementation((_local, server) => ({ ...server, merged: true }));
             const resolver = new ConflictResolver('manual', handler);
             const local = { id: 1, value: 'local' };
             const server = { id: 1, value: 'server' };

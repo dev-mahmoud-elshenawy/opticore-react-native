@@ -2,7 +2,7 @@
 
 **Package**: `opticore-react-native`
 **Version**: 1.0.0
-**Last Updated**: 2026-02-08 (Spec 015: Form Infrastructure - COMPLETED)
+**Last Updated**: 2026-02-08 (Spec 016: Offline Sync Manager - COMPLETED)
 **Target Platforms**: iOS & Android ONLY
 
 > **📖 Spec Kit Reference**: See [speckit_guide.md](speckit_guide.md) for complete specification-driven development guide
@@ -790,6 +790,56 @@ import { QueryProvider } from 'opticore-react-native';
 - TypeScript: Strict mode, 0 errors ✓
 - Tests: 80%+ coverage ✓
 - Error classification accuracy: 95%+ ✓
+
+---
+
+### ✅ Spec 016: Offline Sync Manager (COMPLETED)
+
+**Status**: Fully Implemented
+**Branch**: `feature/016-offline-sync-manager` (ready to merge)
+**Completion Date**: 2026-02-08
+**Scope**: Offline request queuing, sync engine, and conflict resolution
+
+**What Was Delivered**:
+
+#### Request Queue (P1) - COMPLETE ✓
+
+- ✅ **RequestQueue** - Persistent priority queue for API requests
+  - Location: [`src/offline/RequestQueue.ts`](src/offline/RequestQueue.ts)
+  - Features: Priority sorting, retry counting, timestamp ordering
+  - Persistence: Automatically saves to LocalStorage
+- ✅ **OfflineSyncManager** - Singleton orchestrator
+  - Location: [`src/offline/OfflineSyncManager.ts`](src/offline/OfflineSyncManager.ts)
+  - Features: Auto-sync on reconnect, pause/resume, event listeners
+
+#### Sync Engine (P1) - COMPLETE ✓
+
+- ✅ **SyncEngine** - Request processor with backoff
+  - Location: [`src/offline/SyncEngine.ts`](src/offline/SyncEngine.ts)
+  - Features: Exponential backoff, retryable error detection, concurrency control
+- ✅ **ConflictResolver** - Strategy-based conflict handling
+  - Location: [`src/offline/ConflictResolver.ts`](src/offline/ConflictResolver.ts)
+  - Strategies: `client-wins`, `server-wins`, `manual`
+
+#### React Integration (P2) - COMPLETE ✓
+
+- ✅ **useOfflineSync** - Hook for UI integration
+  - Location: [`src/offline/useOfflineSync.ts`](src/offline/useOfflineSync.ts)
+  - Returns: `isOnline`, `isSyncing`, `pendingCount`, `enqueue()`
+- ✅ **OfflineSyncExample** - Usage demonstration
+  - Location: [`examples/offline/OfflineSyncExample.tsx`](examples/offline/OfflineSyncExample.tsx)
+
+**Exports**:
+
+- Main entry: [`src/offline/index.ts`](src/offline/index.ts)
+- Package entry: [`src/index.ts`](src/index.ts) exports via `export * from './offline'`
+- Subpath export: `package.json` includes `"./offline"`
+
+**Quality Metrics**:
+
+- TypeScript: 0 errors, strict mode ✓
+- Tests: 59/59 passing ✓
+- Coverage: >80% for all offline components ✓
 
 ---
 
