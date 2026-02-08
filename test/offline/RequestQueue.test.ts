@@ -1,6 +1,7 @@
 
 import { RequestQueue } from '@/offline/RequestQueue';
 import { LocalStorage } from '@/infrastructure/storage/LocalStorage';
+import { Logger } from '@/infrastructure/logger/Logger';
 import type { QueuedRequest } from '@/offline/types';
 
 jest.mock('@/infrastructure/storage/LocalStorage');
@@ -9,10 +10,12 @@ jest.mock('@/infrastructure/logger/Logger');
 describe('RequestQueue', () => {
     let queue: RequestQueue;
     let mockStorage: jest.Mocked<LocalStorage>;
+    let mockLogger: jest.Mocked<Logger>;
 
     beforeEach(() => {
-        // Reset singletons
+        // Reset singleton
         (LocalStorage as any).instance = null;
+        (Logger as any).instance = null;
 
         // Create mocked storage
         mockStorage = {
@@ -20,7 +23,16 @@ describe('RequestQueue', () => {
             set: jest.fn().mockResolvedValue(undefined),
         } as any;
 
-        (LocalStorage.getInstance as jest.Mock).mockReturnValue(mockStorage);
+        // Create mocked logger
+        mockLogger = {
+            debug: jest.fn(),
+            info: jest.fn(),
+            error: jest.fn(),
+        } as any;
+
+        // Mock the getInstance methods
+        (LocalStorage.getInstance as jest.Mock) = jest.fn().mockReturnValue(mockStorage);
+        (Logger.getInstance as jest.Mock) = jest.fn().mockReturnValue(mockLogger);
 
         queue = new RequestQueue(100, 'test_queue');
     });

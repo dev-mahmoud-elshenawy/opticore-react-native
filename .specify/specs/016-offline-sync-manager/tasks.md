@@ -5,7 +5,7 @@
 
 ## Phase 1: Type Definitions (1 hour)
 
-- [ ] T016.1 Create `src/offline/types.ts`:
+- [x] T016.1 Create `src/offline/types.ts`:
   - QueuedRequest<T>
   - OfflineSyncConfig
   - SyncResult, SyncError, SyncEvent
