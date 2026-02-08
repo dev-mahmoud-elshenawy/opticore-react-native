@@ -7,6 +7,7 @@
 
 import { ApiClient } from '../../src/infrastructure/network/ApiClient';
 import { ApiError } from '../../src/infrastructure/network/ApiError';
+import { HttpMethod } from '../../src/infrastructure/network/HttpMethod';
 import { Logger } from '../../src/infrastructure/logger/Logger';
 import { RenderError } from '../../src/error/RenderError';
 import axios, { AxiosError } from 'axios';
@@ -106,7 +107,10 @@ describe('Integration: ApiClient → Error Flow', () => {
       (client as any).mockReject('get', error404);
 
       try {
-        await client.get('/api/users/999');
+        await client.request({
+          method: HttpMethod.GET,
+          url: '/api/users/999',
+        });
         fail('Should have thrown an error');
       } catch (err) {
         expect(err).toBeInstanceOf(ApiError);
@@ -138,7 +142,10 @@ describe('Integration: ApiClient → Error Flow', () => {
       (client as any).mockReject('get', error500);
 
       try {
-        await client.get('/api/data');
+        await client.request({
+          method: HttpMethod.GET,
+          url: '/api/data',
+        });
         fail('Should have thrown an error');
       } catch (err) {
         expect(err).toBeInstanceOf(ApiError);
@@ -164,7 +171,10 @@ describe('Integration: ApiClient → Error Flow', () => {
       (client as any).mockReject('get', networkError);
 
       try {
-        await client.get('/api/data');
+        await client.request({
+          method: HttpMethod.GET,
+          url: '/api/data',
+        });
         fail('Should have thrown an error');
       } catch (err) {
         expect(err).toBeInstanceOf(ApiError);
@@ -197,7 +207,10 @@ describe('Integration: ApiClient → Error Flow', () => {
       (client as any).mockReject('get', error404);
 
       try {
-        await client.get('/api/users/999');
+        await client.request({
+          method: HttpMethod.GET,
+          url: '/api/users/999',
+        });
       } catch (err) {
         // Error should have been logged
         expect(Logger.getInstance().error).toHaveBeenCalled();
@@ -223,7 +236,11 @@ describe('Integration: ApiClient → Error Flow', () => {
       (client as any).mockReject('post', error500);
 
       try {
-        await client.post('/api/test', { data: 'test' });
+        await client.request({
+          method: HttpMethod.POST,
+          url: '/api/test',
+          data: { data: 'test' },
+        });
       } catch (err) {
         const apiError = err as ApiError;
 
@@ -259,7 +276,11 @@ describe('Integration: ApiClient → Error Flow', () => {
       (client as any).mockReject('post', errorWithData);
 
       try {
-        await client.post('/api/users', { email: 'bad', password: '123' });
+        await client.request({
+          method: HttpMethod.POST,
+          url: '/api/users',
+          data: { email: 'bad', password: '123' },
+        });
         fail('Should have thrown');
       } catch (err) {
         const apiError = err as ApiError;
@@ -294,7 +315,10 @@ describe('Integration: ApiClient → Error Flow', () => {
 
       // 2. Make request
       try {
-        await client.get('/api/protected');
+        await client.request({
+          method: HttpMethod.GET,
+          url: '/api/protected',
+        });
         fail('Should have thrown');
       } catch (err) {
         // 3. Verify error type

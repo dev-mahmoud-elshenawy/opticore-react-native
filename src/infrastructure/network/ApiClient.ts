@@ -6,6 +6,7 @@ import axios, {
 } from 'axios';
 import { NetworkConfig } from './NetworkConfig';
 import { ApiResponse } from './ApiResponse';
+import { HttpMethod } from './HttpMethod';
 import { AuthInterceptor } from './interceptors/AuthInterceptor';
 import { LoggingInterceptor } from './interceptors/LoggingInterceptor';
 import { ErrorInterceptor } from './interceptors/ErrorInterceptor';
@@ -105,6 +106,45 @@ export class ApiClient {
   }
 
   /**
+   * Perform an HTTP request
+   *
+   * @param config - Request configuration with method, url, data, and headers
+   * @returns Promise resolving to ApiResponse with typed data
+   * @example
+   * ```typescript
+   * await apiClient.request({
+   *   method: HttpMethod.POST,
+   *   url: '/users',
+   *   data: { name: 'John' },
+   *   headers: { 'Content-Type': 'application/json' }
+   * });
+   * ```
+   */
+  public async request<T>(config: {
+    method: HttpMethod;
+    url: string;
+    data?: unknown;
+    headers?: Record<string, string>;
+  }): Promise<ApiResponse<T>> {
+    const axiosConfig: AxiosRequestConfig = { headers: config.headers };
+
+    switch (config.method) {
+      case HttpMethod.GET:
+        return this.get<T>(config.url, axiosConfig);
+      case HttpMethod.POST:
+        return this.post<T>(config.url, config.data, axiosConfig);
+      case HttpMethod.PUT:
+        return this.put<T>(config.url, config.data, axiosConfig);
+      case HttpMethod.DELETE:
+        return this.delete<T>(config.url, axiosConfig);
+      case HttpMethod.PATCH:
+        return this.patch<T>(config.url, config.data, axiosConfig);
+      default:
+        throw new Error(`Unsupported HTTP method: ${config.method}`);
+    }
+  }
+
+  /**
    * Perform a GET request
    *
    * @param url - Request URL (relative to baseURL if configured)
@@ -112,7 +152,7 @@ export class ApiClient {
    * @returns Promise resolving to ApiResponse with typed data
    * @throws ApiError on request failure
    */
-  public async get<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+  private async get<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.client.get<T>(url, config);
     return {
       data: response.data,
@@ -130,7 +170,7 @@ export class ApiClient {
    * @param config - Optional Axios request configuration
    * @returns Promise resolving to ApiResponse with typed data
    */
-  public async post<T>(
+  private async post<T>(
     url: string,
     data?: unknown,
     config?: AxiosRequestConfig
@@ -152,7 +192,7 @@ export class ApiClient {
    * @param config - Optional Axios request configuration
    * @returns Promise resolving to ApiResponse with typed data
    */
-  public async put<T>(
+  private async put<T>(
     url: string,
     data?: unknown,
     config?: AxiosRequestConfig
@@ -173,7 +213,7 @@ export class ApiClient {
    * @param config - Optional Axios request configuration
    * @returns Promise resolving to ApiResponse with typed data
    */
-  public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+  private async delete<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.client.delete<T>(url, config);
     return {
       data: response.data,
@@ -191,7 +231,7 @@ export class ApiClient {
    * @param config - Optional Axios request configuration
    * @returns Promise resolving to ApiResponse with typed data
    */
-  public async patch<T>(
+  private async patch<T>(
     url: string,
     data?: unknown,
     config?: AxiosRequestConfig
@@ -205,3 +245,6 @@ export class ApiClient {
     };
   }
 }
+
+export { HttpMethod };
+

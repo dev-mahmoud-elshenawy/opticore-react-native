@@ -32,14 +32,14 @@
 
 ## Phase 3: Sync Engine (3-4 hours)
 
-- [ ] T016.4 Create `src/offline/SyncEngine.ts`:
+- [x] T016.4 Create `src/offline/SyncEngine.ts`:
   - processQueue() - Process all requests
   - executeRequest(request) - Execute single request via ApiClient
   - retryWithBackoff(request) - Exponential backoff logic
   - handleSuccess(request) - Success callback
   - handleFailure(request, error) - Failure callback
   - isRetryable(error) - Check if error is retryable
-- [ ] T016.5 Write tests: `test/offline/SyncEngine.test.ts`
+- [x] T016.5 Write tests: `test/offline/SyncEngine.test.ts`
 
 **Verification**: Sync engine retries failed requests
 
@@ -47,18 +47,18 @@
 
 ## Phase 4: Conflict Resolver (1-2 hours)
 
-- [ ] T016.6 Create `src/offline/ConflictResolver.ts`:
+- [x] T016.6 Create `src/offline/ConflictResolver.ts`:
   - resolve(local, server, strategy) - Resolve conflicts
   - clientWins() - Client-wins strategy
   - serverWins() - Server-wins strategy
   - manual(callback) - Manual resolution
-- [ ] T016.7 Write tests: `test/offline/ConflictResolver.test.ts`
+- [x] T016.7 Write tests: `test/offline/ConflictResolver.test.ts`
 
 ---
 
 ## Phase 5: Offline Sync Manager (3-4 hours)
 
-- [ ] T016.8 Create `src/offline/OfflineSyncManager.ts`:
+- [x] T016.8 Create `src/offline/OfflineSyncManager.ts`:
   - Singleton getInstance()
   - configure(config)
   - enqueue<T>(request) - Add to queue
@@ -70,11 +70,11 @@
   - isSyncing(), isPaused(), getPendingCount()
   - addSyncListener(callback) - Event listeners
   - dispose() - Cleanup
-- [ ] T016.9 Integrate with ConnectivityManager:
+- [x] T016.9 Integrate with ConnectivityManager:
   - Listen for online events
   - Auto-trigger sync when online
   - Configurable sync delay
-- [ ] T016.10 Write tests: `test/offline/OfflineSyncManager.test.ts`
+- [x] T016.10 Write tests: `test/offline/OfflineSyncManager.test.ts`
 
 **Verification**: Manager syncs on reconnect
 

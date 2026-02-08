@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { HttpMethod } from '@/infrastructure/network/HttpMethod';
 import { ApiClient } from '../../../src/infrastructure/network/ApiClient';
 import { AuthInterceptor } from '../../../src/infrastructure/network/interceptors/AuthInterceptor';
 import { ErrorInterceptor } from '../../../src/infrastructure/network/interceptors/ErrorInterceptor';
@@ -224,7 +225,7 @@ describe('Interceptors', () => {
 
     it('should log request details', async () => {
       const config = {
-        method: 'GET',
+        method: HttpMethod.GET,
         url: '/api/users',
         headers: { 'Content-Type': 'application/json' },
       };

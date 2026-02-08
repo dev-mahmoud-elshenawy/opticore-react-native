@@ -1,5 +1,6 @@
 
 import { RequestQueue } from '@/offline/RequestQueue';
+import { HttpMethod } from '@/infrastructure/network/HttpMethod';
 import { LocalStorage } from '@/infrastructure/storage/LocalStorage';
 import { Logger } from '@/infrastructure/logger/Logger';
 import type { QueuedRequest } from '@/offline/types';
@@ -44,7 +45,7 @@ describe('RequestQueue', () => {
     describe('add', () => {
         it('should add a request to the queue', () => {
             const request: QueuedRequest = {
-                method: 'POST',
+                method: HttpMethod.POST,
                 url: '/api/test',
                 data: { foo: 'bar' },
             };
@@ -58,7 +59,7 @@ describe('RequestQueue', () => {
 
         it('should assign a generated ID if not provided', () => {
             const request: QueuedRequest = {
-                method: 'GET',
+                method: HttpMethod.GET,
                 url: '/api/test',
             };
 
@@ -70,7 +71,7 @@ describe('RequestQueue', () => {
         it('should use provided ID', () => {
             const request: QueuedRequest = {
                 id: 'custom-id',
-                method: 'GET',
+                method: HttpMethod.GET,
                 url: '/api/test',
             };
 
@@ -81,7 +82,7 @@ describe('RequestQueue', () => {
 
         it('should set default priority to normal', () => {
             const request: QueuedRequest = {
-                method: 'GET',
+                method: HttpMethod.GET,
                 url: '/api/test',
             };
 
@@ -93,7 +94,7 @@ describe('RequestQueue', () => {
 
         it('should set default maxRetries to 3', () => {
             const request: QueuedRequest = {
-                method: 'GET',
+                method: HttpMethod.GET,
                 url: '/api/test',
             };
 
@@ -106,18 +107,18 @@ describe('RequestQueue', () => {
         it('should throw error when queue is full', () => {
             const smallQueue = new RequestQueue(2, 'small_queue');
 
-            smallQueue.add({ method: 'GET', url: '/1' });
-            smallQueue.add({ method: 'GET', url: '/2' });
+            smallQueue.add({ method: HttpMethod.GET, url: '/1' });
+            smallQueue.add({ method: HttpMethod.GET, url: '/2' });
 
             expect(() => {
-                smallQueue.add({ method: 'GET', url: '/3' });
+                smallQueue.add({ method: HttpMethod.GET, url: '/3' });
             }).toThrow('Queue is full');
         });
     });
 
     describe('remove', () => {
         it('should remove a request from the queue', () => {
-            const id = queue.add({ method: 'GET', url: '/test' });
+            const id = queue.add({ method: HttpMethod.GET, url: '/test' });
 
             const removed = queue.remove(id);
 
@@ -135,9 +136,9 @@ describe('RequestQueue', () => {
 
     describe('getAll', () => {
         it('should return all queued requests', () => {
-            queue.add({ method: 'GET', url: '/1' });
-            queue.add({ method: 'POST', url: '/2' });
-            queue.add({ method: 'PUT', url: '/3' });
+            queue.add({ method: HttpMethod.GET, url: '/1' });
+            queue.add({ method: HttpMethod.POST, url: '/2' });
+            queue.add({ method: HttpMethod.PUT, url: '/3' });
 
             const all = queue.getAll();
 
@@ -145,10 +146,10 @@ describe('RequestQueue', () => {
         });
 
         it('should return a copy of the array', () => {
-            queue.add({ method: 'GET', url: '/1' });
+            queue.add({ method: HttpMethod.GET, url: '/1' });
 
             const all = queue.getAll();
-            all.push({ id: 'fake', method: 'DELETE', url: '/fake', priority: 'normal', maxRetries: 3, retryCount: 0, createdAt: Date.now() });
+            all.push({ id: 'fake', method: HttpMethod.DELETE, url: '/fake', priority: 'normal', maxRetries: 3, retryCount: 0, createdAt: Date.now() });
 
             expect(queue.size()).toBe(1); // Original unchanged
         });
@@ -156,7 +157,7 @@ describe('RequestQueue', () => {
 
     describe('getById', () => {
         it('should return a specific request by ID', () => {
-            const id = queue.add({ method: 'GET', url: '/test' });
+            const id = queue.add({ method: HttpMethod.GET, url: '/test' });
 
             const item = queue.getById(id);
 
@@ -173,7 +174,7 @@ describe('RequestQueue', () => {
 
     describe('update', () => {
         it('should update a request', () => {
-            const id = queue.add({ method: 'GET', url: '/test', retryCount: 0 });
+            const id = queue.add({ method: HttpMethod.GET, url: '/test', retryCount: 0 });
 
             const updated = queue.update(id, { retryCount: 1 });
 
@@ -188,8 +189,8 @@ describe('RequestQueue', () => {
         });
 
         it('should re-sort after update', () => {
-            const id1 = queue.add({ method: 'GET', url: '/1', priority: 'normal' });
-            const id2 = queue.add({ method: 'GET', url: '/2', priority: 'low' });
+            const id1 = queue.add({ method: HttpMethod.GET, url: '/1', priority: 'normal' });
+            const id2 = queue.add({ method: HttpMethod.GET, url: '/2', priority: 'low' });
 
             // Update id2 to high priority
             queue.update(id2, { priority: 'high' });
@@ -202,9 +203,9 @@ describe('RequestQueue', () => {
 
     describe('clear', () => {
         it('should remove all requests', () => {
-            queue.add({ method: 'GET', url: '/1' });
-            queue.add({ method: 'GET', url: '/2' });
-            queue.add({ method: 'GET', url: '/3' });
+            queue.add({ method: HttpMethod.GET, url: '/1' });
+            queue.add({ method: HttpMethod.GET, url: '/2' });
+            queue.add({ method: HttpMethod.GET, url: '/3' });
 
             queue.clear();
 
@@ -214,9 +215,9 @@ describe('RequestQueue', () => {
 
     describe('priority sorting', () => {
         it('should sort by priority: high > normal > low', () => {
-            const lowId = queue.add({ method: 'GET', url: '/low', priority: 'low' });
-            const highId = queue.add({ method: 'GET', url: '/high', priority: 'high' });
-            const normalId = queue.add({ method: 'GET', url: '/normal', priority: 'normal' });
+            const lowId = queue.add({ method: HttpMethod.GET, url: '/low', priority: 'low' });
+            const highId = queue.add({ method: HttpMethod.GET, url: '/high', priority: 'high' });
+            const normalId = queue.add({ method: HttpMethod.GET, url: '/normal', priority: 'normal' });
 
             const all = queue.getAll();
 
@@ -226,9 +227,9 @@ describe('RequestQueue', () => {
         });
 
         it('should sort by creation time within same priority', () => {
-            const id1 = queue.add({ method: 'GET', url: '/1', priority: 'normal' });
-            const id2 = queue.add({ method: 'GET', url: '/2', priority: 'normal' });
-            const id3 = queue.add({ method: 'GET', url: '/3', priority: 'normal' });
+            const id1 = queue.add({ method: HttpMethod.GET, url: '/1', priority: 'normal' });
+            const id2 = queue.add({ method: HttpMethod.GET, url: '/2', priority: 'normal' });
+            const id3 = queue.add({ method: HttpMethod.GET, url: '/3', priority: 'normal' });
 
             const all = queue.getAll();
 
@@ -240,13 +241,13 @@ describe('RequestQueue', () => {
 
     describe('persistence', () => {
         it('should persist queue after adding', () => {
-            queue.add({ method: 'GET', url: '/test' });
+            queue.add({ method: HttpMethod.GET, url: '/test' });
 
             expect(mockStorage.set).toHaveBeenCalledWith('test_queue', expect.any(Array));
         });
 
         it('should persist queue after removing', () => {
-            const id = queue.add({ method: 'GET', url: '/test' });
+            const id = queue.add({ method: HttpMethod.GET, url: '/test' });
             jest.clearAllMocks();
 
             queue.remove(id);
@@ -258,7 +259,7 @@ describe('RequestQueue', () => {
             const storedQueue = [
                 {
                     id: 'stored-1',
-                    method: 'GET' as const,
+                    method: HttpMethod.GET as const,
                     url: '/stored',
                     priority: 'normal' as const,
                     maxRetries: 3,

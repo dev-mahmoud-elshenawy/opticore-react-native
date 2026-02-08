@@ -8,6 +8,7 @@
 export const VERSION = '1.0.0';
 
 // Infrastructure exports
+export { HttpMethod } from './infrastructure';
 export * from './infrastructure';
 export * from './config';
 
@@ -34,3 +35,6 @@ export type * from './types';
 
 // Form infrastructure exports
 export * from './forms';
+
+// Offline sync exports
+export * from './offline';

@@ -37,6 +37,7 @@ expectType<number>(meta.totalItems);
 expectType<boolean>(meta.hasMore);
 
 // Test RequestConfig
+// Test RequestConfig
 const config: RequestConfig = {
   method: 'GET',
   headers: { 'Content-Type': 'application/json' },

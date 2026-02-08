@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ApiClient } from '../../../src/infrastructure/network/ApiClient';
+import { HttpMethod } from '../../../src/infrastructure/network/HttpMethod';
 import { NetworkConfig } from '../../../src/infrastructure/network/NetworkConfig';
 
 jest.mock('axios');
@@ -36,9 +37,12 @@ describe('ApiClient', () => {
     const mockResponse = { data: { id: 1, name: 'Test' }, status: 200, headers: {} };
     mockedAxios.get.mockResolvedValue(mockResponse);
 
-    const response = await apiClient.get<{ id: number; name: string }>('/users/1');
+    const response = await apiClient.request<{ id: number; name: string }>({
+      method: HttpMethod.GET,
+      url: '/users/1',
+    });
 
-    expect(mockedAxios.get).toHaveBeenCalledWith('/users/1', undefined);
+    expect(mockedAxios.get).toHaveBeenCalledWith('/users/1', { headers: undefined });
     expect(response.data).toEqual({ id: 1, name: 'Test' });
   });
 
@@ -47,9 +51,13 @@ describe('ApiClient', () => {
     const mockResponse = { data: { id: 2, ...mockData }, status: 201, headers: {} };
     mockedAxios.post.mockResolvedValue(mockResponse);
 
-    const response = await apiClient.post<{ id: number; name: string }>('/users', mockData);
+    const response = await apiClient.request<{ id: number; name: string }>({
+      method: HttpMethod.POST,
+      url: '/users',
+      data: mockData,
+    });
 
-    expect(mockedAxios.post).toHaveBeenCalledWith('/users', mockData, undefined);
+    expect(mockedAxios.post).toHaveBeenCalledWith('/users', mockData, { headers: undefined });
     expect(response.data).toEqual({ id: 2, name: 'New User' });
   });
 
@@ -58,9 +66,13 @@ describe('ApiClient', () => {
     const mockResponse = { data: { id: 1, ...mockData }, status: 200, headers: {} };
     mockedAxios.put.mockResolvedValue(mockResponse);
 
-    const response = await apiClient.put<{ id: number; name: string }>('/users/1', mockData);
+    const response = await apiClient.request<{ id: number; name: string }>({
+      method: HttpMethod.PUT,
+      url: '/users/1',
+      data: mockData,
+    });
 
-    expect(mockedAxios.put).toHaveBeenCalledWith('/users/1', mockData, undefined);
+    expect(mockedAxios.put).toHaveBeenCalledWith('/users/1', mockData, { headers: undefined });
     expect(response.data).toEqual({ id: 1, name: 'Updated User' });
   });
 
@@ -68,9 +80,12 @@ describe('ApiClient', () => {
     const mockResponse = { data: { success: true }, status: 200, headers: {} };
     mockedAxios.delete.mockResolvedValue(mockResponse);
 
-    const response = await apiClient.delete<{ success: boolean }>('/users/1');
+    const response = await apiClient.request<{ success: boolean }>({
+      method: HttpMethod.DELETE,
+      url: '/users/1',
+    });
 
-    expect(mockedAxios.delete).toHaveBeenCalledWith('/users/1', undefined);
+    expect(mockedAxios.delete).toHaveBeenCalledWith('/users/1', { headers: undefined });
     expect(response.data).toEqual({ success: true });
   });
 
@@ -79,9 +94,13 @@ describe('ApiClient', () => {
     const mockResponse = { data: { id: 1, ...mockData }, status: 200, headers: {} };
     mockedAxios.patch.mockResolvedValue(mockResponse);
 
-    const response = await apiClient.patch<{ id: number; name: string }>('/users/1', mockData);
+    const response = await apiClient.request<{ id: number; name: string }>({
+      method: HttpMethod.PATCH,
+      url: '/users/1',
+      data: mockData,
+    });
 
-    expect(mockedAxios.patch).toHaveBeenCalledWith('/users/1', mockData, undefined);
+    expect(mockedAxios.patch).toHaveBeenCalledWith('/users/1', mockData, { headers: undefined });
     expect(response.data).toEqual({ id: 1, name: 'Patched User' });
   });
 

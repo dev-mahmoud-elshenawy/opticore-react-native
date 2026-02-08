@@ -4,10 +4,7 @@
  * @module offline/types
  */
 
-/**
- * HTTP methods supported by the sync manager
- */
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+import { HttpMethod } from '../infrastructure/network/HttpMethod';
 
 /**
  * Request priority levels
