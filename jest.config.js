@@ -1,5 +1,5 @@
 module.exports = {
-  testEnvironment: 'node',
+  preset: 'jest-expo',
   roots: ['<rootDir>/test'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   testMatch: ['**/test/**/*.(test|spec).(ts|tsx|js)'],

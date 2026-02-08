@@ -18,13 +18,13 @@ describe('BaseStore', () => {
         initialState: {
           count: 0,
           user: null,
-          increment: () => {}, // Placeholder, will be overwritten
-          setUser: () => {}, // Placeholder
+          increment: () => { }, // Placeholder, will be overwritten
+          setUser: () => { }, // Placeholder
         },
         devtools: false,
         immer: true,
-        // @ts-ignore - simplified for test
-      },
+        // @ts-ignore - simplified for test definition mismatch
+      } as any,
       (set: any) => ({
         increment: () =>
           set((state: any) => {
@@ -34,7 +34,7 @@ describe('BaseStore', () => {
           set((state: any) => {
             state.user = { name };
           }),
-      })
+      }) as any
     );
 
   it('should initialize with correct state', () => {
@@ -82,12 +82,10 @@ describe('BaseStore', () => {
         initialState: {
           count: 0,
           user: null,
-          increment: () => {},
-          setUser: () => {},
+          increment: () => { },
+          setUser: () => { },
         },
-        immer: true,
-        // @ts-ignore - simplified for test
-      },
+      } as any,
       (set: any) => ({
         increment: () =>
           set((state: any) => {
@@ -97,7 +95,7 @@ describe('BaseStore', () => {
           set((state: any) => {
             state.user = { name };
           }),
-      })
+      }) as any
     );
 
     const state = useStore.getState();
@@ -112,13 +110,13 @@ describe('BaseStore', () => {
         initialState: {
           count: 0,
           user: null,
-          increment: () => {},
-          setUser: () => {},
+          increment: () => { },
+          setUser: () => { },
         },
         devtools: true,
         immer: true,
         // @ts-ignore - simplified for test
-      },
+      } as any,
       (set: any) => ({
         increment: () =>
           set((state: any) => {
@@ -128,7 +126,7 @@ describe('BaseStore', () => {
           set((state: any) => {
             state.user = { name };
           }),
-      })
+      }) as any
     );
 
     useStore.getState().increment();

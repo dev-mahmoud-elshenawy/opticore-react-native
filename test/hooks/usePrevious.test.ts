@@ -1,14 +1,14 @@
-import { renderHook } from '../utils';
+import { renderHookCompat } from '../utils';
 import { usePrevious } from '../../src/hooks/usePrevious';
 
 describe('usePrevious', () => {
   it('should return undefined initially', async () => {
-    const { result } = await renderHook(() => usePrevious('initial'));
+    const { result } = await renderHookCompat(() => usePrevious('initial'));
     expect(result.current).toBeUndefined();
   });
 
   it('should return previous value after update', async () => {
-    const { result, rerender } = await renderHook(({ val }: { val: any }) => usePrevious(val), {
+    const { result, rerender } = await renderHookCompat(({ val }: { val: any }) => usePrevious(val), {
       initialProps: { val: 'initial' },
     });
 

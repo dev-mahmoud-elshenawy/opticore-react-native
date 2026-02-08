@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '../utils';
+import { renderHookCompat, waitFor } from '../utils';
 import { useConnectivity } from '../../src/hooks/useConnectivity';
 import NetInfo from '@react-native-community/netinfo';
 
@@ -19,7 +19,7 @@ describe('useConnectivity', () => {
       type: 'wifi',
     });
 
-    const { result } = await renderHook(() => useConnectivity());
+    const { result } = await renderHookCompat(() => useConnectivity());
 
     // Wait for fetch to complete
     await waitFor(() => {
@@ -36,7 +36,7 @@ describe('useConnectivity', () => {
       type: 'none',
     });
 
-    const { result } = await renderHook(() => useConnectivity());
+    const { result } = await renderHookCompat(() => useConnectivity());
 
     await waitFor(() => {
       expect(result.current.isConnected).toBe(false);
@@ -49,7 +49,7 @@ describe('useConnectivity', () => {
     const unsubscribeMock = jest.fn();
     (NetInfo.addEventListener as jest.Mock).mockReturnValue(unsubscribeMock);
 
-    const { unmount } = await renderHook(() => useConnectivity());
+    const { unmount } = await renderHookCompat(() => useConnectivity());
     await unmount();
 
     expect(unsubscribeMock).toHaveBeenCalled();

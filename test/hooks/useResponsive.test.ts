@@ -1,4 +1,4 @@
-import { renderHook } from '../utils';
+import { renderHookCompat } from '../utils';
 import { useResponsive, breakpoints } from '../../src/hooks/useResponsive';
 import * as ReactNative from 'react-native';
 
@@ -18,7 +18,7 @@ describe('useResponsive', () => {
       height: 812,
     });
 
-    const { result } = await renderHook(() => useResponsive());
+    const { result } = await renderHookCompat(() => useResponsive());
 
     // width: 375
     // small: < 360 => false
@@ -38,7 +38,7 @@ describe('useResponsive', () => {
       height: 600,
     });
 
-    const { result } = await renderHook(() => useResponsive());
+    const { result } = await renderHookCompat(() => useResponsive());
 
     expect(result.current.isSmall).toBe(true);
     expect(result.current.isMedium).toBe(false);
@@ -52,7 +52,7 @@ describe('useResponsive', () => {
       height: 800,
     });
 
-    const { result } = await renderHook(() => useResponsive());
+    const { result } = await renderHookCompat(() => useResponsive());
 
     expect(result.current.isSmall).toBe(false);
     expect(result.current.isMedium).toBe(false);

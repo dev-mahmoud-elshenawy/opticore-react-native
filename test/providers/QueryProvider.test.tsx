@@ -77,7 +77,15 @@ describe('QueryProvider', () => {
 
   it('should retry failed queries based on configuration', async () => {
     const { getByText } = await render(
-      <QueryProvider>
+      <QueryProvider
+        config={{
+          defaultOptions: {
+            queries: {
+              retryDelay: 10,
+            },
+          },
+        }}
+      >
         <TestQueryComponent shouldFail={true} />
       </QueryProvider>
     );

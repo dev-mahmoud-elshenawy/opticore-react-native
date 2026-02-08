@@ -14,10 +14,17 @@ const mockAddEventListener = jest.fn((callback: (state: NetInfoState) => void) =
   return mockUnsubscribe;
 });
 
+const mockTriggerChange = (state: NetInfoState) => {
+  if ((mockAddEventListener as any).lastCallback) {
+    (mockAddEventListener as any).lastCallback(state);
+  }
+};
+
 const NetInfo = {
   addEventListener: mockAddEventListener,
   fetch: mockFetch,
+  mockTriggerChange,
 };
 
 export default NetInfo;
-export { mockUnsubscribe, mockFetch, mockAddEventListener };
+export { mockUnsubscribe, mockFetch, mockAddEventListener, mockTriggerChange };

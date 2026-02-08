@@ -1,4 +1,4 @@
-import { renderHook } from '../utils';
+import { renderHookCompat } from '../utils';
 import { useKeyboard } from '../../src/hooks/useKeyboard';
 
 jest.mock('react-native', () => {
@@ -19,7 +19,7 @@ jest.mock('react-native', () => {
 
 describe('useKeyboard', () => {
   it('should initialize with keyboard hidden', async () => {
-    const { result } = await renderHook(() => useKeyboard());
+    const { result } = await renderHookCompat(() => useKeyboard());
     expect(result.current.isVisible).toBe(false);
     expect(result.current.keyboardHeight).toBe(0);
   });

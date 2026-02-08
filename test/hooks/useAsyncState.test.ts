@@ -1,9 +1,9 @@
-import { renderHook, act } from '../utils';
+import { renderHookCompat, actCompat } from '../utils';
 import { useAsyncState } from '../../src/hooks/useAsyncState';
 
 describe('useAsyncState', () => {
   it('should initialize with default values', async () => {
-    const { result } = await renderHook(() => useAsyncState());
+    const { result } = await renderHookCompat(() => useAsyncState());
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toBeNull();
@@ -11,10 +11,10 @@ describe('useAsyncState', () => {
   });
 
   it('should handle successful async operation', async () => {
-    const { result } = await renderHook(() => useAsyncState<string>());
+    const { result } = await renderHookCompat(() => useAsyncState<string>());
     const mockAsync = jest.fn().mockResolvedValue('success data');
 
-    await act(async () => {
+    await actCompat(async () => {
       await result.current.run(mockAsync());
     });
 
@@ -24,11 +24,11 @@ describe('useAsyncState', () => {
   });
 
   it('should handle failed async operation', async () => {
-    const { result } = await renderHook(() => useAsyncState<string>());
+    const { result } = await renderHookCompat(() => useAsyncState<string>());
     const error = new Error('fail');
     const mockAsync = jest.fn().mockRejectedValue(error);
 
-    await act(async () => {
+    await actCompat(async () => {
       try {
         await result.current.run(mockAsync());
       } catch (e) {
@@ -42,20 +42,20 @@ describe('useAsyncState', () => {
   });
 
   it('should set loading state while pending', async () => {
-    const { result } = await renderHook(() => useAsyncState<string>());
+    const { result } = await renderHookCompat(() => useAsyncState<string>());
     let resolvePromise: (val: string) => void;
     const promise = new Promise<string>((resolve) => {
       resolvePromise = resolve;
     });
 
     let runPromise: Promise<string | undefined>;
-    await act(async () => {
+    await actCompat(async () => {
       runPromise = result.current.run(promise);
     });
 
     expect(result.current.isLoading).toBe(true);
 
-    await act(async () => {
+    await actCompat(async () => {
       resolvePromise!('done');
       await runPromise;
     });
@@ -64,21 +64,21 @@ describe('useAsyncState', () => {
   });
 
   it('should not update state if unmounted', async () => {
-    const { result, unmount } = await renderHook(() => useAsyncState<string>());
+    const { result, unmount } = await renderHookCompat(() => useAsyncState<string>());
     let resolvePromise: (val: string) => void;
     const promise = new Promise<string>((resolve) => {
       resolvePromise = resolve;
     });
 
     let runPromise: Promise<string | undefined>;
-    await act(async () => {
+    await actCompat(async () => {
       runPromise = result.current.run(promise);
     });
     expect(result.current.isLoading).toBe(true);
 
-    await unmount();
+    unmount();
 
-    await act(async () => {
+    await actCompat(async () => {
       resolvePromise!('done');
       await runPromise;
     });

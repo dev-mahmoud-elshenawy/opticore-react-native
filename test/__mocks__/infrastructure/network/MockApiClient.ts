@@ -1,5 +1,5 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ApiResponse } from '../../src/infrastructure/network/ApiResponse';
+import { ApiResponse } from '../../../../src/infrastructure/network/ApiResponse';
 
 interface MockResponseConfig {
     data?: any;

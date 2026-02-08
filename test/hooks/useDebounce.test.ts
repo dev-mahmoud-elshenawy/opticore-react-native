@@ -1,16 +1,16 @@
-import { renderHook, act } from '../utils';
+import { renderHookCompat, actCompat } from '../utils';
 import { useDebounce } from '../../src/hooks/useDebounce';
 
 describe('useDebounce', () => {
   jest.useFakeTimers();
 
   it('should return initial value immediately', async () => {
-    const { result } = await renderHook(() => useDebounce('initial', 500));
+    const { result } = await renderHookCompat(() => useDebounce('initial', 500));
     expect(result.current).toBe('initial');
   });
 
   it('should debounce value updates', async () => {
-    const { result, rerender } = await renderHook(({ val }: { val: any }) => useDebounce(val, 500), {
+    const { result, rerender } = await renderHookCompat(({ val }: { val: any }) => useDebounce(val, 500), {
       initialProps: { val: 'initial' },
     });
 
@@ -18,12 +18,12 @@ describe('useDebounce', () => {
     // Should still be initial
     expect(result.current).toBe('initial');
 
-    await act(async () => {
+    await actCompat(async () => {
       jest.advanceTimersByTime(250);
     });
     expect(result.current).toBe('initial');
 
-    await act(async () => {
+    await actCompat(async () => {
       jest.advanceTimersByTime(250);
     });
     expect(result.current).toBe('updated');

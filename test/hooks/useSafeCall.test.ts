@@ -1,14 +1,14 @@
-import { renderHook, act } from '../utils';
+import { renderHookCompat, actCompat } from '../utils';
 import { useSafeCall } from '../../src/hooks/useSafeCall';
 
 describe('useSafeCall', () => {
   it('should execute function safely and return result', async () => {
-    const { result } = await renderHook(() => useSafeCall());
+    const { result } = await renderHookCompat(() => useSafeCall());
 
     const mockFn = jest.fn().mockResolvedValue('success');
 
     let data;
-    await act(async () => {
+    await actCompat(async () => {
       data = await result.current.execute(mockFn);
     });
 
@@ -17,12 +17,12 @@ describe('useSafeCall', () => {
   });
 
   it('should catch errors and update error state', async () => {
-    const { result } = await renderHook(() => useSafeCall());
+    const { result } = await renderHookCompat(() => useSafeCall());
     const error = new Error('oops');
     const mockFn = jest.fn().mockRejectedValue(error);
 
     let data;
-    await act(async () => {
+    await actCompat(async () => {
       data = await result.current.execute(mockFn);
     });
 

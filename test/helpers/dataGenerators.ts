@@ -54,12 +54,13 @@ export function generateMockPaginatedResponse<T>(
 ): PaginatedResponse<T> {
     return {
         data: items,
-        page: 1,
-        pageSize: items.length,
-        totalPages: 1,
-        totalItems: items.length,
-        hasNext: false,
-        hasPrev: false,
+        pagination: {
+            page: 1,
+            pageSize: items.length,
+            totalPages: 1,
+            totalItems: items.length,
+            hasMore: false,
+        },
         ...overrides,
     };
 }

@@ -27,10 +27,24 @@ export const AppState = {
   removeEventListener: jest.fn(),
 };
 
+const React = require('react');
+
 // Basic React Native components for testing (simple mocks)
-export const View = (props: any) => ({ type: 'View', props });
-export const Text = (props: any) => ({ type: 'Text', props });
-export const TouchableOpacity = (props: any) => ({ type: 'TouchableOpacity', props });
+export const View = class View extends React.Component {
+  render() {
+    return React.createElement('View', this.props, this.props.children);
+  }
+};
+export const Text = class Text extends React.Component {
+  render() {
+    return React.createElement('Text', this.props, this.props.children);
+  }
+};
+export const TouchableOpacity = class TouchableOpacity extends React.Component {
+  render() {
+    return React.createElement('TouchableOpacity', this.props, this.props.children);
+  }
+};
 export const StyleSheet = {
   create: (styles: any) => styles,
   flatten: (style: any) => {

@@ -1,18 +1,18 @@
-import { renderHook } from '../utils';
+import { renderHookCompat } from '../utils';
 import { useThrottle } from '../../src/hooks/useThrottle';
 
 describe('useThrottle', () => {
   jest.useFakeTimers();
 
   it('should update immediately first time', async () => {
-    const { result } = await renderHook(() => useThrottle('initial', 500));
+    const { result } = await renderHookCompat(() => useThrottle('initial', 500));
     expect(result.current).toBe('initial');
   });
 
   // Testing throttling requires changing props and advancing timers.
   // Basic test:
   it('should throttle updates', async () => {
-    const { result, rerender } = await renderHook(({ val }: { val: any }) => useThrottle(val, 1000), {
+    const { result, rerender } = await renderHookCompat(({ val }: { val: any }) => useThrottle(val, 1000), {
       initialProps: { val: 'start' },
     });
 
