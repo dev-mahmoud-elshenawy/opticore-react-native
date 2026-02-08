@@ -9,9 +9,14 @@ description: 'Task list template for feature implementation'
 
 **Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
 
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+**Organization**: Tasks are grouped by phase to enable incremental PRs and review.
 
-## Format: `[ID] [P?] [Story] Description`
+> **⚠️ GIT RULE**: After completing each phase, you MUST:
+> 1. Commit changes: `git commit -m "feat(spec): complete phase N"`
+> 2. Push to remote: `git push origin <feature-branch>`
+> 3. Verify CI passes (if applicable)
+
+## Format: `[ID] [P?] [Description]`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)

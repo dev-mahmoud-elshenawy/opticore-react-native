@@ -1070,7 +1070,8 @@ your-project/
 3. **Coverage**: ≥ 80% (`npm test -- --coverage`)
 4. **Linting**: 0 errors, 0 warnings (`npm run lint`)
 5. **Formatting**: Correct (`npm run format`)
-6. **No console statements**: None in staged files
+6. **Push changes**: `git push origin <feature-branch>` (REQUIRED after each phase)
+7. **No console statements**: None in staged files
 
 **Verification**: `./.specify/scripts/check-quality.sh` passes
 
@@ -2146,6 +2147,9 @@ git push origin 006-user-profile
 # 14. After merge, mark spec implemented
 sed -i 's/Status: APPROVED/Status: IMPLEMENTED/' \
   .specify/specs/006-user-profile/spec.md
+
+# 15. Do NOT delete feature branch
+# Keep branch for reference/revert
 ```
 
 ---
@@ -2256,6 +2260,17 @@ mv .specify/specs/008-state-mgmt/plan-zustand.md \
 ---
 
 ## Git Integration
+
+### Branch Management
+
+**Feature Branches:**
+
+- Naming: `feature/NNN-short-description`
+- Life Cycle: Create → Commit → Push → Merge → **KEEP**
+- **CRITICAL**: Do NOT delete feature branches after merge.
+  - Keeps history containing spec/plan context
+  - Allows easy reverts if needed
+  - References in specs remain valid
 
 ### Git Hooks
 
