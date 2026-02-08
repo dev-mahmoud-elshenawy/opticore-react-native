@@ -44,7 +44,6 @@ export const password = (options: PasswordValidatorOptions = {}) => {
         requireLowercase = true,
         requireNumbers = true,
         requireSpecial = true,
-        message = 'Password does not meet requirements'
     } = options;
 
     let schema = z.string();

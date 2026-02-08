@@ -93,9 +93,12 @@
 ## Final Verification
 
 - [x] T015.27 Run tests: `npm test test/forms` (All passing)
-- [x] T015.28 Run type-check: `npm run type-check` (0 errors)
+- [ ] T015.28 Run type-check: `npm run type-check` (0 errors)
 - [x] T015.29 Check coverage: `npm test test/forms -- --coverage` (≥80%)
-- [x] T015.30 Build: `npm run build` (Success)
-- [x] T015.31 Update CLAUDE.md with Spec 015 completion
+- [ ] T015.30 Build: `npm run build` (Success)
+- [ ] T015.31 Update CLAUDE.md with Spec 015 completion
+
+## Bug Fixes
+- [ ] Fix reported type errors in form modules
 
 **Success Criteria**: All tasks completed ✓

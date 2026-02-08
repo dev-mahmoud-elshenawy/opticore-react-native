@@ -1,5 +1,4 @@
-
-import { applyCurrencyMask, unmaskCurrency } from '../../src/forms/masks/currencyMask';
+import { applyCurrencyMask, unmaskCurrency } from '@/forms/masks/currencyMask';
 
 describe('Currency Mask', () => {
     describe('applyCurrencyMask', () => {

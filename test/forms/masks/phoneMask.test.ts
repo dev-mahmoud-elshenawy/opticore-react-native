@@ -1,6 +1,6 @@
 
-import { applyPhoneMask, unmaskPhone } from '../../src/forms/masks/phoneMask';
-import { PhoneFormat } from '../../src/forms/types';
+import { applyPhoneMask, unmaskPhone } from '@/forms/masks/phoneMask';
+import { PhoneFormat } from '@/forms/types';
 
 describe('Phone Mask', () => {
     describe('applyPhoneMask', () => {
