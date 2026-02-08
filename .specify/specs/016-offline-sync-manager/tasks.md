@@ -102,10 +102,10 @@
 
 ## Final Verification
 
-- [ ] T016.17 Run tests: `npm test test/offline` (All passing)
-- [ ] T016.18 Run type-check: `npm run type-check` (0 errors)
-- [ ] T016.19 Check coverage: `npm test test/offline -- --coverage` (≥80%)
-- [ ] T016.20 Test offline scenario manually (queue → go offline → go online → auto-sync)
-- [ ] T016.21 Update CLAUDE.md with Spec 016 completion
+- [x] T016.17 Run tests: `npm test test/offline` (All passing)
+- [x] T016.18 Run type-check: `npm run type-check` (0 errors)
+- [x] T016.19 Check coverage: `npm test test/offline -- --coverage` (≥80%)
+- [x] T016.20 Test offline scenario manually (queue → go offline → go online → auto-sync)
+- [x] T016.21 Update CLAUDE.md with Spec 016 completion
 
 **Success Criteria**: All tasks completed ✓
