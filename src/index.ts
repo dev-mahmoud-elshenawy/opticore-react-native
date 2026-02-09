@@ -38,3 +38,7 @@ export * from './forms';
 
 // Offline sync exports
 export * from './offline';
+
+// Theme infrastructure exports
+export * from './theme';
+

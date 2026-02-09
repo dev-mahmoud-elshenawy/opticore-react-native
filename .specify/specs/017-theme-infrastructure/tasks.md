@@ -67,18 +67,18 @@
 
 ## Phase 5: React Provider & Hook (1-2 hours)
 
-- [ ] T017.10 Create `src/theme/ThemeProvider.tsx`:
+- [x] T017.10 Create `src/theme/ThemeProvider.tsx`:
   - Create ThemeContext
   - ThemeProvider component
   - Subscribe to ThemeManager events
   - Re-render on theme changes
-- [ ] T017.11 Create `src/theme/useTheme.ts`:
+- [x] T017.11 Create `src/theme/useTheme.ts`:
   - Returns theme, mode, activeMode
   - Returns setMode, toggleMode helpers
   - Returns color shortcuts (colors, spacing, typography)
   - Returns status booleans (isDark, isLight, isSystem)
-- [ ] T017.12 Write tests: `test/theme/ThemeProvider.test.tsx`
-- [ ] T017.13 Write tests: `test/theme/useTheme.test.ts`
+- [x] T017.12 Write tests: `test/theme/ThemeProvider.test.tsx`
+- [x] T017.13 Write tests: `test/theme/useTheme.test.ts`
 
 **Verification**: Hook re-renders when theme changes
 
@@ -86,20 +86,20 @@
 
 ## Phase 6: Module Exports & Examples (1 hour)
 
-- [ ] T017.14 Create `src/theme/index.ts` - Export all public APIs
-- [ ] T017.15 Add theme exports to `src/index.ts`
-- [ ] T017.16 Add subpath export to package.json: `"./theme": "./dist/theme/index.js"`
-- [ ] T017.17 Create `examples/theme/ThemeExample.tsx`
+- [x] T017.14 Create `src/theme/index.ts` - Export all public APIs
+- [x] T017.15 Add theme exports to `src/index.ts`
+- [x] T017.16 Add subpath export to package.json: `"./theme": "./dist/theme/index.js"`
+- [x] T017.17 Create `examples/theme/ThemeExample.tsx`
 
 ---
 
 ## Final Verification
 
-- [ ] T017.18 Run tests: `npm test test/theme` (All passing)
-- [ ] T017.19 Run type-check: `npm run type-check` (0 errors)
-- [ ] T017.20 Check coverage: `npm test test/theme -- --coverage` (≥80%)
-- [ ] T017.21 Verify WCAG AA contrast in default themes
-- [ ] T017.22 Test system theme detection manually
-- [ ] T017.23 Update CLAUDE.md with Spec 017 completion
+- [x] T017.18 Run tests: `npm test test/theme` (All passing)
+- [x] T017.19 Run type-check: `npm run type-check` (0 errors)
+- [x] T017.20 Check coverage: `npm test test/theme -- --coverage` (≥80%)
+- [x] T017.21 Verify WCAG AA contrast in default themes
+- [x] T017.22 Test system theme detection manually
+- [x] T017.23 Update CLAUDE.md with Spec 017 completion
 
 **Success Criteria**: All tasks completed ✓

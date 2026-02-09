@@ -39,6 +39,11 @@
       "types": "./dist/src/offline/index.d.ts",
       "import": "./dist/src/offline/index.js",
       "require": "./dist/src/offline/index.js"
+    },
+    "./theme": {
+      "types": "./dist/src/theme/index.d.ts",
+      "import": "./dist/src/theme/index.js",
+      "require": "./dist/src/theme/index.js"
     }
   },
   "scripts": {
