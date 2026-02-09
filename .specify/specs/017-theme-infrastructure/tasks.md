@@ -43,7 +43,7 @@
 
 ## Phase 4: Theme Manager (2-3 hours)
 
-- [ ] T017.6 Create `src/theme/ThemeManager.ts`:
+- [x] T017.6 Create `src/theme/ThemeManager.ts`:
   - Singleton getInstance()
   - configure(config)
   - registerTheme(name, theme)
@@ -52,14 +52,14 @@
   - getTheme(), getMode(), getActiveMode()
   - addThemeListener(callback)
   - dispose()
-- [ ] T017.7 Integrate with Appearance API:
+- [x] T017.7 Integrate with Appearance API:
   - Detect system color scheme
   - Listen for system changes
   - Update when system changes (if mode is 'system')
-- [ ] T017.8 Integrate with LocalStorage:
+- [x] T017.8 Integrate with LocalStorage:
   - Persist mode preference
   - Restore on init
-- [ ] T017.9 Write tests: `test/theme/ThemeManager.test.ts`
+- [x] T017.9 Write tests: `test/theme/ThemeManager.test.ts`
 
 **Verification**: Manager follows system theme when mode is 'system'
 
