@@ -5,7 +5,7 @@
 
 ## Phase 1: Type Definitions (1 hour)
 
-- [ ] T017.1 Create `src/theme/types.ts`:
+- [x] T017.1 Create `src/theme/types.ts`:
   - ThemeMode = 'light' | 'dark' | 'system'
   - Theme interface
   - ThemeColors interface
@@ -16,11 +16,11 @@
 
 ## Phase 2: Default Themes (1-2 hours)
 
-- [ ] T017.2 Create `src/theme/defaultThemes.ts`:
+- [x] T017.2 Create `src/theme/defaultThemes.ts`:
   - Light theme (Material Design palette)
   - Dark theme (Material Design palette)
   - Verify WCAG AA contrast for text colors
-- [ ] T017.3 Write tests: `test/theme/defaultThemes.test.ts`
+- [x] T017.3 Write tests: `test/theme/defaultThemes.test.ts`
 
 **Verification**: Themes have all required properties
 
@@ -28,14 +28,14 @@
 
 ## Phase 3: Color Utilities (1-2 hours)
 
-- [ ] T017.4 Create `src/theme/colorUtils.ts`:
+- [x] T017.4 Create `src/theme/colorUtils.ts`:
   - lighten(color, amount) - Lighten color
   - darken(color, amount) - Darken color
   - alpha(color, opacity) - Add transparency
   - contrast(color) - Determine if light/dark text needed
   - hexToRgb(hex) - Convert hex to RGB
   - rgbToHex(r, g, b) - Convert RGB to hex
-- [ ] T017.5 Write tests: `test/theme/colorUtils.test.ts`
+- [x] T017.5 Write tests: `test/theme/colorUtils.test.ts`
 
 **Verification**: Color utils work with hex colors
 
