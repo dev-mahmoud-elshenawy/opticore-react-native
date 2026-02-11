@@ -1,4 +1,6 @@
 import { useWindowDimensions } from 'react-native';
+import { useConfig } from '../providers/useConfig';
+import { ResponsiveConfig } from '../config/types';
 
 export const breakpoints = {
   small: 360,
@@ -9,21 +11,37 @@ export const breakpoints = {
 /**
  * Hook for responsive design breakpoints.
  *
+ * @param customBreakpoints Optional breakpoints to override context/defaults
  * @returns Object containing:
- * - isSmall: boolean (< 360px)
- * - isMedium: boolean (>= 360px && < 768px)
- * - isLarge: boolean (>= 768px && < 1024px)
- * - isXLarge: boolean (>= 1024px)
+ * - isSmall: boolean (< small)
+ * - isMedium: boolean (>= small && < medium)
+ * - isLarge: boolean (>= medium && < large)
+ * - isXLarge: boolean (>= large)
  * - width: number - Current window width
  */
-export function useResponsive() {
+export function useResponsive(customBreakpoints?: ResponsiveConfig['breakpoints']) {
   const { width } = useWindowDimensions();
 
+  // Try to get config from context, but don't fail if outside provider
+  let contextBreakpoints;
+  try {
+    const config = useConfig();
+    contextBreakpoints = config.responsive;
+  } catch (e) {
+    // Ignore error if used outside provider
+  }
+
+  const activeBreakpoints = {
+    ...breakpoints, // Defaults
+    ...contextBreakpoints, // Context
+    ...customBreakpoints, // Params (highest priority)
+  };
+
   return {
-    isSmall: width < breakpoints.small,
-    isMedium: width >= breakpoints.small && width < breakpoints.medium,
-    isLarge: width >= breakpoints.medium && width < breakpoints.large,
-    isXLarge: width >= breakpoints.large,
+    isSmall: width < activeBreakpoints.small!,
+    isMedium: width >= activeBreakpoints.small! && width < activeBreakpoints.medium!,
+    isLarge: width >= activeBreakpoints.medium! && width < activeBreakpoints.large!,
+    isXLarge: width >= activeBreakpoints.large!,
     width,
   };
 }

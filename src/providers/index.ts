@@ -7,8 +7,22 @@
  * @module providers
  */
 
-// Main provider that combines all infrastructure
+// Unified provider (recommended)
+export { OptiCoreProvider } from './OptiCoreProvider';
+export type { OptiCoreProviderProps } from './OptiCoreProvider';
+
+// Configuration context
+export { ConfigContext, ConfigProvider } from './ConfigContext';
+export { useConfig } from './useConfig';
+export type { ConfigContextValue } from './ConfigContext';
+
+/**
+ * @deprecated Use OptiCoreProvider instead. CoreProvider will be removed in v2.0.
+ */
 export { CoreProvider } from './CoreProvider';
+/**
+ * @deprecated Use OptiCoreProviderProps instead. CoreProviderProps will be removed in v2.0.
+ */
 export type { CoreProviderProps } from './CoreProvider';
 
 // Individual providers for granular control

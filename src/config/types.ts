@@ -4,6 +4,15 @@ import { ErrorHandler } from '../types/Error.types';
 /**
  * Configuration for the API client
  */
+import { ThemeConfig, Theme } from '../theme/types';
+import { OfflineSyncConfig } from '../offline/types';
+import { ErrorClassificationRule } from '../error/ErrorClassifier';
+
+// ... imports
+
+/**
+ * Configuration for the API client
+ */
 export interface ApiConfig {
   /**
    * Base URL for all API requests
@@ -67,6 +76,61 @@ export interface FeaturesConfig {
 }
 
 /**
+ * Configuration for Responsive Design
+ */
+export interface ResponsiveConfig {
+  /**
+   * Custom breakpoints for responsive hooks
+   * @default { small: 360, medium: 768, large: 1024 }
+   */
+  breakpoints?: {
+    small?: number;
+    medium?: number;
+    large?: number;
+  };
+}
+
+/**
+ * Configuration for Forms
+ */
+export interface FormsConfig {
+  /**
+   * Default format pattern for phone numbers
+   */
+  defaultPhoneFormat?: string;
+
+  /**
+   * Default currency code
+   */
+  defaultCurrency?: string;
+
+  /**
+   * Custom regex patterns for credit card validation
+   */
+  customCardPatterns?: Record<string, RegExp>;
+}
+
+/**
+ * Configuration for Error Classification
+ */
+export interface ErrorClassificationConfig {
+  /**
+   * Custom rules for classifying errors
+   */
+  customRules?: ErrorClassificationRule[];
+}
+
+/**
+ * Configuration for Theming
+ */
+export interface CoreThemeConfig extends ThemeConfig {
+  /**
+   * Custom themes to register on initialization
+   */
+  customThemes?: Record<string, Theme>;
+}
+
+/**
  * Main OptiCore configuration interface
  */
 export interface CoreConfig {
@@ -81,4 +145,19 @@ export interface CoreConfig {
 
   /** Feature flags and special modes */
   features?: FeaturesConfig;
+
+  /** Theme configuration */
+  theme?: CoreThemeConfig;
+
+  /** Offline sync configuration */
+  offline?: OfflineSyncConfig;
+
+  /** Responsive design configuration */
+  responsive?: ResponsiveConfig;
+
+  /** Forms configuration */
+  forms?: FormsConfig;
+
+  /** Error classification configuration */
+  errorClassification?: ErrorClassificationConfig;
 }

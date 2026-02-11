@@ -5,12 +5,32 @@ import { BaseError } from './BaseError';
  * Utility to automatically classify errors into RENDER (UI) or NON_RENDER (Background)
  * based on error types, HTTP status codes, or error codes.
  */
+
+/**
+ * Rule for custom error classification
+ */
+export interface ErrorClassificationRule {
+  /**
+   * Function to determine error type.
+   * Returns ErrorType if matched, or undefined/null to continue to next rule.
+   */
+  classify: (error: unknown) => ErrorType | undefined | null;
+}
+
 export class ErrorClassifier {
   /**
    * Classify an unknown error object
    */
-  public static classify(error: unknown): ErrorType {
+  public static classify(error: unknown, customRules?: ErrorClassificationRule[]): ErrorType {
     if (!error) return ErrorType.NONE;
+
+    // 0. Check custom rules first
+    if (customRules && customRules.length > 0) {
+      for (const rule of customRules) {
+        const result = rule.classify(error);
+        if (result) return result;
+      }
+    }
 
     // 1. Check if it's already a strongly typed BaseError
     if (error instanceof BaseError) {

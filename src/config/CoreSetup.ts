@@ -4,6 +4,8 @@ import { Logger } from '../infrastructure/logger/Logger';
 import { LogLevel } from '../infrastructure/logger/LogLevel';
 import { ErrorHandler } from '../types/Error.types';
 import { ConfigValidator } from './ConfigValidator';
+import { ThemeManager } from '../theme/ThemeManager';
+import { OfflineSyncManager } from '../offline/OfflineSyncManager';
 
 /**
  * Singleton class to handle OptiCore configuration and initialization
@@ -83,6 +85,37 @@ export class CoreSetup {
         // Configure Global Error Handler if provided
         if (config.onError) {
             this.errorHandler = config.onError;
+        }
+
+        // Configure Theme Manager
+        if (config.theme) {
+            const themeManager = ThemeManager.getInstance();
+
+            // Register custom themes first
+            if (config.theme.customThemes) {
+                Object.entries(config.theme.customThemes).forEach(([name, theme]) => {
+                    themeManager.registerTheme(name, theme);
+                });
+            }
+
+            // Configure manager
+            themeManager.configure({
+                defaultMode: config.theme.defaultMode,
+                persistMode: config.theme.persistMode,
+                storageKey: config.theme.storageKey,
+                followSystem: config.theme.followSystem,
+            });
+
+            // Initialize manager
+            themeManager.init().catch(err => {
+                Logger.getInstance().error('Failed to initialize ThemeManager', err);
+            });
+        }
+
+        // Configure Offline Sync Manager
+        if (config.offline) {
+            const offlineManager = OfflineSyncManager.getInstance();
+            offlineManager.configure(config.offline);
         }
 
         this.initialized = true;
