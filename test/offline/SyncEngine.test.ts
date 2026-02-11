@@ -5,13 +5,17 @@ import { ApiClient } from '@/infrastructure/network/ApiClient';
 import { Logger } from '@/infrastructure/logger/Logger';
 import type { QueueItem, SyncEvent } from '@/offline/types';
 
+import { ConflictResolver } from '@/offline/ConflictResolver';
+
 jest.mock('@/infrastructure/network/ApiClient');
 jest.mock('@/infrastructure/logger/Logger');
+jest.mock('@/offline/ConflictResolver');
 
 describe('SyncEngine', () => {
     let engine: SyncEngine;
     let mockApiClient: jest.Mocked<ApiClient>;
     let mockLogger: jest.Mocked<Logger>;
+    let mockConflictResolver: jest.Mocked<ConflictResolver>;
 
     beforeEach(() => {
         // Reset singletons
@@ -30,11 +34,17 @@ describe('SyncEngine', () => {
             error: jest.fn(),
         } as any;
 
+        // Create mocked ConflictResolver
+        mockConflictResolver = {
+            resolve: jest.fn(),
+            getStrategy: jest.fn().mockReturnValue('server-wins'),
+        } as any;
+
         // Mock getInstance methods
         (ApiClient.getInstance as jest.Mock) = jest.fn().mockReturnValue(mockApiClient);
         (Logger.getInstance as jest.Mock) = jest.fn().mockReturnValue(mockLogger);
 
-        engine = new SyncEngine();
+        engine = new SyncEngine(mockApiClient, mockConflictResolver);
     });
 
     describe('processQueue', () => {
