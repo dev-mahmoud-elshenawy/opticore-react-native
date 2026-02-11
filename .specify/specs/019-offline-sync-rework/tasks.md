@@ -6,11 +6,11 @@
 
 ## Phase 1: SyncEngine Dependency Injection [US3]
 
-- [ ] T001 [US3] Write test: SyncEngine accepts MockApiClient via constructor, processes queue using it
-- [ ] T002 [US3] Write test: SyncEngine works with real ApiClient.getInstance() when passed
-- [ ] T003 [US3] Modify `src/offline/SyncEngine.ts` — change constructor to accept `apiClient: ApiClient` parameter
-- [ ] T004 [US3] Modify `src/offline/OfflineSyncManager.ts` — pass `ApiClient.getInstance()` to SyncEngine constructor
-- [ ] T005 [US3] Run tests — verify existing 59 tests still pass
+- [x] T001 [US3] Write test: SyncEngine accepts MockApiClient via constructor, processes queue using it
+- [x] T002 [US3] Write test: SyncEngine works with real ApiClient.getInstance() when passed
+- [x] T003 [US3] Modify `src/offline/SyncEngine.ts` — change constructor to accept `apiClient: ApiClient` parameter
+- [x] T004 [US3] Modify `src/offline/OfflineSyncManager.ts` — pass `ApiClient.getInstance()` to SyncEngine constructor
+- [x] T005 [US3] Run tests — verify existing 59 tests still pass
 
 **Checkpoint**: SyncEngine is injectable and testable with mocks.
 
@@ -18,15 +18,15 @@
 
 ## Phase 2: ConflictResolver Integration [US1]
 
-- [ ] T006 [US1] Write test: `client-wins` strategy retries with client data on 409
-- [ ] T007 [US1] Write test: `server-wins` strategy accepts server response on 409
-- [ ] T008 [US1] Write test: `manual` strategy calls `onConflict(localData, serverData)` callback
-- [ ] T009 [US1] Write test: `manual` strategy without callback throws validation error
-- [ ] T010 [US1] Modify `src/offline/ConflictResolver.ts` — implement all 3 strategies with proper return types
-- [ ] T011 [US1] Uncomment ConflictResolver import in `src/offline/OfflineSyncManager.ts` — instantiate with config
-- [ ] T012 [US1] Modify `src/offline/SyncEngine.ts` — accept ConflictResolver, call on 409 responses
-- [ ] T013 [US1] Modify `src/offline/OfflineSyncManager.ts` — pass ConflictResolver to SyncEngine
-- [ ] T014 [US1] Run tests — verify conflict resolution works end-to-end
+- [x] T006 [US1] Write test: `client-wins` strategy retries with client data on 409
+- [x] T007 [US1] Write test: `server-wins` strategy accepts server response on 409
+- [x] T008 [US1] Write test: `manual` strategy calls `onConflict(localData, serverData)` callback
+- [x] T009 [US1] Write test: `manual` strategy without callback throws validation error
+- [x] T010 [US1] Modify `src/offline/ConflictResolver.ts` — implement all 3 strategies with proper return types
+- [x] T011 [US1] Uncomment ConflictResolver import in `src/offline/OfflineSyncManager.ts` — instantiate with config
+- [x] T012 [US1] Modify `src/offline/SyncEngine.ts` — accept ConflictResolver, call on 409 responses
+- [x] T013 [US1] Modify `src/offline/OfflineSyncManager.ts` — pass ConflictResolver to SyncEngine
+- [x] T014 [US1] Run tests — verify conflict resolution works end-to-end
 
 **Checkpoint**: ConflictResolver handles all 3 strategies.
 
@@ -34,14 +34,14 @@
 
 ## Phase 3: Deterministic Queue Cleanup [US2]
 
-- [ ] T015 [US2] Add `SyncItemResult` type to `src/offline/types.ts`: `{ requestId, status, retryable, error? }`
-- [ ] T016 [US2] Write test: batch of 5 items (2 success, 1 400-error, 1 500-error, 1 network-error) — verify queue has 2 items after sync
-- [ ] T017 [US2] Write test: item exceeding maxRetries is removed and emitted as non-retryable
-- [ ] T018 [US2] Modify `src/offline/SyncEngine.ts` — return `SyncItemResult[]` from `processQueue()`
-- [ ] T019 [US2] Modify `src/offline/OfflineSyncManager.ts` — iterate results: success→remove, 4xx→remove, 5xx→keep
-- [ ] T020 [US2] Remove ALL comment blocks with uncertain language from `sync()` method (lines 172-194)
-- [ ] T021 [US2] Modify `src/offline/RequestQueue.ts` — add `maxQueueSize` enforcement (reject when full, emit event)
-- [ ] T022 [US2] Run tests — verify deterministic cleanup
+- [x] T015 [US2] Add `SyncItemResult` type to `src/offline/types.ts`: `{ requestId, status, retryable, error? }`
+- [x] T016 [US2] Write test: batch of 5 items (2 success, 1 400-error, 1 500-error, 1 network-error) — verify queue has 2 items after sync
+- [x] T017 [US2] Write test: item exceeding maxRetries is removed and emitted as non-retryable
+- [x] T018 [US2] Modify `src/offline/SyncEngine.ts` — return `SyncItemResult[]` from `processQueue()`
+- [x] T019 [US2] Modify `src/offline/OfflineSyncManager.ts` — iterate results: success→remove, 4xx→remove, 5xx→keep
+- [x] T020 [US2] Remove ALL comment blocks with uncertain language from `sync()` method (lines 172-194)
+- [x] T021 [US2] Modify `src/offline/RequestQueue.ts` — add `maxQueueSize` enforcement (reject when full, emit event)
+- [x] T022 [US2] Run tests — verify deterministic cleanup
 
 **Checkpoint**: Queue cleanup is deterministic with per-item results.
 
