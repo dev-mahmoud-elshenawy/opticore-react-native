@@ -114,7 +114,7 @@ export interface SyncItemResult {
     /** Whether the failed request is retryable */
     retryable?: boolean;
     /** Response data if available and needed */
-    data?: any;
+    data?: unknown;
 }
 
 /**

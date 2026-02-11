@@ -146,9 +146,10 @@ export class SyncEngine {
                 lastError = error as Error;
 
                 // Handle Conflict (409)
-                const statusCode = (error as any)?.response?.status || (error as any)?.status;
+                const errorWithResponse = error as { response?: { status?: number; data?: unknown }; status?: number };
+                const statusCode = errorWithResponse?.response?.status || errorWithResponse?.status;
                 if (statusCode === 409) {
-                    const serverData = (error as any)?.response?.data;
+                    const serverData = errorWithResponse?.response?.data;
                     this.logger.info(`[SyncEngine] Conflict detected for ${item.id}, resolving with strategy: ${this.conflictResolver.getStrategy()}`);
 
                     try {
@@ -167,15 +168,7 @@ export class SyncEngine {
                         item.data = resolvedData;
                         this.logger.info(`[SyncEngine] Resolved conflict, retrying with new data for ${item.id}`);
 
-                        // Continue loop to retry immediately or with backoff?
-                        // Ideally strictly strictly speaking we should just let the loop continue.
-                        // But standard retry logic might count this as an attempt.
-                        // Let's allow it to use standard retry flow.
-
-                        // If we want to guarantee success on next try, we assume the new data fixes it.
-                        // But if we just continue, we hit backoff logic below.
-                        // If we want immediate retry, we could decrement attempt? 
-                        // Let's stick to standard flow.
+                        // Continue loop to retry immediately
                         continue;
 
 
@@ -247,7 +240,9 @@ export class SyncEngine {
         }
 
         // Check HTTP status code if available
-        const statusCode = (error as any)?.response?.status || (error as any)?.status || (error as any)?.statusCode;
+        const errorWithResponse = error as { response?: { status?: number; data?: unknown }; status?: number; statusCode?: number };
+        const statusCode = errorWithResponse?.response?.status || errorWithResponse?.status || errorWithResponse?.statusCode;
+
         if (statusCode) {
             // Don't retry client errors (4xx except 408, 429)
             if (NON_RETRYABLE_STATUS_CODES.includes(statusCode)) {

@@ -62,12 +62,12 @@
 
 ## Phase 5: Connectivity Listener Lifecycle [US5]
 
-- [ ] T029 [US5] Write test: connectivity change triggers exactly 1 sync (no duplicates)
-- [ ] T030 [US5] Write test: after `dispose()`, connectivity changes don't trigger sync
-- [ ] T031 [US5] Write test: while paused, connectivity changes don't trigger sync
-- [ ] T032 [US5] Modify `src/offline/OfflineSyncManager.ts` — store listener as class field, setup once in `initialize()`
-- [ ] T033 [US5] Modify `dispose()` — remove listener via stored reference, clear properly
-- [ ] T034 [US5] Run tests — verify listener lifecycle
+- [x] T029 [US5] Write test: connectivity change triggers exactly 1 sync (no duplicates)
+- [x] T030 [US5] Write test: after `dispose()`, connectivity changes don't trigger sync
+- [x] T031 [US5] Write test: while paused, connectivity changes don't trigger sync
+- [x] T032 [US5] Modify `src/offline/OfflineSyncManager.ts` — store listener as class field, setup once in `initialize()`
+- [x] T033 [US5] Modify `dispose()` — remove listener via stored reference, clear properly
+- [x] T034 [US5] Run tests — verify listener lifecycle
 
 **Checkpoint**: Listener lifecycle is deterministic.
 
@@ -75,12 +75,12 @@
 
 ## Phase 6: Polish & Verification
 
-- [ ] T035 [P] Remove all `// To be used in future` and uncertain comment blocks from all offline files
-- [ ] T036 [P] Update `src/offline/index.ts` exports with new types
-- [ ] T037 Run full test suite: `npm test`
-- [ ] T038 Run `npm run type-check` — verify 0 errors
-- [ ] T039 Run `npm run lint` — verify 0 errors
-- [ ] T040 Verify coverage: 80%+ on all offline module files
+- [x] T035 [P] Remove all `// To be used in future` and uncertain comment blocks from all offline files
+- [x] T036 [P] Update `src/offline/index.ts` exports with new types
+- [x] T037 Run full test suite: `npm test`
+- [x] T038 Run `npm run type-check` — verify 0 errors
+- [x] T039 Run `npm run lint` — verify 0 errors
+- [x] T040 Verify coverage: 80%+ on all offline module files
 
 **Checkpoint**: Offline module production-ready.
 

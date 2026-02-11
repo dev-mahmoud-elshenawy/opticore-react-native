@@ -191,12 +191,7 @@ export class OfflineSyncManager {
                     if (itemResult.success) {
                         this.queue.remove(itemResult.requestId);
                     } else if (itemResult.retryable === false) {
-                        // Optionally remove non-retryable failures?
-                        // For now keeping consistent with previous logic, but we could remove them.
-                        // "Test maxRetries removal" in plan suggests we might want to handle removal logic.
-                        // If it's non-retryable error (e.g. 400), we probably should remove it to avoid infinite loop.
-                        // But let's stick to spec: "Deterministic queue cleanup".
-                        // If success = true, remove.
+                        // Future: Remove non-retryable failures
                     }
                 });
             }
@@ -223,17 +218,7 @@ export class OfflineSyncManager {
             // `request_failed` event has the error. 
 
             if (event.type === 'request_failed') {
-                // Check if we should remove specific failures (like 400 Bad Request which won't pass on retry)
-                // This logic requires inspecting the error again or having SyncEngine tell us.
-                // SyncEngine `processQueue` logic handles retries internally. If it fails there, it means it exhausted retries OR was non-retryable.
-                // So if we get 'request_failed' from SyncEngine processQueue flow, it implies it's done processing that item for this batch.
-                // The question is: do we keep it in the queue for the NEXT sync attempt?
-                // Usually:
-                // - Network errors: Keep in queue
-                // - 4xx errors: Remove (user error, won't fix itself)
-                // - 5xx errors: Keep (server issue, might fix)
-
-                // For this iteration, let's just remove successful ones. Failed ones stay for next sync attempt.
+                // Future: Handle specific failure types (e.g. move to dead-letter queue)
             }
 
             // Propagate events to our listeners
@@ -275,9 +260,6 @@ export class OfflineSyncManager {
         // For now, we reuse SyncEngine's system or just rely on it.
     }
 
-    /**
-     * Get pending request count
-     */
     /**
      * Get pending request count
      */

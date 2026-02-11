@@ -100,7 +100,7 @@ describe('OfflineSyncManager Initialization Guard', () => {
         // Resolve the restore promise (which rejects inside)
         try {
             await restoreResolver(); // This simulates the async completion of restore
-        } catch (e) {
+        } catch {
             // Restore mock might need to be set up differently to simulate rejection properly
             // but here we mocked it to reject.
         }
