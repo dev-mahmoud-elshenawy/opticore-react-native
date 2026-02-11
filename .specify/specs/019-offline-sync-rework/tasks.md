@@ -49,12 +49,12 @@
 
 ## Phase 4: Initialization Guard [US4]
 
-- [ ] T023 [US4] Write test: `enqueue()` called immediately after `getInstance()` — request queued after restore completes
-- [ ] T024 [US4] Write test: `enqueue()` after full init — executes immediately
-- [ ] T025 [US4] Write test: corrupted storage on restore — graceful fallback, no crash
-- [ ] T026 [US4] Modify `src/offline/OfflineSyncManager.ts` — add `private readyPromise: Promise<void>` initialized in constructor
-- [ ] T027 [US4] Modify `enqueue()`, `sync()`, `getPendingCount()` — await `this.readyPromise` before executing
-- [ ] T028 [US4] Run tests — verify init guard prevents race conditions
+- [x] T023 [US4] Write test: `enqueue()` called immediately after `getInstance()` — request queued after restore completes
+- [x] T024 [US4] Write test: `enqueue()` after full init — executes immediately
+- [x] T025 [US4] Write test: corrupted storage on restore — graceful fallback, no crash
+- [x] T026 [US4] Modify `src/offline/OfflineSyncManager.ts` — add `private readyPromise: Promise<void>` initialized in constructor
+- [x] T027 [US4] Modify `enqueue()`, `sync()`, `getPendingCount()` — await `this.readyPromise` before executing
+- [x] T028 [US4] Run tests — verify init guard prevents race conditions
 
 **Checkpoint**: No race conditions on early access.
 

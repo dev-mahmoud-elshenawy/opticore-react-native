@@ -28,6 +28,8 @@ export class OfflineSyncManager {
     private config: OfflineSyncConfig;
     private isPaused: boolean = false;
     private disposeConnectivityListener?: () => void;
+    private readyPromise: Promise<void>;
+    private readyResolver!: () => void;
 
     private constructor() {
         this.logger = Logger.getInstance();
@@ -35,6 +37,11 @@ export class OfflineSyncManager {
         this.conflictResolver = new ConflictResolver();
         this.syncEngine = new SyncEngine(ApiClient.getInstance(), this.conflictResolver);
         this.connectivity = ConnectivityManager.getInstance();
+
+        // Initialize ready promise
+        this.readyPromise = new Promise<void>((resolve) => {
+            this.readyResolver = resolve;
+        });
 
         // Default configuration
         this.config = {
@@ -66,26 +73,32 @@ export class OfflineSyncManager {
      * Initialize the manager
      */
     private async initialize(): Promise<void> {
-        // Restore queue from storage
-        if (this.config.persistQueue) {
-            await this.queue.restore();
-        }
-
-        // Setup connectivity listener
-        const handleConnectivityChange = (isConnected: boolean) => {
-            if (isConnected && this.config.syncOnReconnect && !this.isPaused) {
-                this.logger.info('[OfflineSyncManager] Connectivity restored, scheduling sync');
-                setTimeout(() => {
-                    this.sync().catch(err => {
-                        this.logger.error('[OfflineSyncManager] Auto-sync failed', err);
-                    });
-                }, this.config.syncDelay);
+        try {
+            // Restore queue from storage
+            if (this.config.persistQueue) {
+                await this.queue.restore();
             }
-        };
 
-        this.connectivity.addListener(handleConnectivityChange);
-        this.disposeConnectivityListener = () => {
-            this.connectivity.removeListener(handleConnectivityChange);
+            // Setup connectivity listener
+            const handleConnectivityChange = (isConnected: boolean) => {
+                if (isConnected && this.config.syncOnReconnect && !this.isPaused) {
+                    this.logger.info('[OfflineSyncManager] Connectivity restored, scheduling sync');
+                    setTimeout(() => {
+                        this.sync().catch(err => {
+                            this.logger.error('[OfflineSyncManager] Auto-sync failed', err);
+                        });
+                    }, this.config.syncDelay);
+                }
+            };
+
+            this.connectivity.addListener(handleConnectivityChange);
+            this.disposeConnectivityListener = () => {
+                this.connectivity.removeListener(handleConnectivityChange);
+            }
+        } catch (error) {
+            this.logger.error('[OfflineSyncManager] Initialization failed', error as Error);
+        } finally {
+            this.readyResolver();
         }
     }
 
@@ -116,6 +129,7 @@ export class OfflineSyncManager {
      * @returns Unique ID of the queued request
      */
     public async enqueue<T>(request: QueuedRequest<T>): Promise<string> {
+        await this.readyPromise;
         const id = this.queue.add(request);
 
         // If we are online and not paused, try to sync immediately
@@ -141,6 +155,7 @@ export class OfflineSyncManager {
      * Manually trigger a synchronization
      */
     public async sync(): Promise<SyncResult> {
+        await this.readyPromise;
         if (this.isPaused) {
             this.logger.info('[OfflineSyncManager] Sync skipped (paused)');
             return { success: 0, failed: 0, pending: this.queue.size(), errors: [], results: [] };
@@ -263,7 +278,11 @@ export class OfflineSyncManager {
     /**
      * Get pending request count
      */
-    public getPendingCount(): number {
+    /**
+     * Get pending request count
+     */
+    public async getPendingCount(): Promise<number> {
+        await this.readyPromise;
         return this.queue.size();
     }
 
