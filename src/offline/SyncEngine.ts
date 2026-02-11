@@ -22,17 +22,21 @@ const NON_RETRYABLE_STATUS_CODES = [
     422, // Unprocessable Entity
 ];
 
+import { ConflictResolver } from './ConflictResolver';
+
 /**
  * Sync engine for processing queued requests
  */
 export class SyncEngine {
     private apiClient: ApiClient;
+    private conflictResolver: ConflictResolver;
     private logger: Logger;
     private listeners: SyncListener[] = [];
     private isSyncing = false;
 
-    constructor() {
-        this.apiClient = ApiClient.getInstance();
+    constructor(apiClient: ApiClient, conflictResolver: ConflictResolver) {
+        this.apiClient = apiClient;
+        this.conflictResolver = conflictResolver;
         this.logger = Logger.getInstance();
     }
 
@@ -62,6 +66,7 @@ export class SyncEngine {
             failed: 0,
             pending: items.length,
             errors: [],
+            results: [],
         };
 
         try {
@@ -71,16 +76,28 @@ export class SyncEngine {
                     await this.executeRequest(item, config);
                     result.success++;
                     result.pending--;
+                    result.results.push({
+                        requestId: item.id,
+                        success: true,
+                        retryable: false
+                    });
                     this.emit({ type: 'request_success', requestId: item.id });
                 } catch (error) {
+                    const isRetryable = this.isRetryable(error);
                     const syncError: SyncError = {
                         requestId: item.id,
                         error: error as Error,
-                        retryable: this.isRetryable(error),
+                        retryable: isRetryable,
                     };
                     result.errors.push(syncError);
                     result.failed++;
                     result.pending--;
+                    result.results.push({
+                        requestId: item.id,
+                        success: false,
+                        error: error as Error,
+                        retryable: isRetryable
+                    });
                     this.emit({
                         type: 'request_failed',
                         requestId: item.id,
@@ -127,6 +144,46 @@ export class SyncEngine {
                 return;
             } catch (error) {
                 lastError = error as Error;
+
+                // Handle Conflict (409)
+                const statusCode = (error as any)?.response?.status || (error as any)?.status;
+                if (statusCode === 409) {
+                    const serverData = (error as any)?.response?.data;
+                    this.logger.info(`[SyncEngine] Conflict detected for ${item.id}, resolving with strategy: ${this.conflictResolver.getStrategy()}`);
+
+                    try {
+                        const resolvedData = await this.conflictResolver.resolve(item.data, serverData);
+
+                        // Strategy check
+                        if (this.conflictResolver.getStrategy() === 'server-wins') {
+                            // Server wins means we accept server state and consider request "done"
+                            // No need to retry.
+                            this.logger.info(`[SyncEngine] Resolved conflict with server-wins for ${item.id}`);
+                            return;
+                        }
+
+                        // Client wins or Manual: Retry with resolved data
+                        // Update item data for next attempt
+                        item.data = resolvedData;
+                        this.logger.info(`[SyncEngine] Resolved conflict, retrying with new data for ${item.id}`);
+
+                        // Continue loop to retry immediately or with backoff?
+                        // Ideally strictly strictly speaking we should just let the loop continue.
+                        // But standard retry logic might count this as an attempt.
+                        // Let's allow it to use standard retry flow.
+
+                        // If we want to guarantee success on next try, we assume the new data fixes it.
+                        // But if we just continue, we hit backoff logic below.
+                        // If we want immediate retry, we could decrement attempt? 
+                        // Let's stick to standard flow.
+                        continue;
+
+
+                    } catch (resolveError) {
+                        this.logger.error(`[SyncEngine] Conflict resolution failed for ${item.id}`, resolveError as Error);
+                        // Fall through to normal error handling (retry or fail)
+                    }
+                }
 
                 // Check if error is retryable
                 if (!this.isRetryable(error)) {
@@ -190,7 +247,7 @@ export class SyncEngine {
         }
 
         // Check HTTP status code if available
-        const statusCode = (error as any)?.status || (error as any)?.statusCode;
+        const statusCode = (error as any)?.response?.status || (error as any)?.status || (error as any)?.statusCode;
         if (statusCode) {
             // Don't retry client errors (4xx except 408, 429)
             if (NON_RETRYABLE_STATUS_CODES.includes(statusCode)) {

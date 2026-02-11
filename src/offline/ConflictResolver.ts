@@ -64,4 +64,26 @@ export class ConflictResolver {
             return serverData;
         }
     }
+    /**
+     * Update the conflict resolution strategy
+     * @param strategy - New strategy
+     * @param onConflict - New conflict handler (optional)
+     */
+    public updateStrategy(strategy: ConflictStrategy, onConflict?: ConflictHandler): void {
+        this.strategy = strategy;
+        if (onConflict) {
+            this.onConflict = onConflict;
+        }
+
+        if (this.strategy === 'manual' && !this.onConflict) {
+            Logger.getInstance().warn('ConflictResolver: Strategy set to "manual" but no onConflict handler provided. Falling back to "server-wins".');
+        }
+    }
+
+    /**
+     * Get the current conflict strategy
+     */
+    public getStrategy(): ConflictStrategy {
+        return this.strategy;
+    }
 }

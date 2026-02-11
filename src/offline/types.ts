@@ -88,6 +88,36 @@ export interface OfflineSyncConfig {
 }
 
 /**
+ * Error information for a failed sync request
+ */
+export interface SyncError {
+    /** ID of the request that failed */
+    requestId: string;
+
+    /** Error that occurred */
+    error: Error;
+
+    /** Whether this error is retryable */
+    retryable: boolean;
+}
+
+/**
+ * Result for a single item within a sync operation
+ */
+export interface SyncItemResult {
+    /** ID of the request */
+    requestId: string;
+    /** Whether the request was successfully processed */
+    success: boolean;
+    /** Error if the request failed */
+    error?: Error;
+    /** Whether the failed request is retryable */
+    retryable?: boolean;
+    /** Response data if available and needed */
+    data?: any;
+}
+
+/**
  * Result of a sync operation
  */
 export interface SyncResult {
@@ -102,20 +132,9 @@ export interface SyncResult {
 
     /** Array of sync errors */
     errors: SyncError[];
-}
 
-/**
- * Error information for a failed sync request
- */
-export interface SyncError {
-    /** ID of the request that failed */
-    requestId: string;
-
-    /** Error that occurred */
-    error: Error;
-
-    /** Whether this error is retryable */
-    retryable: boolean;
+    /** Array of individual item results for deterministic cleanup */
+    results: SyncItemResult[];
 }
 
 /**

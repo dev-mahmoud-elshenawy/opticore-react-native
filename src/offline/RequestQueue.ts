@@ -35,6 +35,14 @@ export class RequestQueue {
     }
 
     /**
+     * Update the maximum queue size
+     * @param maxSize - New maximum size
+     */
+    setMaxSize(maxSize: number): void {
+        this.maxSize = maxSize;
+    }
+
+    /**
      * Add a request to the queue
      * @param request - Request to enqueue
      * @returns Unique ID of the queued request

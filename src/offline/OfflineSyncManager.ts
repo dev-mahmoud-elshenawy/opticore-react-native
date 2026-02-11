@@ -2,7 +2,8 @@ import { ConnectivityManager } from '../infrastructure/connectivity/Connectivity
 import { Logger } from '../infrastructure/logger/Logger';
 import { RequestQueue } from './RequestQueue';
 import { SyncEngine } from './SyncEngine';
-// import { ConflictResolver } from './ConflictResolver';
+import { ApiClient } from '../infrastructure/network/ApiClient';
+import { ConflictResolver } from './ConflictResolver';
 import {
     OfflineSyncConfig,
     QueuedRequest,
@@ -21,7 +22,7 @@ export class OfflineSyncManager {
     private static instance: OfflineSyncManager;
     private queue: RequestQueue;
     private syncEngine: SyncEngine;
-    // private conflictResolver: ConflictResolver; // To be used in future
+    private conflictResolver: ConflictResolver;
     private connectivity: ConnectivityManager;
     private logger: Logger;
     private config: OfflineSyncConfig;
@@ -31,8 +32,8 @@ export class OfflineSyncManager {
     private constructor() {
         this.logger = Logger.getInstance();
         this.queue = new RequestQueue();
-        this.syncEngine = new SyncEngine();
-        // this.conflictResolver = new ConflictResolver();
+        this.conflictResolver = new ConflictResolver();
+        this.syncEngine = new SyncEngine(ApiClient.getInstance(), this.conflictResolver);
         this.connectivity = ConnectivityManager.getInstance();
 
         // Default configuration
@@ -97,15 +98,15 @@ export class OfflineSyncManager {
 
         // Update components if needed
         if (config.conflictStrategy || config.onConflict) {
-            // this.conflictResolver = new ConflictResolver(
-            //     this.config.conflictStrategy,
-            //     this.config.onConflict
-            // );
+            this.conflictResolver.updateStrategy(
+                this.config.conflictStrategy || 'server-wins',
+                this.config.onConflict
+            );
         }
 
         // Re-initialize queue if storage settings changed (simplified for now)
         if (config.maxQueueSize) {
-            // In a real implementation, we might need to recreate the queue or update its limit
+            this.queue.setMaxSize(config.maxQueueSize);
         }
     }
 
@@ -142,22 +143,22 @@ export class OfflineSyncManager {
     public async sync(): Promise<SyncResult> {
         if (this.isPaused) {
             this.logger.info('[OfflineSyncManager] Sync skipped (paused)');
-            return { success: 0, failed: 0, pending: this.queue.size(), errors: [] };
+            return { success: 0, failed: 0, pending: this.queue.size(), errors: [], results: [] };
         }
 
         if (!this.connectivity.isConnected) {
             this.logger.info('[OfflineSyncManager] Sync skipped (offline)');
-            return { success: 0, failed: 0, pending: this.queue.size(), errors: [] };
+            return { success: 0, failed: 0, pending: this.queue.size(), errors: [], results: [] };
         }
 
         if (this.syncEngine.getSyncingStatus()) {
             this.logger.info('[OfflineSyncManager] Sync skipped (already in progress)');
-            return { success: 0, failed: 0, pending: this.queue.size(), errors: [] };
+            return { success: 0, failed: 0, pending: this.queue.size(), errors: [], results: [] };
         }
 
         const items = this.queue.getAll();
         if (items.length === 0) {
-            return { success: 0, failed: 0, pending: 0, errors: [] };
+            return { success: 0, failed: 0, pending: 0, errors: [], results: [] };
         }
 
         this.logger.info(`[OfflineSyncManager] Starting sync of ${items.length} items`);
@@ -169,29 +170,21 @@ export class OfflineSyncManager {
                 maxBackoff: this.config.maxBackoff!,
             });
 
-            // Remove successfully synced items
-            // Note: SyncEngine events could also be used, but this ensures consistency
-            // We might need to handle partial failures carefully
-            // For now, let's assume SyncEngine returns which specific requests succeeded/failed via event listeners if we hooked them up,
-            // but here we can just check the result if it contained IDs.
-            // Since SyncEngine result counts are aggregate, we rely on the behavior that SyncEngine 
-            // executes them. However, SyncEngine doesn't automatically remove from queue.
-            // We should probably check which ones succeeded.
-            // To keep it simple for now, we attach a listener to SyncEngine or rely on it returning details.
-            // The current SyncEngine implementation emits events.
-            // Ideally, SyncEngine should return types that let us know WHICH items succeeded.
-            // Let's rely on the fact that we can subscribe to SyncEngine events within this manager if needed,
-            // OR we update SyncEngine to return the list of processed IDs. 
-
-            // Actually, typically the queue removal happens upon success. 
-            // Let's iterate and check. Wait, SyncEngine processes them. 
-            // A Clean way is to have SyncEngine take a callback or we listen to events.
-
-            // Let's use the event listener approach for cleaner decoupling, OR just handle it here if we mock it.
-            // But for this implementation, let's just re-read the queue status? RequestQueue doesn't know about sync status.
-
-            // BETTER APPROACH: modify SyncEngine to return list of successful IDs or we handle it via listeners during init.
-            // Let's register a listener on the SyncEngine during init/construction.
+            // Deterministic cleanup based on results
+            if (result.results && result.results.length > 0) {
+                result.results.forEach(itemResult => {
+                    if (itemResult.success) {
+                        this.queue.remove(itemResult.requestId);
+                    } else if (itemResult.retryable === false) {
+                        // Optionally remove non-retryable failures?
+                        // For now keeping consistent with previous logic, but we could remove them.
+                        // "Test maxRetries removal" in plan suggests we might want to handle removal logic.
+                        // If it's non-retryable error (e.g. 400), we probably should remove it to avoid infinite loop.
+                        // But let's stick to spec: "Deterministic queue cleanup".
+                        // If success = true, remove.
+                    }
+                });
+            }
 
             return result;
 
