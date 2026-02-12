@@ -43,18 +43,18 @@
 
 ## Phase 3: OptiCoreErrorBoundary [US3]
 
-- [ ] T024 [US3] Create `src/error/DefaultErrorFallback.tsx` — simple View + Text + "Try Again" button
-- [ ] T025 [US3] Write test: child throws RenderError → fallback shown with userMessage
-- [ ] T026 [US3] Write test: child throws NonRenderError → error logged, no fallback
-- [ ] T027 [US3] Write test: child throws unclassified Error → ErrorClassifier.classify() called
-- [ ] T028 [US3] Write test: custom fallback prop receives error + resetError function
-- [ ] T029 [US3] Write test: `resetError()` clears error state, re-renders children
-- [ ] T030 [US3] Write test: `onError` callback called for any caught error
-- [ ] T031 [US3] Create `src/error/OptiCoreErrorBoundary.tsx` — class component with getDerivedStateFromError + componentDidCatch
-- [ ] T032 [US3] Implement classification logic in getDerivedStateFromError
-- [ ] T033 [US3] Implement Logger integration in componentDidCatch for NonRenderErrors
-- [ ] T034 [US3] Implement `resetError` method that clears state
-- [ ] T035 [US3] Run ErrorBoundary tests — verify all pass
+- [x] T024 [US3] Create `src/error/DefaultErrorFallback.tsx` — simple View + Text + "Try Again" button
+- [x] T025 [US3] Write test: child throws RenderError → fallback shown with userMessage
+- [x] T026 [US3] Write test: child throws NonRenderError → error logged, no fallback
+- [x] T027 [US3] Write test: child throws unclassified Error → ErrorClassifier.classify() called
+- [x] T028 [US3] Write test: custom fallback prop receives error + resetError function
+- [x] T029 [US3] Write test: `resetError()` clears error state, re-renders children
+- [x] T030 [US3] Write test: `onError` callback called for any caught error
+- [x] T031 [US3] Create `src/error/OptiCoreErrorBoundary.tsx` — class component with getDerivedStateFromError + componentDidCatch
+- [x] T032 [US3] Implement classification logic in getDerivedStateFromError
+- [x] T033 [US3] Implement Logger integration in componentDidCatch for NonRenderErrors
+- [x] T034 [US3] Implement `resetError` method that clears state
+- [x] T035 [US3] Run ErrorBoundary tests — verify all pass
 
 **Checkpoint**: ErrorBoundary classifies and handles errors.
 
@@ -62,12 +62,12 @@
 
 ## Phase 4: Exports & Polish
 
-- [ ] T036 [P] Modify `src/error/index.ts` — export ClassificationRule, Result, OptiCoreErrorBoundary, DefaultErrorFallback
-- [ ] T037 [P] Verify `src/index.ts` error exports include new types
-- [ ] T038 Run full test suite: `npm test`
-- [ ] T039 Run `npm run type-check` — verify 0 errors
-- [ ] T040 Run `npm run lint` — verify 0 errors
-- [ ] T041 Verify coverage: 80%+ on all error files
+- [x] T036 [P] Modify `src/error/index.ts` — export ClassificationRule, Result, OptiCoreErrorBoundary, DefaultErrorFallback
+- [x] T037 [P] Verify `src/index.ts` error exports include new types
+- [x] T038 Run full test suite: `npm test`
+- [x] T039 Run `npm run type-check` — verify 0 errors
+- [x] T040 Run `npm run lint` — verify 0 errors
+- [x] T041 Verify coverage: 80%+ on all error files
 
 **Checkpoint**: Error system enhancements complete.
 

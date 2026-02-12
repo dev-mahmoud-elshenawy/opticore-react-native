@@ -47,11 +47,12 @@
 ## CRITICAL: Workflow Adherence
 
 > [!IMPORTANT]
-> **YOU MUST FOLLOW THE WORKFLOWS DEFINED IN `.agent/workflows/`**
+> **YOU MUST FOLLOW THE WORKFLOWS DEFINED IN [`.agent/workflows/`](.agent/workflows/)**
 >
-> Before starting any task, check `.agent/workflows/` for applicable procedures.
-> - **Spec Implementation**: Follow `spec_implementation_flow.md`
-> - **Git Flow**: Follow `spec_git_alignment.md`
+> Before starting any task, open the relevant workflow and follow it step-by-step:
+> - **Spec Implementation**: [`.agent/workflows/spec_implementation_flow.md`](.agent/workflows/spec_implementation_flow.md)
+> - **Git Flow**: [`.agent/workflows/spec_git_alignment.md`](.agent/workflows/spec_git_alignment.md)
+> - **Critical Enforcement**: [`.agent/workflows/critical_workflow_enforcement.md`](.agent/workflows/critical_workflow_enforcement.md)
 >
 > Failure to follow these workflows results in inconsistent state and documentation drift.
 
@@ -1391,7 +1392,13 @@ export * from './config';
 - [.specify/templates/spec-template.md](.specify/templates/spec-template.md) - Spec template
 - [.specify/templates/plan-template.md](.specify/templates/plan-template.md) - Plan template
 - [.specify/templates/tasks-template.md](.specify/templates/tasks-template.md) - Tasks template
-- [.specify/scripts/](. specify/scripts/) - Helper scripts (create-spec.sh, validate-spec.sh, check-quality.sh, list-specs.sh)
+- [.specify/scripts/](.specify/scripts/) - Helper scripts (create-spec.sh, validate-spec.sh, check-quality.sh, list-specs.sh)
+
+### Agent Workflows
+
+- **[`.agent/workflows/spec_implementation_flow.md`](.agent/workflows/spec_implementation_flow.md)** - Per-session init, implementation loop, phase commits, finalization
+- **[`.agent/workflows/spec_git_alignment.md`](.agent/workflows/spec_git_alignment.md)** - Branch setup, phase sync, commit & push cadence
+- **[`.agent/workflows/critical_workflow_enforcement.md`](.agent/workflows/critical_workflow_enforcement.md)** - Enforcement rules and anti-patterns
 
 ### Existing Specifications
 
@@ -1432,7 +1439,7 @@ Browse `.specify/specs/` for examples of completed specs:
 
 ---
 
-**Last Updated**: 2026-02-03
+**Last Updated**: 2026-02-12
 **Version**: 1.0.0
 **Maintained By**: Mahmoud El Shenawy
 
