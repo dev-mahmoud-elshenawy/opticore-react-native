@@ -1,5 +1,8 @@
 import { ILogger } from './interfaces/ILogger';
 import { LogLevel } from './LogLevel';
+import { LogTransport } from './LogTransport';
+import { ConsoleTransport } from './ConsoleTransport';
+import { LogEntry } from './LogEntry';
 
 export interface LoggerConfig {
   level: LogLevel;
@@ -9,31 +12,11 @@ export interface LoggerConfig {
 }
 
 /**
- * Logger - Singleton logging service with configurable levels
- *
- * Features:
- * - Configurable log levels (DEBUG, INFO, WARN, ERROR)
- * - Automatic suppression in production mode
- * - Colored console output for development
- * - Timestamp support
- * - Safe handling of circular references in objects
- *
- * @example
- * ```typescript
- * const logger = Logger.getInstance();
- *
- * // Configure for production
- * logger.configure({
- *   level: LogLevel.ERROR,
- *   isProduction: true,  // Suppresses ALL logs
- * });
- *
- * logger.debug('Debug message');  // Not logged
- * logger.error('Error occurred', error);  // Logged
- * ```
+ * Logger - Singleton logging service with configurable levels and transports
  */
 export class Logger implements ILogger {
   private static instance: Logger;
+  private transports: LogTransport[] = [];
   private config: LoggerConfig = {
     level: LogLevel.INFO,
     enabled: true,
@@ -41,7 +24,11 @@ export class Logger implements ILogger {
     isProduction: false,
   };
 
-  private constructor() {}
+  private constructor() {
+    // Default transport
+    // We don't set minLevel here so it relies on the Logger's global level configuration
+    this.addTransport(new ConsoleTransport());
+  }
 
   public static getInstance(): Logger {
     if (!Logger.instance) {
@@ -57,100 +44,88 @@ export class Logger implements ILogger {
    */
   public configure(config: Partial<LoggerConfig>): void {
     this.config = { ...this.config, ...config };
+
+    // Update existing console transport if level changed?
+    // Or we expect users to manage transports separately.
+    // For backward compatibility, if 'level' is updated in config, 
+    // we might want to update the default console transport if it exists?
+    // But referencing specific transport is hard.
+    // We'll rely on global filtering in `shouldLog` or `print`.
   }
 
   /**
-   * Log debug message (lowest priority)
-   *
-   * @param message - Log message
-   * @param args - Additional arguments to log
+   * Add a custom transport
    */
+  public addTransport(transport: LogTransport): void {
+    this.transports.push(transport);
+  }
+
+  /**
+   * Remove a transport by name
+   */
+  public removeTransport(name: string): boolean {
+    const initialLength = this.transports.length;
+    this.transports = this.transports.filter(t => t.name !== name);
+    return this.transports.length !== initialLength;
+  }
+
+  /**
+   * Clear all transports
+   */
+  public clearTransports(): void {
+    this.transports = [];
+  }
+
   public debug(message: string, ...args: unknown[]): void {
-    if (this.shouldLog(LogLevel.DEBUG)) {
-      this.print(LogLevel.DEBUG, message, args);
-    }
+    this.log(LogLevel.DEBUG, message, args);
   }
 
-  /**
-   * Log info message (normal operation)
-   *
-   * @param message - Log message
-   * @param args - Additional arguments to log
-   */
   public info(message: string, ...args: unknown[]): void {
-    if (this.shouldLog(LogLevel.INFO)) {
-      this.print(LogLevel.INFO, message, args);
-    }
+    this.log(LogLevel.INFO, message, args);
   }
 
-  /**
-   * Log warning message (potentially harmful situations)
-   *
-   * @param message - Log message
-   * @param args - Additional arguments to log
-   */
   public warn(message: string, ...args: unknown[]): void {
-    if (this.shouldLog(LogLevel.WARN)) {
-      this.print(LogLevel.WARN, message, args);
-    }
+    this.log(LogLevel.WARN, message, args);
   }
 
   public error(message: string, error?: Error, ...args: unknown[]): void {
-    if (this.shouldLog(LogLevel.ERROR)) {
-      this.print(LogLevel.ERROR, message, args, error);
-    }
+    this.log(LogLevel.ERROR, message, args, error);
   }
 
-  private shouldLog(level: LogLevel): boolean {
-    if (!this.config.enabled) return false;
-    if (this.config.isProduction) return false;
-    return level >= this.config.level;
-  }
+  private log(level: LogLevel, message: string, args: unknown[], error?: Error): void {
+    // Global filter first
+    if (!this.config.enabled) return;
+    if (this.config.isProduction) return;
+    if (level < this.config.level) return;
 
-  private print(level: LogLevel, message: string, args: unknown[], error?: Error): void {
-    const timestamp = this.config.showTimestamp ? `[${new Date().toISOString()}] ` : '';
-    const levelLabel = LogLevel[level];
-
-    let colorPrefix = '';
-    const reset = '\x1b[0m';
-
-    switch (level) {
-      case LogLevel.DEBUG:
-        colorPrefix = '\x1b[90m';
-        break;
-      case LogLevel.INFO:
-        colorPrefix = '\x1b[34m';
-        break;
-      case LogLevel.WARN:
-        colorPrefix = '\x1b[33m';
-        break;
-      case LogLevel.ERROR:
-        colorPrefix = '\x1b[31m';
-        break;
+    // Safety check: if no transports, add console
+    if (this.transports.length === 0) {
+      this.addTransport(new ConsoleTransport({ minLevel: this.config.level }));
     }
 
-    const output = `${colorPrefix}[${levelLabel}]${reset} ${timestamp}${message}`;
+    const entry: LogEntry = {
+      level,
+      message,
+      timestamp: new Date().toISOString(),
+      args: args.length > 0 ? args : undefined,
+      error,
+    };
 
-    const logArgs = [output, ...args];
-    if (error) {
-      logArgs.push('\nStack:', error.stack || error.message);
-    }
-
-    /* eslint-disable no-console */
-    switch (level) {
-      case LogLevel.DEBUG:
-        console.log(...logArgs);
-        break;
-      case LogLevel.INFO:
-        console.info(...logArgs);
-        break;
-      case LogLevel.WARN:
-        console.warn(...logArgs);
-        break;
-      case LogLevel.ERROR:
-        console.error(...logArgs);
-        break;
-    }
-    /* eslint-enable no-console */
+    this.transports.forEach(transport => {
+      try {
+        // Transport-level filtering
+        if (transport.minLevel !== undefined && level < transport.minLevel) {
+          return;
+        }
+        transport.write(entry);
+      } catch (err) {
+        // Prevent transport failure from crashing app
+        // We can't log this failure easily as it might cycle.
+        // potentially console.error fallback?
+        /* eslint-disable no-console */
+        console.error('Logger transport failed:', err);
+        /* eslint-enable no-console */
+      }
+    });
   }
 }

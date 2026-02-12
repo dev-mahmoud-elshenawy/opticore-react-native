@@ -15,15 +15,16 @@ export function useOfflineSync() {
     const [state, setState] = useState({
         isOnline: connectivity.isConnected,
         isSyncing: manager.isSyncing(),
-        pendingCount: manager.getPendingCount(),
+        pendingCount: 0,
     });
 
     useEffect(() => {
-        const updateState = () => {
+        const updateState = async () => {
+            const count = await manager.getPendingCount();
             setState({
                 isOnline: connectivity.isConnected,
                 isSyncing: manager.isSyncing(),
-                pendingCount: manager.getPendingCount(),
+                pendingCount: count,
             });
         };
 
