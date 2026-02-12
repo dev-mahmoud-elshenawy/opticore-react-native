@@ -1,8 +1,8 @@
 import { InternalAxiosRequestConfig } from 'axios';
 import { ApiClient } from '../ApiClient';
+import { BearerTokenStrategy } from '../AuthStrategy';
 
 export class AuthInterceptor {
-  private static refreshPromise: Promise<string | null> | null = null;
   private client: ApiClient;
 
   constructor(client: ApiClient) {
@@ -11,38 +11,57 @@ export class AuthInterceptor {
 
   public async onRequest(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
     const networkConfig = this.client.config;
+    let strategy = networkConfig.authStrategy;
 
-    if (networkConfig?.getAuthToken) {
-      const token = await networkConfig.getAuthToken();
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    // Backward compatibility: use legacy callbacks if no strategy provided
+    if (!strategy && networkConfig.getAuthToken) {
+      strategy = new BearerTokenStrategy(
+        networkConfig.getAuthToken,
+        networkConfig.onTokenRefresh
+      );
     }
+
+    if (strategy) {
+      return strategy.applyAuth(config);
+    }
+
     return config;
   }
 
   public async onError(error: any): Promise<any> {
-     
     const config = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
     const networkConfig = this.client.config;
 
-    if (error.response?.status === 401 && !config._retry && networkConfig?.onTokenRefresh) {
-      config._retry = true;
+    // Check if we have a strategy or legacy callbacks
+    let strategy = networkConfig.authStrategy;
+    if (!strategy && networkConfig.getAuthToken) {
+      strategy = new BearerTokenStrategy(
+        networkConfig.getAuthToken,
+        networkConfig.onTokenRefresh
+      );
+    }
 
-      if (!AuthInterceptor.refreshPromise) {
-        AuthInterceptor.refreshPromise = networkConfig.onTokenRefresh().finally(() => {
-          AuthInterceptor.refreshPromise = null;
-        });
-      }
+    if (error.response?.status === 401 && !config._retry && strategy) {
+      const retryConfig = await strategy.handleUnauthorized(error);
 
-      const newToken = await AuthInterceptor.refreshPromise;
+      if (retryConfig?.retry) {
+        config._retry = true;
+        // If the strategy refreshed the token, we might need to update the header
+        // For BearerTokenStrategy, applyAuth fetches the new token.
+        // So we just re-run the request via the client.
 
-      if (newToken && config.headers) {
-        config.headers.Authorization = `Bearer ${newToken}`;
-        // Retry request
+        // However, applyAuth modifies the config passed to it.
+        // We should re-apply auth to the config before retrying?
+        // Or just let the new request go through the interceptor chain again?
+
+        // If we call client.request(config), it runs interceptors again.
+        // BUT config already has headers.
+        // BearerTokenStrategy.applyAuth will overwrite Authorization header if token exists.
+
         return this.client.client.request(config);
       }
     }
+
     return Promise.reject(error);
   }
 }

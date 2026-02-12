@@ -62,6 +62,8 @@ export class CoreSetup {
             getAuthToken: config.api.getAuthToken
                 ? async () => Promise.resolve(config.api.getAuthToken!())
                 : undefined,
+            onTokenRefresh: config.api.onTokenRefresh,
+            authStrategy: config.api.authStrategy,
         });
 
         // Configure Logger

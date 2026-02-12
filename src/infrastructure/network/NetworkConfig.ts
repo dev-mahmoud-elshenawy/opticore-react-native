@@ -1,3 +1,5 @@
+import { AuthStrategy } from './AuthStrategy';
+
 export interface NetworkConfig {
   baseURL?: string;
   timeout?: number;
@@ -13,4 +15,10 @@ export interface NetworkConfig {
    * Should return the new token
    */
   onTokenRefresh?: () => Promise<string | null>;
+
+  /**
+   * Custom authentication strategy
+   * If provided, overrides getAuthToken/onTokenRefresh behavior
+   */
+  authStrategy?: AuthStrategy;
 }

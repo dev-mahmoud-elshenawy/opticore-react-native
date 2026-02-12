@@ -19,7 +19,7 @@ export const email = (message: string = 'Invalid email address') =>
 export const phone = (options: PhoneValidatorOptions = {}) => {
     const { required = true, message = 'Invalid phone number', format = PhoneFormat.US } = options;
 
-    let schema = z.string();
+    const schema = z.string();
 
     if (!required) {
         return schema.optional().or(z.literal(''));
@@ -46,7 +46,7 @@ export const password = (options: PasswordValidatorOptions = {}) => {
         requireSpecial = true,
     } = options;
 
-    let schema = z.string();
+    const schema = z.string();
 
     if (!required) {
         return schema.optional().or(z.literal(''));

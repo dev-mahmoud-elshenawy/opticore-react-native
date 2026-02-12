@@ -14,9 +14,6 @@ import { useAsyncState } from '../../src/hooks/useAsyncState';
 // We can access properties on mocked modules directly
 
 describe('Integration: Hooks → Infrastructure', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
 
   describe('useConnectivity → NetInfo', () => {
     it('should fetch initial connectivity state', async () => {
@@ -26,7 +23,7 @@ describe('Integration: Hooks → Infrastructure', () => {
         expect(result.current.isConnected).toBe(true);
         expect(result.current.isInternetReachable).toBe(true);
         expect(result.current.type).toBe('wifi');
-      });
+      }, { timeout: 1000 });
     });
 
     it('should register listener with NetInfo', async () => {
@@ -41,7 +38,9 @@ describe('Integration: Hooks → Infrastructure', () => {
     it('should cleanup listener on unmount', async () => {
       const NetInfo = require('@react-native-community/netinfo');
       const mockUnsubscribe = jest.fn();
-      NetInfo.addEventListener.mockReturnValue(mockUnsubscribe);
+
+      const originalImpl = NetInfo.addEventListener.getMockImplementation();
+      NetInfo.addEventListener.mockImplementation(() => mockUnsubscribe);
 
       const { unmount } = await renderHookCompat(() => useConnectivity());
 
@@ -49,6 +48,10 @@ describe('Integration: Hooks → Infrastructure', () => {
 
       // Verify unsubscribe was called
       expect(mockUnsubscribe).toHaveBeenCalled();
+
+      if (originalImpl) {
+        NetInfo.addEventListener.mockImplementation(originalImpl);
+      }
     });
 
     it('should update state when connectivity changes', async () => {
@@ -57,10 +60,10 @@ describe('Integration: Hooks → Infrastructure', () => {
       // Wait for initial state
       await waitFor(() => {
         expect(result.current.isConnected).toBe(true);
-      });
+      }, { timeout: 1000 });
 
       // Simulate going offline
-      act(() => {
+      await act(async () => {
         // Access the mock from the module
         const mockNetInfo = require('@react-native-community/netinfo').default;
         if (mockNetInfo.mockTriggerChange) {
@@ -77,7 +80,7 @@ describe('Integration: Hooks → Infrastructure', () => {
         expect(result.current.isConnected).toBe(false);
         expect(result.current.isInternetReachable).toBe(false);
         expect(result.current.type).toBe('none');
-      });
+      }, { timeout: 1000 });
     });
   });
 
@@ -99,7 +102,9 @@ describe('Integration: Hooks → Infrastructure', () => {
     it('should cleanup listener on unmount', async () => {
       const mockRemove = jest.fn();
       const { AppState } = require('react-native');
-      AppState.addEventListener.mockReturnValue({ remove: mockRemove });
+
+      const originalImpl = AppState.addEventListener.getMockImplementation();
+      AppState.addEventListener.mockImplementation(() => ({ remove: mockRemove }));
 
       const { unmount } = await renderHookCompat(() => useLifecycle());
 
@@ -107,6 +112,10 @@ describe('Integration: Hooks → Infrastructure', () => {
 
       // Verify remove was called
       expect(mockRemove).toHaveBeenCalled();
+
+      if (originalImpl) {
+        AppState.addEventListener.mockImplementation(originalImpl);
+      }
     });
 
     it('should update state when app state changes', async () => {
@@ -116,7 +125,7 @@ describe('Integration: Hooks → Infrastructure', () => {
       expect(result.current).toBe('active');
 
       // Simulate app going to background
-      act(() => {
+      await act(async () => {
         // Use the global mock's exposed callback mechanism
         // Note: Check test/__mocks__/react-native.ts for implementation
         const { mockAddEventListener } = require('../../__mocks__/react-native');
@@ -128,12 +137,20 @@ describe('Integration: Hooks → Infrastructure', () => {
       // Verify state updated
       await waitFor(() => {
         expect(result.current).toBe('background');
-      });
+      }, { timeout: 1000 });
     });
   });
 });
 
 describe('useAsyncState → AsyncState Pattern', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('should follow AsyncState pattern transitions', async () => {
     const { result } = await renderHookCompat(() => useAsyncState<string>());
 
@@ -143,11 +160,17 @@ describe('useAsyncState → AsyncState Pattern', () => {
     expect(result.current.error).toBeNull();
 
     // Transition: loading
+    let promise: Promise<string | undefined>;
     await act(async () => {
       const asyncOperation = new Promise<string>((resolve) => {
         setTimeout(() => resolve('Test Data'), 10);
       });
-      await result.current.run(asyncOperation);
+      promise = result.current.run(asyncOperation);
+      jest.runAllTimers();
+    });
+
+    await act(async () => {
+      await promise;
     });
 
     // After success
@@ -155,7 +178,7 @@ describe('useAsyncState → AsyncState Pattern', () => {
       expect(result.current.isLoading).toBe(false);
       expect(result.current.data).toBe('Test Data');
       expect(result.current.error).toBeNull();
-    });
+    }, { timeout: 1000 });
   });
 
   it('should handle errors in AsyncState pattern', async () => {
@@ -170,7 +193,9 @@ describe('useAsyncState → AsyncState Pattern', () => {
       });
 
       try {
-        await result.current.run(failingOperation);
+        const promise = result.current.run(failingOperation);
+        jest.runAllTimers();
+        await promise;
       } catch (err) {
         // Error should be caught and stored in state
       }
@@ -181,7 +206,7 @@ describe('useAsyncState → AsyncState Pattern', () => {
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBe(testError);
       expect(result.current.data).toBeNull();
-    });
+    }, { timeout: 1000 });
   });
 
   it('should prevent memory leaks on unmount', async () => {
@@ -196,6 +221,8 @@ describe('useAsyncState → AsyncState Pattern', () => {
 
     // Unmount before completion
     unmount();
+
+    jest.runAllTimers();
 
     // Wait for operation to complete (should not update state after unmount)
     await promise.catch(() => {
@@ -226,6 +253,6 @@ describe('Cross-Hook Integration', () => {
       expect(result.current.connectivity.isConnected).toBeDefined();
       expect(result.current.lifecycle).toBe('active');
       expect(result.current.async.isLoading).toBe(false);
-    });
+    }, { timeout: 1000 });
   });
 });

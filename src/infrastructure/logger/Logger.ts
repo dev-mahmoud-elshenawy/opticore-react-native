@@ -122,9 +122,9 @@ export class Logger implements ILogger {
         // Prevent transport failure from crashing app
         // We can't log this failure easily as it might cycle.
         // potentially console.error fallback?
-        /* eslint-disable no-console */
+         
         console.error('Logger transport failed:', err);
-        /* eslint-enable no-console */
+         
       }
     });
   }

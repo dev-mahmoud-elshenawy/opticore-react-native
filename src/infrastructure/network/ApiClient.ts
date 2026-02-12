@@ -10,6 +10,7 @@ import { HttpMethod } from './HttpMethod';
 import { AuthInterceptor } from './interceptors/AuthInterceptor';
 import { LoggingInterceptor } from './interceptors/LoggingInterceptor';
 import { ErrorInterceptor } from './interceptors/ErrorInterceptor';
+import { Interceptor, InterceptorId } from './Interceptor';
 
 /**
  * ApiClient - Singleton HTTP client for making API requests
@@ -35,6 +36,10 @@ export class ApiClient {
   public client: AxiosInstance;
   private _config: NetworkConfig = {};
 
+  // Track interceptors for removal
+  private interceptors = new Map<InterceptorId, { type: 'request' | 'response'; axiosId: number }>();
+  private nextInterceptorId = 1;
+
   private constructor() {
     this.client = axios.create();
     this.setupInterceptors();
@@ -49,6 +54,70 @@ export class ApiClient {
 
   public get config(): NetworkConfig {
     return this._config;
+  }
+
+  /**
+   * Add a custom request interceptor
+   * 
+   * @param interceptor - Interceptor with onRequest/onError methods
+   * @returns InterceptorId for removal
+   */
+  public addRequestInterceptor(interceptor: Interceptor): InterceptorId {
+    const onFulfilled = interceptor.onRequest
+      ? (config: InternalAxiosRequestConfig) => interceptor.onRequest!(config) as InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>
+      : undefined;
+
+    const onRejected = interceptor.onError
+      ? (error: any) => interceptor.onError!(error)
+      : undefined;
+
+    const axiosId = this.client.interceptors.request.use(onFulfilled, onRejected);
+    const id = this.nextInterceptorId++;
+
+    this.interceptors.set(id, { type: 'request', axiosId });
+    return id;
+  }
+
+  /**
+   * Add a custom response interceptor
+   * 
+   * @param interceptor - Interceptor with onResponse/onError methods
+   * @returns InterceptorId for removal
+   */
+  public addResponseInterceptor(interceptor: Interceptor): InterceptorId {
+    const onFulfilled = interceptor.onResponse
+      ? (response: AxiosResponse) => interceptor.onResponse!(response)
+      : undefined;
+
+    const onRejected = interceptor.onError
+      ? (error: any) => interceptor.onError!(error)
+      : undefined;
+
+    const axiosId = this.client.interceptors.response.use(onFulfilled, onRejected);
+    const id = this.nextInterceptorId++;
+
+    this.interceptors.set(id, { type: 'response', axiosId });
+    return id;
+  }
+
+  /**
+   * Remove a registered interceptor
+   * 
+   * @param id - InterceptorId returned from addRequestInterceptor/addResponseInterceptor
+   * @returns true if removed, false if not found
+   */
+  public removeInterceptor(id: InterceptorId): boolean {
+    const info = this.interceptors.get(id);
+    if (!info) return false;
+
+    if (info.type === 'request') {
+      this.client.interceptors.request.eject(info.axiosId);
+    } else {
+      this.client.interceptors.response.eject(info.axiosId);
+    }
+
+    this.interceptors.delete(id);
+    return true;
   }
 
   private setupInterceptors(): void {
@@ -247,4 +316,3 @@ export class ApiClient {
 }
 
 export { HttpMethod };
-

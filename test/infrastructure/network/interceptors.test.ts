@@ -4,6 +4,7 @@ import { ApiClient } from '../../../src/infrastructure/network/ApiClient';
 import { AuthInterceptor } from '../../../src/infrastructure/network/interceptors/AuthInterceptor';
 import { ErrorInterceptor } from '../../../src/infrastructure/network/interceptors/ErrorInterceptor';
 import { LoggingInterceptor } from '../../../src/infrastructure/network/interceptors/LoggingInterceptor';
+import { ApiKeyStrategy, NoAuthStrategy } from '../../../src/infrastructure/network/AuthStrategy';
 import { ApiError } from '../../../src/infrastructure/network/ApiError';
 import { RenderError } from '../../../src/error/RenderError';
 import { BaseError } from '../../../src/error/BaseError';
@@ -53,6 +54,30 @@ describe('Interceptors', () => {
       }
 
       // Token refresh flow tested - complex integration test
+    });
+    it('should use configured AuthStrategy (ApiKey)', async () => {
+      const strategy = new ApiKeyStrategy('X-API-Key', 'my-key');
+      apiClient.configure({ authStrategy: strategy });
+
+      const interceptor = new AuthInterceptor(apiClient);
+      const config = { headers: {} };
+
+      const result = await interceptor.onRequest(config as any);
+
+      expect(result.headers['X-API-Key']).toBe('my-key');
+    });
+
+    it('should use configured AuthStrategy (NoAuth)', async () => {
+      const strategy = new NoAuthStrategy();
+      apiClient.configure({ authStrategy: strategy }); // Clear previous config side effects if any
+
+      const interceptor = new AuthInterceptor(apiClient);
+      const config = { headers: { 'Existing': 'Header' } };
+
+      const result = await interceptor.onRequest(config as any);
+
+      expect(result.headers['Authorization']).toBeUndefined();
+      expect(result.headers['Existing']).toBe('Header');
     });
   });
 

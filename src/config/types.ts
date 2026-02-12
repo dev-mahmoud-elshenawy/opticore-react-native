@@ -7,6 +7,7 @@ import { ErrorHandler } from '../types/Error.types';
 import { ThemeConfig, Theme } from '../theme/types';
 import { OfflineSyncConfig } from '../offline/types';
 import { ErrorClassificationRule } from '../error/ErrorClassifier';
+import { AuthStrategy } from '../infrastructure/network/AuthStrategy';
 
 // ... imports
 
@@ -36,6 +37,18 @@ export interface ApiConfig {
    * @returns The bearer token string or null if not authenticated
    */
   getAuthToken?: () => string | null | Promise<string | null>;
+
+  /**
+   * Callback to refresh the authentication token when 401 occurs
+   * Should return the new token
+   */
+  onTokenRefresh?: () => Promise<string | null>;
+
+  /**
+   * Custom authentication strategy
+   * @see AuthStrategy
+   */
+  authStrategy?: AuthStrategy;
 }
 
 /**
