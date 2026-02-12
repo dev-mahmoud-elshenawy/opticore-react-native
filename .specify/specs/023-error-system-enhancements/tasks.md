@@ -6,17 +6,17 @@
 
 ## Phase 1: Extensible ErrorClassifier [US1]
 
-- [ ] T001 [US1] Create `src/error/ClassificationRule.ts` — `ClassificationRule` interface
-- [ ] T002 [US1] Write test: custom rule classifies 429 as NonRenderError (overriding default RenderError for 4xx)
-- [ ] T003 [US1] Write test: custom rules take precedence over defaults
-- [ ] T004 [US1] Write test: error matching no custom rules falls through to defaults
-- [ ] T005 [US1] Write test: broken custom rule (match throws) skips to next rule
-- [ ] T006 [US1] Write test: `ErrorClassifier.addRule()` and `ErrorClassifier.clearCustomRules()`
-- [ ] T007 [US1] Modify `src/error/ErrorClassifier.ts` — add `private static customRules: ClassificationRule[]`
-- [ ] T008 [US1] Add `static addRule(rule: ClassificationRule): void` method
-- [ ] T009 [US1] Add `static clearCustomRules(): void` method (for testing)
-- [ ] T010 [US1] Modify `classify()` — iterate custom rules first, then existing logic
-- [ ] T011 [US1] Run tests — verify custom rules + existing classification tests pass
+- [x] T001 [US1] Create `src/error/ClassificationRule.ts` — `ClassificationRule` interface
+- [x] T002 [US1] Write test: custom rule classifies 429 as NonRenderError (overriding default RenderError for 4xx)
+- [x] T003 [US1] Write test: custom rules take precedence over defaults
+- [x] T004 [US1] Write test: error matching no custom rules falls through to defaults
+- [x] T005 [US1] Write test: broken custom rule (match throws) skips to next rule
+- [x] T006 [US1] Write test: `ErrorClassifier.addRule()` and `ErrorClassifier.clearCustomRules()`
+- [x] T007 [US1] Modify `src/error/ErrorClassifier.ts` — add `private static customRules: ClassificationRule[]`
+- [x] T008 [US1] Add `static addRule(rule: ClassificationRule): void` method
+- [x] T009 [US1] Add `static clearCustomRules(): void` method (for testing)
+- [x] T010 [US1] Modify `classify()` — iterate custom rules first, then existing logic
+- [x] T011 [US1] Run tests — verify custom rules + existing classification tests pass
 
 **Checkpoint**: ErrorClassifier extensible with custom rules.
 
@@ -24,18 +24,18 @@
 
 ## Phase 2: Result<T, E> Pattern [US2]
 
-- [ ] T012 [P] [US2] Create `src/error/Result.ts` — `Ok<T>`, `Err<E>`, `Result<T, E>` types
-- [ ] T013 [US2] Write test: `Result.ok(42).isOk()` → true, `isErr()` → false
-- [ ] T014 [US2] Write test: `Result.ok(42).unwrap()` → 42
-- [ ] T015 [US2] Write test: `Result.err(new Error('fail')).unwrap()` → throws
-- [ ] T016 [US2] Write test: `Result.ok(42).map(x => x * 2)` → `Result.ok(84)`
-- [ ] T017 [US2] Write test: `Result.err(e).map(...)` → still `Result.err(e)`
-- [ ] T018 [US2] Write test: `Result.ok(42).unwrapOr(0)` → 42, `Result.err(e).unwrapOr(0)` → 0
-- [ ] T019 [US2] Write test: `Result.ok(42).flatMap(x => Result.ok(x + 1))` → `Result.ok(43)`
-- [ ] T020 [US2] Implement `Ok<T>` class with isOk, isErr, unwrap, unwrapOr, map, flatMap, mapErr
-- [ ] T021 [US2] Implement `Err<E>` class with isOk, isErr, unwrap, unwrapOr, map, flatMap, mapErr
-- [ ] T022 [US2] Implement `Result.ok()` and `Result.err()` static constructors
-- [ ] T023 [US2] Run Result tests — verify all pass
+- [x] T012 [P] [US2] Create `src/error/Result.ts` — `Ok<T>`, `Err<E>`, `Result<T, E>` types
+- [x] T013 [US2] Write test: `Result.ok(42).isOk()` → true, `isErr()` → false
+- [x] T014 [US2] Write test: `Result.ok(42).unwrap()` → 42
+- [x] T015 [US2] Write test: `Result.err(new Error('fail')).unwrap()` → throws
+- [x] T016 [US2] Write test: `Result.ok(42).map(x => x * 2)` → `Result.ok(84)`
+- [x] T017 [US2] Write test: `Result.err(e).map(...)` → still `Result.err(e)`
+- [x] T018 [US2] Write test: `Result.ok(42).unwrapOr(0)` → 42, `Result.err(e).unwrapOr(0)` → 0
+- [x] T019 [US2] Write test: `Result.ok(42).flatMap(x => Result.ok(x + 1))` → `Result.ok(43)`
+- [x] T020 [US2] Implement `Ok<T>` class with isOk, isErr, unwrap, unwrapOr, map, flatMap, mapErr
+- [x] T021 [US2] Implement `Err<E>` class with isOk, isErr, unwrap, unwrapOr, map, flatMap, mapErr
+- [x] T022 [US2] Implement `Result.ok()` and `Result.err()` static constructors
+- [x] T023 [US2] Run Result tests — verify all pass
 
 **Checkpoint**: Result<T,E> pattern complete.
 
