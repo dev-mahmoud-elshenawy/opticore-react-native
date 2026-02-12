@@ -36,13 +36,35 @@ export enum CardType {
     MASTERCARD = 'mastercard',
     AMEX = 'amex',
     DISCOVER = 'discover',
+    UNIONPAY = 'unionpay',
+    JCB = 'jcb',
+    DINERS = 'diners',
     UNKNOWN = 'unknown'
+}
+
+export interface CurrencyLocaleConfig {
+    decimalSeparator: string;
+    thousandsSeparator: string;
+    symbolPosition: 'before' | 'after';
+    symbol: string;
+}
+
+export interface PhoneLocaleConfig {
+    pattern: string;
+    prefix?: string;
+    maxDigits: number;
+}
+
+export interface CardPattern {
+    pattern: RegExp;
+    name: string;
+    grouping: number[];
 }
 
 export interface CurrencyOptions {
     currency?: string;     // Default: USD
     locale?: string;      // Default: en-US
-    symbol?: string;      // Default: $
+    symbol?: string;      // Default by locale
     precision?: number;   // Default: 2
 }
 
