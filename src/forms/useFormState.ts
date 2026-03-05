@@ -1,5 +1,6 @@
 
 import { useForm, UseFormReturn, FieldValues, SubmitHandler, SubmitErrorHandler } from 'react-hook-form';
+import { useCallback } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormConfig, FormStateReturn } from './types';
 
@@ -41,12 +42,12 @@ export function useFormState<T extends FieldValues>(
     } = form;
 
     // Safe async submission wrapper
-    const handleSafeSubmit = async (
+    const handleSafeSubmit = useCallback(async (
         onValid: SubmitHandler<T>,
         onInvalid?: SubmitErrorHandler<T>
     ): Promise<void> => {
         return rhfHandleSubmit(onValid, onInvalid)();
-    };
+    }, [rhfHandleSubmit]);
 
     return {
         form,

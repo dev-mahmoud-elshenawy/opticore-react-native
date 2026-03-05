@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 export type SafeCallResult<T> = {
   execute: (fn: () => Promise<T>) => Promise<T | undefined>;
@@ -18,19 +18,27 @@ export type SafeCallResult<T> = {
 export function useSafeCall<T>(): SafeCallResult<T> {
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const execute = useCallback(async (fn: () => Promise<T>): Promise<T | undefined> => {
-    setIsLoading(true);
-    setError(null);
+    if (isMounted.current) setIsLoading(true);
+    if (isMounted.current) setError(null);
+
     try {
       const result = await fn();
       return result;
-    } catch (e: any) {
+    } catch (e: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
       const err = e instanceof Error ? e : new Error(String(e));
-      setError(err);
+      if (isMounted.current) setError(err);
       return undefined;
     } finally {
-      setIsLoading(false);
+      if (isMounted.current) setIsLoading(false);
     }
   }, []);
 
