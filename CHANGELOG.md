@@ -11,13 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive documentation (README, ARCHITECTUREcontrib, MIGRATION)
 - Test infrastructure with mocks and helpers
 
-### Fixed (Spec 025 — Infrastructure Hardening)
+### Fixed
 - **SecureStorage**: Added `readyPromise` init-guard — `get()`, `set()`, `remove()`, `clear()` now await `loadKeys()` before executing, eliminating the async initialization race condition that could cause early reads to return `null`.
 - **CoreProvider**: Removed `dispose()` calls on `ConnectivityManager` and `LifecycleManager` during unmount. Singletons outlive any single React tree; disposing them on provider unmount broke all other consumers in the app.
 - **ThemeManager**: Made `setupAppearanceListener()` idempotent — removes the previous listener before registering a new one, preventing duplicate system appearance listeners on repeated `init()` calls.
 - **ThemeManager**: Replaced all `console.warn(...)` calls with `Logger.getInstance().warn(...)` so warnings respect production-mode suppression.
 
-### BREAKING CHANGE — `ThemeShadows` type (Spec 025)
+### BREAKING CHANGE — `ThemeShadows` type
 
 `ThemeShadows` values changed from CSS strings to React Native shadow objects.
 
