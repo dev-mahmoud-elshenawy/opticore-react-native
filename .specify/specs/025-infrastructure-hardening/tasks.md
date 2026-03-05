@@ -69,7 +69,7 @@
 - [x] T033 Run `npm run type-check` — verify 0 errors in src/
 - [x] T034 Run `npm run lint` — 0 errors in modified files
 - [x] T035 Verify coverage: all modified files pass
-- [ ] T036 Document ThemeShadows breaking change in CHANGELOG.md
+- [x] T036 Document ThemeShadows breaking change in CHANGELOG.md
 
 **Checkpoint**: Infrastructure hardening complete. ✅
 

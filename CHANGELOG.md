@@ -11,6 +11,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive documentation (README, ARCHITECTUREcontrib, MIGRATION)
 - Test infrastructure with mocks and helpers
 
+## [1.1.0] - 2026-03-05 — Infrastructure Hardening (Spec 025)
+
+### Fixed
+- **SecureStorage**: Added `readyPromise` init-guard — `get()`, `set()`, `remove()`, `clear()` now await `loadKeys()` before executing, eliminating the async initialization race condition that could cause early reads to return `null`.
+- **CoreProvider**: Removed `dispose()` calls on `ConnectivityManager` and `LifecycleManager` during unmount. Singletons outlive any single React tree; disposing them on provider unmount broke all other consumers in the app.
+- **ThemeManager**: Made `setupAppearanceListener()` idempotent — removes the previous listener before registering a new one, preventing duplicate system appearance listeners on repeated `init()` calls.
+- **ThemeManager**: Replaced all `console.warn(...)` calls with `Logger.getInstance().warn(...)` so warnings respect production-mode suppression.
+
+### BREAKING CHANGE — `ThemeShadows` type
+
+`ThemeShadows` values changed from CSS strings to React Native shadow objects.
+
+**Before** (CSS strings — never worked on React Native):
+```typescript
+// theme.shadows.md was: '0px 4px 6px rgba(0,0,0,0.1)'
+style={{ boxShadow: theme.shadows.md }}  // broken on RN
+```
+
+**After** (RN shadow object — works on iOS & Android):
+```typescript
+// theme.shadows.md is now: { shadowColor, shadowOffset, shadowOpacity, shadowRadius, elevation }
+style={{ ...theme.shadows.md }}  // spread directly onto View style
+```
+
+**Migration**: Replace any `boxShadow: theme.shadows.*` usage with `{ ...theme.shadows.* }`. The new `ThemeShadowValue` type is:
+```typescript
+interface ThemeShadowValue {
+  shadowColor: string;
+  shadowOffset: { width: number; height: number };
+  shadowOpacity: number;
+  shadowRadius: number;
+  elevation: number; // Android
+}
+```
+
 ## [1.0.0] - 2026-02-05
 
 ### Added
