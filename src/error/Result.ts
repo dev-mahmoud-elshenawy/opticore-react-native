@@ -19,9 +19,9 @@
 
 export interface IResult<T, E> {
   /** Returns `true` when this is an `Ok` variant. */
-  isOk(): this is Ok<T>;
+  isOk(): this is Ok<T, E>;
   /** Returns `true` when this is an `Err` variant. */
-  isErr(): this is Err<E>;
+  isErr(): this is Err<T, E>;
   /**
    * Returns the contained value.
    * @throws the contained error when called on an `Err`.
@@ -37,8 +37,9 @@ export interface IResult<T, E> {
   /**
    * Chains another `Result`-producing operation.
    * Returns `this` unchanged when called on an `Err`.
+   * The chained function may produce a different error type `F`.
    */
-  flatMap<U>(fn: (value: T) => Result<U, E>): Result<U, E>;
+  flatMap<U, F = E>(fn: (value: T) => Result<U, F>): Result<U, F>;
   /**
    * Transforms the error inside an `Err` using `fn`.
    * Returns `this` unchanged when called on an `Ok`.
@@ -46,14 +47,14 @@ export interface IResult<T, E> {
   mapErr<F>(fn: (error: E) => F): Result<T, F>;
 }
 
-export class Ok<T> implements IResult<T, never> {
+export class Ok<T, E = never> implements IResult<T, E> {
   constructor(private readonly value: T) {}
 
-  isOk(): this is Ok<T> {
+  isOk(): this is Ok<T, E> {
     return true;
   }
 
-  isErr(): this is Err<never> {
+  isErr(): this is Err<T, E> {
     return false;
   }
 
@@ -65,63 +66,63 @@ export class Ok<T> implements IResult<T, never> {
     return this.value;
   }
 
-  map<U>(fn: (value: T) => U): Result<U, never> {
-    return Result.ok(fn(this.value));
+  map<U>(fn: (value: T) => U): Result<U, E> {
+    return Result.ok<U, E>(fn(this.value));
   }
 
-  flatMap<U, E>(fn: (value: T) => Result<U, E>): Result<U, E> {
+  flatMap<U, F = E>(fn: (value: T) => Result<U, F>): Result<U, F> {
     return fn(this.value);
   }
 
-  mapErr<F>(_fn: (error: never) => F): Result<T, F> {
+  mapErr<F>(_fn: (error: E) => F): Result<T, F> {
     return this as unknown as Result<T, F>;
   }
 }
 
-export class Err<E> implements IResult<never, E> {
+export class Err<T = never, E = Error> implements IResult<T, E> {
   constructor(private readonly error: E) {}
 
-  isOk(): this is Ok<never> {
+  isOk(): this is Ok<T, E> {
     return false;
   }
 
-  isErr(): this is Err<E> {
+  isErr(): this is Err<T, E> {
     return true;
   }
 
-  unwrap(): never {
+  unwrap(): T {
     throw this.error;
   }
 
-  unwrapOr<T>(defaultValue: T): T {
+  unwrapOr(defaultValue: T): T {
     return defaultValue;
   }
 
-  map<T, U>(_fn: (value: T) => U): Result<U, E> {
+  map<U>(_fn: (value: T) => U): Result<U, E> {
     return this as unknown as Result<U, E>;
   }
 
-  flatMap<T, U>(_fn: (value: T) => Result<U, E>): Result<U, E> {
-    return this as unknown as Result<U, E>;
+  flatMap<U, F = E>(_fn: (value: T) => Result<U, F>): Result<U, F> {
+    return this as unknown as Result<U, F>;
   }
 
-  mapErr<T, F>(fn: (error: E) => F): Result<T, F> {
-    return Result.err(fn(this.error));
+  mapErr<F>(fn: (error: E) => F): Result<T, F> {
+    return Result.err<T, F>(fn(this.error));
   }
 }
 
-/** Discriminated union of `Ok<T>` and `Err<E>`. */
-export type Result<T, E = Error> = Ok<T> | Err<E>;
+/** Discriminated union of `Ok<T, E>` and `Err<T, E>`. */
+export type Result<T, E = Error> = Ok<T, E> | Err<T, E>;
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Result {
   /** Create a successful result wrapping `value`. */
   export function ok<T, E = never>(value: T): Result<T, E> {
-    return new Ok<T>(value) as Result<T, E>;
+    return new Ok<T, E>(value);
   }
 
   /** Create a failed result wrapping `error`. */
   export function err<T = never, E = Error>(error: E): Result<T, E> {
-    return new Err<E>(error) as Result<T, E>;
+    return new Err<T, E>(error);
   }
 }

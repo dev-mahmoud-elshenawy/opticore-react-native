@@ -58,7 +58,7 @@ describe('Result<T, E>', () => {
     });
 
     it('unwrapOr() returns the default value', () => {
-      expect(Result.err(new Error('fail')).unwrapOr(0)).toBe(0);
+      expect(Result.err<number>(new Error('fail')).unwrapOr(0)).toBe(0);
     });
 
     it('map() leaves Err unchanged (fn not called)', () => {
