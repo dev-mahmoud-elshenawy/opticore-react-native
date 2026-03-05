@@ -1,5 +1,5 @@
 
-import { renderHook, act } from '@testing-library/react-native';
+import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { useFormState } from '../../src/forms/useFormState';
 import { z } from 'zod';
 
@@ -37,7 +37,7 @@ describe('useFormState', () => {
             await result.current.handleSubmit(onSubmit);
         });
 
-        expect(onSubmit).toHaveBeenCalledWith(defaultValues, expect.anything());
+        expect(onSubmit).toHaveBeenCalledWith(defaultValues, undefined);
         expect(result.current.isValid).toBe(true);
         expect(result.current.errors).toEqual({});
     });
@@ -66,12 +66,12 @@ describe('useFormState', () => {
             schema,
         }));
 
-        act(() => {
+        await act(async () => {
             result.current.setValue('email', 'new@example.com', { shouldDirty: true });
         });
 
         expect(result.current.getValue('email')).toBe('new@example.com');
-        expect(result.current.isDirty).toBe(true);
+        await waitFor(() => expect(result.current.isDirty).toBe(true));
     });
 
     test('should reset form to default values', async () => {
@@ -80,17 +80,31 @@ describe('useFormState', () => {
             schema,
         }));
 
-        act(() => {
+        await act(async () => {
             result.current.setValue('email', 'dirty@example.com', { shouldDirty: true });
         });
 
-        expect(result.current.isDirty).toBe(true);
+        await waitFor(() => expect(result.current.isDirty).toBe(true));
 
-        act(() => {
+        await act(async () => {
             result.current.reset();
         });
 
         expect(result.current.getValue('email')).toBe(defaultValues.email);
-        expect(result.current.isDirty).toBe(false);
+        await waitFor(() => expect(result.current.isDirty).toBe(false));
+    });
+
+    test('should maintain referential stability of handleSubmit', async () => {
+        const { result, rerender } = await renderHook(() => useFormState({
+            defaultValues,
+            schema,
+        }));
+
+        const initialHandleSubmit = result.current.handleSubmit;
+
+        // Force re-render
+        rerender({});
+
+        expect(result.current.handleSubmit).toBe(initialHandleSubmit);
     });
 });
