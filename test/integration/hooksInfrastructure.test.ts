@@ -27,30 +27,33 @@ describe('Integration: Hooks → Infrastructure', () => {
     });
 
     it('should register listener with NetInfo', async () => {
-      const NetInfo = require('@react-native-community/netinfo');
+      // Use named export (default export is at .default in CJS interop)
+      const { mockAddEventListener: netInfoAddEventListener } = require('@react-native-community/netinfo');
 
       await renderHookCompat(() => useConnectivity());
 
       // Verify NetInfo.addEventListener was called
-      expect(NetInfo.addEventListener).toHaveBeenCalled();
+      expect(netInfoAddEventListener).toHaveBeenCalled();
     });
 
     it('should cleanup listener on unmount', async () => {
-      const NetInfo = require('@react-native-community/netinfo');
+      // Use named export for the mock function
+      const { mockAddEventListener: netInfoAddEventListener } = require('@react-native-community/netinfo');
       const mockUnsubscribe = jest.fn();
 
-      const originalImpl = NetInfo.addEventListener.getMockImplementation();
-      NetInfo.addEventListener.mockImplementation(() => mockUnsubscribe);
+      const originalImpl = netInfoAddEventListener.getMockImplementation();
+      netInfoAddEventListener.mockImplementation(() => mockUnsubscribe);
 
       const { unmount } = await renderHookCompat(() => useConnectivity());
 
-      unmount();
+      // Wrap in act to flush cleanup effects
+      await act(async () => { unmount(); });
 
       // Verify unsubscribe was called
       expect(mockUnsubscribe).toHaveBeenCalled();
 
       if (originalImpl) {
-        NetInfo.addEventListener.mockImplementation(originalImpl);
+        netInfoAddEventListener.mockImplementation(originalImpl);
       }
     });
 
@@ -108,7 +111,8 @@ describe('Integration: Hooks → Infrastructure', () => {
 
       const { unmount } = await renderHookCompat(() => useLifecycle());
 
-      unmount();
+      // Wrap in act to flush cleanup effects synchronously
+      await act(async () => { unmount(); });
 
       // Verify remove was called
       expect(mockRemove).toHaveBeenCalled();
@@ -128,7 +132,8 @@ describe('Integration: Hooks → Infrastructure', () => {
       await act(async () => {
         // Use the global mock's exposed callback mechanism
         // Note: Check test/__mocks__/react-native.ts for implementation
-        const { mockAddEventListener } = require('../../__mocks__/react-native');
+        // require react-native which Jest resolves to test/__mocks__/react-native.ts
+        const { mockAddEventListener } = require('react-native');
         if (mockAddEventListener.lastCallback) {
           mockAddEventListener.lastCallback('background');
         }
