@@ -9,6 +9,8 @@ import { IStorage } from './interfaces/IStorage';
 export class SecureStorage implements IStorage {
   private keys: Set<string> = new Set();
   private static readonly KEYS_STORAGE_KEY = '__secure_storage_keys__';
+  /** Resolves when initial key-list load completes (or fails). All public methods await this. */
+  private readyPromise: Promise<void>;
 
   constructor() {
     if (Platform.OS === 'web') {
@@ -16,7 +18,7 @@ export class SecureStorage implements IStorage {
         '[SecureStorage] SecureStorage is not available on web platform. Use LocalStorage instead.'
       );
     }
-    void this.loadKeys();
+    this.readyPromise = this.loadKeys();
   }
 
   private async loadKeys(): Promise<void> {
@@ -27,7 +29,7 @@ export class SecureStorage implements IStorage {
         this.keys = new Set(keys);
       }
     } catch {
-      // If loading fails, start with empty set
+      // If loading fails, start with empty set — storage remains usable
       this.keys = new Set();
     }
   }
@@ -43,6 +45,7 @@ export class SecureStorage implements IStorage {
   }
 
   async get<T>(key: string): Promise<T | null> {
+    await this.readyPromise;
     try {
       const value = await SecureStore.getItemAsync(key);
       return value ? (JSON.parse(value) as T) : null;
@@ -52,6 +55,7 @@ export class SecureStorage implements IStorage {
   }
 
   async set<T>(key: string, value: T): Promise<void> {
+    await this.readyPromise;
     try {
       // Validate data before storing
       if (value === undefined || value === null) {
@@ -70,6 +74,7 @@ export class SecureStorage implements IStorage {
   }
 
   async remove(key: string): Promise<void> {
+    await this.readyPromise;
     try {
       await SecureStore.deleteItemAsync(key);
 
@@ -82,6 +87,7 @@ export class SecureStorage implements IStorage {
   }
 
   async clear(): Promise<void> {
+    await this.readyPromise;
     try {
       // Delete all tracked keys from SecureStore
       const deletePromises = Array.from(this.keys).map((key) =>

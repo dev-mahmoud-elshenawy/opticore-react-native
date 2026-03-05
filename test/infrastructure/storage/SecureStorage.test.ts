@@ -10,9 +10,69 @@ describe('SecureStorage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Default: loadKeys returns null (no persisted keys)
+    (SecureStore.getItemAsync as jest.Mock).mockResolvedValue(null);
+    (SecureStore.setItemAsync as jest.Mock).mockResolvedValue(undefined);
+    (SecureStore.deleteItemAsync as jest.Mock).mockResolvedValue(undefined);
     // Default to iOS for tests
     Platform.OS = 'ios';
     secureStorage = new SecureStorage();
+  });
+
+  describe('Init Guard', () => {
+    it('should return stored value when get() is called immediately after construction', async () => {
+      (SecureStore.getItemAsync as jest.Mock).mockImplementation((key: string) => {
+        if (key === '__secure_storage_keys__') return Promise.resolve(JSON.stringify(['token']));
+        if (key === 'token') return Promise.resolve(JSON.stringify('my-secret-token'));
+        return Promise.resolve(null);
+      });
+
+      const storage = new SecureStorage();
+      const value = await storage.get<string>('token');
+      expect(value).toBe('my-secret-token');
+    });
+
+    it('should wait for init before executing set()', async () => {
+      let resolveLoadKeys!: () => void;
+      (SecureStore.getItemAsync as jest.Mock).mockImplementationOnce(
+        () => new Promise<string | null>(resolve => { resolveLoadKeys = () => resolve(null); })
+      );
+
+      const storage = new SecureStorage();
+      let setCompleted = false;
+      const setPromise = storage.set('key', 'value').then(() => { setCompleted = true; });
+
+      // set() should be blocked waiting for loadKeys
+      await Promise.resolve();
+      expect(setCompleted).toBe(false);
+
+      // Unblock loadKeys
+      resolveLoadKeys();
+      await setPromise;
+
+      expect(setCompleted).toBe(true);
+      expect(SecureStore.setItemAsync).toHaveBeenCalled();
+    });
+
+    it('should handle loadKeys() failure gracefully — get() returns null without crashing', async () => {
+      (SecureStore.getItemAsync as jest.Mock).mockImplementation((key: string) => {
+        if (key === '__secure_storage_keys__') return Promise.reject(new Error('Storage corrupted'));
+        return Promise.resolve(null);
+      });
+
+      const storage = new SecureStorage();
+      await expect(storage.get<string>('token')).resolves.toBeNull();
+    });
+
+    it('should execute operations immediately once init has already completed', async () => {
+      const storage = new SecureStorage();
+      // Allow readyPromise to resolve
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue(JSON.stringify('cached'));
+      const value = await storage.get<string>('existing');
+      expect(value).toBe('cached');
+    });
   });
 
   describe('on iOS Platform', () => {
