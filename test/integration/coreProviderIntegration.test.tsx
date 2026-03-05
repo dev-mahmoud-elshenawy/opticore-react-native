@@ -24,30 +24,34 @@ describe('Integration: CoreProvider', () => {
   });
 
   describe('Infrastructure Initialization', () => {
-    it('should initialize ConnectivityManager when enabled', () => {
+    it('should initialize ConnectivityManager when enabled', async () => {
       const TestComponent = () => <Text>Test</Text>;
 
-      render(
+      await render(
         <CoreProvider config={{ enableConnectivity: true }}>
           <TestComponent />
         </CoreProvider>
       );
 
-      // Verify ConnectivityManager was accessed (singleton pattern)
-      expect(ConnectivityManager.getInstance).toHaveBeenCalled();
+      // Verify ConnectivityManager singleton was accessed
+      await waitFor(() => {
+        expect(ConnectivityManager.getInstance).toHaveBeenCalled();
+      });
     });
 
-    it('should initialize LifecycleManager when enabled', () => {
+    it('should initialize LifecycleManager when enabled', async () => {
       const TestComponent = () => <Text>Test</Text>;
 
-      render(
+      await render(
         <CoreProvider config={{ enableLifecycle: true }}>
           <TestComponent />
         </CoreProvider>
       );
 
-      // Verify LifecycleManager was accessed (singleton pattern)
-      expect(LifecycleManager.getInstance).toHaveBeenCalled();
+      // Verify LifecycleManager singleton was accessed
+      await waitFor(() => {
+        expect(LifecycleManager.getInstance).toHaveBeenCalled();
+      });
     });
 
     it('should NOT initialize ConnectivityManager when disabled', () => {
@@ -78,7 +82,7 @@ describe('Integration: CoreProvider', () => {
   });
 
   describe('React Query Context', () => {
-    it('should provide QueryClient to child components', () => {
+    it('should provide QueryClient to child components', async () => {
       let queryClientFromContext: any = null;
 
       const TestComponent = () => {
@@ -86,16 +90,18 @@ describe('Integration: CoreProvider', () => {
         return <Text>Test</Text>;
       };
 
-      render(
+      await render(
         <CoreProvider>
           <TestComponent />
         </CoreProvider>
       );
 
       // Verify QueryClient is available
-      expect(queryClientFromContext).toBeDefined();
-      expect(queryClientFromContext).toHaveProperty('getQueryData');
-      expect(queryClientFromContext).toHaveProperty('setQueryData');
+      await waitFor(() => {
+        expect(queryClientFromContext).toBeDefined();
+        expect(queryClientFromContext).toHaveProperty('getQueryData');
+        expect(queryClientFromContext).toHaveProperty('setQueryData');
+      });
     });
 
     it('should render multiple children correctly', async () => {
@@ -131,10 +137,10 @@ describe('Integration: CoreProvider', () => {
       expect(LifecycleManager.getInstance).toHaveBeenCalled();
     });
 
-    it('should merge custom configuration with defaults', () => {
+    it('should merge custom configuration with defaults', async () => {
       const TestComponent = () => <Text>Test</Text>;
 
-      render(
+      await render(
         <CoreProvider
           config={{
             enableConnectivity: true,
@@ -146,13 +152,15 @@ describe('Integration: CoreProvider', () => {
         </CoreProvider>
       );
 
-      expect(ConnectivityManager.getInstance).toHaveBeenCalled();
-      expect(LifecycleManager.getInstance).not.toHaveBeenCalled();
+      await waitFor(() => {
+        expect(ConnectivityManager.getInstance).toHaveBeenCalled();
+        expect(LifecycleManager.getInstance).not.toHaveBeenCalled();
+      });
     });
   });
 
   describe('Cleanup', () => {
-    it('should cleanup managers on unmount', async () => {
+    it('should NOT dispose singleton managers on unmount (singletons outlive provider)', async () => {
       const mockDispose = jest.fn();
 
       (ConnectivityManager.getInstance as jest.Mock).mockReturnValue({
@@ -173,10 +181,9 @@ describe('Integration: CoreProvider', () => {
 
       unmount();
 
-      await waitFor(() => {
-        // Verify dispose was called on cleanup
-        expect(mockDispose).toHaveBeenCalled();
-      });
+      // Singletons must NOT be disposed — they are shared across the whole app.
+      // Disposing on provider unmount would break all other consumers.
+      expect(mockDispose).not.toHaveBeenCalled();
     });
   });
 });

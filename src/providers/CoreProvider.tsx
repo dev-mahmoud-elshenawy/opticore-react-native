@@ -64,30 +64,18 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({ children, config = {
   React.useEffect(() => {
     if (!enableConnectivity) return;
 
-    const connectivityManager = ConnectivityManager.getInstance();
-
-    // Connectivity manager is a singleton and automatically initializes
-    // It will monitor network status for all consumers
-
-    return () => {
-      // Cleanup: dispose connectivity manager
-      connectivityManager.dispose();
-    };
+    // Ensure the singleton is initialized; it manages its own lifecycle.
+    // Do NOT dispose on unmount — it's a singleton shared across all consumers.
+    ConnectivityManager.getInstance();
   }, [enableConnectivity]);
 
   // Initialize lifecycle management if enabled
   React.useEffect(() => {
     if (!enableLifecycle) return;
 
-    const lifecycleManager = LifecycleManager.getInstance();
-
-    // Lifecycle manager is a singleton and automatically initializes
-    // It will monitor app state for all consumers
-
-    return () => {
-      // Cleanup: dispose lifecycle manager
-      lifecycleManager.dispose();
-    };
+    // Ensure the singleton is initialized; it manages its own lifecycle.
+    // Do NOT dispose on unmount — it's a singleton shared across all consumers.
+    LifecycleManager.getInstance();
   }, [enableLifecycle]);
 
   // Initialize state observers

@@ -3,6 +3,11 @@ import { render, waitFor } from '@testing-library/react-native';
 import { Text, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { CoreProvider } from '../../src/providers/CoreProvider';
+import { ConnectivityManager } from '../../src/infrastructure/connectivity/ConnectivityManager';
+import { LifecycleManager } from '../../src/infrastructure/lifecycle/LifecycleManager';
+
+jest.mock('../../src/infrastructure/connectivity/ConnectivityManager');
+jest.mock('../../src/infrastructure/lifecycle/LifecycleManager');
 
 // Test component that uses React Query
 const TestQueryComponent: React.FC = () => {
@@ -16,6 +21,52 @@ const TestQueryComponent: React.FC = () => {
 };
 
 describe('CoreProvider', () => {
+  let mockConnectivityDispose: jest.Mock;
+  let mockLifecycleDispose: jest.Mock;
+
+  beforeEach(() => {
+    mockConnectivityDispose = jest.fn();
+    mockLifecycleDispose = jest.fn();
+    (ConnectivityManager.getInstance as jest.Mock).mockReturnValue({
+      dispose: mockConnectivityDispose,
+    });
+    (LifecycleManager.getInstance as jest.Mock).mockReturnValue({
+      dispose: mockLifecycleDispose,
+    });
+  });
+
+  describe('Singleton Safety', () => {
+    it('should NOT dispose ConnectivityManager on unmount', async () => {
+      const { unmount } = await render(
+        <CoreProvider>
+          <Text>Test</Text>
+        </CoreProvider>
+      );
+      unmount();
+      expect(mockConnectivityDispose).not.toHaveBeenCalled();
+    });
+
+    it('should NOT dispose LifecycleManager on unmount', async () => {
+      const { unmount } = await render(
+        <CoreProvider>
+          <Text>Test</Text>
+        </CoreProvider>
+      );
+      unmount();
+      expect(mockLifecycleDispose).not.toHaveBeenCalled();
+    });
+
+    it('should leave ConnectivityManager instance accessible after unmount', async () => {
+      const { unmount } = await render(
+        <CoreProvider>
+          <Text>Test</Text>
+        </CoreProvider>
+      );
+      unmount();
+      expect(mockConnectivityDispose).not.toHaveBeenCalled();
+      expect(ConnectivityManager.getInstance()).toBeDefined();
+    });
+  });
   it('should render children successfully', async () => {
     const { getByText } = await render(
       <CoreProvider>
