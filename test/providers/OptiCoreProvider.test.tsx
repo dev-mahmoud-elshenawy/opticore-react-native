@@ -5,6 +5,8 @@ import { OptiCoreProvider } from '../../src/providers/OptiCoreProvider';
 import { useConfig } from '../../src/providers/useConfig';
 import { CoreSetup } from '../../src/config/CoreSetup';
 import { ThemeManager } from '../../src/theme/ThemeManager';
+import { ConnectivityManager } from '../../src/infrastructure/connectivity/ConnectivityManager';
+import { LifecycleManager } from '../../src/infrastructure/lifecycle/LifecycleManager';
 import { Text } from 'react-native';
 
 // Mocks
@@ -41,6 +43,8 @@ describe('OptiCoreProvider', () => {
             init: mockInit,
         });
         (ThemeManager.getInstance as jest.Mock).mockReturnValue(mockThemeManager);
+        (ConnectivityManager.getInstance as jest.Mock).mockReturnValue({ dispose: jest.fn() });
+        (LifecycleManager.getInstance as jest.Mock).mockReturnValue({ dispose: jest.fn() });
     });
 
     it('should initialize CoreSetup with config', async () => {
