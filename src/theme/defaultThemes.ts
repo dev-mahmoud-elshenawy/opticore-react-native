@@ -71,9 +71,9 @@ export const lightTheme: Theme = {
         full: 9999,
     },
     shadows: {
-        sm: '0px 1px 2px rgba(0, 0, 0, 0.1)',
-        md: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-        lg: '0px 10px 15px rgba(0, 0, 0, 0.1)',
+        sm: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 },
+        md: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 6, elevation: 4 },
+        lg: { shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.1, shadowRadius: 15, elevation: 8 },
     },
 };
 
@@ -115,8 +115,8 @@ export const darkTheme: Theme = {
     typography: lightTheme.typography,
     borderRadius: lightTheme.borderRadius,
     shadows: {
-        sm: '0px 1px 2px rgba(0, 0, 0, 0.3)',
-        md: '0px 4px 6px rgba(0, 0, 0, 0.3)',
-        lg: '0px 10px 15px rgba(0, 0, 0, 0.3)',
+        sm: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.3, shadowRadius: 2, elevation: 2 },
+        md: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 6, elevation: 4 },
+        lg: { shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.3, shadowRadius: 15, elevation: 8 },
     },
 };

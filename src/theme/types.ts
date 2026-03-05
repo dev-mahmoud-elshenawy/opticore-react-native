@@ -79,11 +79,24 @@ export interface ThemeBorderRadius {
     full: number;   // 9999
 }
 
+/**
+ * React Native shadow object. Spread directly onto a View's style prop.
+ * iOS uses shadowColor/shadowOffset/shadowOpacity/shadowRadius.
+ * Android uses elevation.
+ */
+export interface ThemeShadowValue {
+    shadowColor: string;
+    shadowOffset: { width: number; height: number };
+    shadowOpacity: number;
+    shadowRadius: number;
+    elevation: number;
+}
+
 export interface ThemeShadows {
-    sm: string;
-    md: string;
-    lg: string;
-    [key: string]: string;
+    sm: ThemeShadowValue;
+    md: ThemeShadowValue;
+    lg: ThemeShadowValue;
+    [key: string]: ThemeShadowValue;
 }
 
 export interface Theme {
