@@ -1,5 +1,6 @@
 import { Appearance, NativeEventSubscription } from 'react-native';
 import { LocalStorage } from '../infrastructure/storage/LocalStorage';
+import { Logger } from '../infrastructure/logger/Logger';
 import { lightTheme, darkTheme } from './defaultThemes';
 import type { Theme, ThemeMode, ThemeConfig, ThemeListener } from './types';
 
@@ -63,9 +64,8 @@ export class ThemeManager {
     public async init(): Promise<void> {
         if (this.initialized) return;
 
-        if (!this.appearanceListener) {
-            this.setupAppearanceListener();
-        }
+        // Re-establish appearance listener (idempotent — safe to call even if constructor ran it)
+        this.setupAppearanceListener();
 
         if (this.config.persistMode) {
             try {
@@ -74,7 +74,7 @@ export class ThemeManager {
                     this.mode = savedMode;
                 }
             } catch (error) {
-                console.warn('[ThemeManager] Failed to restore theme mode:', error);
+                Logger.getInstance().warn('[ThemeManager] Failed to restore theme mode:', error);
             }
         }
 
@@ -94,7 +94,7 @@ export class ThemeManager {
      */
     public unregisterTheme(name: string): void {
         if (name === 'light' || name === 'dark') {
-            console.warn('[ThemeManager] Cannot unregister default themes');
+            Logger.getInstance().warn('[ThemeManager] Cannot unregister default themes', {});
             return;
         }
         this.themes.delete(name);
@@ -110,7 +110,7 @@ export class ThemeManager {
      */
     public setTheme(name: string): void {
         if (!this.themes.has(name)) {
-            console.warn(`[ThemeManager] Theme '${name}' not found`);
+            Logger.getInstance().warn(`[ThemeManager] Theme '${name}' not found`, {});
             return;
         }
         this.activeThemeName = name;
@@ -125,7 +125,7 @@ export class ThemeManager {
 
         if (this.config.persistMode) {
             LocalStorage.getInstance().set(this.config.storageKey!, mode).catch(e =>
-                console.warn('[ThemeManager] Failed to persist mode:', e)
+                Logger.getInstance().warn('[ThemeManager] Failed to persist mode:', e)
             );
         }
 
@@ -196,6 +196,11 @@ export class ThemeManager {
     }
 
     private setupAppearanceListener() {
+        // Remove existing listener before adding a new one (idempotent)
+        if (this.appearanceListener) {
+            this.appearanceListener.remove();
+            this.appearanceListener = null;
+        }
         this.appearanceListener = Appearance.addChangeListener(() => {
             if (this.mode === 'system') {
                 this.notifyListeners();

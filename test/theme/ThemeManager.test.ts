@@ -1,10 +1,12 @@
 import { ThemeManager } from '../../src/theme/ThemeManager';
 import { lightTheme, darkTheme } from '../../src/theme/defaultThemes';
 import { LocalStorage } from '../../src/infrastructure/storage/LocalStorage';
+import { Logger } from '../../src/infrastructure/logger/Logger';
 import { Appearance } from 'react-native';
 
 // Mock dependencies
 jest.mock('../../src/infrastructure/storage/LocalStorage');
+jest.mock('../../src/infrastructure/logger/Logger');
 jest.mock('react-native', () => ({
     Appearance: {
         getColorScheme: jest.fn(),
@@ -15,6 +17,7 @@ jest.mock('react-native', () => ({
 describe('ThemeManager', () => {
     let manager: ThemeManager;
     let mockStorage: { get: jest.Mock; set: jest.Mock };
+    let mockLogger: { warn: jest.Mock; info: jest.Mock; error: jest.Mock };
 
     beforeEach(() => {
         // Setup LocalStorage mock
@@ -22,52 +25,26 @@ describe('ThemeManager', () => {
             get: jest.fn(),
             set: jest.fn().mockResolvedValue(undefined),
         };
-        // Mock the static getInstance method
         (LocalStorage.getInstance as jest.Mock).mockReturnValue(mockStorage);
+
+        // Setup Logger mock
+        mockLogger = {
+            warn: jest.fn(),
+            info: jest.fn(),
+            error: jest.fn(),
+        };
+        (Logger.getInstance as jest.Mock).mockReturnValue(mockLogger);
 
         // Reset mocks
         jest.clearAllMocks();
         (Appearance.getColorScheme as jest.Mock).mockReturnValue('light');
+        (Appearance.addChangeListener as jest.Mock).mockReturnValue({ remove: jest.fn() });
+        (LocalStorage.getInstance as jest.Mock).mockReturnValue(mockStorage);
+        (Logger.getInstance as jest.Mock).mockReturnValue(mockLogger);
 
-        // Get instance and reset
+        // Get singleton and reset it via dispose
         manager = ThemeManager.getInstance();
         manager.dispose();
-        // Re-trigger constructor logic simulation if needed, but since it's singleton
-        // we rely on dispose() clearing state. 
-        // However, constructor runs only once. logic in constructor:
-        // 1. register themes (persists)
-        // 2. setupAppearanceListener (we need to ensure this is re-called or persists)
-
-        // dispose() removes the listener. We need to re-add it if we want to test it.
-        // ThemeManager doesn't expose a way to re-run constructor logic.
-        // But we can call setupAppearanceListener via private access or just rely on init() if it did it?
-        // Actually, dispose() removes listener. Manager expects to be done.
-        // If we want to reuse it, we might need a "reset" or "reinit" method for testing,
-        // or we just modify the test to manually re-enable it or expose a method.
-        //
-        // Let's check ThemeManager.ts: dispose() sets initialized=false, removes listener.
-        // It does NOT clear themes.
-        // It does NOT re-add listener automatically on next use unless we call something.
-        // Explicitly, the class has no "start" method other than init() which handles persistence.
-        // The listener is set in constructor.
-        //
-        // Problem: dispose() kills the listener forever for that singleton instance.
-        // Fix: We should probably move listener setup to init() or have a reset() method.
-        // For now, let's create a new instance via prototype manipulation or just accept we need to fix the class.
-        //
-        // Actually, let's look at `configure` or `init`.
-        // Let's modify ThemeManager to allow re-setup of listener in init() or similar?
-        // Or just hack it for tests.
-        //
-        // Better: Allow `init()` to setup listener if missing?
-        // in ThemeManager.ts:
-        // setupAppearanceListener() is called in constructor.
-        // dispose() removes it.
-        // Nothing calls setupAppearanceListener() again.
-        //
-        // I should modify ThemeManager.ts to call setupAppearanceListener() in init() if it's null?
-        //
-        // Let's verify this behavior.
 
         manager.configure({ persistMode: false });
     });
@@ -131,6 +108,69 @@ describe('ThemeManager', () => {
 
             manager.setMode('dark');
             expect(listener).toHaveBeenCalledWith(darkTheme, 'dark');
+        });
+    });
+
+    describe('Appearance Listener Deduplication', () => {
+        it('should have exactly 1 appearance listener after init()', async () => {
+            await manager.init();
+            // init() calls setupAppearanceListener() once (idempotent)
+            expect(Appearance.addChangeListener).toHaveBeenCalledTimes(1);
+        });
+
+        it('should not add a second listener when init() is called again', async () => {
+            await manager.init();
+            const callCountAfterFirst = (Appearance.addChangeListener as jest.Mock).mock.calls.length;
+
+            // init() returns early on second call
+            await manager.init();
+            expect(Appearance.addChangeListener).toHaveBeenCalledTimes(callCountAfterFirst);
+        });
+
+        it('should create exactly 1 listener after dispose() + init()', async () => {
+            await manager.init();
+            manager.dispose();
+
+            jest.clearAllMocks();
+            (Appearance.addChangeListener as jest.Mock).mockReturnValue({ remove: jest.fn() });
+            (LocalStorage.getInstance as jest.Mock).mockReturnValue(mockStorage);
+            (Logger.getInstance as jest.Mock).mockReturnValue(mockLogger);
+
+            await manager.init();
+            expect(Appearance.addChangeListener).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('Logger Integration', () => {
+        it('should use Logger.warn instead of console.warn for storage restore failure', async () => {
+            const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+            manager.configure({ persistMode: true, storageKey: 'test_key' });
+            mockStorage.get.mockRejectedValue(new Error('storage error'));
+
+            await manager.init();
+
+            expect(mockLogger.warn).toHaveBeenCalledWith(
+                expect.stringContaining('[ThemeManager]'),
+                expect.any(Error)
+            );
+            expect(consoleSpy).not.toHaveBeenCalled();
+            consoleSpy.mockRestore();
+        });
+
+        it('should use Logger for unregisterTheme warning on default themes', () => {
+            manager.unregisterTheme('light');
+            expect(mockLogger.warn).toHaveBeenCalledWith(
+                expect.stringContaining('[ThemeManager]'),
+                expect.anything()
+            );
+        });
+
+        it('should use Logger for setTheme warning when theme not found', () => {
+            manager.setTheme('nonexistent');
+            expect(mockLogger.warn).toHaveBeenCalledWith(
+                expect.stringContaining('[ThemeManager]'),
+                expect.anything()
+            );
         });
     });
 
