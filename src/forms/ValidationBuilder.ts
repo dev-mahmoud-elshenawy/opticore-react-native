@@ -29,8 +29,8 @@ export const phone = (options: PhoneValidatorOptions = {}) => {
         if (!val) return false;
         // Basic US phone regex: (123) 456-7890 or 123-456-7890 or 1234567890
         const usPhoneRegex = /^(\+?1[-.]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-        // Basic International regex: +1234567890
-        const intlPhoneRegex = /^\+?[1-9]\d{1,14}$/;
+        // International E.164: min 7 digits total (e.g. +1234567), max 15
+        const intlPhoneRegex = /^\+?[1-9]\d{6,14}$/;
 
         return format === PhoneFormat.US ? usPhoneRegex.test(val) : intlPhoneRegex.test(val);
     }, { message });

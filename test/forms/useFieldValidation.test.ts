@@ -59,6 +59,9 @@ describe('useFieldValidation', () => {
             { initialProps: { value: 'initial' } }
         );
 
+        // Clear the initial mount validation call (hook validates on mount)
+        validator.mockClear();
+
         // Fast updates
         rerender({ value: 'up' });
         rerender({ value: 'update' });
@@ -67,16 +70,17 @@ describe('useFieldValidation', () => {
         // Should not have called validator yet
         expect(validator).not.toHaveBeenCalled();
 
-        // Fast forward time
-        await act(async () => {
-            jest.advanceTimersByTime(500);
+        // Fast forward time to trigger the debounce
+        act(() => {
+            jest.advanceTimersByTime(600);
         });
+
+        // Restore real timers so waitFor internal polling can work
+        jest.useRealTimers();
 
         await waitFor(() => {
             expect(validator).toHaveBeenCalledTimes(1); // Only once for 'updated'
             expect(validator).toHaveBeenCalledWith('updated');
         });
-
-        jest.useRealTimers();
     });
 });

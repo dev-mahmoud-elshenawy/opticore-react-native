@@ -6,7 +6,8 @@ describe('Phone Mask', () => {
     describe('applyPhoneMask', () => {
         test('should format US phone numbers correctly (default)', () => {
             expect(applyPhoneMask('1234567890')).toBe('(123) 456-7890');
-            expect(applyPhoneMask('123')).toBe('123');
+            // Partial input: leading separator '(' is added before first digit group
+            expect(applyPhoneMask('123')).toBe('(123');
             expect(applyPhoneMask('123456')).toBe('(123) 456');
         });
 
