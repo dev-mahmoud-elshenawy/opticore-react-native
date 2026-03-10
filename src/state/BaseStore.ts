@@ -15,6 +15,7 @@ export function createBaseStore<T extends object>(
   stateCreator: AppStoreCreator<T>
 ) {
   // We need to cast the middleware chain to match TypeScript's expected types for Zustand
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const storeCreator = (set: any, get: any, api: any) => {
     // Inject reset and hydrate actions
     const baseActions: BaseActions = {

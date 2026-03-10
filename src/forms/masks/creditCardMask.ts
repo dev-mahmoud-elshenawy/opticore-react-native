@@ -30,7 +30,7 @@ export function detectCardType(value: string): CardType | string {
             // Let's assume for this implementation we just return UNKNOWN for now as the type signature forbids otherwise,
             // UNLESS we change the signature to `CardType | string`.
             // Let's change the signature to `CardType | string` to support this.
-            return patternConfig.name as any;
+            return patternConfig.name;
         }
     }
 

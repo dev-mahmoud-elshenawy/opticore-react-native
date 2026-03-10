@@ -12,7 +12,7 @@ export function filterNonNull<T>(arr: (T | null | undefined)[]): T[] {
  * @param arr - Input array
  * @param key - Key to group by
  */
-export function groupBy<T extends Record<string, any>>(
+export function groupBy<T extends Record<string, unknown>>(
   arr: T[],
   key: keyof T
 ): Record<string, T[]> {
@@ -43,7 +43,7 @@ export function unique<T>(arr: T[]): T[] {
  * @param key - Key to sort by
  * @param order - Sort order ('asc' or 'desc', default: 'asc')
  */
-export function sortBy<T extends Record<string, any>>(
+export function sortBy<T extends Record<string, unknown>>(
   arr: T[],
   key: keyof T,
   order: 'asc' | 'desc' = 'asc'

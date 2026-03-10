@@ -12,7 +12,7 @@ export class JsonFormatter implements LogFormatter {
 
     private getReplacer() {
         const seen = new WeakSet();
-        return (key: string, value: any) => {
+        return (key: string, value: unknown) => {
             // Serialize LogLevel numeric enum as its string name
             if (key === 'level' && typeof value === 'number') {
                 return LogLevel[value] ?? value;
@@ -21,7 +21,7 @@ export class JsonFormatter implements LogFormatter {
             // Handle Error objects specifically as they don't stringify well
             if (value instanceof Error) {
                 // Extract known properties and rest
-                const { name, message, stack, ...rest } = value as any;
+                const { name, message, stack, ...rest } = value as Error & Record<string, unknown>;
                 return {
                     name,
                     message,

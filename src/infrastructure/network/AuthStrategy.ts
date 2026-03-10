@@ -1,4 +1,4 @@
-import { InternalAxiosRequestConfig } from 'axios';
+import { InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
 
 export interface AuthRetryResult {
     retry: boolean;
@@ -15,7 +15,7 @@ export interface AuthStrategy {
      * Handle 401 Unauthorized errors
      * Return configuration for retry if handled, or null to propagate error
      */
-    handleUnauthorized(error: any): Promise<AuthRetryResult | null>;
+    handleUnauthorized(error: unknown): Promise<AuthRetryResult | null>;
 }
 
 export class NoAuthStrategy implements AuthStrategy {
@@ -33,7 +33,7 @@ export class ApiKeyStrategy implements AuthStrategy {
 
     applyAuth(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
         if (!config.headers) {
-            config.headers = {} as any;
+            config.headers = new AxiosHeaders();
         }
         config.headers[this.headerName] = this.apiKey;
         return config;
@@ -58,15 +58,16 @@ export class BearerTokenStrategy implements AuthStrategy {
         return config;
     }
 
-    async handleUnauthorized(error: any): Promise<AuthRetryResult | null> {
+    async handleUnauthorized(error: unknown): Promise<AuthRetryResult | null> {
         // Basic check for 401
-        if (error.response?.status === 401 && this.onRefresh) {
+        const axiosError = error as { response?: { status?: number } };
+        if (axiosError.response?.status === 401 && this.onRefresh) {
             try {
                 const newToken = await this.onRefresh();
                 if (newToken) {
                     return { retry: true, tokenRefreshed: true };
                 }
-            } catch (e) {
+            } catch (_e) {
                 // Refresh failed
                 return null;
             }

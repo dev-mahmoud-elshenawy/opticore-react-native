@@ -56,7 +56,7 @@ export function useAsyncState<T>(initialData: T | null = null): UseAsyncStateRet
         setError(null);
       }
       return result;
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (isMounted.current) {
         setError(e instanceof Error ? e : new Error(String(e)));
         setData(null);

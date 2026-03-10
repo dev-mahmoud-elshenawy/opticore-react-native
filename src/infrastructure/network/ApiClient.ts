@@ -68,7 +68,7 @@ export class ApiClient {
       : undefined;
 
     const onRejected = interceptor.onError
-      ? (error: any) => interceptor.onError!(error)
+      ? (error: unknown) => interceptor.onError!(error)
       : undefined;
 
     const axiosId = this.client.interceptors.request.use(onFulfilled, onRejected);
@@ -90,7 +90,7 @@ export class ApiClient {
       : undefined;
 
     const onRejected = interceptor.onError
-      ? (error: any) => interceptor.onError!(error)
+      ? (error: unknown) => interceptor.onError!(error)
       : undefined;
 
     const axiosId = this.client.interceptors.response.use(onFulfilled, onRejected);

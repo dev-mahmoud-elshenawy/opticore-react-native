@@ -104,6 +104,7 @@ export type {
     ZodRawShape
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- z is the Zod namespace object; its full type is not publicly exported from zod
 export type SchemaBuilder = (z: any) => ZodRawShape;
 
 export interface PhoneValidatorOptions {

@@ -35,7 +35,7 @@ export class ConfigValidator {
     try {
       new URL(url);
       return true;
-    } catch (_) {
+    } catch (_err) {
       return false;
     }
   }

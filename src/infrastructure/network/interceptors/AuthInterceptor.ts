@@ -28,8 +28,9 @@ export class AuthInterceptor {
     return config;
   }
 
-  public async onError(error: any): Promise<any> {
-    const config = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+  public async onError(error: unknown): Promise<unknown> {
+    const axiosError = error as { config?: InternalAxiosRequestConfig & { _retry?: boolean }; response?: { status?: number } };
+    const config = axiosError.config;
     const networkConfig = this.client.config;
 
     // Check if we have a strategy or legacy callbacks
@@ -41,7 +42,7 @@ export class AuthInterceptor {
       );
     }
 
-    if (error.response?.status === 401 && !config._retry && strategy) {
+    if (axiosError.response?.status === 401 && config && !config._retry && strategy) {
       const retryConfig = await strategy.handleUnauthorized(error);
 
       if (retryConfig?.retry) {

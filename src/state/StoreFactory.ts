@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any --
+   Zustand + Immer's set() callback requires `any` for draft state mutations.
+   The generic middleware chain types are incompatible with strict inference here.
+   This is a known Zustand limitation; all state is still typed externally via CrudStore<T>. */
 import { StateCreator } from 'zustand/vanilla';
 import { createBaseStore } from './BaseStore';
 import { AsyncState, toLoading, toSuccess, toError, toIdle } from './AsyncState';

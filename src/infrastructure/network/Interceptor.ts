@@ -23,5 +23,5 @@ export interface Interceptor {
      * Called when a request fails or a response error occurs.
      * Return a rejected promise to propagate the error, or resolve to handle it.
      */
-    onError?(error: any): any;
+    onError?(error: unknown): unknown;
 }

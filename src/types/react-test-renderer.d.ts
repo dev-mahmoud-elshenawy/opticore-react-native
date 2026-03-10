@@ -1,7 +1,7 @@
 declare module 'react-test-renderer' {
     export interface ReactTestRendererJSON {
         type: string;
-        props: { [propName: string]: any };
+        props: { [propName: string]: unknown };
         children: null | ReactTestRendererNode[];
     }
     export type ReactTestRendererNode = ReactTestRendererJSON | string;
@@ -10,11 +10,11 @@ declare module 'react-test-renderer' {
         toTree(): ReactTestRendererJSON | null;
         update(nextElement: React.ReactElement): void;
         unmount(): void;
-        getInstance(): any | null;
-        root: any;
+        getInstance(): unknown;
+        root: unknown;
     }
     export interface TestRendererOptions {
-        createNodeMock?: (element: React.ReactElement) => any;
+        createNodeMock?: (element: React.ReactElement) => unknown;
     }
     export function create(
         nextElement: React.ReactElement,

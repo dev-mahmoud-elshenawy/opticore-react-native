@@ -4,11 +4,14 @@
  * @param path - Dot notation path (e.g., 'a.b.c')
  * @param fallback - Fallback value if not found
  */
-export function get(obj: any, path: string, fallback?: any): any {
+export function get(obj: Record<string, unknown>, path: string, fallback?: unknown): unknown {
   if (!obj || !path) return fallback;
   const result = path
     .split('.')
-    .reduce((acc, part) => (acc && acc[part] !== undefined ? acc[part] : undefined), obj);
+    .reduce<unknown>((acc, part) => {
+      const record = acc as Record<string, unknown> | null | undefined;
+      return record && record[part] !== undefined ? record[part] : undefined;
+    }, obj);
   return result !== undefined ? result : fallback;
 }
 
@@ -17,7 +20,7 @@ export function get(obj: any, path: string, fallback?: any): any {
  * @param target - Target object
  * @param source - Source object
  */
-export function deepMerge(target: any, source: any): any {
+export function deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
   if (!isObject(target) || !isObject(source)) {
     return source;
   }
@@ -25,11 +28,11 @@ export function deepMerge(target: any, source: any): any {
   const output = { ...target };
 
   Object.keys(source).forEach((key) => {
-    if (isObject(source[key])) {
+    if (isObject(source[key] as Record<string, unknown>)) {
       if (!(key in target)) {
         Object.assign(output, { [key]: source[key] });
       } else {
-        output[key] = deepMerge(target[key], source[key]);
+        output[key] = deepMerge(target[key] as Record<string, unknown>, source[key] as Record<string, unknown>);
       }
     } else {
       Object.assign(output, { [key]: source[key] });
@@ -39,8 +42,8 @@ export function deepMerge(target: any, source: any): any {
   return output;
 }
 
-function isObject(item: any): boolean {
-  return item && typeof item === 'object' && !Array.isArray(item);
+function isObject(item: unknown): boolean {
+  return Boolean(item && typeof item === 'object' && !Array.isArray(item));
 }
 
 /**

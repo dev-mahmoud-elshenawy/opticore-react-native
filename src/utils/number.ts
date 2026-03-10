@@ -3,9 +3,9 @@
  * @param value - Input value
  * @param fallback - Fallback if parsing fails (default: 0)
  */
-export function toInt(value: any, fallback: number = 0): number {
+export function toInt(value: unknown, fallback: number = 0): number {
   if (value === null || value === undefined) return fallback;
-  const parsed = parseInt(value, 10);
+  const parsed = parseInt(String(value), 10);
   return isNaN(parsed) ? fallback : parsed;
 }
 
@@ -14,9 +14,9 @@ export function toInt(value: any, fallback: number = 0): number {
  * @param value - Input value
  * @param fallback - Fallback if parsing fails (default: 0)
  */
-export function toDouble(value: any, fallback: number = 0): number {
+export function toDouble(value: unknown, fallback: number = 0): number {
   if (value === null || value === undefined) return fallback;
-  const parsed = parseFloat(value);
+  const parsed = parseFloat(String(value));
   return isNaN(parsed) ? fallback : parsed;
 }
 

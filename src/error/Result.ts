@@ -114,7 +114,6 @@ export class Err<T = never, E = Error> implements IResult<T, E> {
 /** Discriminated union of `Ok<T, E>` and `Err<T, E>`. */
 export type Result<T, E = Error> = Ok<T, E> | Err<T, E>;
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Result {
   /** Create a successful result wrapping `value`. */
   export function ok<T, E = never>(value: T): Result<T, E> {
