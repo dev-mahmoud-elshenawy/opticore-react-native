@@ -2,8 +2,8 @@
   "name": "opticore-react-native",
   "version": "1.0.0",
   "description": "Pure infrastructure library for React Native/Expo applications",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "README.md",
@@ -11,44 +11,44 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js",
-      "require": "./dist/src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     },
     "./utils": {
-      "types": "./dist/src/utils/index.d.ts",
-      "import": "./dist/src/utils/index.js",
-      "require": "./dist/src/utils/index.js"
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js",
+      "require": "./dist/utils/index.js"
     },
     "./state": {
-      "types": "./dist/src/state/index.d.ts",
-      "import": "./dist/src/state/index.js",
-      "require": "./dist/src/state/index.js"
+      "types": "./dist/state/index.d.ts",
+      "import": "./dist/state/index.js",
+      "require": "./dist/state/index.js"
     },
     "./hooks": {
-      "types": "./dist/src/hooks/index.d.ts",
-      "import": "./dist/src/hooks/index.js",
-      "require": "./dist/src/hooks/index.js"
+      "types": "./dist/hooks/index.d.ts",
+      "import": "./dist/hooks/index.js",
+      "require": "./dist/hooks/index.js"
     },
     "./forms": {
-      "types": "./dist/src/forms/index.d.ts",
-      "import": "./dist/src/forms/index.js",
-      "require": "./dist/src/forms/index.js"
+      "types": "./dist/forms/index.d.ts",
+      "import": "./dist/forms/index.js",
+      "require": "./dist/forms/index.js"
     },
     "./offline": {
-      "types": "./dist/src/offline/index.d.ts",
-      "import": "./dist/src/offline/index.js",
-      "require": "./dist/src/offline/index.js"
+      "types": "./dist/offline/index.d.ts",
+      "import": "./dist/offline/index.js",
+      "require": "./dist/offline/index.js"
     },
     "./theme": {
-      "types": "./dist/src/theme/index.d.ts",
-      "import": "./dist/src/theme/index.js",
-      "require": "./dist/src/theme/index.js"
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme/index.js",
+      "require": "./dist/theme/index.js"
     }
   },
   "scripts": {
     "start": "tsc --watch",
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
@@ -58,7 +58,8 @@
     "test:coverage": "jest --coverage",
     "validate": "npm run type-check && npm run lint && npm run format:check && npm run test",
     "test:types": "tsd",
-    "clean": "rm -rf dist coverage node_modules"
+    "clean": "rm -rf dist coverage node_modules",
+    "install:peers": "npx install-peerdeps opticore-react-native"
   },
   "keywords": [
     "react-native",

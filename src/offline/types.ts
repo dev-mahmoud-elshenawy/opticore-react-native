@@ -146,7 +146,8 @@ export type SyncEvent =
     | { type: 'sync_error'; error: Error }
     | { type: 'request_success'; requestId: string }
     | { type: 'request_failed'; requestId: string; error: Error }
-    | { type: 'request_retry'; requestId: string; attempt: number };
+    | { type: 'request_retry'; requestId: string; attempt: number }
+    | { type: 'disposed' };
 
 /**
  * Callback function for sync event listeners

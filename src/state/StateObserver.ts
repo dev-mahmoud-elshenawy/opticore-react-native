@@ -8,7 +8,7 @@ import { Listener, StateCallback, SubscribeOptions } from './types/ObserverTypes
 export class StateObserver {
   private static instance: StateObserver;
   private listeners: Map<string, Listener> = new Map();
-  private storeUnsubscribers: Map<string, () => void> = new Map();
+  private storeUnSubscribers: Map<string, () => void> = new Map();
 
   private constructor() {}
 
@@ -74,7 +74,7 @@ export class StateObserver {
     });
 
     // Store the unsubscribe function mapped to our listener ID so we can cleanup
-    this.storeUnsubscribers.set(id, unsubscribeStore);
+    this.storeUnSubscribers.set(id, unsubscribeStore);
 
     return () => this.unsubscribe(id);
   }
@@ -87,10 +87,10 @@ export class StateObserver {
     this.listeners.delete(listenerId);
 
     // 2. Call the store's unsubscribe function
-    const unsubscribeStore = this.storeUnsubscribers.get(listenerId);
+    const unsubscribeStore = this.storeUnSubscribers.get(listenerId);
     if (unsubscribeStore) {
       unsubscribeStore();
-      this.storeUnsubscribers.delete(listenerId);
+      this.storeUnSubscribers.delete(listenerId);
     }
   }
 
@@ -99,10 +99,10 @@ export class StateObserver {
    */
   public cleanup(): void {
     // Call all unsubscribe functions
-    this.storeUnsubscribers.forEach((unsubscribe) => unsubscribe());
+    this.storeUnSubscribers.forEach((unsubscribe) => unsubscribe());
 
     // Clear maps
-    this.storeUnsubscribers.clear();
+    this.storeUnSubscribers.clear();
     this.listeners.clear();
   }
 }

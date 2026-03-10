@@ -119,12 +119,8 @@ export class Logger implements ILogger {
         }
         transport.write(entry);
       } catch (err) {
-        // Prevent transport failure from crashing app
-        // We can't log this failure easily as it might cycle.
-        // potentially console.error fallback?
-         
+        // Cannot use Logger here (would cycle), so fall back to console
         console.error('Logger transport failed:', err);
-         
       }
     });
   }

@@ -49,7 +49,7 @@ export class CoreSetup {
      * ```
      */
     public init(config: CoreConfig): void {
-        ConfigValidator.validate(config);
+        ConfigValidator.validateOrThrow(config);
 
         this.config = config;
 

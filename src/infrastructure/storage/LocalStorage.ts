@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Logger } from '../logger/Logger';
 import { IStorage } from './interfaces/IStorage';
 
 export class LocalStorage implements IStorage {
@@ -16,8 +17,18 @@ export class LocalStorage implements IStorage {
   async get<T>(key: string): Promise<T | null> {
     try {
       const value = await AsyncStorage.getItem(key);
-      return value ? JSON.parse(value) : null;
-    } catch {
+      if (value === null) return null;
+      try {
+        return JSON.parse(value) as T;
+      } catch (parseError) {
+        Logger.getInstance().warn(
+          `[LocalStorage] Failed to parse value for key "${key}", returning null`,
+          parseError as Error,
+        );
+        return null;
+      }
+    } catch (error) {
+      Logger.getInstance().error(`[LocalStorage] Failed to read key "${key}"`, error as Error);
       return null;
     }
   }
@@ -26,6 +37,7 @@ export class LocalStorage implements IStorage {
     try {
       await AsyncStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
+      Logger.getInstance().error(`[LocalStorage] Failed to write key "${key}"`, error as Error);
       throw error;
     }
   }
@@ -34,6 +46,7 @@ export class LocalStorage implements IStorage {
     try {
       await AsyncStorage.removeItem(key);
     } catch (error) {
+      Logger.getInstance().error(`[LocalStorage] Failed to remove key "${key}"`, error as Error);
       throw error;
     }
   }
@@ -42,6 +55,7 @@ export class LocalStorage implements IStorage {
     try {
       await AsyncStorage.clear();
     } catch (error) {
+      Logger.getInstance().error('[LocalStorage] Failed to clear storage', error as Error);
       throw error;
     }
   }

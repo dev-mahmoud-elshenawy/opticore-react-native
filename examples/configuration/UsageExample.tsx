@@ -1,7 +1,7 @@
 /* eslint-disable no-console -- Example file uses console for demonstration output */
 import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
-import { coreSetup, LogLevel } from '../../src';
+import { coreSetup, LogLevel, ConfigValidationError } from '../../src';
 
 // Example of initialization in a root component
 export const AppConfig = () => {
@@ -21,7 +21,13 @@ export const AppConfig = () => {
       });
       console.log('OptiCore initialized successfully');
     } catch (error) {
-      console.error('Failed to initialize OptiCore:', error);
+      if (error instanceof ConfigValidationError) {
+        // Inspect individual validation issues
+        error.result.errors.forEach((e) => console.error(`${e.path}: ${e.message}`));
+        error.result.warnings.forEach((w) => console.warn(`${w.path}: ${w.message}`));
+      } else {
+        console.error('Failed to initialize OptiCore:', error);
+      }
     }
   }, []);
 

@@ -1,18 +1,24 @@
-# 🎨 Theme Engine
+# Theme Engine
 
-OptiCore's Theme Engine provides a fully dynamic, type-safe theming system with dark mode, typography, spacing, shadows, and runtime switching.
+A dynamic, type-safe theming system with dark mode, typography, spacing, shadows, and runtime switching.
 
 ---
 
-## Quick Setup
+## Setup
+
+Pass theme config to `OptiCoreProvider`:
 
 ```typescript
 import { OptiCoreProvider } from 'opticore-react-native';
-import { lightTheme, darkTheme } from 'opticore-react-native/theme';
 
 <OptiCoreProvider
-  config={{ api: { baseURL: '...' } }}
-  theme={lightTheme}
+  config={{
+    api: { baseURL: '...' },
+    theme: {
+      defaultMode: 'system',   // respect OS dark mode
+      persistMode: true,       // remember user's choice
+    },
+  }}
 >
   <App />
 </OptiCoreProvider>
@@ -20,20 +26,54 @@ import { lightTheme, darkTheme } from 'opticore-react-native/theme';
 
 ---
 
-## useTheme Hook
+## useTheme
+
+The primary hook for consuming theme values in components.
 
 ```typescript
 import { useTheme } from 'opticore-react-native/theme';
 
-function MyComponent() {
-  const { theme, toggleTheme, isDark } = useTheme();
+const {
+  theme,           // full Theme object
+  mode,            // 'light' | 'dark' | 'system'
+  activeMode,      // 'light' | 'dark' (resolved — 'system' maps to actual mode)
+  isDark,          // boolean
+  isLight,         // boolean
+  setMode,         // (mode: ThemeMode) => void
+  toggleMode,      // () => void
+  colors,          // shortcut for theme.colors
+  spacing,         // shortcut for theme.spacing
+  typography,      // shortcut for theme.typography
+  borderRadius,    // shortcut for theme.borderRadius
+} = useTheme();
+```
+
+### Example
+
+```typescript
+function ProfileCard() {
+  const { colors, spacing, typography, isDark, toggleMode } = useTheme();
 
   return (
-    <View style={{ backgroundColor: theme.colors.background }}>
-      <Text style={{ color: theme.colors.text, fontSize: theme.typography.body }}>
-        Hello World
+    <View style={{
+      backgroundColor: colors.surface,
+      padding: spacing.md,
+      borderRadius: 12,
+    }}>
+      <Text style={{
+        color: colors.text,
+        fontSize: typography.h3,
+        fontWeight: '600',
+      }}>
+        John Doe
       </Text>
-      <Button onPress={toggleTheme} title={isDark ? 'Light Mode' : 'Dark Mode'} />
+      <Text style={{ color: colors.textSecondary, fontSize: typography.body }}>
+        @johndoe
+      </Text>
+      <Switch
+        value={isDark}
+        onValueChange={toggleMode}
+      />
     </View>
   );
 }
@@ -58,29 +98,29 @@ interface Theme {
     border: string;
   };
   typography: {
-    h1: number;
-    h2: number;
-    h3: number;
-    body: number;
-    caption: number;
-    small: number;
+    h1: number;       // 32
+    h2: number;       // 28
+    h3: number;       // 24
+    body: number;     // 16
+    caption: number;  // 14
+    small: number;    // 12
   };
   spacing: {
-    xs: number;    // 4
-    sm: number;    // 8
-    md: number;    // 16
-    lg: number;    // 24
-    xl: number;    // 32
-    xxl: number;   // 48
+    xs: number;   // 4
+    sm: number;   // 8
+    md: number;   // 16
+    lg: number;   // 24
+    xl: number;   // 32
+    xxl: number;  // 48
   };
   borderRadius: {
-    sm: number;
-    md: number;
-    lg: number;
-    full: number;
+    sm: number;   // 4
+    md: number;   // 8
+    lg: number;   // 16
+    full: number; // 999
   };
   shadows: {
-    sm: object;
+    sm: object;   // React Native shadow props
     md: object;
     lg: object;
   };
@@ -89,7 +129,37 @@ interface Theme {
 
 ---
 
-## Custom Theme
+## Built-in Themes
+
+```typescript
+import { lightTheme, darkTheme } from 'opticore-react-native/theme';
+```
+
+### lightTheme
+
+| Token | Value |
+|---|---|
+| `primary` | `#007AFF` |
+| `background` | `#FFFFFF` |
+| `surface` | `#F2F2F7` |
+| `text` | `#000000` |
+| `textSecondary` | `#6E6E73` |
+
+### darkTheme
+
+| Token | Value |
+|---|---|
+| `primary` | `#0A84FF` |
+| `background` | `#000000` |
+| `surface` | `#1C1C1E` |
+| `text` | `#FFFFFF` |
+| `textSecondary` | `#98989D` |
+
+---
+
+## Custom Themes
+
+### createTheme
 
 ```typescript
 import { createTheme } from 'opticore-react-native/theme';
@@ -99,69 +169,151 @@ const brandTheme = createTheme({
     primary: '#6C63FF',
     secondary: '#FF6584',
     background: '#FAFAFA',
+    surface: '#FFFFFF',
     text: '#1A1A2E',
-    // ... rest of colors
+    textSecondary: '#6B7280',
+    error: '#EF4444',
+    success: '#10B981',
+    warning: '#F59E0B',
+    border: '#E5E7EB',
   },
   typography: {
-    h1: 32,
+    h1: 36,
+    h2: 28,
+    h3: 22,
     body: 16,
-    // ...
+    caption: 14,
+    small: 12,
+  },
+  spacing: {
+    xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48,
+  },
+  borderRadius: {
+    sm: 6, md: 12, lg: 20, full: 999,
   },
 });
 ```
 
+### Register and Use
+
+```typescript
+// Register via CoreConfig
+theme: {
+  customThemes: {
+    brand: brandTheme,
+    compact: compactTheme,
+  },
+}
+
+// Register programmatically
+ThemeManager.getInstance().registerTheme('brand', brandTheme);
+
+// Switch to custom theme
+ThemeManager.getInstance().setMode('light'); // must be 'light' or 'dark'
+// Custom themes extend the active mode — register as light or dark variant
+```
+
 ---
 
-## ThemeManager (Programmatic)
+## ThemeManager
+
+Direct access to the theme engine, outside React.
 
 ```typescript
 import { ThemeManager } from 'opticore-react-native/theme';
 
 const manager = ThemeManager.getInstance();
+```
 
-// Switch theme at runtime
-manager.setTheme(darkTheme);
+### API
 
-// Get current theme
-const current = manager.getTheme();
+```typescript
+// Get current theme and mode
+const theme = manager.getTheme();
+const mode = manager.getMode();          // 'light' | 'dark' | 'system'
+const active = manager.getActiveMode();  // 'light' | 'dark'
 
-// Listen for theme changes
-manager.addListener((theme) => {
-  console.warn('Theme changed:', theme.colors.primary);
+// Change mode
+manager.setMode('dark');
+manager.setMode('system');
+manager.toggleMode();
+
+// Listen to changes
+const unsubscribe = manager.addThemeListener((theme, mode) => {
+  console.warn('Theme changed to:', mode);
 });
+unsubscribe(); // cleanup
+
+// Register custom themes
+manager.registerTheme('brand', brandTheme);
+manager.unregisterTheme('brand');
 ```
 
 ---
 
-## Dynamic Scaling
+## Dark Mode Patterns
+
+### Follow System (recommended)
 
 ```typescript
-import { useResponsive } from 'opticore-react-native/hooks';
+theme: { defaultMode: 'system', followSystem: true }
+// Automatically switches when OS dark mode changes
+```
 
-function ResponsiveComponent() {
-  const { scale, isTablet, screenWidth } = useResponsive();
+### User Toggle
+
+```typescript
+function ThemeToggle() {
+  const { isDark, toggleMode } = useTheme();
 
   return (
-    <Text style={{ fontSize: scale(16) }}>
-      Scales with screen size
-    </Text>
+    <TouchableOpacity onPress={toggleMode}>
+      <Text>{isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}</Text>
+    </TouchableOpacity>
   );
 }
 ```
 
+### Conditional Styling
+
+```typescript
+const { isDark, colors } = useTheme();
+
+const styles = {
+  container: {
+    backgroundColor: colors.background,
+    // Or manual conditional:
+    borderWidth: isDark ? 0 : 1,
+    borderColor: colors.border,
+  },
+};
+```
+
 ---
 
-## Built-in Themes
+## Color Utilities
 
-| Theme | Description |
-|---|---|
-| `lightTheme` | Clean light theme with blue primary |
-| `darkTheme` | Dark theme optimized for OLED displays |
+```typescript
+import { colorUtils } from 'opticore-react-native/theme';
+
+colorUtils.hexToRgb('#6C63FF');           // { r: 108, g: 99, b: 255 }
+colorUtils.rgbToHex(108, 99, 255);        // '#6c63ff'
+colorUtils.lighten('#6C63FF', 0.2);       // lighter shade
+colorUtils.darken('#6C63FF', 0.2);        // darker shade
+```
 
 ---
 
 ## Notes
 
-- Shadows use React Native's native shadow props (not CSS strings) — works on iOS and Android
-- Theme changes trigger re-renders only in components using `useTheme`
-- `ThemeManager` is a singleton — safe to call `getInstance()` anywhere
+- **Shadows** use React Native's native shadow props — not CSS strings — works correctly on iOS and Android
+- **`persistMode`** saves the user's mode preference to AsyncStorage and restores it on app launch
+- `ThemeManager` is a singleton — `getInstance()` is safe to call anywhere
+- `useTheme` only re-renders the component when the theme actually changes
+
+---
+
+## See Also
+
+- [Configuration → theme](./CONFIGURATION.md#theme--optional) — Theme config options
+- [Color Utilities](./api/UTILITIES.md#color-utilities) — Standalone color helpers

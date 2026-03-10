@@ -1,5 +1,262 @@
 # Migration Guide
 
+Step-by-step guide for migrating your existing React Native project to OptiCore.
+
+---
+
+## From Plain Axios
+
+**Before:**
+```typescript
+// Scattered setup across files
+const api = axios.create({ baseURL: 'https://api.example.com' });
+
+api.interceptors.request.use(config => {
+  const token = getToken();
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+async function fetchUsers() {
+  try {
+    const response = await api.get('/users');
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+```
+
+**After:**
+```typescript
+// Configured once in OptiCoreProvider
+<OptiCoreProvider config={{
+  api: {
+    baseURL: 'https://api.example.com',
+    getAuthToken: () => storage.secure.get('token'),
+    onTokenRefresh: () => refreshToken(),
+  },
+}}>
+
+// Used anywhere — auth, logging, error handling automatic
+async function fetchUsers() {
+  const { data } = await ApiClient.getInstance().get<User[]>('/users');
+  return data;
+}
+```
+
+---
+
+## From Redux
+
+**Before:**
+```typescript
+// actions.ts
+export const FETCH_USERS_REQUEST = 'FETCH_USERS_REQUEST';
+export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
+export const FETCH_USERS_FAILURE = 'FETCH_USERS_FAILURE';
+
+// reducer.ts
+function usersReducer(state = initialState, action) {
+  switch (action.type) {
+    case FETCH_USERS_REQUEST: return { ...state, loading: true };
+    case FETCH_USERS_SUCCESS: return { ...state, loading: false, data: action.payload };
+    case FETCH_USERS_FAILURE: return { ...state, loading: false, error: action.error };
+    default: return state;
+  }
+}
+
+// thunk.ts
+export const fetchUsers = () => async (dispatch) => {
+  dispatch({ type: FETCH_USERS_REQUEST });
+  try {
+    const { data } = await api.get('/users');
+    dispatch({ type: FETCH_USERS_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({ type: FETCH_USERS_FAILURE, error });
+  }
+};
+```
+
+**After:**
+```typescript
+// One file — store + actions + async state
+import { createCrudStore } from 'opticore-react-native/state';
+
+export const useUserStore = createCrudStore<User>({
+  name: 'UserStore',
+  api: {
+    fetchAll: () => ApiClient.getInstance().get<User[]>('/users').then(r => r.data),
+    fetchById: (id) => ApiClient.getInstance().get<User>(`/users/${id}`).then(r => r.data),
+    create: (data) => ApiClient.getInstance().post<User>('/users', data).then(r => r.data),
+    update: (id, data) => ApiClient.getInstance().put<User>(`/users/${id}`, data).then(r => r.data),
+    delete: (id) => ApiClient.getInstance().delete(`/users/${id}`),
+  },
+});
+
+// In component — fully typed, no boilerplate
+const { items, status, fetchAll } = useUserStore();
+```
+
+**Store Provider migration:**
+```typescript
+// Remove Redux Provider + configureStore
+// Replace with OptiCoreProvider
+<OptiCoreProvider config={...}>
+  <App />
+</OptiCoreProvider>
+```
+
+---
+
+## From MobX
+
+**Before:**
+```typescript
+class UserStore {
+  @observable users: User[] = [];
+  @observable loading = false;
+  @observable error: Error | null = null;
+
+  @action
+  async fetchUsers() {
+    this.loading = true;
+    try {
+      this.users = await api.get('/users');
+    } catch (e) {
+      this.error = e as Error;
+    } finally {
+      this.loading = false;
+    }
+  }
+}
+```
+
+**After:**
+```typescript
+// Same mental model — observable state replaced with Zustand + AsyncState
+import { createBaseStore } from 'opticore-react-native/state';
+import { toLoading, toSuccess, toError } from 'opticore-react-native';
+
+export const useUserStore = createBaseStore(
+  { name: 'UserStore', initialState: { users: createAsyncState<User[]>() } },
+  (set) => ({
+    users: createAsyncState<User[]>(),
+    fetchUsers: async () => {
+      set({ users: toLoading() });
+      try {
+        const { data } = await ApiClient.getInstance().get<User[]>('/users');
+        set({ users: toSuccess(data) });
+      } catch (e) {
+        set({ users: toError(e as Error) });
+      }
+    },
+  })
+);
+```
+
+---
+
+## From AsyncStorage (direct)
+
+**Before:**
+```typescript
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+await AsyncStorage.setItem('user', JSON.stringify(user));
+const raw = await AsyncStorage.getItem('user');
+const user = raw ? JSON.parse(raw) : null;
+```
+
+**After:**
+```typescript
+import { StorageManager } from 'opticore-react-native';
+const storage = StorageManager.getInstance();
+
+// Serialization is automatic
+await storage.local.set('user', user);
+const user = await storage.local.get<User>('user');
+```
+
+---
+
+## From custom Logger (console.log)
+
+**Before:**
+```typescript
+if (__DEV__) {
+  console.log('[Auth]', 'Login successful', user);
+  console.error('[Auth]', 'Login failed', error);
+}
+```
+
+**After:**
+```typescript
+import { Logger } from 'opticore-react-native';
+const logger = Logger.getInstance();
+
+// Level-based filtering, structured metadata, pluggable transports
+logger.info('Login successful', { userId: user.id });
+logger.error('Login failed', error);
+
+// In production: add Sentry transport once — all logger.error() calls go there
+logger.addTransport({
+  name: 'sentry',
+  minLevel: LogLevel.ERROR,
+  write: (entry) => Sentry.captureMessage(entry.message),
+});
+```
+
+---
+
+## From react-hook-form (standalone)
+
+**Before:**
+```typescript
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const { register, handleSubmit, formState: { errors } } = useForm({
+  resolver: zodResolver(schema),
+});
+```
+
+**After:**
+```typescript
+import { useFormState } from 'opticore-react-native/forms';
+
+// Same power, cleaner API, masks included
+const { errors, handleSubmit, setValue, watch } = useFormState({
+  schema,
+  defaultValues: { email: '', password: '' },
+  mode: 'onChange',
+});
+// Plus: phoneMask, creditCardMask, currencyMask, useFieldValidation
+```
+
+---
+
+## Migration Checklist
+
+- [ ] Install `opticore-react-native` and peer deps
+- [ ] Add `OptiCoreProvider` to app root with `api.baseURL`
+- [ ] Remove `axios.create()` calls — use `ApiClient.getInstance()`
+- [ ] Migrate auth token injection to `getAuthToken` config
+- [ ] Replace `AsyncStorage` direct calls with `StorageManager`
+- [ ] Replace `console.log` with `Logger.getInstance()`
+- [ ] Migrate Redux/MobX stores to `createBaseStore` or `createCrudStore`
+- [ ] Replace error `try/catch` with `RenderError`/`NonRenderError`
+- [ ] Add `OptiCoreErrorBoundary` around root navigator
+
+---
+
+## See Also
+
+- [Quick Start](./QUICK_START.md) — Full setup walkthrough
+- [Configuration](./CONFIGURATION.md) — All config options
+- [Architecture](./ARCHITECTURE.md) — How the library is structured
+
 ## Migrating to opticore-react-native
 
 This guide helps you migrate from other solutions to opticore.

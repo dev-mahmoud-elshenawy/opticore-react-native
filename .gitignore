@@ -10,6 +10,9 @@ EXPO_APP_GUIDE.md
 # Node modules & lockfiles
 node_modules/
 package-lock.json
+yarn.lock
+bun.lockb
+pnpm-lock.yaml
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

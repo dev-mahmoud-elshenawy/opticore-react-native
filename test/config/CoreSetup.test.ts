@@ -31,7 +31,8 @@ jest.mock('../../src/infrastructure/logger/Logger', () => ({
 // Mock ConfigValidator
 jest.mock('../../src/config/ConfigValidator', () => ({
   ConfigValidator: {
-    validate: jest.fn(),
+    validate: jest.fn().mockReturnValue({ valid: true, errors: [], warnings: [] }),
+    validateOrThrow: jest.fn(),
   },
 }));
 

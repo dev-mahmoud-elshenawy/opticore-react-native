@@ -46,11 +46,13 @@ Type definitions for route parameters and navigation options.
 ```typescript
 import type { RouteParams } from 'opticore-react-native';
 
-// Extend RouteParams to define your app's routes
+// Extend RouteParams to define your app's own routes via declaration merging.
+// OptiCore does NOT define any routes — it is a reusable infrastructure library.
 declare module 'opticore-react-native' {
   interface RouteParams {
-    home: undefined;
-    profile: { userId: string };
+    '/dashboard': undefined;
+    '/profile/[id]': { id: string };
+    '/search': { query: string; category?: string };
   }
 }
 ```

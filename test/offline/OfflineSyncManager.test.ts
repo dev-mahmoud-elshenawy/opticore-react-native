@@ -56,9 +56,10 @@ describe('OfflineSyncManager', () => {
 
         // Setup SyncEngine Mock
         mockSyncEngine = {
-            processQueue: jest.fn().mockResolvedValue({ success: 0, failed: 0, pending: 0, errors: [] }),
+            processQueue: jest.fn().mockResolvedValue({ success: 0, failed: 0, pending: 0, errors: [], results: [] }),
             getSyncingStatus: jest.fn().mockReturnValue(false),
-            addListener: jest.fn().mockReturnValue(() => { })
+            addListener: jest.fn().mockReturnValue(() => { }),
+            isRetryable: jest.fn().mockReturnValue(true),
         };
         (SyncEngine as jest.Mock).mockImplementation(() => mockSyncEngine);
 
@@ -134,5 +135,98 @@ describe('OfflineSyncManager', () => {
         listener({ type: 'request_success', requestId: 'req-1' });
 
         expect(mockQueue.remove).toHaveBeenCalledWith('req-1');
+    });
+
+    it('should remove non-retryable failures from queue', () => {
+        const addListenerCall = mockSyncEngine.addListener.mock.calls[0];
+        const syncListener = addListenerCall[0];
+
+        // Mark as non-retryable
+        mockSyncEngine.isRetryable.mockReturnValue(false);
+
+        const error = new Error('Bad Request');
+        syncListener({ type: 'request_failed', requestId: 'req-bad', error });
+
+        expect(mockQueue.remove).toHaveBeenCalledWith('req-bad');
+    });
+
+    it('should NOT remove retryable failures from queue', () => {
+        const addListenerCall = mockSyncEngine.addListener.mock.calls[0];
+        const syncListener = addListenerCall[0];
+
+        // Mark as retryable
+        mockSyncEngine.isRetryable.mockReturnValue(true);
+
+        const error = new Error('Network timeout');
+        syncListener({ type: 'request_failed', requestId: 'req-retry', error });
+
+        expect(mockQueue.remove).not.toHaveBeenCalled();
+    });
+
+    describe('emit / addListener', () => {
+        it('should propagate SyncEngine events to manager listeners', () => {
+            const addListenerCall = mockSyncEngine.addListener.mock.calls[0];
+            const syncListener = addListenerCall[0];
+
+            const managerListener = jest.fn();
+            manager.addListener(managerListener);
+
+            syncListener({ type: 'sync_start' });
+
+            expect(managerListener).toHaveBeenCalledWith({ type: 'sync_start' });
+        });
+
+        it('should allow unsubscribing listeners', () => {
+            const addListenerCall = mockSyncEngine.addListener.mock.calls[0];
+            const syncListener = addListenerCall[0];
+
+            const managerListener = jest.fn();
+            const unsubscribe = manager.addListener(managerListener);
+
+            unsubscribe();
+            syncListener({ type: 'sync_start' });
+
+            expect(managerListener).not.toHaveBeenCalled();
+        });
+
+        it('should catch errors thrown by listeners', () => {
+            const addListenerCall = mockSyncEngine.addListener.mock.calls[0];
+            const syncListener = addListenerCall[0];
+
+            const badListener = jest.fn(() => { throw new Error('listener crash'); });
+            const goodListener = jest.fn();
+            manager.addListener(badListener);
+            manager.addListener(goodListener);
+
+            syncListener({ type: 'sync_start' });
+
+            // Bad listener threw but good listener still received the event
+            expect(goodListener).toHaveBeenCalledWith({ type: 'sync_start' });
+        });
+    });
+
+    describe('dispose', () => {
+        it('should clean up all resources', async () => {
+            await new Promise(process.nextTick);
+
+            const managerListener = jest.fn();
+            manager.addListener(managerListener);
+
+            manager.dispose();
+
+            // Listener receives the 'disposed' event before being cleared
+            expect(managerListener).toHaveBeenCalledWith({ type: 'disposed' });
+            expect(mockQueue.clear).toHaveBeenCalled();
+
+            // Reset mock to verify no further events are received after dispose
+            managerListener.mockClear();
+
+            // Trigger a sync engine event after dispose
+            const addListenerCall = mockSyncEngine.addListener.mock.calls[0];
+            const syncListener = addListenerCall[0];
+            syncListener({ type: 'sync_start' });
+
+            expect(managerListener).not.toHaveBeenCalled();
+        });
     });
 });

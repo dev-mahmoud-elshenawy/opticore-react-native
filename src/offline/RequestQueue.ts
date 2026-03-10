@@ -182,7 +182,7 @@ export class RequestQueue {
                 this.logger.debug('[RequestQueue] No stored queue found');
             }
         } catch (error) {
-            this.logger.error('[RequestQueue] Failed to persist queue', error as Error);
+            this.logger.error('[RequestQueue] Failed to restore queue', error as Error);
             this.items = [];
         }
     }

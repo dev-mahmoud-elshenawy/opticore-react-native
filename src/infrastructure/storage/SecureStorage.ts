@@ -1,5 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
+import { Logger } from '../logger/Logger';
 import { IStorage } from './interfaces/IStorage';
 
 /**
@@ -28,8 +29,8 @@ export class SecureStorage implements IStorage {
         const keys = JSON.parse(keysJson) as string[];
         this.keys = new Set(keys);
       }
-    } catch {
-      // If loading fails, start with empty set — storage remains usable
+    } catch (error) {
+      Logger.getInstance().warn('[SecureStorage] Failed to load keys list, starting fresh', error as Error);
       this.keys = new Set();
     }
   }
@@ -39,8 +40,7 @@ export class SecureStorage implements IStorage {
       const keysJson = JSON.stringify(Array.from(this.keys));
       await SecureStore.setItemAsync(SecureStorage.KEYS_STORAGE_KEY, keysJson);
     } catch (error) {
-      // Log but don't throw - key tracking is best-effort
-      console.warn('[SecureStorage] Failed to save keys list:', error);
+      Logger.getInstance().warn('[SecureStorage] Failed to persist keys list', error as Error);
     }
   }
 
@@ -48,8 +48,18 @@ export class SecureStorage implements IStorage {
     await this.readyPromise;
     try {
       const value = await SecureStore.getItemAsync(key);
-      return value ? (JSON.parse(value) as T) : null;
-    } catch {
+      if (value === null) return null;
+      try {
+        return JSON.parse(value) as T;
+      } catch (parseError) {
+        Logger.getInstance().warn(
+          `[SecureStorage] Failed to parse value for key "${key}", returning null`,
+          parseError as Error,
+        );
+        return null;
+      }
+    } catch (error) {
+      Logger.getInstance().error(`[SecureStorage] Failed to read key "${key}"`, error as Error);
       return null;
     }
   }
@@ -57,7 +67,6 @@ export class SecureStorage implements IStorage {
   async set<T>(key: string, value: T): Promise<void> {
     await this.readyPromise;
     try {
-      // Validate data before storing
       if (value === undefined || value === null) {
         throw new Error(`[SecureStorage] Cannot store undefined or null value for key: ${key}`);
       }
@@ -65,10 +74,10 @@ export class SecureStorage implements IStorage {
       const stringValue = JSON.stringify(value);
       await SecureStore.setItemAsync(key, stringValue);
 
-      // Track key for clear() operation
       this.keys.add(key);
       await this.saveKeys();
     } catch (error) {
+      Logger.getInstance().error(`[SecureStorage] Failed to write key "${key}"`, error as Error);
       throw error;
     }
   }
@@ -78,10 +87,10 @@ export class SecureStorage implements IStorage {
     try {
       await SecureStore.deleteItemAsync(key);
 
-      // Remove from tracked keys
       this.keys.delete(key);
       await this.saveKeys();
     } catch (error) {
+      Logger.getInstance().error(`[SecureStorage] Failed to remove key "${key}"`, error as Error);
       throw error;
     }
   }
@@ -89,20 +98,21 @@ export class SecureStorage implements IStorage {
   async clear(): Promise<void> {
     await this.readyPromise;
     try {
-      // Delete all tracked keys from SecureStore
+      const logger = Logger.getInstance();
+
       const deletePromises = Array.from(this.keys).map((key) =>
-        SecureStore.deleteItemAsync(key).catch(() => {
-          // Ignore individual key deletion errors
+        SecureStore.deleteItemAsync(key).catch((error) => {
+          logger.warn(`[SecureStorage] Failed to delete key "${key}" during clear`, error as Error);
         })
       );
       await Promise.all(deletePromises);
       this.keys.clear();
 
-      // Clear the keys tracking storage itself
-      await SecureStore.deleteItemAsync(SecureStorage.KEYS_STORAGE_KEY).catch(() => {
-        // Ignore error
+      await SecureStore.deleteItemAsync(SecureStorage.KEYS_STORAGE_KEY).catch((error) => {
+        logger.warn('[SecureStorage] Failed to delete keys-tracking entry during clear', error as Error);
       });
     } catch (error) {
+      Logger.getInstance().error('[SecureStorage] Failed to clear storage', error as Error);
       throw error;
     }
   }

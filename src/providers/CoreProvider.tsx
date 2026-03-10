@@ -20,9 +20,9 @@ export interface CoreProviderProps {
  * Combines all opticore infrastructure providers into a single wrapper component
  * for simplified app setup. Includes:
  * - QueryProvider: React Query configuration and caching
- * - Connectivity monitoring (future)
- * - Lifecycle management (future)
- * - State observers (future)
+ * - ConnectivityManager: Network state monitoring (singleton, opt-in)
+ * - LifecycleManager: App state lifecycle tracking (singleton, opt-in)
+ * - DevTools: Zustand dev-mode integrations (dev only, opt-in)
  *
  * @example
  * ```tsx
@@ -79,15 +79,12 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({ children, config = {
   }, [enableLifecycle]);
 
   // Initialize state observers
+  // Zustand DevTools are enabled by default in dev mode via store middleware.
+  // No additional setup needed here — this effect is reserved for future
+  // dev-only integrations (e.g. custom state inspector, performance profiler).
   React.useEffect(() => {
     if (!(__DEV__ && enableDevTools)) return;
-
-    // TODO: Initialize Zustand DevTools when state management is integrated
-    // For now, DevTools are enabled by default in Zustand stores
-
-    return () => {
-      // Cleanup: disconnect DevTools when implemented
-    };
+    return undefined;
   }, [enableDevTools]);
 
   // Wrap children with QueryProvider

@@ -17,6 +17,7 @@ describe('useRouteHelper', () => {
   const mockBack = jest.fn();
   const mockCanGoBack = jest.fn();
   const mockDismissAll = jest.fn();
+  const mockSetParams = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -26,6 +27,7 @@ describe('useRouteHelper', () => {
       back: mockBack,
       canGoBack: mockCanGoBack,
       dismissAll: mockDismissAll,
+      setParams: mockSetParams,
     });
   });
 
@@ -84,6 +86,24 @@ describe('useRouteHelper', () => {
       mockCanGoBack.mockReturnValue(false);
       const { result } = await renderHookCompat(() => useRouteHelper());
       result.current.back();
+      expect(mockBack).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('backWithData', () => {
+    it('should set params and go back when stack has history', async () => {
+      mockCanGoBack.mockReturnValue(true);
+      const { result } = await renderHookCompat(() => useRouteHelper());
+      result.current.backWithData({ selected: 'item-42', confirmed: 'true' });
+      expect(mockSetParams).toHaveBeenCalledWith({ selected: 'item-42', confirmed: 'true' });
+      expect(mockBack).toHaveBeenCalledTimes(1);
+    });
+
+    it('should be no-op when at root (no history)', async () => {
+      mockCanGoBack.mockReturnValue(false);
+      const { result } = await renderHookCompat(() => useRouteHelper());
+      result.current.backWithData({ selected: 'item-42' });
+      expect(mockSetParams).not.toHaveBeenCalled();
       expect(mockBack).not.toHaveBeenCalled();
     });
   });

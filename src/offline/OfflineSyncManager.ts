@@ -27,7 +27,9 @@ export class OfflineSyncManager {
     private logger: Logger;
     private config: OfflineSyncConfig;
     private isPaused: boolean = false;
+    private listeners: SyncListener[] = [];
     private disposeConnectivityListener?: () => void;
+    private disposeSyncEngineListener?: () => void;
     private readyPromise: Promise<void>;
     private readyResolver!: () => void;
 
@@ -191,7 +193,10 @@ export class OfflineSyncManager {
                     if (itemResult.success) {
                         this.queue.remove(itemResult.requestId);
                     } else if (itemResult.retryable === false) {
-                        // Future: Remove non-retryable failures
+                        this.queue.remove(itemResult.requestId);
+                        this.logger.warn(
+                            `[OfflineSyncManager] Removed non-retryable request "${itemResult.requestId}" from queue`,
+                        );
                     }
                 });
             }
@@ -204,24 +209,28 @@ export class OfflineSyncManager {
         }
     }
 
-    // Helper to handle queue cleanup based on sync events
-    // We need to listen to SyncEngine events to remove items from queue
-    private setupSyncListeners() {
-        this.syncEngine.addListener((event: SyncEvent) => {
+    /**
+     * Listen to SyncEngine events for queue cleanup and event propagation.
+     */
+    private setupSyncListeners(): void {
+        this.disposeSyncEngineListener = this.syncEngine.addListener((event: SyncEvent) => {
             if (event.type === 'request_success') {
                 this.queue.remove(event.requestId);
             }
-            // We can also handle 'request_failed' if it's non-retryable to remove it?
-            // For now, keep it in queue if failed? Or move to a dead-letter queue?
-            // If SyncEngine determines it's non-retryable, it might still return it as failed.
-            // The current SyncEngine implementation distinguishes retryable vs not in the error, but
-            // `request_failed` event has the error. 
 
             if (event.type === 'request_failed') {
-                // Future: Handle specific failure types (e.g. move to dead-letter queue)
+                // Remove non-retryable failures — they will never succeed on retry
+                const isRetryable = this.syncEngine.isRetryable(event.error);
+                if (!isRetryable) {
+                    this.queue.remove(event.requestId);
+                    this.logger.warn(
+                        `[OfflineSyncManager] Removed non-retryable request "${event.requestId}" from queue`,
+                        event.error,
+                    );
+                }
             }
 
-            // Propagate events to our listeners
+            // Propagate all SyncEngine events to manager listeners
             this.emit(event);
         });
     }
@@ -241,23 +250,36 @@ export class OfflineSyncManager {
         this.isPaused = false;
         this.logger.info('[OfflineSyncManager] Sync resumed');
         if (this.connectivity.isConnected) {
-            this.sync().catch(() => { });
+            this.sync().catch((err) => {
+                this.logger.error('[OfflineSyncManager] Sync after resume failed', err);
+            });
         }
     }
 
     /**
-     * Add a listener for sync events
+     * Add a listener for sync events.
+     * Receives all SyncEngine events (sync_start, sync_complete, request_success, etc.)
+     * propagated through the manager.
+     * @returns Unsubscribe function
      */
     public addListener(listener: SyncListener): () => void {
-        return this.syncEngine.addListener(listener);
+        this.listeners.push(listener);
+        return () => {
+            this.listeners = this.listeners.filter(l => l !== listener);
+        };
     }
 
-    // Wrapper for emit to satisfy private usage or simple event bubbling if we had our own listeners
-    // But we delegate to SyncEngine's listener system mostly, OR we maintain our own.
-    // Since we expose `addListener` via SyncEngine, we don't need a separate `emit` here unless we have manager-specific events.
-    private emit(_event: SyncEvent) {
-        // If we had a separate listener set for Manager, we'd emit here. 
-        // For now, we reuse SyncEngine's system or just rely on it.
+    /**
+     * Emit a sync event to all manager-level listeners.
+     */
+    private emit(event: SyncEvent): void {
+        for (const listener of this.listeners) {
+            try {
+                listener(event);
+            } catch (error) {
+                this.logger.error('[OfflineSyncManager] Error in event listener', error as Error);
+            }
+        }
     }
 
     /**
@@ -283,13 +305,24 @@ export class OfflineSyncManager {
     }
 
     /**
-     * Dispose the manager
+     * Dispose the manager and release all resources.
+     * Removes connectivity and sync engine listeners, clears the queue, and resets state.
      */
     public dispose(): void {
         if (this.disposeConnectivityListener) {
             this.disposeConnectivityListener();
+            this.disposeConnectivityListener = undefined;
         }
+        if (this.disposeSyncEngineListener) {
+            this.disposeSyncEngineListener();
+            this.disposeSyncEngineListener = undefined;
+        }
+
+        // Notify listeners before clearing them
+        this.emit({ type: 'disposed' });
+        this.listeners = [];
+        this.queue.clear();
         this.isPaused = false;
-        // Potentially cleanup queue or sync engine if they had resources
+        this.logger.info('[OfflineSyncManager] Disposed');
     }
 }

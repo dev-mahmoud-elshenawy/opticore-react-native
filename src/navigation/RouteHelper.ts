@@ -14,12 +14,13 @@ export type NavigationParams = Record<string, string | number>;
  *
  * @example
  * ```typescript
- * const { push, replace, back, reset } = useRouteHelper();
+ * const { push, replace, back, backWithData, reset } = useRouteHelper();
  *
  * push('/home');
  * push('/user/profile', { id: '123' });
  * replace('/login');
  * back();
+ * backWithData({ selected: 'item-42' });
  * reset('/home');
  * ```
  */
@@ -63,6 +64,33 @@ export const useRouteHelper = () => {
   };
 
   /**
+   * Go back one step and pass data to the previous screen.
+   *
+   * Sets navigation params before going back so the previous screen can read them
+   * via `useLocalSearchParams()`.
+   *
+   * Safe — no-op if already at the root screen.
+   *
+   * @param data - Key-value pairs to pass to the previous screen
+   *
+   * @example
+   * ```typescript
+   * // Screen B: go back with result
+   * backWithData({ selected: 'item-42', confirmed: 'true' });
+   *
+   * // Screen A: read the returned data
+   * const params = useLocalSearchParams();
+   * console.log(params.selected); // 'item-42'
+   * ```
+   */
+  const backWithData = (data: NavigationParams): void => {
+    if (router.canGoBack()) {
+      (router as unknown as { setParams: (params: Record<string, string>) => void }).setParams(data as Record<string, string>);
+      router.back();
+    }
+  };
+
+  /**
    * Clear the entire navigation stack and navigate to a route.
    * Uses dismissAll() to clear all screens, then replace() to set the new root.
    * @param route - The route path string
@@ -75,5 +103,5 @@ export const useRouteHelper = () => {
     replace(route, params);
   };
 
-  return { push, replace, back, reset };
+  return { push, replace, back, backWithData, reset };
 };

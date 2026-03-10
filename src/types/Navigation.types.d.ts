@@ -8,20 +8,28 @@
  */
 
 /**
- * Route parameter types
- * Define your route parameters here for type safety
+ * Route parameter types.
+ *
+ * This is an open base interface that consuming apps extend
+ * via declaration merging to get type-safe route params for their own routes.
+ *
+ * OptiCore does NOT define any routes — this is a reusable infrastructure library.
+ * Apps define their own route map by merging into this interface.
+ *
+ * @example
+ * ```typescript
+ * // In your app's types file (e.g. src/types/routes.d.ts):
+ * declare module 'opticore-react-native' {
+ *   interface RouteParams {
+ *     '/dashboard': undefined;
+ *     '/profile/[id]': { id: string };
+ *     '/search': { query: string; category?: string };
+ *   }
+ * }
+ * ```
  */
 export interface RouteParams {
-  /** User profile route */
-  'user/[id]': { id: string };
-  /** Product details route */
-  'product/[id]': { id: string };
-  /** Search results route */
-  search: { query: string; category?: string };
-  /** Settings route */
-  settings: undefined;
-  /** Home route */
-  index: undefined;
+  [route: string]: Record<string, string | number> | undefined;
 }
 
 /**

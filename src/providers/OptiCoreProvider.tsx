@@ -53,10 +53,6 @@ export const OptiCoreProvider: React.FC<OptiCoreProviderProps> = ({
         if (!enableConnectivity) return;
         const connectivity = ConnectivityManager.getInstance();
         return () => {
-            // We don't necessarily want to dispose the singleton here if it's shared,
-            // but following CoreProvider pattern, we clean up listeners if any.
-            // However, ConnectivityManager.dispose() removes listeners.
-            // For now, we assume it's safe to dispose as it re-initializes on getInstance()
             connectivity.dispose();
         };
     }, [enableConnectivity]);
@@ -72,14 +68,8 @@ export const OptiCoreProvider: React.FC<OptiCoreProviderProps> = ({
 
     return (
         <ConfigProvider config={config}>
-            <QueryProvider config={config.api?.timeout ? { defaultOptions: { queries: { retry: config.offline?.maxRetries } } } : undefined}>
-                <ThemeProvider
-                    defaultMode={config.theme?.defaultMode}
-                // ThemeManager is configured via CoreSetup.init(), but we can pass defaultMode to Provider too
-                // actually ThemeProvider calls configure() internally if defaultMode props is passed,
-                // which might be redundant if CoreSetup already did it.
-                // But for safety and React-way, passing it here ensures Provider syncs with config.
-                >
+            <QueryProvider>
+                <ThemeProvider defaultMode={config.theme?.defaultMode}>
                     {children}
                 </ThemeProvider>
             </QueryProvider>

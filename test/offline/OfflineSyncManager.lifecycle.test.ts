@@ -48,6 +48,7 @@ describe('OfflineSyncManager Listener Lifecycle', () => {
             restore: jest.fn().mockResolvedValue(undefined),
             size: jest.fn().mockReturnValue(1), // Assume items pending
             getAll: jest.fn().mockReturnValue([{ id: '1' }]),
+            clear: jest.fn(),
         }));
         (ConnectivityManager.getInstance as jest.Mock).mockReturnValue(mockConnectivity);
         (ApiClient.getInstance as jest.Mock).mockReturnValue({});

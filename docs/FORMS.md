@@ -1,138 +1,266 @@
-# 📋 Forms Infrastructure
+# Forms Infrastructure
 
-OptiCore's form layer wraps **React Hook Form** + **Zod** with built-in input masks, i18n error messages, and async validation — out of the box.
+React Hook Form + Zod + input masks + field-level validation. Everything you need for production forms.
 
 ---
 
-## Quick Start
+## Setup
+
+No extra setup required. Import directly:
+
+```typescript
+import { useFormState } from 'opticore-react-native/forms';
+import { z } from 'zod';
+```
+
+---
+
+## useFormState
+
+The primary form hook. Wraps React Hook Form with schema-based validation.
+
+```typescript
+function useFormState<T extends object>(config: FormConfig<T>): FormStateReturn<T>
+```
+
+### FormConfig
+
+```typescript
+interface FormConfig<T> {
+  schema?: ZodSchema<T>;              // Zod schema for validation
+  defaultValues?: Partial<T>;         // Initial field values
+  mode?: 'onSubmit' | 'onBlur' | 'onChange' | 'onTouched' | 'all';  // default: 'onSubmit'
+  reValidateMode?: 'onSubmit' | 'onBlur' | 'onChange';               // default: 'onChange'
+}
+```
+
+### FormStateReturn
+
+```typescript
+interface FormStateReturn<T> {
+  form: UseFormReturn<T>;      // Full React Hook Form instance
+  errors: FieldErrors<T>;     // Typed validation errors
+  isValid: boolean;           // All fields pass validation
+  isSubmitting: boolean;      // True during async onSubmit
+  isDirty: boolean;           // At least one field changed
+  handleSubmit: (fn: (data: T) => Promise<void> | void) => () => void;
+  reset: (values?: Partial<T>) => void;
+  setValue: (name: keyof T, value: unknown) => void;
+  getValue: (name: keyof T) => unknown;
+  watch: (name?: keyof T) => unknown;
+  clearErrors: (name?: keyof T | Array<keyof T>) => void;
+}
+```
+
+---
+
+## Complete Example
 
 ```typescript
 import { useFormState } from 'opticore-react-native/forms';
 import { z } from 'zod';
 
 const schema = z.object({
-  email: z.string().email('Invalid email'),
-  phone: z.string().min(10, 'Phone too short'),
-  age: z.number().min(18, 'Must be 18+'),
+  email: z.string().email('Enter a valid email'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  phone: z.string().min(10, 'Enter a valid phone number'),
+  age: z.number().min(18, 'Must be 18 or older'),
 });
 
-type FormData = z.infer<typeof schema>;
+type LoginForm = z.infer<typeof schema>;
 
-function SignUpForm() {
-  const { errors, handleSubmit, setValue, watch, isSubmitting, isValid } =
-    useFormState<FormData>({
-      schema,
-      defaultValues: { email: '', phone: '', age: 18 },
-      mode: 'onChange',
-    });
+function LoginScreen() {
+  const {
+    errors,
+    isValid,
+    isSubmitting,
+    handleSubmit,
+    setValue,
+    watch,
+  } = useFormState<LoginForm>({
+    schema,
+    defaultValues: { email: '', password: '', phone: '', age: 18 },
+    mode: 'onChange',
+  });
 
-  const onSubmit = async (data: FormData) => {
-    await api.post('/register', data);
+  const onSubmit = async (data: LoginForm) => {
+    await ApiClient.getInstance().post('/auth/login', data);
   };
 
   return (
-    <View>
+    <ScrollView>
       <TextInput
-        value={watch('email')}
+        value={String(watch('email') ?? '')}
         onChangeText={(v) => setValue('email', v)}
         placeholder="Email"
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
       {errors.email && <Text style={{ color: 'red' }}>{errors.email.message}</Text>}
 
+      <TextInput
+        value={String(watch('password') ?? '')}
+        onChangeText={(v) => setValue('password', v)}
+        placeholder="Password"
+        secureTextEntry
+      />
+      {errors.password && <Text style={{ color: 'red' }}>{errors.password.message}</Text>}
+
       <Button
+        title={isSubmitting ? 'Signing in...' : 'Sign In'}
         onPress={handleSubmit(onSubmit)}
-        title={isSubmitting ? 'Submitting...' : 'Sign Up'}
         disabled={!isValid || isSubmitting}
       />
-    </View>
+    </ScrollView>
   );
 }
-```
-
----
-
-## useFormState API
-
-```typescript
-const {
-  form,           // React Hook Form instance (full access)
-  errors,         // Typed field errors
-  isSubmitting,   // True during async onSubmit
-  isValid,        // True when all fields pass validation
-  isDirty,        // True when any field has changed
-  setValue,       // Set a field value programmatically
-  getValue,       // Get current field value
-  watch,          // Watch field for changes
-  reset,          // Reset form to defaults
-  handleSubmit,   // Wrap submit handler with validation
-  clearErrors,    // Clear all or specific errors
-} = useFormState<T>({ schema, defaultValues, mode });
 ```
 
 ---
 
 ## Input Masks
 
+Pure functions that format input as the user types.
+
 ```typescript
 import { phoneMask, creditCardMask, currencyMask } from 'opticore-react-native/forms';
+```
 
-// Phone mask: (555) 123-4567
-<TextInput
-  value={phoneMask(watch('phone'))}
-  onChangeText={(v) => setValue('phone', phoneMask(v))}
-/>
+### phoneMask
 
-// Credit card: 4111 1111 1111 1111
-<TextInput
-  value={creditCardMask(watch('card'))}
-  onChangeText={(v) => setValue('card', creditCardMask(v))}
-  keyboardType="numeric"
-/>
+```typescript
+phoneMask.apply('5551234567')   // '(555) 123-4567'
+phoneMask.apply('555123')       // '(555) 123'
+```
 
-// Currency: $1,234.56
+```typescript
 <TextInput
-  value={currencyMask(watch('amount'))}
-  onChangeText={(v) => setValue('amount', currencyMask(v))}
+  value={phoneMask.apply(String(watch('phone') ?? ''))}
+  onChangeText={(v) => setValue('phone', v.replace(/\D/g, ''))} // store raw digits
+  keyboardType="phone-pad"
+  placeholder="(555) 123-4567"
 />
 ```
 
-### Available Masks
+### creditCardMask
 
-| Mask | Example Output |
-|---|---|
-| `phoneMask` | `(555) 123-4567` |
-| `creditCardMask` | `4111 1111 1111 1111` |
-| `currencyMask` | `$1,234.56` |
-| `dateMask` | `12/31/2024` |
-| `cpfMask` | `123.456.789-00` |
-| `cnpjMask` | `12.345.678/0001-90` |
-| `zipCodeMask` | `12345-678` |
+```typescript
+creditCardMask.apply('4111111111111111')  // '4111 1111 1111 1111'
+```
+
+```typescript
+<TextInput
+  value={creditCardMask.apply(String(watch('card') ?? ''))}
+  onChangeText={(v) => setValue('card', v.replace(/\D/g, ''))}
+  keyboardType="numeric"
+  maxLength={19}
+  placeholder="4111 1111 1111 1111"
+/>
+```
+
+### currencyMask
+
+```typescript
+currencyMask.apply('1234.56')   // '$1,234.56'
+currencyMask.apply('1000')      // '$1,000.00'
+```
+
+```typescript
+<TextInput
+  value={currencyMask.apply(String(watch('amount') ?? ''))}
+  onChangeText={(v) => setValue('amount', parseFloat(v.replace(/[^0-9.]/g, '')))}
+  keyboardType="numeric"
+  placeholder="$0.00"
+/>
+```
 
 ---
 
-## Field-Level Validation Hook
+## useFieldValidation
+
+Standalone per-field validation with optional debounce. Use for async validation or inline field feedback.
 
 ```typescript
-import { useFieldValidation } from 'opticore-react-native/hooks';
+function useFieldValidation<T>(config: FieldValidationConfig<T>): FieldValidationReturn
+```
 
+```typescript
+interface FieldValidationConfig<T> {
+  schema: ZodSchema<T>;
+  debounceMs?: number;        // default: 0 (immediate)
+}
+
+interface FieldValidationReturn {
+  error: string | undefined;
+  isValid: boolean;
+  isValidating: boolean;
+  validate: (value: unknown) => Promise<boolean>;
+}
+```
+
+```typescript
 function EmailField() {
-  const { value, error, validate, isValid, onChange } = useFieldValidation({
-    schema: z.string().email(),
-    debounce: 300,
+  const [value, setValue] = useState('');
+  const { error, isValid, isValidating, validate } = useFieldValidation({
+    schema: z.string().email('Invalid email'),
+    debounceMs: 300,
   });
 
   return (
     <View>
       <TextInput
         value={value}
-        onChangeText={onChange}
-        style={{ borderColor: error ? 'red' : isValid ? 'green' : 'gray' }}
+        onChangeText={async (v) => {
+          setValue(v);
+          await validate(v);
+        }}
+        style={{
+          borderColor: error ? '#EF4444' : isValid ? '#10B981' : '#D1D5DB',
+          borderWidth: 1,
+        }}
       />
-      {error && <Text>{error}</Text>}
+      {isValidating && <ActivityIndicator size="small" />}
+      {error && <Text style={{ color: '#EF4444' }}>{error}</Text>}
+      {isValid && !isValidating && <Text style={{ color: '#10B981' }}>✓</Text>}
     </View>
   );
 }
 ```
+
+---
+
+## Built-in Validators
+
+Pre-built Zod validators for common fields:
+
+```typescript
+import { validators } from 'opticore-react-native/forms';
+```
+
+```typescript
+const schema = z.object({
+  email: validators.email('Please enter a valid email'),
+  phone: validators.phone({ format: 'US' }),
+  password: validators.password({ minLength: 8, requireUppercase: true }),
+  website: validators.common.url('Enter a valid URL'),
+  name: validators.common.required('Name is required')
+    .pipe(validators.common.minLength(2, 'Name too short'))
+    .pipe(validators.common.maxLength(50, 'Name too long')),
+});
+```
+
+### Validators Reference
+
+| Validator | Options | Description |
+|---|---|---|
+| `validators.email(msg?)` | — | Valid email format |
+| `validators.phone(opts?)` | `format: 'US' \| 'International'` | Phone number |
+| `validators.password(opts?)` | `minLength, requireUppercase, requireNumber, requireSpecial` | Password strength |
+| `validators.common.required(msg?)` | — | Non-empty string |
+| `validators.common.minLength(n, msg?)` | — | Minimum length |
+| `validators.common.maxLength(n, msg?)` | — | Maximum length |
+| `validators.common.matches(regex, msg?)` | — | Regex pattern |
+| `validators.common.url(msg?)` | — | Valid URL |
 
 ---
 
@@ -140,33 +268,74 @@ function EmailField() {
 
 ```typescript
 const schema = z.object({
-  username: z.string().min(3).refine(
-    async (val) => {
-      const { available } = await api.get(`/check-username/${val}`);
-      return available;
-    },
-    { message: 'Username already taken' }
-  ),
+  username: z.string()
+    .min(3, 'Too short')
+    .refine(
+      async (val) => {
+        const { data } = await ApiClient.getInstance().get(`/check-username/${val}`);
+        return data.available;
+      },
+      { message: 'Username already taken' }
+    ),
 });
+```
+
+---
+
+## Multi-Step Form
+
+```typescript
+function SignUpFlow() {
+  const [step, setStep] = useState<'account' | 'profile' | 'payment'>('account');
+  const [formData, setFormData] = useState({});
+
+  const accountForm = useFormState({
+    schema: accountSchema,
+    defaultValues: { email: '', password: '' },
+    mode: 'onChange',
+  });
+
+  const profileForm = useFormState({
+    schema: profileSchema,
+    defaultValues: { name: '', phone: '' },
+    mode: 'onChange',
+  });
+
+  const onAccountSubmit = accountForm.handleSubmit(async (data) => {
+    setFormData(prev => ({ ...prev, ...data }));
+    setStep('profile');
+  });
+
+  // ...
+}
 ```
 
 ---
 
 ## Error i18n
 
-Validation error messages are plain strings — pass them through your i18n layer:
+Validation errors are plain strings — pass them through your i18n system:
 
 ```typescript
-const schema = z.object({
-  email: z.string().email(t('validation.email')),
-  password: z.string().min(8, t('validation.passwordMin', { min: 8 })),
-});
+import { useTranslation } from 'react-i18next';
+
+function useLoginForm() {
+  const { t } = useTranslation();
+
+  return useFormState({
+    schema: z.object({
+      email: z.string().email(t('validation.email')),
+      password: z.string().min(8, t('validation.passwordMin', { min: 8 })),
+    }),
+    defaultValues: { email: '', password: '' },
+  });
+}
 ```
 
 ---
 
-## Notes
+## See Also
 
-- Built on React Hook Form `^7.54` + Zod `^3.24` — both fully supported
-- All masks are pure functions — use them independently of `useFormState`
-- `useFormState` exposes the full RHF `form` instance for advanced use cases
+- [Hooks → useAsyncState](./api/HOOKS.md) — For non-form async operations
+- [Configuration → forms](./CONFIGURATION.md#forms--optional) — Default form settings
+- [Zod Documentation](https://zod.dev) — Full Zod schema reference

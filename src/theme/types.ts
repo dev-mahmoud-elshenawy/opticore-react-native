@@ -1,6 +1,5 @@
 /**
  * Theme Infrastructure Types
- * Spec 017
  */
 
 export type ThemeMode = 'light' | 'dark' | 'system';

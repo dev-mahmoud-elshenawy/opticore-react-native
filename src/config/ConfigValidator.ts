@@ -1,42 +1,67 @@
 import { CoreConfig } from './types';
+import { ConfigValidationError, ValidationResult, ValidationIssue } from './validation/types';
+import {
+  validateApiConfig,
+  validateLoggerConfig,
+  validateResponsiveConfig,
+  validateOfflineConfig,
+  validateThemeConfig,
+  validateFormsConfig,
+} from './validation/validators';
 
+export { ConfigValidationError };
+export type { ValidationIssue, ValidationResult };
+
+/**
+ * Runtime validator for {@link CoreConfig}.
+ *
+ * - `validate(config)` — returns a {@link ValidationResult} with all issues.
+ * - `validateOrThrow(config)` — throws {@link ConfigValidationError} on failure.
+ */
 export class ConfigValidator {
   /**
-   * Validate the provided configuration object.
-   * Throws explicit errors if configuration is invalid.
-   * @param config The configuration to validate
+   * Validate config and return all issues at once.
    */
-  public static validate(config: CoreConfig): void {
+  public static validate(config: CoreConfig): ValidationResult {
+    const errors: ValidationIssue[] = [];
+    const warnings: ValidationIssue[] = [];
+
     if (!config) {
-      throw new Error('Configuration object is required');
+      errors.push({ path: 'config', message: 'Configuration object is required' });
+      return { valid: false, errors, warnings };
     }
 
-    // Validate API Config
-    if (!config.api) {
-      throw new Error('API configuration is required');
-    }
+    // Required section
+    validateApiConfig(config.api, errors, warnings);
 
-    if (!config.api.baseURL) {
-      throw new Error('API baseURL is required');
-    }
-
-    if (!this.isValidUrl(config.api.baseURL)) {
-      throw new Error(`Invalid API baseURL: ${config.api.baseURL}`);
-    }
-
-    // Validate Logger Config (optional)
+    // Optional sections
     if (config.logger) {
-      // Level is optional but if present typically valid by type system
-      // We could runtime validate enum values if needed but TypeScript handles most
+      validateLoggerConfig(config.logger, errors, warnings);
     }
+    if (config.responsive) {
+      validateResponsiveConfig(config.responsive, errors, warnings);
+    }
+    if (config.offline) {
+      validateOfflineConfig(config.offline, errors, warnings);
+    }
+    if (config.theme) {
+      validateThemeConfig(config.theme, errors, warnings);
+    }
+    if (config.forms) {
+      validateFormsConfig(config.forms, errors, warnings);
+    }
+
+    return { valid: errors.length === 0, errors, warnings };
   }
 
-  private static isValidUrl(url: string): boolean {
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
+  /**
+   * Validate config and throw if invalid.
+   * Warnings are accessible on the thrown error's `result` property.
+   */
+  public static validateOrThrow(config: CoreConfig): void {
+    const result = this.validate(config);
+    if (!result.valid) {
+      throw new ConfigValidationError(result);
     }
   }
 }

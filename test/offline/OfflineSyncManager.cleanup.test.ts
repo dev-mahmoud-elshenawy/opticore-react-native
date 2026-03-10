@@ -100,7 +100,7 @@ describe('OfflineSyncManager Cleanup', () => {
         expect(mockQueue.remove).not.toHaveBeenCalledWith('2');
     });
 
-    it('should handle non-retryable failures (optional - currently verifying they stay or are removed based on implementation)', async () => {
+    it('should remove non-retryable failures from queue', async () => {
         // Setup queue with items
         const items = [{ id: '3' }];
         mockQueue.getAll.mockReturnValue(items as any);
@@ -121,10 +121,7 @@ describe('OfflineSyncManager Cleanup', () => {
         // Trigger sync
         await manager.sync();
 
-        // Verify removal logic for non-retryable
-        // Currently implementation does NOT remove non-retryable explicitely in the `else if` block I wrote?
-        // Let's check the code: "} else if (itemResult.retryable === false) { }" - empty block.
-        // So it should NOT be removed.
-        expect(mockQueue.remove).not.toHaveBeenCalledWith('3');
+        // Non-retryable failures (e.g. 4xx) are removed — they will never succeed on retry
+        expect(mockQueue.remove).toHaveBeenCalledWith('3');
     });
 });

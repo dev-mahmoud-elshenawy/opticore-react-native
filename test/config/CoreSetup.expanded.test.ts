@@ -31,7 +31,15 @@ describe('CoreSetup Expanded', () => {
     });
 
     it('should configure ThemeManager when theme config is provided', async () => {
-        const customTheme: any = { name: 'custom', colors: {} };
+        const customTheme: any = {
+            name: 'custom',
+            mode: 'dark',
+            colors: {},
+            spacing: {},
+            typography: {},
+            borderRadius: {},
+            shadows: {},
+        };
         await CoreSetup.getInstance().init({
             api: { baseURL: 'https://api.example.com' },
             theme: {

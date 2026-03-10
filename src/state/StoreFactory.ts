@@ -74,7 +74,10 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
       status: toIdle<T[]>(),
 
       fetchAll: async () => {
-        if (!config.api.fetchAll) return;
+        if (!config.api.fetchAll) {
+          if (__DEV__) console.warn(`[CrudStore:${config.name}] fetchAll called but api.fetchAll is not defined`);
+          return;
+        }
 
         set((state: any) => {
           state.status = toLoading(state.status);
@@ -97,11 +100,11 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
       },
 
       fetchById: async (id: string) => {
-        if (!config.api.fetchById) return;
+        if (!config.api.fetchById) {
+          if (__DEV__) console.warn(`[CrudStore:${config.name}] fetchById called but api.fetchById is not defined`);
+          return;
+        }
 
-        // We might want separate status for detailed view vs list view
-        // For simplicity reusing global status or we could add 'selectedItemStatus'
-        // Reuse global for MVP
         set((state: any) => {
           state.status = toLoading(state.status);
         });
@@ -110,8 +113,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
           const data = await config.api.fetchById(id);
           set((state: any) => {
             state.selectedItem = data;
-            state.status = toSuccess(data); // Note: type mismatch potential if T vs T[]
-            // But AsyncState is generics. Here it's AsyncState<T[] | T>
+            state.status = toSuccess(data);
           });
         } catch (error) {
           set((state: any) => {
@@ -124,7 +126,10 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
       },
 
       create: async (data: Partial<T>) => {
-        if (!config.api.create) return;
+        if (!config.api.create) {
+          if (__DEV__) console.warn(`[CrudStore:${config.name}] create called but api.create is not defined`);
+          return;
+        }
 
         set((state: any) => {
           state.status = toLoading(state.status);
@@ -147,7 +152,10 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
       },
 
       update: async (id: string, data: Partial<T>) => {
-        if (!config.api.update) return;
+        if (!config.api.update) {
+          if (__DEV__) console.warn(`[CrudStore:${config.name}] update called but api.update is not defined`);
+          return;
+        }
 
         set((state: any) => {
           state.status = toLoading(state.status);
@@ -176,7 +184,10 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
       },
 
       delete: async (id: string) => {
-        if (!config.api.delete) return;
+        if (!config.api.delete) {
+          if (__DEV__) console.warn(`[CrudStore:${config.name}] delete called but api.delete is not defined`);
+          return;
+        }
 
         set((state: any) => {
           state.status = toLoading(state.status);

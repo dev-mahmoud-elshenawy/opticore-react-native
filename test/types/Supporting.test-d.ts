@@ -25,12 +25,9 @@ expectType<ErrorSeverity>(severity);
 const action: RecoveryAction = 'fallback';
 expectType<RecoveryAction>(action);
 
-// Test RouteParams (mapped type with specific routes)
-type UserRouteParams = RouteParams['user/[id]'];
-expectType<{ id: string }>({ id: '123' } as UserRouteParams);
-
-type SearchParams = RouteParams['search'];
-expectType<{ query: string; category?: string }>({ query: 'test' } as SearchParams);
+// Test RouteParams (open index signature — apps extend via declaration merging)
+type AnyRouteParams = RouteParams[string];
+expectType<Record<string, string | number> | undefined>(undefined as AnyRouteParams);
 
 // Test NavigationOptions
 const navOptions: NavigationOptions = {

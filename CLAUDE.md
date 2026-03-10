@@ -2,10 +2,10 @@
 
 **Package**: `opticore-react-native`
 **Version**: 1.0.0
-**Last Updated**: 2026-02-12 (Spec 021: ApiClient Extensibility - COMPLETED)
+**Last Updated**: 2026-03-10 (Spec 026: Test Stabilization - COMPLETED)
 **Target Platforms**: iOS & Android ONLY
 
-> **📖 Spec Kit Reference**: See [speckit_guide.md](speckit_guide.md) for complete specification-driven development guide
+> **📖 Spec Kit Reference**: See [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete specification-driven development guide
 
 ---
 
@@ -60,7 +60,7 @@
 
 ## Completed Specifications
 
-> **Note**: To keep this document concise, completed specifications have been moved to [docs/CompletedSpecs.md](docs/CompletedSpecs.md).
+> **Note**: To keep this document concise, completed specifications have been moved to [docs/COMPLETED_SPECS.md](docs/COMPLETED_SPECS.md).
 
 ---
 
@@ -127,7 +127,7 @@ import { capitalize, formatPhone } from 'opticore-react-native/utils/string';
 **CRITICAL**: Before ANY development work, read these foundational documents:
 
 1. **[.specify/memory/constitution.md](.specify/memory/constitution.md)** - Project constitution
-2. **[speckit_guide.md](speckit_guide.md)** - Complete Spec Kit guide (AI & human reference)
+2. **[SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md)** - Complete Spec Kit guide (AI & human reference)
 
 The constitution is the **supreme authority** for this project and defines:
 
@@ -145,7 +145,7 @@ The constitution is the **supreme authority** for this project and defines:
 
 ## Development Workflow
 
-**📖 Reference**: For detailed Spec Kit setup and usage, see [speckit_guide.md](speckit_guide.md)
+**📖 Reference**: For detailed Spec Kit setup and usage, see [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md)
 
 ### The Mandatory Workflow Order
 
@@ -156,7 +156,7 @@ Constitution → Specify → Plan → Tasks → Implement → Verify
 #### 1. Constitution (Already Exists)
 
 - Read [.specify/memory/constitution.md](.specify/memory/constitution.md)
-- Read [speckit_guide.md](speckit_guide.md) for complete Spec Kit reference
+- Read [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete Spec Kit reference
 - Understand project principles and constraints
 - Verify your proposed change aligns with constitutional principles
 
@@ -207,18 +207,18 @@ Constitution → Specify → Plan → Tasks → Implement → Verify
 **Step 1: Numbering**
 
 - List existing specs: `ls .specify/specs/`
-- Use next sequential number (e.g., if last is `012-*`, use `013-`)
+- Use next sequential number (e.g., if last is `026-*`, use `027-`)
 
 **Step 2: Create Directory**
 
 ```bash
-mkdir -p .specify/specs/013-feature-name
+mkdir -p .specify/specs/027-feature-name
 ```
 
 **Step 3: Create spec.md**
 
 ```bash
-cp .specify/templates/spec-template.md .specify/specs/013-feature-name/spec.md
+cp .specify/templates/spec-template.md .specify/specs/027-feature-name/spec.md
 ```
 
 **Step 4: Fill Out Specification**
@@ -594,7 +594,7 @@ Before committing ANY code:
 **View coverage report**:
 
 ```bash
-npm test -- --coverage
+npm run test:coverage
 open coverage/lcov-report/index.html
 ```
 
@@ -811,12 +811,12 @@ npm run format
 npm run build
 
 # Run all quality gates
-npm run verify  # (if script exists)
+npm run validate
 ```
 
 ### Spec Kit Commands
 
-**📖 Full Reference**: See [speckit_guide.md](speckit_guide.md) for complete Spec Kit documentation
+**📖 Full Reference**: See [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete Spec Kit documentation
 
 #### Helper Scripts (Available)
 
@@ -884,8 +884,8 @@ cp .specify/templates/spec-template.md .specify/specs/013-phone-formatting/spec.
 # 2. Fill spec, get approval (WAIT for approval)
 
 # 3. Create plan and tasks
-cp .specify/templates/plan-template.md .specify/specs/013-phone-formatting/plan.md
-cp .specify/templates/tasks-template.md .specify/specs/013-phone-formatting/tasks.md
+cp .specify/templates/plan-template.md .specify/specs/027-phone-formatting/plan.md
+cp .specify/templates/tasks-template.md .specify/specs/027-phone-formatting/tasks.md
 
 # 4. Write test first
 cat > src/utils/string/formatPhone.test.ts << 'EOF'
@@ -1011,6 +1011,10 @@ opticore-react-native/
 ├── jest.config.js
 ├── .eslintrc.js
 ├── .prettierrc.js
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── CODE_OF_CONDUCT.md
+├── SECURITY.md
 └── CLAUDE.md                          # This file
 ```
 
@@ -1387,7 +1391,7 @@ export * from './config';
 
 ### Key Files to Reference
 
-- **[speckit_guide.md](speckit_guide.md)** - Complete Spec Kit guide (framework-agnostic, works with ANY project)
+- **[SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md)** - Complete Spec Kit guide (framework-agnostic, works with ANY project)
 - [.specify/memory/constitution.md](.specify/memory/constitution.md) - Project constitution
 - [.specify/templates/spec-template.md](.specify/templates/spec-template.md) - Spec template
 - [.specify/templates/plan-template.md](.specify/templates/plan-template.md) - Plan template
@@ -1425,6 +1429,11 @@ Browse `.specify/specs/` for examples of completed specs:
 - `019-offline-sync-rework/` - Robust offline sync engine
 - `020-logger-transport-system/` - Pluggable logging
 - `021-api-client-extensibility/` - Interceptors & Auth Strategies
+- `022-forms-i18n/` - Form validation i18n messages
+- `023-error-system-enhancements/` - Extensible ErrorClassifier, Result<T,E> improvements
+- `024-hooks-configurability/` - Hooks fixes and configurability
+- `025-infrastructure-hardening/` - Infrastructure stability fixes
+- `026-test-stabilization/` - Test suite stabilization
 
 ### Technology Stack
 
@@ -1439,11 +1448,11 @@ Browse `.specify/specs/` for examples of completed specs:
 
 ---
 
-**Last Updated**: 2026-02-12
+**Last Updated**: 2026-03-10
 **Version**: 1.0.0
 **Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**
 
-1. **[speckit_guide.md](speckit_guide.md)** - Complete Spec Kit reference
+1. **[SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md)** - Complete Spec Kit reference
 2. **[constitution.md](.specify/memory/constitution.md)** - Project constitution

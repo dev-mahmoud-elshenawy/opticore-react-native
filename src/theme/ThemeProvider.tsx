@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState, ReactNode } from 'react';
 import { ThemeManager } from './ThemeManager';
-// import { lightTheme, darkTheme } from './defaultThemes';
 import type { Theme, ThemeMode } from './types';
 
 export interface ThemeContextValue {
