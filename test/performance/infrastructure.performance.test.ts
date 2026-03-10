@@ -1,3 +1,4 @@
+/* eslint-disable no-console -- Performance test intentionally logs timing metrics */
 import { ApiClient } from '../../src/infrastructure/network/ApiClient';
 import { StorageManager } from '../../src/infrastructure/storage/StorageManager';
 

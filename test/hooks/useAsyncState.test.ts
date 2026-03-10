@@ -31,8 +31,8 @@ describe('useAsyncState', () => {
     await actCompat(async () => {
       try {
         await result.current.run(mockAsync());
-      } catch (e) {
-        // Expected
+      } catch {
+        // Expected - error is intentionally swallowed
       }
     });
 

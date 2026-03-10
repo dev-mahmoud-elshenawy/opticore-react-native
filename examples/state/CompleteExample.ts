@@ -1,3 +1,4 @@
+/* eslint-disable no-console, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars -- Example file for demonstration */
 /**
  * Complete Example of State Management Core
  * Demonstrates: AsyncState, BaseStore, StateObserver, StoreFactory

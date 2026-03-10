@@ -41,25 +41,25 @@ export function useOfflineSync() {
             unsubscribeSync();
             connectivity.removeListener(handleConnectivity);
         };
-    }, []);
+    }, [manager, connectivity]);
 
     const enqueue = useCallback(async <T>(request: QueuedRequest<T>) => {
         return manager.enqueue(request);
-    }, []);
+    }, [manager]);
 
     const sync = useCallback(async () => {
         return manager.sync();
-    }, []);
+    }, [manager]);
 
     const remove = useCallback((id: string) => {
         return manager.remove(id);
-    }, []);
+    }, [manager]);
 
     const clearQueue = useCallback(() => {
         manager.clearQueue();
         // Force update state after clear since it might not emit event immediately
         setState(prev => ({ ...prev, pendingCount: 0 }));
-    }, []);
+    }, [manager]);
 
     return {
         ...state,

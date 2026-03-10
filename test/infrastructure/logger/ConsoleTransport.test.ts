@@ -1,3 +1,4 @@
+/* eslint-disable no-console -- Test file verifies console output via jest.Mock assertions */
 import { Platform } from 'react-native';
 import { ConsoleTransport } from '../../../src/infrastructure/logger/ConsoleTransport';
 import { LogLevel } from '../../../src/infrastructure/logger/LogLevel';

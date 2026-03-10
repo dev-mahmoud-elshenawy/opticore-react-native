@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- Example file demonstrates types via declarations */
 import type {
   ApiResponse,
   LoadingState,

@@ -51,7 +51,7 @@ export class BearerTokenStrategy implements AuthStrategy {
         const token = await this.getToken();
         if (token) {
             if (!config.headers) {
-                config.headers = {} as any;
+                config.headers = new AxiosHeaders();
             }
             config.headers['Authorization'] = `Bearer ${token}`;
         }
@@ -67,7 +67,7 @@ export class BearerTokenStrategy implements AuthStrategy {
                 if (newToken) {
                     return { retry: true, tokenRefreshed: true };
                 }
-            } catch (_e) {
+            } catch {
                 // Refresh failed
                 return null;
             }

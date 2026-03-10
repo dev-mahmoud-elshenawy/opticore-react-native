@@ -1,3 +1,4 @@
+/* eslint-disable no-console, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars -- Performance script logs metrics and uses flexible types */
 /**
  * Performance Test Script for State Management Core
  * Uses stand-alone execution to verify performance requirements.

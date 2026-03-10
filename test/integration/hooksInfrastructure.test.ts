@@ -201,7 +201,7 @@ describe('useAsyncState → AsyncState Pattern', () => {
         const promise = result.current.run(failingOperation);
         jest.runAllTimers();
         await promise;
-      } catch (err) {
+      } catch {
         // Error should be caught and stored in state
       }
     });

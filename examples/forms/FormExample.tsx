@@ -1,4 +1,4 @@
-
+/* eslint-disable no-console, @typescript-eslint/no-unused-vars -- Example file for demonstration */
 import React from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import { useFormState } from '../../src/forms/useFormState';

@@ -1,3 +1,4 @@
+/* eslint-disable no-console -- Example file uses console for demonstration output */
 import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { coreSetup, LogLevel } from '../../src';

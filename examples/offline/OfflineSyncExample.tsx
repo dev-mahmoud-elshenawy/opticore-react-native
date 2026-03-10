@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- Example file for demonstration */
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, StyleSheet, Alert } from 'react-native';
 import { useOfflineSync } from '../../src/offline/useOfflineSync';

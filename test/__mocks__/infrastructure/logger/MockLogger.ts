@@ -59,6 +59,7 @@ export class MockLogger {
         this.logs.push(entry);
 
         if (!this.silent) {
+            // eslint-disable-next-line no-console -- MockLogger intentionally proxies to console
             console[level](message, data);
         }
     }
