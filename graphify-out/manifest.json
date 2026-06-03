@@ -1,0 +1,1972 @@
+{
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/scripts/bash/check-prerequisites.sh": {
+    "mtime": 1769951103.36837,
+    "ast_hash": "a8738d6f126b60481413b0e9ef6ef4ae",
+    "semantic_hash": "a8738d6f126b60481413b0e9ef6ef4ae"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/scripts/bash/common.sh": {
+    "mtime": 1769951103.367485,
+    "ast_hash": "9221ae87db6704d4d532718f4424dd00",
+    "semantic_hash": "9221ae87db6704d4d532718f4424dd00"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/scripts/bash/create-new-feature.sh": {
+    "mtime": 1769951103.3681078,
+    "ast_hash": "eb8c4468ab330f53daa53b3c6a785637",
+    "semantic_hash": "eb8c4468ab330f53daa53b3c6a785637"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/scripts/bash/setup-plan.sh": {
+    "mtime": 1769951103.3682141,
+    "ast_hash": "4ce206b50f766fbf36a2d69e448356e9",
+    "semantic_hash": "4ce206b50f766fbf36a2d69e448356e9"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/scripts/bash/update-agent-context.sh": {
+    "mtime": 1769951103.3678837,
+    "ast_hash": "7593ba8c83a162ca6a9ad214d084948f",
+    "semantic_hash": "7593ba8c83a162ca6a9ad214d084948f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/scripts/check-quality.sh": {
+    "mtime": 1770128816.7042325,
+    "ast_hash": "a1536bda630ef7fae0849b2fca6131a9",
+    "semantic_hash": "a1536bda630ef7fae0849b2fca6131a9"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/scripts/create-spec.sh": {
+    "mtime": 1770128676.0251715,
+    "ast_hash": "83da1e3233c2914bd955be89e89ede44",
+    "semantic_hash": "83da1e3233c2914bd955be89e89ede44"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/scripts/list-specs.sh": {
+    "mtime": 1770128846.4985244,
+    "ast_hash": "70709a74769df367ab3b5c214f9b1317",
+    "semantic_hash": "70709a74769df367ab3b5c214f9b1317"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/scripts/validate-spec.sh": {
+    "mtime": 1770128696.6098516,
+    "ast_hash": "dda45987234d11af3e6778e9bd197f8c",
+    "semantic_hash": "dda45987234d11af3e6778e9bd197f8c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/babel.config.js": {
+    "mtime": 1770050632.694091,
+    "ast_hash": "d5e2db950bfe6ff57e65c815ebc37317",
+    "semantic_hash": "d5e2db950bfe6ff57e65c815ebc37317"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/bin/install-peers.mjs": {
+    "mtime": 1780487708.499542,
+    "ast_hash": "70cc9df8c5c3b6bf63a2f99b88d7652d",
+    "semantic_hash": "70cc9df8c5c3b6bf63a2f99b88d7652d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/eslint.config.mjs": {
+    "mtime": 1773138127.197497,
+    "ast_hash": "d8b4fd0d115fc29a54cfa8d2f055c0cf",
+    "semantic_hash": "d8b4fd0d115fc29a54cfa8d2f055c0cf"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/examples/configuration/UsageExample.tsx": {
+    "mtime": 1773151529.5994773,
+    "ast_hash": "676f818a3d339f555d3f8b4f9454d125",
+    "semantic_hash": "676f818a3d339f555d3f8b4f9454d125"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/examples/error/UsageExample.ts": {
+    "mtime": 1770316131.4939468,
+    "ast_hash": "ccf1b7099792e258bd7c2ef1f320d225",
+    "semantic_hash": "ccf1b7099792e258bd7c2ef1f320d225"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/examples/forms/FormExample.tsx": {
+    "mtime": 1773138127.1984024,
+    "ast_hash": "744b19106f4e85a4db7d29e41d88a806",
+    "semantic_hash": "744b19106f4e85a4db7d29e41d88a806"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/examples/infrastructure/complete-setup.ts": {
+    "mtime": 1770316131.4947083,
+    "ast_hash": "ce4fd705746d82a74fceec1d6ca3dfad",
+    "semantic_hash": "ce4fd705746d82a74fceec1d6ca3dfad"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/examples/navigation/UsageExample.tsx": {
+    "mtime": 1770316131.4948986,
+    "ast_hash": "1e586106aec4bf34b48d778eddd9e0c7",
+    "semantic_hash": "1e586106aec4bf34b48d778eddd9e0c7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/examples/offline/OfflineSyncExample.tsx": {
+    "mtime": 1773138127.198711,
+    "ast_hash": "6028e3a2f422b0a50aa51d03fb979bb9",
+    "semantic_hash": "6028e3a2f422b0a50aa51d03fb979bb9"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/examples/providers/AppSetup.example.tsx": {
+    "mtime": 1770316131.495219,
+    "ast_hash": "0764763b650ed2f115a034a7643880e7",
+    "semantic_hash": "0764763b650ed2f115a034a7643880e7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/examples/state/CompleteExample.ts": {
+    "mtime": 1773138127.199015,
+    "ast_hash": "4ec80a02a9239cb0e961b95ac81cdc9b",
+    "semantic_hash": "4ec80a02a9239cb0e961b95ac81cdc9b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/examples/theme/ThemeExample.tsx": {
+    "mtime": 1773138127.1992924,
+    "ast_hash": "0bd81a0484a8a6c75751872af8480791",
+    "semantic_hash": "0bd81a0484a8a6c75751872af8480791"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/examples/types/UsageExample.tsx": {
+    "mtime": 1773138127.1996093,
+    "ast_hash": "6506022719e9dbf74b908fbda6ba8593",
+    "semantic_hash": "6506022719e9dbf74b908fbda6ba8593"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/jest.config.js": {
+    "mtime": 1770579189.5576727,
+    "ast_hash": "ef872117f346778ccc1e11a7ba782441",
+    "semantic_hash": "ef872117f346778ccc1e11a7ba782441"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/metro.js": {
+    "mtime": 1780481525.157293,
+    "ast_hash": "64c49e213e85ff489c5d201a3fcd7af0",
+    "semantic_hash": "64c49e213e85ff489c5d201a3fcd7af0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/package.json": {
+    "mtime": 1780489953.4335597,
+    "ast_hash": "bcba3978d4d563ce0bb4d5d0ee7f7a8d",
+    "semantic_hash": "bcba3978d4d563ce0bb4d5d0ee7f7a8d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/scripts/perf-test.js": {
+    "mtime": 1770050632.6963613,
+    "ast_hash": "01635748fe9eb223fceaea7e9c59ff9b",
+    "semantic_hash": "01635748fe9eb223fceaea7e9c59ff9b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/scripts/perf-test.ts": {
+    "mtime": 1773138127.2000942,
+    "ast_hash": "995625ba8e9544b6d34e74562455238a",
+    "semantic_hash": "995625ba8e9544b6d34e74562455238a"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/defaults/asyncStorage.ts": {
+    "mtime": 1780486944.3869138,
+    "ast_hash": "cccc2583e43020f6889933a79a030272",
+    "semantic_hash": "cccc2583e43020f6889933a79a030272"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/defaults/deviceInfo.ts": {
+    "mtime": 1780486849.4342527,
+    "ast_hash": "65bb5a7edd06539bf2248ea9ea2585f5",
+    "semantic_hash": "65bb5a7edd06539bf2248ea9ea2585f5"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/defaults/expoClipboard.ts": {
+    "mtime": 1780486679.1094036,
+    "ast_hash": "26c1a791fa476bfff977ea9e88262761",
+    "semantic_hash": "26c1a791fa476bfff977ea9e88262761"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/defaults/expoDevice.ts": {
+    "mtime": 1780486690.8343084,
+    "ast_hash": "43bc64c02d07c532d2693a743744a9f0",
+    "semantic_hash": "43bc64c02d07c532d2693a743744a9f0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/defaults/expoSecureStore.ts": {
+    "mtime": 1780478630.1349146,
+    "ast_hash": "daa2a2b2bd9c9d150622a4cd412bea51",
+    "semantic_hash": "daa2a2b2bd9c9d150622a4cd412bea51"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/defaults/memory.ts": {
+    "mtime": 1780479023.1293042,
+    "ast_hash": "6c9c539a555614b543556bc7d745a3be",
+    "semantic_hash": "6c9c539a555614b543556bc7d745a3be"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/defaults/nativeModulePresent.ts": {
+    "mtime": 1780486934.050043,
+    "ast_hash": "91daa83d1128d5ac91413254f4de58b2",
+    "semantic_hash": "91daa83d1128d5ac91413254f4de58b2"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/defaults/netInfo.ts": {
+    "mtime": 1780486864.8307238,
+    "ast_hash": "7f72ebc5e58f88e27d298ae8b5d80db0",
+    "semantic_hash": "7f72ebc5e58f88e27d298ae8b5d80db0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/defaults/rnClipboard.ts": {
+    "mtime": 1780486840.2369494,
+    "ast_hash": "c3e4c5cbeeb8b5884aaee7d4e162e016",
+    "semantic_hash": "c3e4c5cbeeb8b5884aaee7d4e162e016"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/index.ts": {
+    "mtime": 1780486953.603864,
+    "ast_hash": "a5371e75e09c63dd16ea5c3bb81d1f1f",
+    "semantic_hash": "a5371e75e09c63dd16ea5c3bb81d1f1f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/interfaces.ts": {
+    "mtime": 1780479021.6319702,
+    "ast_hash": "f0082b6e9ed133c66699e95bf3219c4b",
+    "semantic_hash": "f0082b6e9ed133c66699e95bf3219c4b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/adapters/registry.ts": {
+    "mtime": 1780486712.647546,
+    "ast_hash": "ed94bbf7ace48d00a0fbb10d6c865528",
+    "semantic_hash": "ed94bbf7ace48d00a0fbb10d6c865528"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/ConfigValidator.ts": {
+    "mtime": 1773151259.682662,
+    "ast_hash": "58eadd9c6a9c42a06d04e865680146f2",
+    "semantic_hash": "58eadd9c6a9c42a06d04e865680146f2"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/CoreSetup.ts": {
+    "mtime": 1773151283.7025707,
+    "ast_hash": "503ce571209c2a1a79e440b62e7df89b",
+    "semantic_hash": "503ce571209c2a1a79e440b62e7df89b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/index.ts": {
+    "mtime": 1770308393.8359172,
+    "ast_hash": "73748c6319b3a0396084519d5b9ab39a",
+    "semantic_hash": "73748c6319b3a0396084519d5b9ab39a"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/types.ts": {
+    "mtime": 1780478807.1149967,
+    "ast_hash": "14d6cb8bb40d7e482163a2262fb372f5",
+    "semantic_hash": "14d6cb8bb40d7e482163a2262fb372f5"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/validation/assertions.ts": {
+    "mtime": 1773151126.979104,
+    "ast_hash": "9db4dd42dd2ea548b26a8217066cacb5",
+    "semantic_hash": "9db4dd42dd2ea548b26a8217066cacb5"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/validation/index.ts": {
+    "mtime": 1773151238.4469082,
+    "ast_hash": "c32e4885825abda69b60675e82db499b",
+    "semantic_hash": "c32e4885825abda69b60675e82db499b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/validation/types.ts": {
+    "mtime": 1773151113.8655293,
+    "ast_hash": "7c340210cd2ab7da721cc990777a1dcf",
+    "semantic_hash": "7c340210cd2ab7da721cc990777a1dcf"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/validation/validators/api.ts": {
+    "mtime": 1773151140.9919915,
+    "ast_hash": "51f9a7a87f94b5a2d34ace67262057c5",
+    "semantic_hash": "51f9a7a87f94b5a2d34ace67262057c5"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/validation/validators/forms.ts": {
+    "mtime": 1773151207.3654716,
+    "ast_hash": "70f06702997de29f1b7d7e463d6910e2",
+    "semantic_hash": "70f06702997de29f1b7d7e463d6910e2"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/validation/validators/index.ts": {
+    "mtime": 1773151214.718679,
+    "ast_hash": "c3ffe1d64c07b61629e0787e7b25d6f0",
+    "semantic_hash": "c3ffe1d64c07b61629e0787e7b25d6f0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/validation/validators/logger.ts": {
+    "mtime": 1773151156.9868221,
+    "ast_hash": "92f152b0710cbd5cd694ebbbff88e837",
+    "semantic_hash": "92f152b0710cbd5cd694ebbbff88e837"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/validation/validators/offline.ts": {
+    "mtime": 1773151182.7104092,
+    "ast_hash": "5950325a46dcdcb27167147b2e998c3c",
+    "semantic_hash": "5950325a46dcdcb27167147b2e998c3c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/validation/validators/responsive.ts": {
+    "mtime": 1773151170.115926,
+    "ast_hash": "83bfe52ebc7a7e1e113a7c186f4ad61f",
+    "semantic_hash": "83bfe52ebc7a7e1e113a7c186f4ad61f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/config/validation/validators/theme.ts": {
+    "mtime": 1773151199.6271217,
+    "ast_hash": "5a3be6c2a62e7b91dd4b4eb788fddf2e",
+    "semantic_hash": "5a3be6c2a62e7b91dd4b4eb788fddf2e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/error/BaseError.ts": {
+    "mtime": 1770316131.4980483,
+    "ast_hash": "19f175a222c4e15c5bc565a7f565eb65",
+    "semantic_hash": "19f175a222c4e15c5bc565a7f565eb65"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/error/ClassificationRule.ts": {
+    "mtime": 1770921282.9780838,
+    "ast_hash": "c8c18e54119ab0c7950976a27a778f2f",
+    "semantic_hash": "c8c18e54119ab0c7950976a27a778f2f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/error/DefaultErrorFallback.tsx": {
+    "mtime": 1770921282.978367,
+    "ast_hash": "151090d82d0683c21f01c223a0e5cdd7",
+    "semantic_hash": "151090d82d0683c21f01c223a0e5cdd7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/error/ErrorClassifier.ts": {
+    "mtime": 1770921282.9785943,
+    "ast_hash": "bfbbd56a9464faa06b96bde192558036",
+    "semantic_hash": "bfbbd56a9464faa06b96bde192558036"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/error/ErrorType.ts": {
+    "mtime": 1770316131.4983804,
+    "ast_hash": "2eae04dbfc34d9dafadd986db852b9b9",
+    "semantic_hash": "2eae04dbfc34d9dafadd986db852b9b9"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/error/NonRenderError.ts": {
+    "mtime": 1770316131.4987016,
+    "ast_hash": "d1f2f737bdb4ee302daf6f98ae1d2fac",
+    "semantic_hash": "d1f2f737bdb4ee302daf6f98ae1d2fac"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/error/OptiCoreErrorBoundary.tsx": {
+    "mtime": 1770921282.9788563,
+    "ast_hash": "746148c261e8a7771798d06e77894e17",
+    "semantic_hash": "746148c261e8a7771798d06e77894e17"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/error/RecoveryStrategy.ts": {
+    "mtime": 1770316131.4989111,
+    "ast_hash": "03e70f0195baa2e1787dd17cf6fa6f5e",
+    "semantic_hash": "03e70f0195baa2e1787dd17cf6fa6f5e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/error/RenderError.ts": {
+    "mtime": 1770316131.4992156,
+    "ast_hash": "da59d36239c284f6751d652fbc09eaf0",
+    "semantic_hash": "da59d36239c284f6751d652fbc09eaf0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/error/Result.ts": {
+    "mtime": 1773138127.2007775,
+    "ast_hash": "27f85709aa7a2a4889bb2dd9b0ef5925",
+    "semantic_hash": "27f85709aa7a2a4889bb2dd9b0ef5925"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/error/index.ts": {
+    "mtime": 1770921282.9795442,
+    "ast_hash": "a86cb26ff118234194e1afb762543aa8",
+    "semantic_hash": "a86cb26ff118234194e1afb762543aa8"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/forms/ValidationBuilder.ts": {
+    "mtime": 1772718709.2469676,
+    "ast_hash": "2e751adeefac0c5057aee23359edf527",
+    "semantic_hash": "2e751adeefac0c5057aee23359edf527"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/forms/index.ts": {
+    "mtime": 1770579916.1905851,
+    "ast_hash": "e1ed5144ef745f7a40fed41fcf9a88a7",
+    "semantic_hash": "e1ed5144ef745f7a40fed41fcf9a88a7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/forms/masks/creditCardMask.ts": {
+    "mtime": 1773138127.2009826,
+    "ast_hash": "4f820b977d5043d3482958e8e2749287",
+    "semantic_hash": "4f820b977d5043d3482958e8e2749287"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/forms/masks/currencyMask.ts": {
+    "mtime": 1770918381.2980783,
+    "ast_hash": "2b004238258cf35e81d02bbe33009ba3",
+    "semantic_hash": "2b004238258cf35e81d02bbe33009ba3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/forms/masks/index.ts": {
+    "mtime": 1770579916.1912644,
+    "ast_hash": "561e9c7ce0bc0836df706e23862040fd",
+    "semantic_hash": "561e9c7ce0bc0836df706e23862040fd"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/forms/masks/phoneMask.ts": {
+    "mtime": 1773169228.2246137,
+    "ast_hash": "40b0e0c5bf410ec664e06e78246b9059",
+    "semantic_hash": "40b0e0c5bf410ec664e06e78246b9059"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/forms/types.ts": {
+    "mtime": 1773138127.2014143,
+    "ast_hash": "c443dc1d3bf3d685d4f2a26d5c5b9c80",
+    "semantic_hash": "c443dc1d3bf3d685d4f2a26d5c5b9c80"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/forms/useFieldValidation.ts": {
+    "mtime": 1770579916.1920435,
+    "ast_hash": "627c4391d22f2d1f8895ce846b1d13ae",
+    "semantic_hash": "627c4391d22f2d1f8895ce846b1d13ae"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/forms/useFormState.ts": {
+    "mtime": 1772708470.1475825,
+    "ast_hash": "29ffe5d45f6f810ca0ca490d77fa9426",
+    "semantic_hash": "29ffe5d45f6f810ca0ca490d77fa9426"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/index.ts": {
+    "mtime": 1770131758.4346886,
+    "ast_hash": "d7cfa821cafdf057d3b9811945b8ee26",
+    "semantic_hash": "d7cfa821cafdf057d3b9811945b8ee26"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/useAsyncState.ts": {
+    "mtime": 1780482416.5933661,
+    "ast_hash": "bd7f9ba4249a61bd94bf704d7210247a",
+    "semantic_hash": "bd7f9ba4249a61bd94bf704d7210247a"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/useConnectivity.ts": {
+    "mtime": 1780478748.6544774,
+    "ast_hash": "1a442cf383bbf95c8863c4db9b844c8d",
+    "semantic_hash": "1a442cf383bbf95c8863c4db9b844c8d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/useDebounce.ts": {
+    "mtime": 1770316131.4998977,
+    "ast_hash": "c3c7de848f7be75fa157e5182c79d0f9",
+    "semantic_hash": "c3c7de848f7be75fa157e5182c79d0f9"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/useKeyboard.ts": {
+    "mtime": 1773138127.2019048,
+    "ast_hash": "6041f069ec95dd3928ceff24371a738d",
+    "semantic_hash": "6041f069ec95dd3928ceff24371a738d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/useLifecycle.ts": {
+    "mtime": 1770316131.5003715,
+    "ast_hash": "369232eeca0050dea648e5917ae594af",
+    "semantic_hash": "369232eeca0050dea648e5917ae594af"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/useMount.ts": {
+    "mtime": 1770316131.500536,
+    "ast_hash": "cc34fe13c85852e46756a7ca26bb731f",
+    "semantic_hash": "cc34fe13c85852e46756a7ca26bb731f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/useOrientation.ts": {
+    "mtime": 1770316131.5007155,
+    "ast_hash": "f7f9bf28fa9a2a8f24b0287a5a56928a",
+    "semantic_hash": "f7f9bf28fa9a2a8f24b0287a5a56928a"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/usePrevious.ts": {
+    "mtime": 1770316131.5010185,
+    "ast_hash": "d2c667d6ae02aeff0c3eb2281d917d60",
+    "semantic_hash": "d2c667d6ae02aeff0c3eb2281d917d60"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/useResponsive.ts": {
+    "mtime": 1772708470.1477208,
+    "ast_hash": "082483b1087c836156afbe23e105606d",
+    "semantic_hash": "082483b1087c836156afbe23e105606d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/useSafeCall.ts": {
+    "mtime": 1772708470.1478302,
+    "ast_hash": "6f6ee4b232904d24db1a720a9b9ffa39",
+    "semantic_hash": "6f6ee4b232904d24db1a720a9b9ffa39"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/hooks/useThrottle.ts": {
+    "mtime": 1770316131.5017495,
+    "ast_hash": "41a2415ed4daf824f05924b67cbaa574",
+    "semantic_hash": "41a2415ed4daf824f05924b67cbaa574"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/index.ts": {
+    "mtime": 1780487151.440776,
+    "ast_hash": "2570f5a3c4653f9ab86df937b7a27f0d",
+    "semantic_hash": "2570f5a3c4653f9ab86df937b7a27f0d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/connectivity/ConnectivityListener.ts": {
+    "mtime": 1770037625.3609114,
+    "ast_hash": "863c464c25ea58527a90775962192f22",
+    "semantic_hash": "863c464c25ea58527a90775962192f22"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/connectivity/ConnectivityManager.ts": {
+    "mtime": 1780478739.479168,
+    "ast_hash": "d1a3fb76c27732ca57423ee08c3658a4",
+    "semantic_hash": "d1a3fb76c27732ca57423ee08c3658a4"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/connectivity/index.ts": {
+    "mtime": 1770037625.3613446,
+    "ast_hash": "018fbd8826ecba53be4981eabf27bdd7",
+    "semantic_hash": "018fbd8826ecba53be4981eabf27bdd7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/index.ts": {
+    "mtime": 1770037625.3616276,
+    "ast_hash": "6f063df1e5e11f24aee02e79c3d598d9",
+    "semantic_hash": "6f063df1e5e11f24aee02e79c3d598d9"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/lifecycle/LifecycleManager.ts": {
+    "mtime": 1770316131.5030367,
+    "ast_hash": "2a7a960edf565b627ca6b6f8b31e0fae",
+    "semantic_hash": "2a7a960edf565b627ca6b6f8b31e0fae"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/lifecycle/LifecycleObserver.ts": {
+    "mtime": 1770037625.3628175,
+    "ast_hash": "36ec3b5da69793b04360506d2e4231dd",
+    "semantic_hash": "36ec3b5da69793b04360506d2e4231dd"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/lifecycle/index.ts": {
+    "mtime": 1770037625.3631294,
+    "ast_hash": "d8f98453045ebb964f2e75c10e268a34",
+    "semantic_hash": "d8f98453045ebb964f2e75c10e268a34"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/logger/ConsoleTransport.ts": {
+    "mtime": 1770889837.1926844,
+    "ast_hash": "48c92554cdb3d73a99db01f350cd912f",
+    "semantic_hash": "48c92554cdb3d73a99db01f350cd912f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/logger/LogEntry.ts": {
+    "mtime": 1770889837.192804,
+    "ast_hash": "16e3ed795d1cd08de232feeccbc8fc25",
+    "semantic_hash": "16e3ed795d1cd08de232feeccbc8fc25"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/logger/LogFormatter.ts": {
+    "mtime": 1773138127.202396,
+    "ast_hash": "90f53eec8107fd2f8560c4e636f44cde",
+    "semantic_hash": "90f53eec8107fd2f8560c4e636f44cde"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/logger/LogLevel.ts": {
+    "mtime": 1770037625.3637269,
+    "ast_hash": "d6c2aa824396f3fa80a8feec8c8d4462",
+    "semantic_hash": "d6c2aa824396f3fa80a8feec8c8d4462"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/logger/LogTransport.ts": {
+    "mtime": 1770889837.1930192,
+    "ast_hash": "c47246005a2e3af599809f6f3668e2ea",
+    "semantic_hash": "c47246005a2e3af599809f6f3668e2ea"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/logger/Logger.ts": {
+    "mtime": 1773169331.3418686,
+    "ast_hash": "75e512b952e1238392f82aaa5957fc65",
+    "semantic_hash": "75e512b952e1238392f82aaa5957fc65"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/logger/index.ts": {
+    "mtime": 1770889837.1932833,
+    "ast_hash": "6316eedc1e30cb5086a5a80c2391ac1b",
+    "semantic_hash": "6316eedc1e30cb5086a5a80c2391ac1b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/logger/interfaces/ILogger.ts": {
+    "mtime": 1770037625.3649597,
+    "ast_hash": "93c708269f7e86243b171cc191238276",
+    "semantic_hash": "93c708269f7e86243b171cc191238276"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/network/ApiClient.ts": {
+    "mtime": 1773138127.202738,
+    "ast_hash": "42841224ee3591fb709ed762e7a04229",
+    "semantic_hash": "42841224ee3591fb709ed762e7a04229"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/network/ApiError.ts": {
+    "mtime": 1770316131.5039809,
+    "ast_hash": "6c10687ee96a1c2adba62156066f6908",
+    "semantic_hash": "6c10687ee96a1c2adba62156066f6908"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/network/ApiResponse.ts": {
+    "mtime": 1770037625.36599,
+    "ast_hash": "c2ea16eaa09a70d644e40c8ab0aba8a5",
+    "semantic_hash": "c2ea16eaa09a70d644e40c8ab0aba8a5"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/network/AuthStrategy.ts": {
+    "mtime": 1773138127.20304,
+    "ast_hash": "44a3aa0f5f1768ba8104defc7b03ed96",
+    "semantic_hash": "44a3aa0f5f1768ba8104defc7b03ed96"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/network/HttpMethod.ts": {
+    "mtime": 1770585746.2072208,
+    "ast_hash": "cb095e54d50999f824b7ba075f4fb756",
+    "semantic_hash": "cb095e54d50999f824b7ba075f4fb756"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/network/Interceptor.ts": {
+    "mtime": 1773138127.2033238,
+    "ast_hash": "6306b1df8971dd7a4d90781f4b3ebe0e",
+    "semantic_hash": "6306b1df8971dd7a4d90781f4b3ebe0e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/network/NetworkConfig.ts": {
+    "mtime": 1770917284.9630623,
+    "ast_hash": "fa97e8a24b7c356d31e6a20e6c89356e",
+    "semantic_hash": "fa97e8a24b7c356d31e6a20e6c89356e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/network/index.ts": {
+    "mtime": 1770917284.9634042,
+    "ast_hash": "a46061c3e92701ecf8444960d1cf746e",
+    "semantic_hash": "a46061c3e92701ecf8444960d1cf746e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/network/interceptors/AuthInterceptor.ts": {
+    "mtime": 1773138127.2035525,
+    "ast_hash": "799edf45f28f22d1de1d063e51819ae2",
+    "semantic_hash": "799edf45f28f22d1de1d063e51819ae2"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/network/interceptors/ErrorInterceptor.ts": {
+    "mtime": 1770316131.5044692,
+    "ast_hash": "1e605f6d9fab7ad3b80ca89803cc5b5c",
+    "semantic_hash": "1e605f6d9fab7ad3b80ca89803cc5b5c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/network/interceptors/LoggingInterceptor.ts": {
+    "mtime": 1780482100.8358676,
+    "ast_hash": "e189963a506013830aa3d17c9dd88816",
+    "semantic_hash": "e189963a506013830aa3d17c9dd88816"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/storage/LocalStorage.ts": {
+    "mtime": 1780478713.6821954,
+    "ast_hash": "36e0f0a00da6dec9c55a0c960ba9e575",
+    "semantic_hash": "36e0f0a00da6dec9c55a0c960ba9e575"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/storage/SecureStorage.ts": {
+    "mtime": 1780478700.501824,
+    "ast_hash": "9e26572e055ff44e17dd2088bca561c9",
+    "semantic_hash": "9e26572e055ff44e17dd2088bca561c9"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/storage/StorageKeys.ts": {
+    "mtime": 1773167141.2406974,
+    "ast_hash": "da7c0707ebfda6eecf5ca13e73fe5e45",
+    "semantic_hash": "da7c0707ebfda6eecf5ca13e73fe5e45"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/storage/StorageManager.ts": {
+    "mtime": 1780478725.439946,
+    "ast_hash": "818dcc413aa59f7831bafcfc84e6e478",
+    "semantic_hash": "818dcc413aa59f7831bafcfc84e6e478"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/storage/index.ts": {
+    "mtime": 1770037625.3686063,
+    "ast_hash": "c97b0bb48afdf63cc9f41fedb9d6c0b8",
+    "semantic_hash": "c97b0bb48afdf63cc9f41fedb9d6c0b8"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/infrastructure/storage/interfaces/IStorage.ts": {
+    "mtime": 1770037625.368838,
+    "ast_hash": "49659402e70e78d61417221c1f2602a5",
+    "semantic_hash": "49659402e70e78d61417221c1f2602a5"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/navigation/RouteHelper.ts": {
+    "mtime": 1773169736.319411,
+    "ast_hash": "76a389fa4dfb1be25aefec7635f73204",
+    "semantic_hash": "76a389fa4dfb1be25aefec7635f73204"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/navigation/index.ts": {
+    "mtime": 1770057671.1275942,
+    "ast_hash": "e6ffcd90e3f6a107067e29ad40be7239",
+    "semantic_hash": "e6ffcd90e3f6a107067e29ad40be7239"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/offline/ConflictResolver.ts": {
+    "mtime": 1770887537.6861622,
+    "ast_hash": "2e90a272d2b0963e6f87ca75a4abffb5",
+    "semantic_hash": "2e90a272d2b0963e6f87ca75a4abffb5"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/offline/OfflineSyncManager.ts": {
+    "mtime": 1773169355.5013938,
+    "ast_hash": "3a4d9bbc98c0ab668f54aafc98a537ea",
+    "semantic_hash": "3a4d9bbc98c0ab668f54aafc98a537ea"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/offline/RequestQueue.ts": {
+    "mtime": 1773169244.6541748,
+    "ast_hash": "9cb4d0aaf3755aa1a025c58718d78af6",
+    "semantic_hash": "9cb4d0aaf3755aa1a025c58718d78af6"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/offline/SyncEngine.ts": {
+    "mtime": 1770887537.6885276,
+    "ast_hash": "06dbe77dc2ddfc1762188e01a60882ae",
+    "semantic_hash": "06dbe77dc2ddfc1762188e01a60882ae"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/offline/index.ts": {
+    "mtime": 1770585746.2110188,
+    "ast_hash": "bb2575cc208d21916de24e8fc94427ef",
+    "semantic_hash": "bb2575cc208d21916de24e8fc94427ef"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/offline/types.ts": {
+    "mtime": 1773168587.4035313,
+    "ast_hash": "254e41aa77a488f29496844dd50f7466",
+    "semantic_hash": "254e41aa77a488f29496844dd50f7466"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/offline/useOfflineSync.ts": {
+    "mtime": 1773138127.2039473,
+    "ast_hash": "6bd584b233fd6439ece19004c988d3cd",
+    "semantic_hash": "6bd584b233fd6439ece19004c988d3cd"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/providers/ConfigContext.tsx": {
+    "mtime": 1770810223.7778528,
+    "ast_hash": "e58f027cc13bd4e5ceb64e3a405942e7",
+    "semantic_hash": "e58f027cc13bd4e5ceb64e3a405942e7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/providers/CoreProvider.tsx": {
+    "mtime": 1773169390.7325678,
+    "ast_hash": "e78b76de043bce064b4bd8248ebf5d1d",
+    "semantic_hash": "e78b76de043bce064b4bd8248ebf5d1d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/providers/OptiCoreProvider.tsx": {
+    "mtime": 1780478822.7366076,
+    "ast_hash": "191cbba706eab1aef0b3cab38943e649",
+    "semantic_hash": "191cbba706eab1aef0b3cab38943e649"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/providers/QueryProvider.tsx": {
+    "mtime": 1770316131.5054357,
+    "ast_hash": "4ca64797ec64fb6bfb44aa4dc8a209fb",
+    "semantic_hash": "4ca64797ec64fb6bfb44aa4dc8a209fb"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/providers/index.ts": {
+    "mtime": 1770810223.7783637,
+    "ast_hash": "6c173cd2194a7f9985268b09fad00f4e",
+    "semantic_hash": "6c173cd2194a7f9985268b09fad00f4e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/providers/useConfig.ts": {
+    "mtime": 1770810223.7785733,
+    "ast_hash": "f759f9870972d16c444d1973589894c8",
+    "semantic_hash": "f759f9870972d16c444d1973589894c8"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/state/AsyncState.ts": {
+    "mtime": 1770316131.5066502,
+    "ast_hash": "7fb2a1bdf8ded488ff56d80e8e4460d6",
+    "semantic_hash": "7fb2a1bdf8ded488ff56d80e8e4460d6"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/state/AsyncStateHelpers.ts": {
+    "mtime": 1770316131.5069833,
+    "ast_hash": "74dea8b9689ce8fbb971dd2a2c1fc962",
+    "semantic_hash": "74dea8b9689ce8fbb971dd2a2c1fc962"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/state/BaseStore.ts": {
+    "mtime": 1773138127.2044191,
+    "ast_hash": "a18b00d41512d1d14591755d4931a82b",
+    "semantic_hash": "a18b00d41512d1d14591755d4931a82b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/state/StateObserver.ts": {
+    "mtime": 1773168296.115114,
+    "ast_hash": "2d4dd0ec8e4643b21dfbdf39a421083d",
+    "semantic_hash": "2d4dd0ec8e4643b21dfbdf39a421083d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/state/StoreFactory.ts": {
+    "mtime": 1773169467.3494885,
+    "ast_hash": "0a16436d8119512023c556b59a9ae02f",
+    "semantic_hash": "0a16436d8119512023c556b59a9ae02f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/state/index.ts": {
+    "mtime": 1770153997.1496859,
+    "ast_hash": "78636e1c660a2765818364ee26011319",
+    "semantic_hash": "78636e1c660a2765818364ee26011319"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/state/providers/StoreProvider.tsx": {
+    "mtime": 1770316131.5080395,
+    "ast_hash": "75e105bd59ddd986ccd4437485ba72fd",
+    "semantic_hash": "75e105bd59ddd986ccd4437485ba72fd"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/state/types/AsyncStateTypes.ts": {
+    "mtime": 1770316131.5082662,
+    "ast_hash": "687d00d53af28718e8097e2733c25d68",
+    "semantic_hash": "687d00d53af28718e8097e2733c25d68"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/state/types/ObserverTypes.ts": {
+    "mtime": 1770316131.5084732,
+    "ast_hash": "329b69b44a3d6eafb07bf1979e984b2e",
+    "semantic_hash": "329b69b44a3d6eafb07bf1979e984b2e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/state/types/StoreConfig.ts": {
+    "mtime": 1770316131.5086925,
+    "ast_hash": "a92578cf78c3c2ed2f95b361e0352408",
+    "semantic_hash": "a92578cf78c3c2ed2f95b361e0352408"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/theme/ThemeManager.ts": {
+    "mtime": 1772714576.6964724,
+    "ast_hash": "2b8da67636efcb8aeb877a403226086e",
+    "semantic_hash": "2b8da67636efcb8aeb877a403226086e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/theme/ThemeProvider.tsx": {
+    "mtime": 1773168344.426767,
+    "ast_hash": "775d4230421eb7a42e1a91db2ad9cc7f",
+    "semantic_hash": "775d4230421eb7a42e1a91db2ad9cc7f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/theme/colorUtils.ts": {
+    "mtime": 1770637639.5504506,
+    "ast_hash": "831d963715b97f787e715a3249b02347",
+    "semantic_hash": "831d963715b97f787e715a3249b02347"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/theme/defaultThemes.ts": {
+    "mtime": 1772714576.6967936,
+    "ast_hash": "cdfa8a5fdf8ebbe19427d5ff3f8dc483",
+    "semantic_hash": "cdfa8a5fdf8ebbe19427d5ff3f8dc483"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/theme/index.ts": {
+    "mtime": 1770637639.5511835,
+    "ast_hash": "e174735cf851b143eb7fc80c3f98b60c",
+    "semantic_hash": "e174735cf851b143eb7fc80c3f98b60c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/theme/types.ts": {
+    "mtime": 1773168352.110266,
+    "ast_hash": "ca5e071bd5d59051ec7c738d925bd29f",
+    "semantic_hash": "ca5e071bd5d59051ec7c738d925bd29f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/theme/useTheme.ts": {
+    "mtime": 1770637639.5517087,
+    "ast_hash": "681b0cfd5bd7e2c093bb8b57e10c76b2",
+    "semantic_hash": "681b0cfd5bd7e2c093bb8b57e10c76b2"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/types/Api.types.d.ts": {
+    "mtime": 1770316131.5088701,
+    "ast_hash": "9db5d358982268fe2b81a06f6943bac6",
+    "semantic_hash": "9db5d358982268fe2b81a06f6943bac6"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/types/Error.types.d.ts": {
+    "mtime": 1770316131.509032,
+    "ast_hash": "52517f99439bb3fb74aa1db3168d47d2",
+    "semantic_hash": "52517f99439bb3fb74aa1db3168d47d2"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/types/Navigation.types.d.ts": {
+    "mtime": 1773168555.9736035,
+    "ast_hash": "8fcebf471f0d2d4ebba463899f0db2a7",
+    "semantic_hash": "8fcebf471f0d2d4ebba463899f0db2a7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/types/State.types.d.ts": {
+    "mtime": 1770316131.509748,
+    "ast_hash": "f2879bc5185bf520c5e41757c061e7b5",
+    "semantic_hash": "f2879bc5185bf520c5e41757c061e7b5"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/types/Storage.types.d.ts": {
+    "mtime": 1770316131.5100582,
+    "ast_hash": "3b523897e4e783d94d96831e4287211c",
+    "semantic_hash": "3b523897e4e783d94d96831e4287211c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/types/expo-router.d.ts": {
+    "mtime": 1770057671.1281686,
+    "ast_hash": "10cdbcb3f3750518c080a1c94fb6f36f",
+    "semantic_hash": "10cdbcb3f3750518c080a1c94fb6f36f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/types/index.ts": {
+    "mtime": 1770316131.510835,
+    "ast_hash": "46aa8750084670b147e35535875a4925",
+    "semantic_hash": "46aa8750084670b147e35535875a4925"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/types/provider-types.d.ts": {
+    "mtime": 1770316131.511052,
+    "ast_hash": "234f0f2058088ff69eccded25ba664bc",
+    "semantic_hash": "234f0f2058088ff69eccded25ba664bc"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/types/react-test-renderer.d.ts": {
+    "mtime": 1773138127.2050457,
+    "ast_hash": "63e8b403b179f143327ad7866b658ea0",
+    "semantic_hash": "63e8b403b179f143327ad7866b658ea0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/utils/array.ts": {
+    "mtime": 1773138127.2052743,
+    "ast_hash": "577c54875ce197a71a0d37f743d15faa",
+    "semantic_hash": "577c54875ce197a71a0d37f743d15faa"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/utils/color.ts": {
+    "mtime": 1770316131.5118458,
+    "ast_hash": "acc52e4d0432e8f6334aa12e9fea1ff0",
+    "semantic_hash": "acc52e4d0432e8f6334aa12e9fea1ff0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/utils/date.ts": {
+    "mtime": 1770316131.5120604,
+    "ast_hash": "553b5794bf30f392e4745a0a168c723b",
+    "semantic_hash": "553b5794bf30f392e4745a0a168c723b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/utils/format.ts": {
+    "mtime": 1770316131.512263,
+    "ast_hash": "863cc10cee498dc46c639b9359333e80",
+    "semantic_hash": "863cc10cee498dc46c639b9359333e80"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/utils/index.ts": {
+    "mtime": 1770135543.2478993,
+    "ast_hash": "9bdba6c4268071862795eb49b47f5a49",
+    "semantic_hash": "9bdba6c4268071862795eb49b47f5a49"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/utils/number.ts": {
+    "mtime": 1773138127.205464,
+    "ast_hash": "1409f35b1d414d401c1eaa39dd3cd5a3",
+    "semantic_hash": "1409f35b1d414d401c1eaa39dd3cd5a3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/utils/object.ts": {
+    "mtime": 1773138127.2056332,
+    "ast_hash": "f155c2bbb0f01977644b60216db9f198",
+    "semantic_hash": "f155c2bbb0f01977644b60216db9f198"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/utils/platform.ts": {
+    "mtime": 1780478788.1192298,
+    "ast_hash": "45bc895c99ee00edbddac799ef0179b7",
+    "semantic_hash": "45bc895c99ee00edbddac799ef0179b7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/src/utils/string.ts": {
+    "mtime": 1770316131.513411,
+    "ast_hash": "b8c9912bf8ced744b68d07d67775bdda",
+    "semantic_hash": "b8c9912bf8ced744b68d07d67775bdda"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/@react-native-async-storage/async-storage.ts": {
+    "mtime": 1770316131.5137646,
+    "ast_hash": "cf37d8de866f403b9013775613668e6c",
+    "semantic_hash": "cf37d8de866f403b9013775613668e6c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/@react-native-clipboard/clipboard.ts": {
+    "mtime": 1770135543.2485926,
+    "ast_hash": "2635f45c595133eacc0966bff85b5ff9",
+    "semantic_hash": "2635f45c595133eacc0966bff85b5ff9"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/@react-native-community/netinfo.ts": {
+    "mtime": 1770579189.5611165,
+    "ast_hash": "6c4f02f3c288f7080e265b5fb1c23962",
+    "semantic_hash": "6c4f02f3c288f7080e265b5fb1c23962"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/empty.ts": {
+    "mtime": 1770135543.2487106,
+    "ast_hash": "f5bfda210e25a14cf7042a5ad2254060",
+    "semantic_hash": "f5bfda210e25a14cf7042a5ad2254060"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/expo-secure-store.ts": {
+    "mtime": 1770037625.3701167,
+    "ast_hash": "50577230c70de031d871517521975699",
+    "semantic_hash": "50577230c70de031d871517521975699"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/index.ts": {
+    "mtime": 1770316958.0933235,
+    "ast_hash": "742eabe6359a37e71cfe9491b8f69c9e",
+    "semantic_hash": "742eabe6359a37e71cfe9491b8f69c9e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/infrastructure/connectivity/MockConnectivity.ts": {
+    "mtime": 1770316958.093702,
+    "ast_hash": "307137e9be9873820e7c6ce548acad44",
+    "semantic_hash": "307137e9be9873820e7c6ce548acad44"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/infrastructure/lifecycle/MockLifecycle.ts": {
+    "mtime": 1770316958.0939713,
+    "ast_hash": "977acd48fd1091356283f7a20afca16d",
+    "semantic_hash": "977acd48fd1091356283f7a20afca16d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/infrastructure/logger/MockLogger.ts": {
+    "mtime": 1773138127.2059526,
+    "ast_hash": "614c918a5bae127ba14abb037fd52ee6",
+    "semantic_hash": "614c918a5bae127ba14abb037fd52ee6"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/infrastructure/network/MockApiClient.ts": {
+    "mtime": 1770579189.5615702,
+    "ast_hash": "325f68ec01d54e7441a9091f19336792",
+    "semantic_hash": "325f68ec01d54e7441a9091f19336792"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/infrastructure/storage/MockStorage.ts": {
+    "mtime": 1770316958.0949087,
+    "ast_hash": "78ead792a47df78bc2796518dc465969",
+    "semantic_hash": "78ead792a47df78bc2796518dc465969"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/react-native-device-info.ts": {
+    "mtime": 1770135543.2488346,
+    "ast_hash": "bcf3cfce8b2d9c506ca8542194205941",
+    "semantic_hash": "bcf3cfce8b2d9c506ca8542194205941"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/__mocks__/react-native.ts": {
+    "mtime": 1770579189.5618439,
+    "ast_hash": "3f43a87673e7cd73a26130ba4a564a00",
+    "semantic_hash": "3f43a87673e7cd73a26130ba4a564a00"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/config/ConfigValidator.test.ts": {
+    "mtime": 1773151343.6787584,
+    "ast_hash": "604e957f859e1e9efaac49cc00acc29a",
+    "semantic_hash": "604e957f859e1e9efaac49cc00acc29a"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/config/CoreSetup.auth.test.ts": {
+    "mtime": 1770917284.9640856,
+    "ast_hash": "4dc79e353caffeff810282c5c5db2e6f",
+    "semantic_hash": "4dc79e353caffeff810282c5c5db2e6f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/config/CoreSetup.expanded.test.ts": {
+    "mtime": 1773168812.8555205,
+    "ast_hash": "b22cda18fbb70ac6bd2062f363f61f9f",
+    "semantic_hash": "b22cda18fbb70ac6bd2062f363f61f9f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/config/CoreSetup.test.ts": {
+    "mtime": 1773168835.2688706,
+    "ast_hash": "e9516e461c605de50ae35dae7b120a46",
+    "semantic_hash": "e9516e461c605de50ae35dae7b120a46"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/error/BaseError.test.ts": {
+    "mtime": 1770316131.514784,
+    "ast_hash": "0e254f00c371c4599cfcff1daa005563",
+    "semantic_hash": "0e254f00c371c4599cfcff1daa005563"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/error/ErrorClassifier.test.ts": {
+    "mtime": 1770316131.5149746,
+    "ast_hash": "4619baff0f85cb7b918716603a3489a2",
+    "semantic_hash": "4619baff0f85cb7b918716603a3489a2"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/error/ErrorClassifierCustomRules.test.ts": {
+    "mtime": 1770921282.9797914,
+    "ast_hash": "5711d264d9aa15336ee6f9308501a99b",
+    "semantic_hash": "5711d264d9aa15336ee6f9308501a99b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/error/NonRenderError.test.ts": {
+    "mtime": 1770316131.5153873,
+    "ast_hash": "bd80b786da5238aed94a6a302fb69439",
+    "semantic_hash": "bd80b786da5238aed94a6a302fb69439"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/error/OptiCoreErrorBoundary.test.tsx": {
+    "mtime": 1772718709.2479882,
+    "ast_hash": "0c6fb68e01d0073084e96decede62f63",
+    "semantic_hash": "0c6fb68e01d0073084e96decede62f63"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/error/RecoveryStrategy.test.ts": {
+    "mtime": 1770316131.5155866,
+    "ast_hash": "61fcd661d62396b9f7fa28faa9435e2d",
+    "semantic_hash": "61fcd661d62396b9f7fa28faa9435e2d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/error/RenderError.test.ts": {
+    "mtime": 1770316131.5157928,
+    "ast_hash": "02bcd70cb2dcc73093294ba0602a599c",
+    "semantic_hash": "02bcd70cb2dcc73093294ba0602a599c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/error/Result.test.ts": {
+    "mtime": 1772718709.248294,
+    "ast_hash": "a83ab74f71fa7aac32ddc2134324d92d",
+    "semantic_hash": "a83ab74f71fa7aac32ddc2134324d92d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/forms/ValidationBuilder.test.ts": {
+    "mtime": 1770579916.1928566,
+    "ast_hash": "5932061d8b1e5582c71010ac6d4519be",
+    "semantic_hash": "5932061d8b1e5582c71010ac6d4519be"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/forms/masks/creditCardMask.test.ts": {
+    "mtime": 1772708470.1479492,
+    "ast_hash": "af01e255640c877f24ff6c0a7522a87b",
+    "semantic_hash": "af01e255640c877f24ff6c0a7522a87b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/forms/masks/currencyMask.test.ts": {
+    "mtime": 1772718709.248576,
+    "ast_hash": "547600d1537696b95c8866cabae92ce6",
+    "semantic_hash": "547600d1537696b95c8866cabae92ce6"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/forms/masks/phoneMask.test.ts": {
+    "mtime": 1772718709.2489586,
+    "ast_hash": "7feec101c67a973654cb3ebfbc202f24",
+    "semantic_hash": "7feec101c67a973654cb3ebfbc202f24"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/forms/useFieldValidation.test.ts": {
+    "mtime": 1772718709.2493436,
+    "ast_hash": "29e4d379014daf41cd699c0fe9ac1e7a",
+    "semantic_hash": "29e4d379014daf41cd699c0fe9ac1e7a"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/forms/useFormState.test.ts": {
+    "mtime": 1772708470.14808,
+    "ast_hash": "82b5e68f57e5aab4c5bbc4efe3b18fd3",
+    "semantic_hash": "82b5e68f57e5aab4c5bbc4efe3b18fd3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/helpers/asyncHelpers.ts": {
+    "mtime": 1770316958.0951939,
+    "ast_hash": "2c2ad29f38c75d5ef17af4dada67ed16",
+    "semantic_hash": "2c2ad29f38c75d5ef17af4dada67ed16"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/helpers/dataGenerators.ts": {
+    "mtime": 1770579189.5624447,
+    "ast_hash": "4627f11ede842c938f30ae450ffd34b9",
+    "semantic_hash": "4627f11ede842c938f30ae450ffd34b9"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/helpers/index.ts": {
+    "mtime": 1770316958.0955873,
+    "ast_hash": "6fd596f4013d0c0c3923d02ee0fc2c6b",
+    "semantic_hash": "6fd596f4013d0c0c3923d02ee0fc2c6b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/helpers/renderHelpers.tsx": {
+    "mtime": 1770316958.095786,
+    "ast_hash": "fcee41b3a6155be06346e3ee0b393f79",
+    "semantic_hash": "fcee41b3a6155be06346e3ee0b393f79"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/helpers/storeHelpers.ts": {
+    "mtime": 1770316958.0960402,
+    "ast_hash": "689fed1e7bd3da72ac7d91692d80a86a",
+    "semantic_hash": "689fed1e7bd3da72ac7d91692d80a86a"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/useAsyncState.test.ts": {
+    "mtime": 1773138127.2063582,
+    "ast_hash": "6c38b05fbc657697223c2779ebb9aa2a",
+    "semantic_hash": "6c38b05fbc657697223c2779ebb9aa2a"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/useConnectivity.test.ts": {
+    "mtime": 1770579189.562966,
+    "ast_hash": "e6f2691a752218bcd82010e82bebc104",
+    "semantic_hash": "e6f2691a752218bcd82010e82bebc104"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/useDebounce.test.ts": {
+    "mtime": 1770579189.563253,
+    "ast_hash": "c6004bc91b0c2b413f3ce2ae9fe68cce",
+    "semantic_hash": "c6004bc91b0c2b413f3ce2ae9fe68cce"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/useKeyboard.test.ts": {
+    "mtime": 1770579189.5636206,
+    "ast_hash": "5fc81b206f5f5112ed0088a839c3ae1d",
+    "semantic_hash": "5fc81b206f5f5112ed0088a839c3ae1d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/useLifecycle.test.ts": {
+    "mtime": 1770579189.563983,
+    "ast_hash": "461f80662a2baae8f7ac321ee585f05a",
+    "semantic_hash": "461f80662a2baae8f7ac321ee585f05a"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/useMount.test.ts": {
+    "mtime": 1770579189.5643117,
+    "ast_hash": "5e9e0ef5a53d6e2f747bd014b1f806f2",
+    "semantic_hash": "5e9e0ef5a53d6e2f747bd014b1f806f2"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/useOrientation.test.ts": {
+    "mtime": 1770579189.5645723,
+    "ast_hash": "0c5c5cb7b08c9b802b333a8725c50295",
+    "semantic_hash": "0c5c5cb7b08c9b802b333a8725c50295"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/usePrevious.test.ts": {
+    "mtime": 1770579189.5648274,
+    "ast_hash": "c7093344879c3620335c46a86ca49c8f",
+    "semantic_hash": "c7093344879c3620335c46a86ca49c8f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/useResponsive.context.test.tsx": {
+    "mtime": 1770810223.7794445,
+    "ast_hash": "59beca72877fd3cfb250b940f194b196",
+    "semantic_hash": "59beca72877fd3cfb250b940f194b196"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/useResponsive.test.ts": {
+    "mtime": 1772708470.148222,
+    "ast_hash": "4291df77316de77c9c16445e57721c25",
+    "semantic_hash": "4291df77316de77c9c16445e57721c25"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/useSafeCall.test.ts": {
+    "mtime": 1772708470.148414,
+    "ast_hash": "c98a447b791fef5f9ad71ea1039ecaf3",
+    "semantic_hash": "c98a447b791fef5f9ad71ea1039ecaf3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/hooks/useThrottle.test.ts": {
+    "mtime": 1770579189.56572,
+    "ast_hash": "13815613d9b97ba8dd0b76bbfd8e317b",
+    "semantic_hash": "13815613d9b97ba8dd0b76bbfd8e317b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/index.test.ts": {
+    "mtime": 1770316131.518607,
+    "ast_hash": "a8ed022ee4dfed9acf59e9dc2949af82",
+    "semantic_hash": "a8ed022ee4dfed9acf59e9dc2949af82"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/connectivity/ConnectivityManager.test.ts": {
+    "mtime": 1770316131.5191283,
+    "ast_hash": "63f1efc43a6b1cccd91c46fcbfb838c3",
+    "semantic_hash": "63f1efc43a6b1cccd91c46fcbfb838c3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/lifecycle/LifecycleManager.test.ts": {
+    "mtime": 1770316131.5194914,
+    "ast_hash": "4e90f3884437bc974012d017f0b4fba0",
+    "semantic_hash": "4e90f3884437bc974012d017f0b4fba0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/logger/ConsoleTransport.test.ts": {
+    "mtime": 1773138127.2066202,
+    "ast_hash": "930dc31d306338b64925a6faeaebc5f6",
+    "semantic_hash": "930dc31d306338b64925a6faeaebc5f6"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/logger/LogFormatter.test.ts": {
+    "mtime": 1770889837.1936226,
+    "ast_hash": "a8e82ee9050d1affcd29f2006d876906",
+    "semantic_hash": "a8e82ee9050d1affcd29f2006d876906"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/logger/Logger.test.ts": {
+    "mtime": 1770037625.3713107,
+    "ast_hash": "a3b71f1e520fd8772ca3804558b40734",
+    "semantic_hash": "a3b71f1e520fd8772ca3804558b40734"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/logger/Logger.transport.test.ts": {
+    "mtime": 1770889837.1937242,
+    "ast_hash": "59d0cc78436f740edde99b8cc9deffa1",
+    "semantic_hash": "59d0cc78436f740edde99b8cc9deffa1"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/network/ApiClient.test.ts": {
+    "mtime": 1770585746.2127538,
+    "ast_hash": "ae272d9e6c84c6d8286aaca98e91dff5",
+    "semantic_hash": "ae272d9e6c84c6d8286aaca98e91dff5"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/network/AuthStrategy.test.ts": {
+    "mtime": 1770917284.9643013,
+    "ast_hash": "33b5d9e1116e6cc1bb8c5cd24a0379db",
+    "semantic_hash": "33b5d9e1116e6cc1bb8c5cd24a0379db"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/network/Interceptor.test.ts": {
+    "mtime": 1770917284.9645042,
+    "ast_hash": "f1c3406bfc9923689a3f4263e58e4a1c",
+    "semantic_hash": "f1c3406bfc9923689a3f4263e58e4a1c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/network/interceptors.test.ts": {
+    "mtime": 1770917284.9648352,
+    "ast_hash": "9d31a3ceb78c7ecd5686c19ffb321b15",
+    "semantic_hash": "9d31a3ceb78c7ecd5686c19ffb321b15"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/storage/LocalStorage.test.ts": {
+    "mtime": 1770585746.2137394,
+    "ast_hash": "69cb18f8c83b0ec7739e334811afb8e5",
+    "semantic_hash": "69cb18f8c83b0ec7739e334811afb8e5"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/storage/SecureStorage.test.ts": {
+    "mtime": 1772714576.6978297,
+    "ast_hash": "dc1c198eccffae9ab785339704e5f5e3",
+    "semantic_hash": "dc1c198eccffae9ab785339704e5f5e3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/infrastructure/storage/StorageManager.test.ts": {
+    "mtime": 1770037625.372396,
+    "ast_hash": "5dd5c271421a5b32660954283546c696",
+    "semantic_hash": "5dd5c271421a5b32660954283546c696"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/integration/apiClientErrorFlow.test.ts": {
+    "mtime": 1772718709.249828,
+    "ast_hash": "d1420dcf79f08ea91447f67ec7292fd7",
+    "semantic_hash": "d1420dcf79f08ea91447f67ec7292fd7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/integration/coreProviderIntegration.test.tsx": {
+    "mtime": 1772714576.6985264,
+    "ast_hash": "40ed7d356f90dcf1b4a5862a26f12230",
+    "semantic_hash": "40ed7d356f90dcf1b4a5862a26f12230"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/integration/hooksInfrastructure.test.ts": {
+    "mtime": 1773138127.2068655,
+    "ast_hash": "553ebb80d66cecb23ad41910c14244ad",
+    "semantic_hash": "553ebb80d66cecb23ad41910c14244ad"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/integration/infrastructure.integration.test.ts": {
+    "mtime": 1770316131.5203907,
+    "ast_hash": "36f3e17289e72cf4fd1ed0703aeb5939",
+    "semantic_hash": "36f3e17289e72cf4fd1ed0703aeb5939"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/integration/stateErrorIntegration.test.ts": {
+    "mtime": 1770579189.5672796,
+    "ast_hash": "3f637d20d7e620a6fae0633409d5c233",
+    "semantic_hash": "3f637d20d7e620a6fae0633409d5c233"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/navigation/RouteHelper.test.ts": {
+    "mtime": 1773167409.377858,
+    "ast_hash": "60d5414323de56ff483a615e9378b472",
+    "semantic_hash": "60d5414323de56ff483a615e9378b472"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/offline/ConflictResolver.test.ts": {
+    "mtime": 1770585746.2147243,
+    "ast_hash": "4d855c36490d0c61553c20ea38e490f3",
+    "semantic_hash": "4d855c36490d0c61553c20ea38e490f3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/offline/OfflineSyncManager.cleanup.test.ts": {
+    "mtime": 1773168798.6301286,
+    "ast_hash": "9628d07c9af9cf0015461e6b84d8fdd7",
+    "semantic_hash": "9628d07c9af9cf0015461e6b84d8fdd7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/offline/OfflineSyncManager.init.test.ts": {
+    "mtime": 1770887537.6903331,
+    "ast_hash": "15fe7a9c1cc3839dc5ba6f4aa5f4e298",
+    "semantic_hash": "15fe7a9c1cc3839dc5ba6f4aa5f4e298"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/offline/OfflineSyncManager.lifecycle.test.ts": {
+    "mtime": 1773168778.2771578,
+    "ast_hash": "d81f66ecac80ff470cc10528356c26e7",
+    "semantic_hash": "d81f66ecac80ff470cc10528356c26e7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/offline/OfflineSyncManager.test.ts": {
+    "mtime": 1773168863.1756508,
+    "ast_hash": "99cb30d497f50ff972abd2469fe52f12",
+    "semantic_hash": "99cb30d497f50ff972abd2469fe52f12"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/offline/RequestQueue.test.ts": {
+    "mtime": 1770585746.2155154,
+    "ast_hash": "98fce1e70ffc6c03d34b42b092575754",
+    "semantic_hash": "98fce1e70ffc6c03d34b42b092575754"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/offline/SyncEngine.DI.test.ts": {
+    "mtime": 1770887537.6908906,
+    "ast_hash": "18bf83df72e07c1e339211024d974c52",
+    "semantic_hash": "18bf83df72e07c1e339211024d974c52"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/offline/SyncEngine.cleanup.test.ts": {
+    "mtime": 1770887537.6912532,
+    "ast_hash": "8fa31f6d716e6641f78e2c60299d460d",
+    "semantic_hash": "8fa31f6d716e6641f78e2c60299d460d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/offline/SyncEngine.conflict.test.ts": {
+    "mtime": 1770887537.691579,
+    "ast_hash": "125b46e86452a257a78d7b37795dd533",
+    "semantic_hash": "125b46e86452a257a78d7b37795dd533"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/offline/SyncEngine.test.ts": {
+    "mtime": 1770887537.6920526,
+    "ast_hash": "632f9bdaaf5f2fbbe97206697a5e0a6e",
+    "semantic_hash": "632f9bdaaf5f2fbbe97206697a5e0a6e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/offline/useOfflineSync.test.ts": {
+    "mtime": 1770585746.2159786,
+    "ast_hash": "0009fe253a8b674bc2eeaa430bc6e24e",
+    "semantic_hash": "0009fe253a8b674bc2eeaa430bc6e24e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/performance/infrastructure.performance.test.ts": {
+    "mtime": 1773138127.2070775,
+    "ast_hash": "f4f1da88b19fca0ad3692348f0fb4520",
+    "semantic_hash": "f4f1da88b19fca0ad3692348f0fb4520"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/providers/CoreProvider.test.tsx": {
+    "mtime": 1772714576.6990032,
+    "ast_hash": "44b6867f89ef58c8f1d1a70a9ca01624",
+    "semantic_hash": "44b6867f89ef58c8f1d1a70a9ca01624"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/providers/OptiCoreProvider.test.tsx": {
+    "mtime": 1772718709.2517085,
+    "ast_hash": "5babac2f164d7e752544130e83959d95",
+    "semantic_hash": "5babac2f164d7e752544130e83959d95"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/providers/QueryProvider.test.tsx": {
+    "mtime": 1770579189.568825,
+    "ast_hash": "0e26ce9d52fedf3e91d69299a84ace4d",
+    "semantic_hash": "0e26ce9d52fedf3e91d69299a84ace4d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/setup.ts": {
+    "mtime": 1770579189.5693674,
+    "ast_hash": "39981cd9ee505ec429591d50c7ecf7b0",
+    "semantic_hash": "39981cd9ee505ec429591d50c7ecf7b0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/state/AsyncState.test.ts": {
+    "mtime": 1770316131.521997,
+    "ast_hash": "ba0d80ddee11962a784cd3bd86dabc93",
+    "semantic_hash": "ba0d80ddee11962a784cd3bd86dabc93"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/state/AsyncStateHelpers.test.ts": {
+    "mtime": 1770316131.522342,
+    "ast_hash": "b68c0cb6dec6d4beb3f5572d3000a50c",
+    "semantic_hash": "b68c0cb6dec6d4beb3f5572d3000a50c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/state/BaseStore.test.ts": {
+    "mtime": 1770579189.569917,
+    "ast_hash": "0d781d33b695e8c9dcdec558f48b9614",
+    "semantic_hash": "0d781d33b695e8c9dcdec558f48b9614"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/state/StateObserver.test.ts": {
+    "mtime": 1770316131.5230093,
+    "ast_hash": "105f39b5f2011cd52e862ae4e2c9fbb6",
+    "semantic_hash": "105f39b5f2011cd52e862ae4e2c9fbb6"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/state/StoreFactory.test.ts": {
+    "mtime": 1770316131.523387,
+    "ast_hash": "a0917677b5ce6f04f613983645986177",
+    "semantic_hash": "a0917677b5ce6f04f613983645986177"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/state/integration/CoreIntegration.test.ts": {
+    "mtime": 1770316131.5237486,
+    "ast_hash": "06f99b879d482bdbf6e7b42b29f105f0",
+    "semantic_hash": "06f99b879d482bdbf6e7b42b29f105f0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/state/providers/Providers.test.tsx": {
+    "mtime": 1770579189.5702825,
+    "ast_hash": "f174cfc9c7deb14eab7acd7d0d342f94",
+    "semantic_hash": "f174cfc9c7deb14eab7acd7d0d342f94"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/theme/ThemeManager.test.ts": {
+    "mtime": 1772714576.6997826,
+    "ast_hash": "0176c6f4eb249c0ac49e94da234a163f",
+    "semantic_hash": "0176c6f4eb249c0ac49e94da234a163f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/theme/ThemeProvider.test.tsx": {
+    "mtime": 1770637639.552385,
+    "ast_hash": "62a0f4f1ee19de0ddc4382c00c7ff0ec",
+    "semantic_hash": "62a0f4f1ee19de0ddc4382c00c7ff0ec"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/theme/colorUtils.test.ts": {
+    "mtime": 1770637639.5527625,
+    "ast_hash": "19ac5ca321a53c2d0870137fb522bdb7",
+    "semantic_hash": "19ac5ca321a53c2d0870137fb522bdb7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/theme/defaultThemes.test.ts": {
+    "mtime": 1772714576.7003033,
+    "ast_hash": "5c8fd3a23f5793baec17eb55b6203969",
+    "semantic_hash": "5c8fd3a23f5793baec17eb55b6203969"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/types/Api.test-d.ts": {
+    "mtime": 1770585746.2163064,
+    "ast_hash": "1c81bacb41ece9271243b9b5ac1d8c35",
+    "semantic_hash": "1c81bacb41ece9271243b9b5ac1d8c35"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/types/State.test-d.ts": {
+    "mtime": 1770316131.5249794,
+    "ast_hash": "b91c72dbf4907224aada90c8d7ad3dd3",
+    "semantic_hash": "b91c72dbf4907224aada90c8d7ad3dd3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/types/Supporting.test-d.ts": {
+    "mtime": 1773169638.9182596,
+    "ast_hash": "a28cde2906eed36797f0891f6858ba93",
+    "semantic_hash": "a28cde2906eed36797f0891f6858ba93"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/utils/array.test.ts": {
+    "mtime": 1770316131.5255566,
+    "ast_hash": "305b556440ccd415a27c15d4930b1e39",
+    "semantic_hash": "305b556440ccd415a27c15d4930b1e39"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/utils/color.test.ts": {
+    "mtime": 1770316131.5257983,
+    "ast_hash": "86052871c8ad4c47e3a1252ce9026d22",
+    "semantic_hash": "86052871c8ad4c47e3a1252ce9026d22"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/utils/date.test.ts": {
+    "mtime": 1770316131.5260208,
+    "ast_hash": "14a8e695e8006ff307da8ef8679bb943",
+    "semantic_hash": "14a8e695e8006ff307da8ef8679bb943"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/utils/format.test.ts": {
+    "mtime": 1770316131.5262191,
+    "ast_hash": "ef5492576ba764fa5a1504db526264c0",
+    "semantic_hash": "ef5492576ba764fa5a1504db526264c0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/utils/index.ts": {
+    "mtime": 1770579189.5705516,
+    "ast_hash": "613e73e2406ee0f86095a7fa54d725bf",
+    "semantic_hash": "613e73e2406ee0f86095a7fa54d725bf"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/utils/number.test.ts": {
+    "mtime": 1770316131.5264645,
+    "ast_hash": "3ec6e04cf67e65eb004de30042b865fb",
+    "semantic_hash": "3ec6e04cf67e65eb004de30042b865fb"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/utils/object.test.ts": {
+    "mtime": 1770316131.5268276,
+    "ast_hash": "60dc141f75bed1034b98a4b26b01cdb1",
+    "semantic_hash": "60dc141f75bed1034b98a4b26b01cdb1"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/utils/platform.test.ts": {
+    "mtime": 1770316131.527075,
+    "ast_hash": "2ef4b20200eaba49f092040a01849c5b",
+    "semantic_hash": "2ef4b20200eaba49f092040a01849c5b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/utils/react19Helpers.ts": {
+    "mtime": 1770579189.5707524,
+    "ast_hash": "4147b7936e5b7567a4980a149fb45b89",
+    "semantic_hash": "4147b7936e5b7567a4980a149fb45b89"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/test/utils/string.test.ts": {
+    "mtime": 1770316131.5273497,
+    "ast_hash": "d650c5c5567d157d4108ece5e60e44bf",
+    "semantic_hash": "d650c5c5567d157d4108ece5e60e44bf"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/tsconfig.build.json": {
+    "mtime": 1773169790.2998927,
+    "ast_hash": "69e90c021f2d16791da7da48e29f37c7",
+    "semantic_hash": "69e90c021f2d16791da7da48e29f37c7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/tsconfig.json": {
+    "mtime": 1770309039.811312,
+    "ast_hash": "c2d6bb40ef120bd3b6c8bfa53745b844",
+    "semantic_hash": "c2d6bb40ef120bd3b6c8bfa53745b844"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.agent/workflows/critical_workflow_enforcement.md": {
+    "mtime": 1770917284.9584851,
+    "ast_hash": "e7f45a12379e6cbba5b05047d257f66b",
+    "semantic_hash": "e7f45a12379e6cbba5b05047d257f66b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.agent/workflows/spec_git_alignment.md": {
+    "mtime": 1770889837.1923423,
+    "ast_hash": "a445f4bbfc5a462f9495fd5a34b4c8b3",
+    "semantic_hash": "a445f4bbfc5a462f9495fd5a34b4c8b3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.agent/workflows/spec_implementation_flow.md": {
+    "mtime": 1770585818.9897237,
+    "ast_hash": "e139ffb336aa84cca19b3fc799edb447",
+    "semantic_hash": "e139ffb336aa84cca19b3fc799edb447"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.github/RELEASE_TEMPLATE.md": {
+    "mtime": 1770318824.8316107,
+    "ast_hash": "e60a92c1172f9aa803de41dbe6c12cb4",
+    "semantic_hash": "e60a92c1172f9aa803de41dbe6c12cb4"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/SPECKIT_GUIDE.md": {
+    "mtime": 1770579343.9337301,
+    "ast_hash": "175776bb4e7fa878d722cb65ea333053",
+    "semantic_hash": "175776bb4e7fa878d722cb65ea333053"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/001-npm-package-setup/plan.md": {
+    "mtime": 1769963662.5035527,
+    "ast_hash": "3828caf786265aa0dc348f399cdcb88c",
+    "semantic_hash": "3828caf786265aa0dc348f399cdcb88c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/001-npm-package-setup/spec.md": {
+    "mtime": 1769963662.5265157,
+    "ast_hash": "30c8d0745339e342649b2d308fdb0501",
+    "semantic_hash": "30c8d0745339e342649b2d308fdb0501"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/001-npm-package-setup/tasks.md": {
+    "mtime": 1769963806.6404486,
+    "ast_hash": "dc6c95b2eedbdb2cc0d796de403d994b",
+    "semantic_hash": "dc6c95b2eedbdb2cc0d796de403d994b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/002-infrastructure-layer/plan.md": {
+    "mtime": 1770037625.3528104,
+    "ast_hash": "3c6af3d96b4a204be68f706f7db7f863",
+    "semantic_hash": "3c6af3d96b4a204be68f706f7db7f863"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/002-infrastructure-layer/spec.md": {
+    "mtime": 1769963662.5938504,
+    "ast_hash": "635148b13a74c25151a3c637f98f88e1",
+    "semantic_hash": "635148b13a74c25151a3c637f98f88e1"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/002-infrastructure-layer/tasks.md": {
+    "mtime": 1770037625.3537312,
+    "ast_hash": "d7e598f4a98639853f7b1d9d3c59ac94",
+    "semantic_hash": "d7e598f4a98639853f7b1d9d3c59ac94"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/003-state-management-core/plan.md": {
+    "mtime": 1769963662.6739733,
+    "ast_hash": "f2ede000de119fd97724c943edf38eaf",
+    "semantic_hash": "f2ede000de119fd97724c943edf38eaf"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/003-state-management-core/spec.md": {
+    "mtime": 1769963662.6946487,
+    "ast_hash": "56da1ca2f19a5a492807f819df81efd4",
+    "semantic_hash": "56da1ca2f19a5a492807f819df81efd4"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/003-state-management-core/tasks.md": {
+    "mtime": 1770050632.6938338,
+    "ast_hash": "6fa7e26d19defee648be7c03afbcbf50",
+    "semantic_hash": "6fa7e26d19defee648be7c03afbcbf50"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/004-error-classification/plan.md": {
+    "mtime": 1769963662.7243495,
+    "ast_hash": "89703c7e14d44fc91e03e9b2986c9494",
+    "semantic_hash": "89703c7e14d44fc91e03e9b2986c9494"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/004-error-classification/spec.md": {
+    "mtime": 1769963662.7422976,
+    "ast_hash": "99c8950657754441948f400f1121d73b",
+    "semantic_hash": "99c8950657754441948f400f1121d73b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/004-error-classification/tasks.md": {
+    "mtime": 1770051761.0665605,
+    "ast_hash": "8b70ece837a39f744424c4a850a85742",
+    "semantic_hash": "8b70ece837a39f744424c4a850a85742"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/005-navigation-utilities/plan.md": {
+    "mtime": 1770316131.4897897,
+    "ast_hash": "e9aaa1e57d3b90bf2c560d47dfe06517",
+    "semantic_hash": "e9aaa1e57d3b90bf2c560d47dfe06517"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/005-navigation-utilities/spec.md": {
+    "mtime": 1770057671.1229558,
+    "ast_hash": "e5a972dc8cd2f06d3eec8931ea4b5a3d",
+    "semantic_hash": "e5a972dc8cd2f06d3eec8931ea4b5a3d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/005-navigation-utilities/tasks.md": {
+    "mtime": 1770057671.123211,
+    "ast_hash": "86fe2e31cbf63715b05d7c6f4635f8ed",
+    "semantic_hash": "86fe2e31cbf63715b05d7c6f4635f8ed"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/006-custom-hooks/plan.md": {
+    "mtime": 1769963662.7820034,
+    "ast_hash": "869a1e221d19b19309e5f2336759b24f",
+    "semantic_hash": "869a1e221d19b19309e5f2336759b24f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/006-custom-hooks/spec.md": {
+    "mtime": 1769963662.8142512,
+    "ast_hash": "952086a8cd3520ea080516b144a2be0f",
+    "semantic_hash": "952086a8cd3520ea080516b144a2be0f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/006-custom-hooks/tasks.md": {
+    "mtime": 1770131758.4333239,
+    "ast_hash": "cb2d4d48c89e13ad77699a6c591c5400",
+    "semantic_hash": "cb2d4d48c89e13ad77699a6c591c5400"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/007-utility-functions/plan.md": {
+    "mtime": 1769963662.8514752,
+    "ast_hash": "5f05e3c8519271f98aec5c1bb910284c",
+    "semantic_hash": "5f05e3c8519271f98aec5c1bb910284c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/007-utility-functions/spec.md": {
+    "mtime": 1769963662.8696487,
+    "ast_hash": "8e6d6fb7c5c489bd5a5db35f30d0f219",
+    "semantic_hash": "8e6d6fb7c5c489bd5a5db35f30d0f219"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/007-utility-functions/tasks.md": {
+    "mtime": 1770135543.2462385,
+    "ast_hash": "2b503bb1c56c9ca9d91fb8b0cf0c186e",
+    "semantic_hash": "2b503bb1c56c9ca9d91fb8b0cf0c186e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/008-core-providers/plan.md": {
+    "mtime": 1769963662.8850024,
+    "ast_hash": "fd8e3e9cc2036c4b6955bc32e0a68cf5",
+    "semantic_hash": "fd8e3e9cc2036c4b6955bc32e0a68cf5"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/008-core-providers/spec.md": {
+    "mtime": 1769963662.892541,
+    "ast_hash": "1ff0758d094f977cb40b813add6a8388",
+    "semantic_hash": "1ff0758d094f977cb40b813add6a8388"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/008-core-providers/tasks.md": {
+    "mtime": 1770153997.127587,
+    "ast_hash": "b4eea208c952a92b150d8644985d4eff",
+    "semantic_hash": "b4eea208c952a92b150d8644985d4eff"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/009-types/plan.md": {
+    "mtime": 1769963662.9018085,
+    "ast_hash": "2c7a7aecadc6978c7cb7eccb88d3c9ab",
+    "semantic_hash": "2c7a7aecadc6978c7cb7eccb88d3c9ab"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/009-types/spec.md": {
+    "mtime": 1769963662.9097528,
+    "ast_hash": "5acb8eebce2aa796f007140c2ce9fe27",
+    "semantic_hash": "5acb8eebce2aa796f007140c2ce9fe27"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/009-types/tasks.md": {
+    "mtime": 1770316131.4901636,
+    "ast_hash": "610323a07b9037014bd985d50567ccbd",
+    "semantic_hash": "610323a07b9037014bd985d50567ccbd"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/010-configuration-interface/plan.md": {
+    "mtime": 1769963662.9192073,
+    "ast_hash": "50926dde8bbab5032f592619a6336110",
+    "semantic_hash": "50926dde8bbab5032f592619a6336110"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/010-configuration-interface/spec.md": {
+    "mtime": 1769963662.9259357,
+    "ast_hash": "3585a8b57691d29ffeed979d19d37f33",
+    "semantic_hash": "3585a8b57691d29ffeed979d19d37f33"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/010-configuration-interface/tasks.md": {
+    "mtime": 1770308393.8335276,
+    "ast_hash": "e41cac304d5f8fe1b745c4757985493f",
+    "semantic_hash": "e41cac304d5f8fe1b745c4757985493f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/011-testing/plan.md": {
+    "mtime": 1769963662.9346957,
+    "ast_hash": "05b29005b0394e9c6b22356e7dcacd34",
+    "semantic_hash": "05b29005b0394e9c6b22356e7dcacd34"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/011-testing/spec.md": {
+    "mtime": 1769963662.944987,
+    "ast_hash": "b9d9c60dca396f55ee615fb2cd9a68f2",
+    "semantic_hash": "b9d9c60dca396f55ee615fb2cd9a68f2"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/011-testing/tasks.md": {
+    "mtime": 1770316958.0909085,
+    "ast_hash": "edbd2b3e2164669fc1c53c7e670b2063",
+    "semantic_hash": "edbd2b3e2164669fc1c53c7e670b2063"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/012-documentation-examples/plan.md": {
+    "mtime": 1769963662.9590003,
+    "ast_hash": "0caac13544163c2641b8d8f3d70e9a89",
+    "semantic_hash": "0caac13544163c2641b8d8f3d70e9a89"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/012-documentation-examples/spec.md": {
+    "mtime": 1769963662.9699712,
+    "ast_hash": "4ed0b946372ec8852ba26e37b99f5987",
+    "semantic_hash": "4ed0b946372ec8852ba26e37b99f5987"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/012-documentation-examples/tasks.md": {
+    "mtime": 1770318824.8320003,
+    "ast_hash": "d9d6af3ec48ec3cc23f49c035f47b858",
+    "semantic_hash": "d9d6af3ec48ec3cc23f49c035f47b858"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/013-architecture-gaps-resolution/plan.md": {
+    "mtime": 1770316131.4907124,
+    "ast_hash": "73fd2e5ba2cb8e694e5677dd44aa74c9",
+    "semantic_hash": "73fd2e5ba2cb8e694e5677dd44aa74c9"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/013-architecture-gaps-resolution/spec.md": {
+    "mtime": 1770316131.4911578,
+    "ast_hash": "6f41553ead2725d1ce4365d82a6c3280",
+    "semantic_hash": "6f41553ead2725d1ce4365d82a6c3280"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/013-architecture-gaps-resolution/tasks.md": {
+    "mtime": 1770316131.4914935,
+    "ast_hash": "7ffd5c907c4a8486e295df99a6660a16",
+    "semantic_hash": "7ffd5c907c4a8486e295df99a6660a16"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/014-react19-test-stabilization/plan.md": {
+    "mtime": 1770320228.7111747,
+    "ast_hash": "a12478d632f1eab92e61b5a37febee37",
+    "semantic_hash": "a12478d632f1eab92e61b5a37febee37"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/014-react19-test-stabilization/spec.md": {
+    "mtime": 1770320447.9721668,
+    "ast_hash": "1c0521b8278010e273104646c84c8e1a",
+    "semantic_hash": "1c0521b8278010e273104646c84c8e1a"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/014-react19-test-stabilization/tasks.md": {
+    "mtime": 1770579189.5542727,
+    "ast_hash": "8ab00a20622574c2babba359166e3048",
+    "semantic_hash": "8ab00a20622574c2babba359166e3048"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/015-form-infrastructure/plan.md": {
+    "mtime": 1770320246.2442913,
+    "ast_hash": "3b26c0299d0c3dd58a70923d335e8670",
+    "semantic_hash": "3b26c0299d0c3dd58a70923d335e8670"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/015-form-infrastructure/spec.md": {
+    "mtime": 1770320460.0657048,
+    "ast_hash": "ebca6fafc7c8c964c6d830d16b77d87e",
+    "semantic_hash": "ebca6fafc7c8c964c6d830d16b77d87e"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/015-form-infrastructure/tasks.md": {
+    "mtime": 1770581361.7255523,
+    "ast_hash": "87f30c9f08be1a1cd5412d699271a502",
+    "semantic_hash": "87f30c9f08be1a1cd5412d699271a502"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/016-offline-sync-manager/plan.md": {
+    "mtime": 1770320258.3714366,
+    "ast_hash": "cec52e77898b70d1d06d6849d034b624",
+    "semantic_hash": "cec52e77898b70d1d06d6849d034b624"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/016-offline-sync-manager/spec.md": {
+    "mtime": 1770320426.838779,
+    "ast_hash": "8acd13cb59d3dbb82eb7ab2ac62ffcd0",
+    "semantic_hash": "8acd13cb59d3dbb82eb7ab2ac62ffcd0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/016-offline-sync-manager/tasks.md": {
+    "mtime": 1770585746.203882,
+    "ast_hash": "a38d4beb4061630149f2c5cb99d9cc0d",
+    "semantic_hash": "a38d4beb4061630149f2c5cb99d9cc0d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/017-theme-infrastructure/plan.md": {
+    "mtime": 1770320279.2642078,
+    "ast_hash": "2915978f9299e949822da0de27d6f62b",
+    "semantic_hash": "2915978f9299e949822da0de27d6f62b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/017-theme-infrastructure/spec.md": {
+    "mtime": 1770320455.2068765,
+    "ast_hash": "ec4b3fbca9f47fa4c6757780aa45446d",
+    "semantic_hash": "ec4b3fbca9f47fa4c6757780aa45446d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/017-theme-infrastructure/tasks.md": {
+    "mtime": 1770637639.5465586,
+    "ast_hash": "36dc0b22f8e7c2c19edcec7d64fec263",
+    "semantic_hash": "36dc0b22f8e7c2c19edcec7d64fec263"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/018-unified-configuration-provider/plan.md": {
+    "mtime": 1770805438.546539,
+    "ast_hash": "61e7974250cecd73595c766ea1fb29f6",
+    "semantic_hash": "61e7974250cecd73595c766ea1fb29f6"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/018-unified-configuration-provider/spec.md": {
+    "mtime": 1770805072.494719,
+    "ast_hash": "efaefc45132641e4477ff68395f721eb",
+    "semantic_hash": "efaefc45132641e4477ff68395f721eb"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/018-unified-configuration-provider/tasks.md": {
+    "mtime": 1770810223.775651,
+    "ast_hash": "e1a211c71b65730afbd7bae2c0360017",
+    "semantic_hash": "e1a211c71b65730afbd7bae2c0360017"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/019-offline-sync-rework/plan.md": {
+    "mtime": 1770805484.821851,
+    "ast_hash": "5fef5e974803de7f38adf70324c28548",
+    "semantic_hash": "5fef5e974803de7f38adf70324c28548"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/019-offline-sync-rework/spec.md": {
+    "mtime": 1770805078.4300644,
+    "ast_hash": "c9beb7ecdf5fb94ae678616975f62386",
+    "semantic_hash": "c9beb7ecdf5fb94ae678616975f62386"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/019-offline-sync-rework/tasks.md": {
+    "mtime": 1770887537.6856096,
+    "ast_hash": "bbe4fc4c5374bf6b48d8e46940a55940",
+    "semantic_hash": "bbe4fc4c5374bf6b48d8e46940a55940"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/020-logger-transport-system/plan.md": {
+    "mtime": 1770805546.4792829,
+    "ast_hash": "e22bf76743405db790d490286d6a82e9",
+    "semantic_hash": "e22bf76743405db790d490286d6a82e9"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/020-logger-transport-system/spec.md": {
+    "mtime": 1770805097.58253,
+    "ast_hash": "24c4cfb024792285acdc356bd9b30a1a",
+    "semantic_hash": "24c4cfb024792285acdc356bd9b30a1a"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/020-logger-transport-system/tasks.md": {
+    "mtime": 1770889837.1925495,
+    "ast_hash": "4080389df673aca4105e865b8680c585",
+    "semantic_hash": "4080389df673aca4105e865b8680c585"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/021-api-client-extensibility/plan.md": {
+    "mtime": 1770805587.6576407,
+    "ast_hash": "335345d8460211f55b778f1741b92dbd",
+    "semantic_hash": "335345d8460211f55b778f1741b92dbd"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/021-api-client-extensibility/spec.md": {
+    "mtime": 1770805106.7509058,
+    "ast_hash": "1c79911097daa75efd3af6488531d005",
+    "semantic_hash": "1c79911097daa75efd3af6488531d005"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/021-api-client-extensibility/tasks.md": {
+    "mtime": 1770917284.9590812,
+    "ast_hash": "44f7163039c7b606e627653507aca493",
+    "semantic_hash": "44f7163039c7b606e627653507aca493"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/022-forms-internationalization/plan.md": {
+    "mtime": 1770805627.4834445,
+    "ast_hash": "0756985552e4f81c15eaf838a312b372",
+    "semantic_hash": "0756985552e4f81c15eaf838a312b372"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/022-forms-internationalization/spec.md": {
+    "mtime": 1770805132.8443274,
+    "ast_hash": "7733a1071d22fb6ea515478617dfaca6",
+    "semantic_hash": "7733a1071d22fb6ea515478617dfaca6"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/022-forms-internationalization/tasks.md": {
+    "mtime": 1770918381.2960932,
+    "ast_hash": "541c5d6313efb95ca8ade1be85f03588",
+    "semantic_hash": "541c5d6313efb95ca8ade1be85f03588"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/023-error-system-enhancements/plan.md": {
+    "mtime": 1770805667.5192847,
+    "ast_hash": "51ab8702e223289701aac80e01e23d12",
+    "semantic_hash": "51ab8702e223289701aac80e01e23d12"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/023-error-system-enhancements/spec.md": {
+    "mtime": 1770805157.3732388,
+    "ast_hash": "be8c905f69022b109f6e6ed562c352e3",
+    "semantic_hash": "be8c905f69022b109f6e6ed562c352e3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/023-error-system-enhancements/tasks.md": {
+    "mtime": 1770921282.9766457,
+    "ast_hash": "59be87e8a149a18c89953c580ac63070",
+    "semantic_hash": "59be87e8a149a18c89953c580ac63070"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/024-hooks-configurability/plan.md": {
+    "mtime": 1770805718.0445833,
+    "ast_hash": "25e769fd4f30b0715a75a4053e80292c",
+    "semantic_hash": "25e769fd4f30b0715a75a4053e80292c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/024-hooks-configurability/spec.md": {
+    "mtime": 1770805177.0329478,
+    "ast_hash": "e360f61855ac4b8cba1dc79131fc6a07",
+    "semantic_hash": "e360f61855ac4b8cba1dc79131fc6a07"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/024-hooks-configurability/tasks.md": {
+    "mtime": 1772708470.1474178,
+    "ast_hash": "8101a6a810a43d47b02334f787910ffd",
+    "semantic_hash": "8101a6a810a43d47b02334f787910ffd"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/025-infrastructure-hardening/plan.md": {
+    "mtime": 1770805751.4155748,
+    "ast_hash": "8488dd737db26819dcb140ab952577e3",
+    "semantic_hash": "8488dd737db26819dcb140ab952577e3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/025-infrastructure-hardening/spec.md": {
+    "mtime": 1770805238.14051,
+    "ast_hash": "d017b068ddd82e9342fe1cabea1e1c96",
+    "semantic_hash": "d017b068ddd82e9342fe1cabea1e1c96"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/025-infrastructure-hardening/tasks.md": {
+    "mtime": 1772714576.6944268,
+    "ast_hash": "9f0fb180ec8dc3dd8ff1ee371a67fffc",
+    "semantic_hash": "9f0fb180ec8dc3dd8ff1ee371a67fffc"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/026-test-stabilization/plan.md": {
+    "mtime": 1772711130.8968697,
+    "ast_hash": "b09555de2cca129704346807b10e30bb",
+    "semantic_hash": "b09555de2cca129704346807b10e30bb"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/026-test-stabilization/spec.md": {
+    "mtime": 1772710896.7386367,
+    "ast_hash": "5b9939b3a54a93ab94a53615b9fcfd24",
+    "semantic_hash": "5b9939b3a54a93ab94a53615b9fcfd24"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/026-test-stabilization/tasks.md": {
+    "mtime": 1772718709.2461612,
+    "ast_hash": "132a3f89ed80003df98a85f334a91512",
+    "semantic_hash": "132a3f89ed80003df98a85f334a91512"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/027-lint-cleanup/plan.md": {
+    "mtime": 1772719017.795022,
+    "ast_hash": "8bf908667c4c2d213399525421ab7aa7",
+    "semantic_hash": "8bf908667c4c2d213399525421ab7aa7"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/027-lint-cleanup/spec.md": {
+    "mtime": 1772718922.8368893,
+    "ast_hash": "9d1818e2cab220029a5de6273f1ff98f",
+    "semantic_hash": "9d1818e2cab220029a5de6273f1ff98f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/specs/027-lint-cleanup/tasks.md": {
+    "mtime": 1773145067.7574663,
+    "ast_hash": "4d8a9eaff5557202b186b1c16482a3a8",
+    "semantic_hash": "4d8a9eaff5557202b186b1c16482a3a8"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/templates/agent-file-template.md": {
+    "mtime": 1769951103.3693876,
+    "ast_hash": "b8247a4214e5a2fb2468ad8dcf5fca50",
+    "semantic_hash": "b8247a4214e5a2fb2468ad8dcf5fca50"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/templates/checklist-template.md": {
+    "mtime": 1769963662.9850829,
+    "ast_hash": "cb2f2cbc3b87a1ab1f3b2c5ac4587061",
+    "semantic_hash": "cb2f2cbc3b87a1ab1f3b2c5ac4587061"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/templates/plan-template.md": {
+    "mtime": 1769963662.990264,
+    "ast_hash": "6113fcdd01a69806d93b792563403b9b",
+    "semantic_hash": "6113fcdd01a69806d93b792563403b9b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/templates/spec-template.md": {
+    "mtime": 1769963662.9998045,
+    "ast_hash": "0cd60db607a12e10ece6f92dc853123b",
+    "semantic_hash": "0cd60db607a12e10ece6f92dc853123b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/.specify/templates/tasks-template.md": {
+    "mtime": 1770579270.7498436,
+    "ast_hash": "134a3095018f01cb7d6ebe8a40f683da",
+    "semantic_hash": "134a3095018f01cb7d6ebe8a40f683da"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/CHANGELOG.md": {
+    "mtime": 1780489454.4393349,
+    "ast_hash": "8927227f19ba7530a36d7918cc8fbaa2",
+    "semantic_hash": "8927227f19ba7530a36d7918cc8fbaa2"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/CLAUDE.md": {
+    "mtime": 1780487490.9060252,
+    "ast_hash": "eebfefa536c215012ed77c22d7f33c3f",
+    "semantic_hash": "eebfefa536c215012ed77c22d7f33c3f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/CODE_OF_CONDUCT.md": {
+    "mtime": 1770318824.833845,
+    "ast_hash": "a8aa464b749720f149b517003f758cc2",
+    "semantic_hash": "a8aa464b749720f149b517003f758cc2"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/CONTRIBUTING.md": {
+    "mtime": 1773145203.7967072,
+    "ast_hash": "cc2cc7c09c0adc2e695fc6c1dfaefdaf",
+    "semantic_hash": "cc2cc7c09c0adc2e695fc6c1dfaefdaf"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/MIGRATION_v1.1.md": {
+    "mtime": 1780487734.409181,
+    "ast_hash": "9f56b87de3dc07eb844832ff833dd8c8",
+    "semantic_hash": "9f56b87de3dc07eb844832ff833dd8c8"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/README.md": {
+    "mtime": 1780489940.0488439,
+    "ast_hash": "d58f03a0767f332acfe52bf850d82ffb",
+    "semantic_hash": "d58f03a0767f332acfe52bf850d82ffb"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/SECURITY.md": {
+    "mtime": 1773145519.5015485,
+    "ast_hash": "0bae1c5a06b94b601c2d67338b7d4a79",
+    "semantic_hash": "0bae1c5a06b94b601c2d67338b7d4a79"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/ARCHITECTURE.md": {
+    "mtime": 1773145631.3983681,
+    "ast_hash": "e121eee5b211e4bf4a008055f1864da4",
+    "semantic_hash": "e121eee5b211e4bf4a008055f1864da4"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/CONFIGURATION.md": {
+    "mtime": 1773151484.1556535,
+    "ast_hash": "753298e4ff83feb0cfd35df1fb070580",
+    "semantic_hash": "753298e4ff83feb0cfd35df1fb070580"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/FAQ.md": {
+    "mtime": 1773149268.8747323,
+    "ast_hash": "99bec186c0bc9ebed771e2b6c83ae38d",
+    "semantic_hash": "99bec186c0bc9ebed771e2b6c83ae38d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/FORMS.md": {
+    "mtime": 1773145631.4049013,
+    "ast_hash": "7cc701e3d0a54a4a48e7585bd2e57f75",
+    "semantic_hash": "7cc701e3d0a54a4a48e7585bd2e57f75"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/INDEX.md": {
+    "mtime": 1773145631.4491,
+    "ast_hash": "9bed97a052a1002c87a2cb689e4bf0a3",
+    "semantic_hash": "9bed97a052a1002c87a2cb689e4bf0a3"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/MIGRATION.md": {
+    "mtime": 1773145631.4356043,
+    "ast_hash": "b0d0978acdb697a1beb444679bdfa2d0",
+    "semantic_hash": "b0d0978acdb697a1beb444679bdfa2d0"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/OFFLINE.md": {
+    "mtime": 1773168666.2831643,
+    "ast_hash": "6077fc9b4d023d33337190ff7f295572",
+    "semantic_hash": "6077fc9b4d023d33337190ff7f295572"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/QUICK_START.md": {
+    "mtime": 1773149268.8740158,
+    "ast_hash": "01e56823db588aa83f97b346f2a0801b",
+    "semantic_hash": "01e56823db588aa83f97b346f2a0801b"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/TESTING.md": {
+    "mtime": 1773145631.4435978,
+    "ast_hash": "8dec33c89de85d8290df460859d0481d",
+    "semantic_hash": "8dec33c89de85d8290df460859d0481d"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/THEME.md": {
+    "mtime": 1773145631.4561439,
+    "ast_hash": "e755b2ddeb1ddaa2eb5127e652ad3e99",
+    "semantic_hash": "e755b2ddeb1ddaa2eb5127e652ad3e99"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/TYPES.md": {
+    "mtime": 1773168720.3713899,
+    "ast_hash": "fbc56a29a82422be2479c074fd57cf44",
+    "semantic_hash": "fbc56a29a82422be2479c074fd57cf44"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/api/ERRORS.md": {
+    "mtime": 1773151498.6636689,
+    "ast_hash": "cddb0f69c3b317e20b6f6c8ad9215b18",
+    "semantic_hash": "cddb0f69c3b317e20b6f6c8ad9215b18"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/api/HOOKS.md": {
+    "mtime": 1773146615.9666302,
+    "ast_hash": "8a2b75952f1cd9318016534871dbc437",
+    "semantic_hash": "8a2b75952f1cd9318016534871dbc437"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/api/INFRASTRUCTURE.md": {
+    "mtime": 1773146661.3428884,
+    "ast_hash": "d5ab691a4c5aa47d58bb6bdcfbc2b52f",
+    "semantic_hash": "d5ab691a4c5aa47d58bb6bdcfbc2b52f"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/api/NAVIGATION.md": {
+    "mtime": 1773168704.0220191,
+    "ast_hash": "74a1e822bb88f1949a23f40954736d1c",
+    "semantic_hash": "74a1e822bb88f1949a23f40954736d1c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/api/STATE.md": {
+    "mtime": 1773169544.9442682,
+    "ast_hash": "102e9631e91729bba479245a6cc193bd",
+    "semantic_hash": "102e9631e91729bba479245a6cc193bd"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/docs/api/UTILITIES.md": {
+    "mtime": 1773146661.3421404,
+    "ast_hash": "520a4bde89a3b9434794165808b3c91c",
+    "semantic_hash": "520a4bde89a3b9434794165808b3c91c"
+  },
+  "/Users/elshenawy/ReactNativeProjects/opticore-react-native/examples/infrastructure/README.md": {
+    "mtime": 1770316131.4943907,
+    "ast_hash": "c4bf676cb4fb0c9903e2efbc446738d8",
+    "semantic_hash": "c4bf676cb4fb0c9903e2efbc446738d8"
+  }
+}
