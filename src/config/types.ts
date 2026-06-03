@@ -8,6 +8,7 @@ import { ThemeConfig, Theme } from '../theme/types';
 import { OfflineSyncConfig } from '../offline/types';
 import { ErrorClassificationRule } from '../error/ErrorClassifier';
 import { AuthStrategy } from '../infrastructure/network/AuthStrategy';
+import type { OptiCoreAdapters } from '../adapters/interfaces';
 
 // ... imports
 
@@ -173,4 +174,14 @@ export interface CoreConfig {
 
   /** Error classification configuration */
   errorClassification?: ErrorClassificationConfig;
+
+  /**
+   * Override native module adapters.
+   *
+   * Omitted adapters auto-resolve via the default chain (popular peer
+   * dependency → in-memory fallback). Inject custom implementations here to
+   * swap storage backends (MMKV, Keychain), provide test doubles, or run on
+   * platforms where the default peer isn't available.
+   */
+  adapters?: OptiCoreAdapters;
 }

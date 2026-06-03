@@ -1,22 +1,43 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Logger } from '../logger/Logger';
-import { IStorage } from './interfaces/IStorage';
+import type { IStorage } from './interfaces/IStorage';
+import type { LocalStorageAdapter } from '../../adapters/interfaces';
+import { resolveLocalStorageAdapter } from '../../adapters/registry';
 
+/**
+ * Local (non-secure) storage backed by a pluggable {@link LocalStorageAdapter}.
+ *
+ * Default adapter is auto-resolved from `@react-native-async-storage/async-storage`
+ * when installed, or an in-memory fallback otherwise. Consumers can inject any
+ * adapter (e.g. react-native-mmkv) via `OptiCoreProvider`.
+ */
 export class LocalStorage implements IStorage {
   private static instance: LocalStorage;
+  private adapter: LocalStorageAdapter;
 
-  private constructor() { }
+  private constructor(adapter?: LocalStorageAdapter) {
+    this.adapter = adapter ?? resolveLocalStorageAdapter();
+  }
 
-  public static getInstance(): LocalStorage {
+  /**
+   * Get the shared LocalStorage instance.
+   * If `adapter` is provided on the first call, it becomes the backing store
+   * for the lifetime of the process.
+   */
+  public static getInstance(adapter?: LocalStorageAdapter): LocalStorage {
     if (!LocalStorage.instance) {
-      LocalStorage.instance = new LocalStorage();
+      LocalStorage.instance = new LocalStorage(adapter);
     }
     return LocalStorage.instance;
   }
 
+  /** Replace the backing adapter at runtime (e.g. when OptiCoreProvider mounts). */
+  public setAdapter(adapter: LocalStorageAdapter): void {
+    this.adapter = adapter;
+  }
+
   async get<T>(key: string): Promise<T | null> {
     try {
-      const value = await AsyncStorage.getItem(key);
+      const value = await this.adapter.getItem(key);
       if (value === null) return null;
       try {
         return JSON.parse(value) as T;
@@ -35,7 +56,7 @@ export class LocalStorage implements IStorage {
 
   async set<T>(key: string, value: T): Promise<void> {
     try {
-      await AsyncStorage.setItem(key, JSON.stringify(value));
+      await this.adapter.setItem(key, JSON.stringify(value));
     } catch (error) {
       Logger.getInstance().error(`[LocalStorage] Failed to write key "${key}"`, error as Error);
       throw error;
@@ -44,7 +65,7 @@ export class LocalStorage implements IStorage {
 
   async remove(key: string): Promise<void> {
     try {
-      await AsyncStorage.removeItem(key);
+      await this.adapter.removeItem(key);
     } catch (error) {
       Logger.getInstance().error(`[LocalStorage] Failed to remove key "${key}"`, error as Error);
       throw error;
@@ -53,7 +74,7 @@ export class LocalStorage implements IStorage {
 
   async clear(): Promise<void> {
     try {
-      await AsyncStorage.clear();
+      await this.adapter.clear();
     } catch (error) {
       Logger.getInstance().error('[LocalStorage] Failed to clear storage', error as Error);
       throw error;

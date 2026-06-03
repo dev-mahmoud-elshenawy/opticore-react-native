@@ -5,12 +5,15 @@
  * @packageDocumentation
  */
 
-export const VERSION = '1.0.0';
+export const VERSION = '1.1.0';
 
 // Infrastructure exports
 export { HttpMethod } from './infrastructure';
 export * from './infrastructure';
 export * from './config';
+
+// Adapter system — interfaces, registry, and built-in default adapters.
+export * from './adapters';
 
 // Error classification exports
 export * from './error';

@@ -1,28 +1,35 @@
 import { useState, useEffect } from 'react';
-import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import type { ConnectivityAdapter } from '../adapters/interfaces';
+import { resolveConnectivityAdapter } from '../adapters/registry';
 
 /**
  * Hook to monitor network connectivity status.
- * Wraps @react-native-community/netinfo.
+ *
+ * Resolves a {@link ConnectivityAdapter} via the default chain
+ * (`@react-native-community/netinfo` → memory fallback). Pass an `adapter`
+ * argument to override — e.g. to provide a test-only adapter or a custom
+ * implementation supplied via `OptiCoreProvider`.
  *
  * @returns Object containing:
- * - isConnected: boolean | null - True if connected, false if definitely offline, null if unknown
- * - isInternetReachable: boolean | null - True if internet allows actual requests
- * - type: string | null - Connection type (wifi, cellular, etc.)
+ * - isConnected: boolean | null
+ * - isInternetReachable: boolean | null
+ * - type: string | null
  */
-export function useConnectivity() {
+export function useConnectivity(adapter?: ConnectivityAdapter) {
   const [isConnected, setIsConnected] = useState<boolean | null>(true);
   const [isInternetReachable, setIsInternetReachable] = useState<boolean | null>(true);
   const [type, setType] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
+    const resolved = adapter ?? resolveConnectivityAdapter();
+
+    const unsubscribe = resolved.addEventListener((state) => {
       setIsConnected(state.isConnected);
       setIsInternetReachable(state.isInternetReachable);
       setType(state.type);
     });
 
-    NetInfo.fetch().then((state) => {
+    resolved.fetch().then((state) => {
       setIsConnected(state.isConnected);
       setIsInternetReachable(state.isInternetReachable);
       setType(state.type);
@@ -31,7 +38,7 @@ export function useConnectivity() {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [adapter]);
 
   return { isConnected, isInternetReachable, type };
 }

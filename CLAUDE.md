@@ -1,8 +1,8 @@
 # Claude Development Guide for OptiCore React Native
 
 **Package**: `opticore-react-native`
-**Version**: 1.0.0
-**Last Updated**: 2026-03-10 (Spec 026: Test Stabilization - COMPLETED)
+**Version**: 1.1.0
+**Last Updated**: 2026-06-03 (v1.1.0: native modules moved to optional peer deps + runtime adapter system)
 **Target Platforms**: iOS & Android ONLY
 
 > **📖 Spec Kit Reference**: See [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete specification-driven development guide
@@ -110,15 +110,97 @@ OptiCore React Native is a **pure infrastructure library** for React Native/Expo
 
 ```bash
 npm install opticore-react-native
+# Then install the native peers (see Adapter System below)
+npx opticore-install-peers
 ```
 
 ```typescript
-// Import from main entry
-import { ApiClient, Logger } from 'opticore-react-native';
+// Import from main entry (everything is re-exported here)
+import { ApiClient, Logger, OptiCoreProvider } from 'opticore-react-native';
 
-// Import from subpaths
-import { capitalize, formatPhone } from 'opticore-react-native/utils/string';
+// Import from a subpath (defined in package.json "exports")
+import { capitalize } from 'opticore-react-native/utils';
+import type { LocalStorageAdapter } from 'opticore-react-native/adapters';
 ```
+
+Subpath exports map to `dist/*`: `.`, `./utils`, `./state`, `./hooks`, `./forms`,
+`./offline`, `./theme`, `./adapters`, and `./metro` (the Metro config helper).
+
+---
+
+## Architecture: Adapter System (v1.1.0 — READ THIS FIRST)
+
+This is the most important cross-cutting design in the codebase and it spans
+`src/adapters/`, `src/providers/`, every infrastructure singleton, `metro.js`,
+and `bin/install-peers.mjs`. Understand it before touching storage, connectivity,
+device, or clipboard code.
+
+**The problem it solves**: v1.0.0 pinned native modules (`expo-secure-store`,
+NetInfo, AsyncStorage, …) as hard `dependencies`. That caused cross-SDK runtime
+crashes (e.g. `ClassNotFoundException: AnyTypeProvider`) when a consumer's Expo
+SDK didn't match OptiCore's pinned `expo-modules-core`.
+
+**The v1.1.0 fix**: native modules are now **optional `peerDependencies`**
+(`peerDependenciesMeta` marks them `optional: true`). OptiCore depends only on a
+set of small **adapter interfaces** and resolves a concrete implementation at
+runtime via a **resolver chain**.
+
+### How it fits together
+
+1. **Interfaces** (`src/adapters/interfaces.ts`) — stable contracts:
+   `SecureStorageAdapter`, `LocalStorageAdapter`, `ConnectivityAdapter`,
+   `DeviceAdapter`, `ClipboardAdapter`, and the `OptiCoreAdapters` injection bundle.
+   OptiCore code depends on these, never on a native module directly.
+
+2. **Default adapters** (`src/adapters/defaults/*`) — each wraps one peer behind
+   a `create*Adapter()` factory that **lazily `require()`s** the peer and returns
+   `null` if it's absent or its native module isn't in the binary. Never throws at
+   import time — that's what keeps the library Expo Go-friendly.
+
+3. **`nativeModulePresent` / `loadOptionalNativeModule`**
+   (`src/adapters/defaults/nativeModulePresent.ts`) — the guard that probes
+   `TurboModuleRegistry.get` / `NativeModules` **without throwing**. Any default
+   adapter wrapping a *bare* RN native lib (clipboard, device-info, NetInfo) must
+   gate its `require` through this, or it red-boxes in Expo Go. Exported for
+   consumers to wrap their own native deps the same way.
+
+4. **Resolver chain** (`src/adapters/registry.ts`) — `resolve*Adapter()` picks the
+   first available: **consumer override → popular default peer → in-memory fallback**.
+   `resolveAllAdapters(overrides)` resolves the whole bundle at once. The memory
+   fallback means missing peers degrade gracefully (good for Jest/SSR) instead of
+   crashing — but it is **not** real persistence/secure storage in production.
+
+5. **Wiring** (`src/providers/OptiCoreProvider.tsx`) — on mount, calls
+   `resolveAllAdapters(config.adapters)` then pushes the resolved adapters into the
+   singletons: `StorageManager.configure(...)`, `configurePlatformAdapters(...)`
+   (clipboard/device, in `src/utils/platform.ts`), and
+   `ConnectivityManager.configure(...)`. Singletons hold no native imports of their
+   own — they receive an adapter or fall back to the resolver default.
+
+6. **Consumer injection** — pass `config.adapters` to `OptiCoreProvider` to swap in
+   MMKV, react-native-keychain, a Jest double, etc. Any omitted adapter falls back
+   to the default chain. See `MIGRATION_v1.1.md` for the canonical example.
+
+### Supporting pieces
+
+- **`bin/install-peers.mjs`** (CLI: `npx opticore-install-peers`) — detects Expo +
+  package manager and runs `expo install` (SDK-aligned) for the peers. Flags:
+  `--required`, `--optional`, `--dry-run`. REQUIRED peers = secure-store, async-storage,
+  netinfo; OPTIONAL = device-info, clipboard.
+- **`metro.js`** (`withOptiCoreMetroConfig`, exported as `opticore-react-native/metro`)
+  — only needed for `file:`/monorepo consumption. Forces `react`/`react-native`/
+  `react-dom` to resolve from the **app's** `node_modules` (via `resolveRequest`),
+  preventing the duplicate-React "Invalid hook call" crash.
+
+### Rules when adding/modifying native-backed features
+
+- Never `import` a native peer at module top level. Add a `create*Adapter()` factory
+  under `src/adapters/defaults/`, gate bare-RN libs through `loadOptionalNativeModule`,
+  add it to the relevant `resolve*` chain, and export it from `src/adapters/index.ts`.
+- Add new contracts to `interfaces.ts` and the `OptiCoreAdapters` bundle so consumers
+  can override them.
+- Add the peer to `peerDependencies` + `peerDependenciesMeta` (optional) in
+  `package.json`, and to the appropriate list in `bin/install-peers.mjs`.
 
 ---
 
@@ -606,15 +688,24 @@ open coverage/lcov-report/index.html
 
 ### Test File Organization
 
+Tests are **NOT co-located with source**. They live in a top-level `test/` tree
+that mirrors `src/`, and Jest only looks there:
+
 ```
-src/
-├── utils/
-│   └── string/
-│       ├── capitalize.ts
-│       ├── capitalize.test.ts        # Co-located
-│       └── __tests__/               # Or in __tests__
-│           └── formatPhone.test.ts
+test/                      # jest.config.js: roots: ['<rootDir>/test']
+├── setup.ts               # setupFilesAfterEnv (global mocks, RN env)
+├── __mocks__/             # manual module mocks (native peers, etc.)
+├── helpers/               # shared test utilities
+├── integration/           # cross-module integration tests
+├── utils/  state/  hooks/  infrastructure/  ...   # mirror of src/ folders
+└── index.test.ts
 ```
+
+- Preset: **`jest-expo`** (see `jest.config.js`). Test match:
+  `**/test/**/*.(test|spec).(ts|tsx|js)`.
+- When adding a source file under `src/foo/`, add its test under `test/foo/`
+  (not next to the source). Adapters/native peers are mocked in `test/__mocks__`,
+  which is also why the memory-fallback adapters matter for the suite.
 
 ### Test Structure
 
@@ -796,23 +887,34 @@ npm test
 npm test -- --watch
 
 # Run tests with coverage
-npm test -- --coverage
+npm run test:coverage
 
-# Lint code
+# Run a SINGLE test file or pattern
+npm test -- test/utils/string.test.ts
+npm test -- -t "capitalize"          # by test name
+
+# Lint code (flat config: eslint.config.mjs)
 npm run lint
 
 # Fix linting issues
 npm run lint -- --fix
 
-# Format code
+# Format code (Prettier) / check only
 npm run format
+npm run format:check
 
-# Build package
+# Type-test the public API surface (tsd)
+npm run test:types
+
+# Build package (clean dist + tsc -p tsconfig.build.json)
 npm run build
 
-# Run all quality gates
+# Run all quality gates: type-check + lint + format:check + test
 npm run validate
 ```
+
+> Note: `npm run verify` referenced in some older sections does not exist — use
+> `npm run validate`. There is no `npm run dev`; `npm start` runs `tsc --watch`.
 
 ### Spec Kit Commands
 
@@ -1437,19 +1539,23 @@ Browse `.specify/specs/` for examples of completed specs:
 
 ### Technology Stack
 
-- **React Native**: 0.83+ (Expo SDK 54)
-- **TypeScript**: 5.7+ (strict mode)
-- **State**: Zustand ^5.0.11 + React Query ^5.90.20
-- **Network**: Axios ^1.13.4
-- **Storage**: AsyncStorage ^2.2.0 + SecureStore ^15.0.8
-- **Validation**: Zod ^3.24.1
-- **Forms**: React Hook Form ^7.54.2
-- **Testing**: Jest ^29.7.0 + React Native Testing Library ^14.0.0-beta
+Peer ranges widened in v1.1.0 — OptiCore is no longer pinned to one Expo SDK.
+
+- **Peers** (consumer-provided): `react >=19`, `react-native >=0.78`,
+  `expo >=54.0.0` (54/55/56/+), `expo-router >=4`, `typescript >=5`
+- **Optional native peers** (auto-detected via adapters, not bundled):
+  `expo-secure-store`, `@react-native-async-storage/async-storage`,
+  `@react-native-community/netinfo`, `react-native-device-info`,
+  `@react-native-clipboard/clipboard` (install via `npx opticore-install-peers`)
+- **Bundled deps**: Zustand ^5 + React Query ^5 (state), Axios ^1.13 (network),
+  Zod ^3 + React Hook Form ^7 + @hookform/resolvers (forms), date-fns ^4, immer ^10
+- **Testing**: Jest ^29 with the **`jest-expo`** preset + React Native Testing Library;
+  `tsd` for public-API type tests
 
 ---
 
-**Last Updated**: 2026-03-10
-**Version**: 1.0.0
+**Last Updated**: 2026-06-03
+**Version**: 1.1.0
 **Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**

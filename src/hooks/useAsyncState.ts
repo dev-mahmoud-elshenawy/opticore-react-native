@@ -4,7 +4,7 @@ export type UseAsyncStateReturn<T> = {
   isLoading: boolean;
   data: T | null;
   error: Error | null;
-  run: (promise: Promise<T>) => Promise<T | undefined>;
+  run: (promise: Promise<T>) => Promise<void>;
   setData: React.Dispatch<React.SetStateAction<T | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
   reset: () => void;
@@ -44,7 +44,7 @@ export function useAsyncState<T>(initialData: T | null = null): UseAsyncStateRet
     };
   }, []);
 
-  const run = useCallback(async (promise: Promise<T>): Promise<T | undefined> => {
+  const run = useCallback(async (promise: Promise<T>): Promise<void> => {
     setIsLoading(true);
     setError(null);
     setData(null);
@@ -55,13 +55,11 @@ export function useAsyncState<T>(initialData: T | null = null): UseAsyncStateRet
         setData(result);
         setError(null);
       }
-      return result;
     } catch (e: unknown) {
       if (isMounted.current) {
         setError(e instanceof Error ? e : new Error(String(e)));
         setData(null);
       }
-      throw e;
     } finally {
       if (isMounted.current) {
         setIsLoading(false);

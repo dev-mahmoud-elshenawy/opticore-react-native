@@ -7,13 +7,13 @@ OptiCore is a **TypeScript-first**, production-ready infrastructure layer that e
 [![npm version](https://img.shields.io/npm/v/opticore-react-native?color=blue&label=npm)](https://www.npmjs.com/package/opticore-react-native)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-3178C6)](https://www.typescriptlang.org/)
 [![React Native](https://img.shields.io/badge/React%20Native-0.78+-61DAFB)](https://reactnative.dev/)
-[![Tests](https://img.shields.io/badge/Tests-647%20passing-brightgreen)](./docs/TESTING.md)
-[![Coverage](https://img.shields.io/badge/Coverage-89%25+-brightgreen)](./docs/TESTING.md)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](./LICENSE)
+[![Tests](https://img.shields.io/badge/Tests-647%20passing-brightgreen)](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/TESTING.md)
+[![Coverage](https://img.shields.io/badge/Coverage-89%25+-brightgreen)](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/TESTING.md)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/LICENSE)
 [![Build](https://img.shields.io/badge/Build-Passing-teal)]()
 
-<a href="https://www.buymeacoffee.com/m.elshenawy" target="_blank">
-  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="40" width="175">
+<a href="https://www.buymeacoffee.com/m.elshenawy">
+  <img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support%20My%20Work-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=0D1117" alt="Buy Me A Coffee"/>
 </a>
 
 ---
@@ -46,15 +46,36 @@ npm install opticore-react-native
 yarn add opticore-react-native
 ```
 
-### Peer Dependencies
+### Peer Dependencies — one command
 
-Install all peer dependencies with one command:
+> **v1.1.0**: native modules are now **peer dependencies** managed by your app's Expo SDK — not pinned by OptiCore. This eliminates the SDK-version crashes that affected `1.0.0` (`AnyTypeProvider`, duplicate `expo-modules-core`, etc.). See [`MIGRATION_v1.1.md`](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/MIGRATION_v1.1.md) for the upgrade.
+
+OptiCore ships a tiny CLI that installs every peer in one shot, using `expo install` to pick versions that match your Expo SDK:
 
 ```bash
-npx install-peerdeps opticore-react-native
+npx opticore-install-peers
 ```
 
-> This uses [`install-peerdeps`](https://www.npmjs.com/package/install-peerdeps) to automatically resolve and install the correct versions of all required peer dependencies.
+That installs both required and optional peers. Flags if you want finer control:
+
+```bash
+npx opticore-install-peers --required   # storage + network only
+npx opticore-install-peers --optional   # clipboard + device only
+npx opticore-install-peers --dry-run    # show the command without running
+```
+
+Behind the scenes it detects Expo / Yarn / pnpm / npm and runs the right tool. Prefer to run the bundled installer script directly (same flags):
+
+```bash
+node node_modules/opticore-react-native/bin/install-peers.mjs            # required + optional
+node node_modules/opticore-react-native/bin/install-peers.mjs --dry-run  # print the command only
+```
+
+> **Bare React Native (no Expo Go)?** The clipboard/device adapters also accept the
+> bare peers `@react-native-clipboard/clipboard` and `react-native-device-info` as a
+> fallback — but they only work in a custom dev build, not in Expo Go.
+
+Any peer you skip falls back to an **in-memory adapter** at runtime — useful for tests and SSR, never a substitute for real native storage in production. If you'd rather inject a custom adapter (MMKV, Keychain, a JS-only stub), see [Custom Adapters](#-custom-adapters) below.
 
 ---
 
@@ -113,7 +134,94 @@ const { data: users, isLoading, error, run } = useAsyncState<User[]>();
 run(() => ApiClient.getInstance().get<User[]>('/users').then(r => r.data));
 ```
 
-→ **[Full setup guide](./docs/QUICK_START.md)** — auth, error handling, offline sync, theming and more.
+→ **[Full setup guide](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/QUICK_START.md)** — auth, error handling, offline sync, theming and more.
+
+---
+
+## 🔌 Custom Adapters
+
+OptiCore's native dependencies are accessed through **adapter interfaces**. The defaults auto-resolve the popular peers when installed; you can override any of them. Each capability prefers an **Expo module** (which ships inside Expo Go), then falls back to the bare React Native peer, then to an in-memory stub:
+
+| Capability | Preferred (Expo Go-safe) | Fallback peer | Last resort |
+|---|---|---|---|
+| Secure storage | `expo-secure-store` | — | in-memory |
+| Local storage | — | `@react-native-async-storage/async-storage` | in-memory |
+| Connectivity | — | `@react-native-community/netinfo` | in-memory |
+| Device info | `expo-device` (+ `expo-application`) | `react-native-device-info` | in-memory |
+| Clipboard | `expo-clipboard` | `@react-native-clipboard/clipboard` | in-memory |
+
+### Why this matters
+
+- **No SDK pinning** — your Expo SDK picks the native module versions, not OptiCore.
+- **Plug in any backend** — MMKV for fast storage, Keychain for hardened secure storage, custom NetInfo for WebSocket-based reachability.
+- **Works in unit tests + SSR** — missing peers degrade to in-memory adapters instead of crashing.
+- **Works in Expo Go — even when bare native libs are installed.** See below.
+
+### Example: MMKV for local storage
+
+```ts
+import { MMKV } from 'react-native-mmkv';
+import {
+  OptiCoreProvider,
+  type LocalStorageAdapter,
+} from 'opticore-react-native';
+
+const mmkv = new MMKV();
+
+const mmkvAdapter: LocalStorageAdapter = {
+  setItem:    async (k, v) => { mmkv.set(k, v); },
+  getItem:    async (k)    => mmkv.getString(k) ?? null,
+  removeItem: async (k)    => { mmkv.delete(k); },
+  clear:      async ()     => { mmkv.clearAll(); },
+};
+
+<OptiCoreProvider
+  config={{
+    api: { baseURL: 'https://api.example.com' },
+    adapters: { localStorage: mmkvAdapter },
+  }}>
+  <App />
+</OptiCoreProvider>;
+```
+
+### Available interfaces
+
+```ts
+import type {
+  SecureStorageAdapter,
+  LocalStorageAdapter,
+  ConnectivityAdapter,
+  ConnectivitySnapshot,
+  DeviceAdapter,
+  ClipboardAdapter,
+  OptiCoreAdapters,
+} from 'opticore-react-native';
+```
+
+Pass any subset via `config.adapters`. Anything you don't pass auto-resolves through the **override → Expo module → bare peer → memory** chain.
+
+### Expo Go compatibility (even with native libs installed)
+
+Bare React Native native libs (`@react-native-clipboard/clipboard`, `react-native-device-info`, `@react-native-community/netinfo`, …) call `TurboModuleRegistry.getEnforcing(...)` **at import time**. In Expo Go the native code isn't in the binary, so that call throws and surfaces as a red box — _just by importing the lib_, before you ever call it.
+
+OptiCore avoids this by **probing the native registry without throwing** and only importing a bare peer when its native module is actually in the running binary. So OptiCore runs in Expo Go regardless of which native libs your `package.json` lists — clipboard/device/connectivity transparently use the Expo module or the in-memory fallback, and switch to full native functionality automatically in a development build.
+
+The same guard is exported for **your own** native dependencies:
+
+```ts
+import { nativeModulePresent, loadOptionalNativeModule } from 'opticore-react-native';
+
+// Boolean probe — never throws, works for any native module name.
+if (nativeModulePresent('RNHaptic')) {
+  /* safe to use react-native-haptic-feedback */
+}
+
+// Probe + load in one step; returns null in Expo Go instead of throwing.
+const haptics = loadOptionalNativeModule('RNHaptic', () =>
+  require('react-native-haptic-feedback').default,
+);
+haptics?.trigger('impactLight'); // no-op in Expo Go, real haptics in a dev build
+```
 
 ---
 
@@ -123,38 +231,38 @@ run(() => ApiClient.getInstance().get<User[]>('/users').then(r => r.data));
 
 | Guide | Description |
 |---|---|
-| 🚀 **[Quick Start](./docs/QUICK_START.md)** | Install, configure, and make your first API call in 10 minutes |
-| 🏛 **[Architecture](./docs/ARCHITECTURE.md)** | Library layers, data flow, design patterns, and extension points |
-| ⚙️ **[Configuration](./docs/CONFIGURATION.md)** | Every `CoreConfig` option explained with examples |
-| 📑 **[Full Docs Index](./docs/INDEX.md)** | Central navigation hub for all documentation |
+| 🚀 **[Quick Start](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/QUICK_START.md)** | Install, configure, and make your first API call in 10 minutes |
+| 🏛 **[Architecture](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/ARCHITECTURE.md)** | Library layers, data flow, design patterns, and extension points |
+| ⚙️ **[Configuration](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/CONFIGURATION.md)** | Every `CoreConfig` option explained with examples |
+| 📑 **[Full Docs Index](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/INDEX.md)** | Central navigation hub for all documentation |
 
 ### API Reference
 
 | Guide | Description |
 |---|---|
-| 🏗 **[Infrastructure](./docs/api/INFRASTRUCTURE.md)** | ApiClient, Logger, StorageManager, ConnectivityManager, LifecycleManager |
-| 🗄 **[State Management](./docs/api/STATE.md)** | AsyncState, BaseStore, CrudStore, StoreFactory, StateObserver |
-| 🪝 **[Hooks](./docs/api/HOOKS.md)** | 11 custom hooks — useAsyncState, useDebounce, useKeyboard, useConnectivity & more |
-| ⚠️ **[Error Handling](./docs/api/ERRORS.md)** | RenderError, NonRenderError, ApiError, Result\<T,E\>, ErrorBoundary |
-| 🛠 **[Utilities](./docs/api/UTILITIES.md)** | 40+ pure functions — string, number, array, date, object, format, color, platform |
-| 🧭 **[Navigation](./docs/api/NAVIGATION.md)** | useRouteHelper, Expo Router integration |
-| 🔷 **[Types](./docs/TYPES.md)** | All shared TypeScript types — ApiResponse, AsyncState, PaginatedResponse & more |
+| 🏗 **[Infrastructure](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/api/INFRASTRUCTURE.md)** | ApiClient, Logger, StorageManager, ConnectivityManager, LifecycleManager |
+| 🗄 **[State Management](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/api/STATE.md)** | AsyncState, BaseStore, CrudStore, StoreFactory, StateObserver |
+| 🪝 **[Hooks](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/api/HOOKS.md)** | 11 custom hooks — useAsyncState, useDebounce, useKeyboard, useConnectivity & more |
+| ⚠️ **[Error Handling](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/api/ERRORS.md)** | RenderError, NonRenderError, ApiError, Result\<T,E\>, ErrorBoundary |
+| 🛠 **[Utilities](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/api/UTILITIES.md)** | 40+ pure functions — string, number, array, date, object, format, color, platform |
+| 🧭 **[Navigation](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/api/NAVIGATION.md)** | useRouteHelper, Expo Router integration |
+| 🔷 **[Types](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/TYPES.md)** | All shared TypeScript types — ApiResponse, AsyncState, PaginatedResponse & more |
 
 ### Feature Guides
 
 | Guide | Description |
 |---|---|
-| 🎨 **[Theme Engine](./docs/THEME.md)** | Dynamic theming, dark mode, custom themes, ThemeManager |
-| 📋 **[Forms](./docs/FORMS.md)** | useFormState, Zod validation, input masks, field-level validation |
-| 📡 **[Offline Sync](./docs/OFFLINE.md)** | Request queue, auto-sync on reconnect, conflict resolution |
+| 🎨 **[Theme Engine](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/THEME.md)** | Dynamic theming, dark mode, custom themes, ThemeManager |
+| 📋 **[Forms](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/FORMS.md)** | useFormState, Zod validation, input masks, field-level validation |
+| 📡 **[Offline Sync](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/OFFLINE.md)** | Request queue, auto-sync on reconnect, conflict resolution |
 
 ### Project Guides
 
 | Guide | Description |
 |---|---|
-| 🔄 **[Migration](./docs/MIGRATION.md)** | Migrate from Redux, MobX, plain Axios, AsyncStorage, console.log |
-| 🧪 **[Testing](./docs/TESTING.md)** | Mock helpers, test patterns, coverage requirements |
-| ❓ **[FAQ](./docs/FAQ.md)** | Common questions, troubleshooting, platform notes |
+| 🔄 **[Migration](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/MIGRATION.md)** | Migrate from Redux, MobX, plain Axios, AsyncStorage, console.log |
+| 🧪 **[Testing](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/TESTING.md)** | Mock helpers, test patterns, coverage requirements |
+| ❓ **[FAQ](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/docs/FAQ.md)** | Common questions, troubleshooting, platform notes |
 
 ---
 
@@ -168,13 +276,13 @@ Please include:
 - OptiCore version
 - Relevant code snippets
 
-Contributions are welcome — check the **[Contributing Guide](./CONTRIBUTING.md)**.
+Contributions are welcome — check the **[Contributing Guide](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/CONTRIBUTING.md)**.
 
 ---
 
 ## 📜 Changelog
 
-See **[CHANGELOG.md](./CHANGELOG.md)** for release history and migration notes.
+See **[CHANGELOG.md](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/CHANGELOG.md)** for release history and migration notes.
 
 ---
 
@@ -195,8 +303,8 @@ See **[CHANGELOG.md](./CHANGELOG.md)** for release history and migration notes.
 
 ## 📜 License
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/LICENSE)
 
-**OptiCore React Native** is open-source software released under the **[MIT License](./LICENSE)**.
+**OptiCore React Native** is open-source software released under the **[MIT License](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/blob/develop/LICENSE)**.
 
 Free to use, modify, and distribute — in personal and commercial projects.

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { CoreConfig } from '../config/types';
 import { CoreSetup } from '../config/CoreSetup';
 import { ConfigProvider } from './ConfigContext';
@@ -6,6 +6,9 @@ import { QueryProvider } from './QueryProvider';
 import { ThemeProvider } from '../theme/ThemeProvider';
 import { ConnectivityManager } from '../infrastructure/connectivity/ConnectivityManager';
 import { LifecycleManager } from '../infrastructure/lifecycle/LifecycleManager';
+import { StorageManager } from '../infrastructure/storage/StorageManager';
+import { resolveAllAdapters } from '../adapters/registry';
+import { configurePlatformAdapters } from '../utils/platform';
 
 export interface OptiCoreProviderProps {
     /**
@@ -32,10 +35,12 @@ export interface OptiCoreProviderProps {
 }
 
 /**
- * Unified Provider for OptiCore
- * 
- * Composes all necessary providers and initializes singletons.
- * Replaces CoreProvider as the main entry point.
+ * Unified Provider for OptiCore.
+ *
+ * Resolves the adapter chain on mount (consumer overrides > popular peer >
+ * memory fallback), wires every singleton to those adapters, initializes
+ * CoreSetup, ConnectivityManager, LifecycleManager, then composes the
+ * downstream providers (Config / Query / Theme).
  */
 export const OptiCoreProvider: React.FC<OptiCoreProviderProps> = ({
     config,
@@ -43,19 +48,37 @@ export const OptiCoreProvider: React.FC<OptiCoreProviderProps> = ({
     enableConnectivity = true,
     enableLifecycle = true,
 }) => {
+    const resolvedAdapters = useMemo(
+        () => resolveAllAdapters(config.adapters),
+        [config.adapters],
+    );
+
+    // Wire adapters into singletons before any consumer code runs.
+    useEffect(() => {
+        StorageManager.getInstance().configure({
+            secureAdapter: resolvedAdapters.secureStorage,
+            localAdapter: resolvedAdapters.localStorage,
+        });
+        configurePlatformAdapters({
+            clipboard: resolvedAdapters.clipboard,
+            device: resolvedAdapters.device,
+        });
+    }, [resolvedAdapters]);
+
     // Initialize CoreSetup on mount
     useEffect(() => {
         CoreSetup.getInstance().init(config);
     }, [config]);
 
-    // Initialize connectivity monitoring
+    // Initialize connectivity monitoring (uses resolved adapter)
     useEffect(() => {
         if (!enableConnectivity) return;
         const connectivity = ConnectivityManager.getInstance();
+        connectivity.configure(resolvedAdapters.connectivity);
         return () => {
             connectivity.dispose();
         };
-    }, [enableConnectivity]);
+    }, [enableConnectivity, resolvedAdapters.connectivity]);
 
     // Initialize lifecycle management
     useEffect(() => {

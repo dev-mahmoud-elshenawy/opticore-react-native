@@ -1,30 +1,40 @@
-import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { Logger } from '../logger/Logger';
-import { IStorage } from './interfaces/IStorage';
+import type { IStorage } from './interfaces/IStorage';
+import type { SecureStorageAdapter } from '../../adapters/interfaces';
+import { resolveSecureStorageAdapter } from '../../adapters/registry';
 
 /**
- * Secure storage implementation using expo-secure-store (iOS Keychain, Android Keystore)
- * @platform iOS, Android only - not available on web
+ * Secure storage implementation.
+ *
+ * Backed by a pluggable {@link SecureStorageAdapter}. By default the adapter
+ * is auto-resolved from `expo-secure-store` (real Keychain/Keystore) or, if
+ * the peer isn't installed, an in-memory fallback so the app doesn't crash.
+ * Consumers can inject any custom adapter (e.g. react-native-keychain) via
+ * `OptiCoreProvider`.
+ *
+ * @platform iOS, Android — web throws by default (use LocalStorage instead).
  */
 export class SecureStorage implements IStorage {
+  private adapter: SecureStorageAdapter;
   private keys: Set<string> = new Set();
   private static readonly KEYS_STORAGE_KEY = '__secure_storage_keys__';
   /** Resolves when initial key-list load completes (or fails). All public methods await this. */
   private readyPromise: Promise<void>;
 
-  constructor() {
+  constructor(adapter?: SecureStorageAdapter) {
     if (Platform.OS === 'web') {
       throw new Error(
         '[SecureStorage] SecureStorage is not available on web platform. Use LocalStorage instead.'
       );
     }
+    this.adapter = adapter ?? resolveSecureStorageAdapter();
     this.readyPromise = this.loadKeys();
   }
 
   private async loadKeys(): Promise<void> {
     try {
-      const keysJson = await SecureStore.getItemAsync(SecureStorage.KEYS_STORAGE_KEY);
+      const keysJson = await this.adapter.getItemAsync(SecureStorage.KEYS_STORAGE_KEY);
       if (keysJson) {
         const keys = JSON.parse(keysJson) as string[];
         this.keys = new Set(keys);
@@ -38,7 +48,7 @@ export class SecureStorage implements IStorage {
   private async saveKeys(): Promise<void> {
     try {
       const keysJson = JSON.stringify(Array.from(this.keys));
-      await SecureStore.setItemAsync(SecureStorage.KEYS_STORAGE_KEY, keysJson);
+      await this.adapter.setItemAsync(SecureStorage.KEYS_STORAGE_KEY, keysJson);
     } catch (error) {
       Logger.getInstance().warn('[SecureStorage] Failed to persist keys list', error as Error);
     }
@@ -47,7 +57,7 @@ export class SecureStorage implements IStorage {
   async get<T>(key: string): Promise<T | null> {
     await this.readyPromise;
     try {
-      const value = await SecureStore.getItemAsync(key);
+      const value = await this.adapter.getItemAsync(key);
       if (value === null) return null;
       try {
         return JSON.parse(value) as T;
@@ -72,7 +82,7 @@ export class SecureStorage implements IStorage {
       }
 
       const stringValue = JSON.stringify(value);
-      await SecureStore.setItemAsync(key, stringValue);
+      await this.adapter.setItemAsync(key, stringValue);
 
       this.keys.add(key);
       await this.saveKeys();
@@ -85,7 +95,7 @@ export class SecureStorage implements IStorage {
   async remove(key: string): Promise<void> {
     await this.readyPromise;
     try {
-      await SecureStore.deleteItemAsync(key);
+      await this.adapter.deleteItemAsync(key);
 
       this.keys.delete(key);
       await this.saveKeys();
@@ -101,14 +111,14 @@ export class SecureStorage implements IStorage {
       const logger = Logger.getInstance();
 
       const deletePromises = Array.from(this.keys).map((key) =>
-        SecureStore.deleteItemAsync(key).catch((error) => {
+        this.adapter.deleteItemAsync(key).catch((error) => {
           logger.warn(`[SecureStorage] Failed to delete key "${key}" during clear`, error as Error);
         })
       );
       await Promise.all(deletePromises);
       this.keys.clear();
 
-      await SecureStore.deleteItemAsync(SecureStorage.KEYS_STORAGE_KEY).catch((error) => {
+      await this.adapter.deleteItemAsync(SecureStorage.KEYS_STORAGE_KEY).catch((error) => {
         logger.warn('[SecureStorage] Failed to delete keys-tracking entry during clear', error as Error);
       });
     } catch (error) {

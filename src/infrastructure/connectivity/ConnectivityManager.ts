@@ -1,34 +1,24 @@
-import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
-import { ConnectivityCallback } from './ConnectivityListener';
+import type { ConnectivityCallback } from './ConnectivityListener';
+import type { ConnectivityAdapter } from '../../adapters/interfaces';
+import { resolveConnectivityAdapter } from '../../adapters/registry';
 
 /**
  * ConnectivityManager - Singleton network connectivity monitor
  *
- * Monitors network connectivity status and notifies listeners of changes.
- * Uses @react-native-community/netinfo for cross-platform network detection.
- *
- * @example
- * ```typescript
- * const connectivity = ConnectivityManager.getInstance();
- *
- * // Check current status
- * if (connectivity.isConnected) {
- *   console.log('Online');
- * }
- *
- * // Listen for changes
- * connectivity.addListener((isConnected) => {
- *   console.log('Network status changed:', isConnected);
- * });
- * ```
+ * Backed by a pluggable {@link ConnectivityAdapter}. By default it auto-resolves
+ * `@react-native-community/netinfo` if installed, else falls back to an
+ * always-online stub so the app never crashes when the peer is missing.
+ * Consumers can inject any implementation via `OptiCoreProvider`.
  */
 export class ConnectivityManager {
   private static instance: ConnectivityManager;
   private listeners: Set<ConnectivityCallback> = new Set();
   private _isConnected: boolean = true;
-  private unsubscribe: NetInfoSubscription | null = null;
+  private adapter: ConnectivityAdapter;
+  private unsubscribe: (() => void) | null = null;
 
-  private constructor() {
+  private constructor(adapter?: ConnectivityAdapter) {
+    this.adapter = adapter ?? resolveConnectivityAdapter();
     this.initialize();
   }
 
@@ -39,22 +29,32 @@ export class ConnectivityManager {
     return ConnectivityManager.instance;
   }
 
+  /**
+   * Swap the underlying adapter at runtime (re-subscribes events).
+   */
+  public configure(adapter: ConnectivityAdapter): void {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
+    }
+    this.adapter = adapter;
+    this.initialize();
+  }
+
   private initialize(): void {
-    // Fetch initial state
-    NetInfo.fetch()
-      .then((state: NetInfoState) => {
+    this.adapter
+      .fetch()
+      .then((state) => {
         this._isConnected = state.isConnected ?? false;
       })
       .catch(() => {
         this._isConnected = false;
       });
 
-    // Setup listener
-    this.unsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
+    this.unsubscribe = this.adapter.addEventListener((state) => {
       const wasConnected = this._isConnected;
       this._isConnected = state.isConnected ?? false;
 
-      // Only notify if status changed
       if (wasConnected !== this._isConnected) {
         this.notifyListeners();
       }
@@ -63,8 +63,6 @@ export class ConnectivityManager {
 
   /**
    * Get current connectivity status
-   *
-   * @returns true if connected to a network, false otherwise
    */
   public get isConnected(): boolean {
     return this._isConnected;
@@ -72,8 +70,6 @@ export class ConnectivityManager {
 
   /**
    * Register a listener for connectivity changes
-   *
-   * @param callback - Function called when connectivity status changes
    */
   public addListener(callback: ConnectivityCallback): void {
     this.listeners.add(callback);
@@ -81,8 +77,6 @@ export class ConnectivityManager {
 
   /**
    * Remove a registered connectivity listener
-   *
-   * @param callback - Previously registered listener function
    */
   public removeListener(callback: ConnectivityCallback): void {
     this.listeners.delete(callback);
@@ -93,6 +87,7 @@ export class ConnectivityManager {
       try {
         callback(this._isConnected);
       } catch (error) {
+        // eslint-disable-next-line no-console -- listener error is reported via console as a last resort
         console.error('[ConnectivityManager] Error in listener:', error);
       }
     });
@@ -100,8 +95,6 @@ export class ConnectivityManager {
 
   /**
    * Clean up and remove all listeners
-   *
-   * Call this when the manager is no longer needed to prevent memory leaks.
    */
   public dispose(): void {
     if (this.unsubscribe) {
