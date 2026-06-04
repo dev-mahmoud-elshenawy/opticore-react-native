@@ -14,6 +14,14 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🛠 [1.1.1] — Fix documentation links
+
+### 🔧 Changed
+
+- README doc links converted from absolute branch URLs (`/blob/develop/`) to relative paths — links now resolve correctly on any branch, tag, or npm package page.
+
+---
+
 ## 🔌 [1.1.0] — Dynamic adapter system, optional native peers
 
 Native modules were pinned `dependencies` in `1.0.0`, causing cross-SDK crashes (`ClassNotFoundException: AnyTypeProvider`). `1.1.0` makes them optional peers resolved at runtime through adapters.

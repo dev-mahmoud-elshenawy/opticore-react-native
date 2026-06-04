@@ -1,6 +1,6 @@
 {
   "name": "opticore-react-native",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Pure infrastructure library for React Native/Expo applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
