@@ -99,8 +99,10 @@ class ApiError extends RenderError {
 ```
 
 ```typescript
+import { ApiClient, HttpMethod } from 'opticore-react-native';
+
 try {
-  await ApiClient.getInstance().get('/users/999');
+  await ApiClient.getInstance().request({ method: HttpMethod.GET, url: '/users/999' });
 } catch (e) {
   if (e instanceof ApiError) {
     switch (e.status) {
@@ -465,11 +467,13 @@ throw new DatabaseError('Query failed', 'SELECT * FROM users');
 ### Try-Catch with Classification
 
 ```typescript
-import { RenderError, NonRenderError, Logger } from 'opticore-react-native';
+import { ApiClient, HttpMethod, RenderError, NonRenderError, Logger } from 'opticore-react-native';
+
+const apiClient = ApiClient.getInstance();
 
 async function fetchUserData() {
   try {
-    const response = await apiClient.get('/user');
+    const response = await apiClient.request({ method: HttpMethod.GET, url: '/user' });
     return response.data;
   } catch (error) {
     if (error instanceof RenderError) {

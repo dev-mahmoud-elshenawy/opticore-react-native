@@ -1,8 +1,8 @@
 # Claude Development Guide for OptiCore React Native
 
 **Package**: `opticore-react-native`
-**Version**: 1.1.0
-**Last Updated**: 2026-06-03 (v1.1.0: native modules moved to optional peer deps + runtime adapter system)
+**Version**: 1.2.0
+**Last Updated**: 2026-06-08 (spec 028: navigation→`/navigation` subpath, `expo-router` required-but-isolated, `typescript` optional peer, enum-based ApiClient docs + fail-fast init guard, synchronous provider init, adapter memory-fallback dev warnings, per-package install-peers CLI)
 **Target Platforms**: iOS & Android ONLY
 
 > **📖 Spec Kit Reference**: See [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete specification-driven development guide
@@ -124,7 +124,14 @@ import type { LocalStorageAdapter } from 'opticore-react-native/adapters';
 ```
 
 Subpath exports map to `dist/*`: `.`, `./utils`, `./state`, `./hooks`, `./forms`,
-`./offline`, `./theme`, `./adapters`, and `./metro` (the Metro config helper).
+`./offline`, `./theme`, `./adapters`, `./navigation`, and `./metro` (the Metro config helper).
+
+> **Navigation is NOT in the main barrel.** `useRouteHelper` / `NavigationParams` are exposed
+> ONLY via `opticore-react-native/navigation`, because they import `expo-router`. Even though
+> `expo-router` is a **required** peer, keeping navigation in a subpath means the main entry's
+> bundle never resolves expo-router unless that subpath is actually imported — so the rest of
+> OptiCore stays usable/buildable without pulling expo-router in. Do NOT re-export navigation
+> from `src/index.ts`. See spec 028.
 
 ---
 
@@ -168,14 +175,20 @@ runtime via a **resolver chain**.
    first available: **consumer override → popular default peer → in-memory fallback**.
    `resolveAllAdapters(overrides)` resolves the whole bundle at once. The memory
    fallback means missing peers degrade gracefully (good for Jest/SSR) instead of
-   crashing — but it is **not** real persistence/secure storage in production.
+   crashing — but it is **not** real persistence/secure storage in production. When a
+   resolver falls through to the memory fallback it emits a one-time `__DEV__`
+   `console.warn` via `warnMemoryFallback` (deduped; `_resetAdapterWarnings()` exported
+   for tests) so the degradation is never silent. Never make it throw — that breaks
+   Expo Go support.
 
-5. **Wiring** (`src/providers/OptiCoreProvider.tsx`) — on mount, calls
-   `resolveAllAdapters(config.adapters)` then pushes the resolved adapters into the
-   singletons: `StorageManager.configure(...)`, `configurePlatformAdapters(...)`
-   (clipboard/device, in `src/utils/platform.ts`), and
-   `ConnectivityManager.configure(...)`. Singletons hold no native imports of their
-   own — they receive an adapter or fall back to the resolver default.
+5. **Wiring** (`src/providers/OptiCoreProvider.tsx`) — configures the singletons
+   **SYNCHRONOUSLY during render** (ref-guarded, idempotent), BEFORE children render —
+   NOT in `useEffect` (child effects run before parent effects, so effect-based setup
+   let early API calls hit an unconfigured client). It calls `resolveAllAdapters(...)`,
+   then `StorageManager.configure(...)`, `configurePlatformAdapters(...)`
+   (clipboard/device, in `src/utils/platform.ts`), `CoreSetup.init(config)`, and
+   `ConnectivityManager.configure(...)`. Disposal stays in `useEffect` cleanup. Don't
+   move setup back into an effect.
 
 6. **Consumer injection** — pass `config.adapters` to `OptiCoreProvider` to swap in
    MMKV, react-native-keychain, a Jest double, etc. Any omitted adapter falls back
@@ -184,9 +197,13 @@ runtime via a **resolver chain**.
 ### Supporting pieces
 
 - **`bin/install-peers.mjs`** (CLI: `npx opticore-install-peers`) — detects Expo +
-  package manager and runs `expo install` (SDK-aligned) for the peers. Flags:
-  `--required`, `--optional`, `--dry-run`. REQUIRED peers = secure-store, async-storage,
-  netinfo; OPTIONAL = device-info, clipboard.
+  package manager and runs `expo install` (SDK-aligned) for the **optional native peers
+  only**. Flags: `--required` (secure-store, async-storage, netinfo), `--optional`
+  (expo-clipboard, expo-device, expo-application), `--dry-run`. Also accepts explicit peer
+  names (`npx opticore-install-peers expo-clipboard`), validated against `KNOWN_PEERS`
+  (includes the bare-RN variants); named selection overrides the group flags. Does NOT
+  install `react`/`react-native`/`expo`/`expo-router` (the app provides those) — the CLI's
+  "required/optional" labels are about feature importance, not npm peer requiredness.
 - **`metro.js`** (`withOptiCoreMetroConfig`, exported as `opticore-react-native/metro`)
   — only needed for `file:`/monorepo consumption. Forces `react`/`react-native`/
   `react-dom` to resolve from the **app's** `node_modules` (via `resolveRequest`),
@@ -196,11 +213,25 @@ runtime via a **resolver chain**.
 
 - Never `import` a native peer at module top level. Add a `create*Adapter()` factory
   under `src/adapters/defaults/`, gate bare-RN libs through `loadOptionalNativeModule`,
-  add it to the relevant `resolve*` chain, and export it from `src/adapters/index.ts`.
+  add it to the relevant `resolve*` chain (with a `warnMemoryFallback(...)` call before
+  the memory fallback), and export it from `src/adapters/index.ts`.
 - Add new contracts to `interfaces.ts` and the `OptiCoreAdapters` bundle so consumers
   can override them.
 - Add the peer to `peerDependencies` + `peerDependenciesMeta` (optional) in
-  `package.json`, and to the appropriate list in `bin/install-peers.mjs`.
+  `package.json`, to the appropriate list in `bin/install-peers.mjs` (and `KNOWN_PEERS`),
+  and to the "Optional native peers" table in `README.md`.
+- **Exception — `expo-router`:** it is a **required** peer (navigation is first-class),
+  not optional, and is NOT adapter-backed. Its only consumer is `src/navigation/` which is
+  exposed solely via the `opticore-react-native/navigation` subpath (NOT the main barrel),
+  so the main entry never bundles expo-router. Don't re-export navigation from `src/index.ts`.
+
+### Other cross-cutting rules from spec 028
+
+- **ApiClient public API is the enum-based `request({ method: HttpMethod.X, url, data? })`.**
+  The `get/post/put/delete/patch` verb methods are **private** by design — don't make them
+  public; fix docs to use `request()`. `request()` **fails fast** (throws) if called before
+  `configure()`/`CoreSetup.init()`. `ApiClient.isInitialized()` / `CoreSetup.isInitialized()`
+  exist for imperative readiness guards.
 
 ---
 
@@ -289,7 +320,7 @@ Constitution → Specify → Plan → Tasks → Implement → Verify
 **Step 1: Numbering**
 
 - List existing specs: `ls .specify/specs/`
-- Use next sequential number (e.g., if last is `026-*`, use `027-`)
+- Use next sequential number (last is `028-*`, so the next new spec is `029-`)
 
 **Step 2: Create Directory**
 
@@ -1154,8 +1185,8 @@ export * from './state';
 // Error handling
 export * from './error';
 
-// Navigation
-export * from './navigation';
+// NOTE: Navigation is deliberately NOT re-exported here (it imports expo-router).
+// It is exposed only via the `opticore-react-native/navigation` subpath. See spec 028.
 
 // Hooks
 export * from './hooks';
@@ -1536,13 +1567,29 @@ Browse `.specify/specs/` for examples of completed specs:
 - `024-hooks-configurability/` - Hooks fixes and configurability
 - `025-infrastructure-hardening/` - Infrastructure stability fixes
 - `026-test-stabilization/` - Test suite stabilization
+- `027-lint-cleanup/` - Lint cleanup
+- `028-consumer-integration-fixes/` - expo-router decoupling (subpath), enum-based ApiClient docs, synchronous provider init + `request()` init guard, optional `typescript` peer, adapter memory-fallback dev warnings (shipped in 1.2.0)
 
 ### Technology Stack
 
-Peer ranges widened in v1.1.0 — OptiCore is no longer pinned to one Expo SDK.
+Peer baseline is **Expo SDK 54**. The dev/test toolchain is pinned to SDK 54
+(react `19.1.0`, react-native `~0.81.0`, expo `54.0.32`, expo-router `~6.0.0`)
+so the library is built and tested against the SDK consumers actually run.
+Note: Expo Go runs only the *latest* SDK — an SDK-54 app opens in a dev build,
+not necessarily in the store Expo Go if it has moved to a newer SDK.
 
-- **Peers** (consumer-provided): `react >=19`, `react-native >=0.78`,
-  `expo >=54.0.0` (54/55/56/+), `expo-router >=4`, `typescript >=5`
+- **Required peers** (consumer-provided): `react >=19.0.0`, `react-native >=0.78.0`,
+  `expo >=54.0.0`, `expo-router >=4.0.0` — all use open `>=` ranges so an SDK-aligned RN+Expo
+  app satisfies them without `--legacy-peer-deps` (verified by simulated install).
+  `expo-router` is required because navigation (`useRouteHelper`) is a first-class,
+  heavily-used feature — every consumer is expected to use it. Consumers install it via their
+  normal Expo setup (`expo install expo-router`). Note: navigation still lives ONLY at the
+  `opticore-react-native/navigation` subpath, so the main entry's bundle never pulls expo-router
+  unless that subpath is imported (the issue-① build-break fix is structural and preserved).
+- **`typescript`** (`>=5`) is an **optional** peer. OptiCore ships its own `.d.ts` (133 files);
+  a TS consumer's own compiler reads them for full types. Optional only affects npm's
+  install-time check — it never affects typed-coding — and avoids `--legacy-peer-deps` for
+  JS-only apps or TS-version mismatches.
 - **Optional native peers** (auto-detected via adapters, not bundled):
   `expo-secure-store`, `@react-native-async-storage/async-storage`,
   `@react-native-community/netinfo`, `react-native-device-info`,
@@ -1554,8 +1601,8 @@ Peer ranges widened in v1.1.0 — OptiCore is no longer pinned to one Expo SDK.
 
 ---
 
-**Last Updated**: 2026-06-03
-**Version**: 1.1.0
+**Last Updated**: 2026-06-08
+**Version**: 1.2.0
 **Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**

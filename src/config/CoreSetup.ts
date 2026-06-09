@@ -124,6 +124,20 @@ export class CoreSetup {
     }
 
     /**
+     * Whether {@link init} has completed successfully.
+     *
+     * Useful for imperative (non-React) call sites that need to guard work until
+     * OptiCore is configured — e.g. avoid issuing network calls before setup.
+     * Inside React, prefer wrapping the app in `OptiCoreProvider`, which
+     * configures the singletons synchronously before children render.
+     *
+     * @returns `true` once `init()` has run, otherwise `false`.
+     */
+    public isInitialized(): boolean {
+        return this.initialized;
+    }
+
+    /**
      * Get the current configuration
      * @throws Error if not initialized
      */

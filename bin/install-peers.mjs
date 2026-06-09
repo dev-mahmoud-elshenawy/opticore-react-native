@@ -7,10 +7,16 @@
  * or falls back to `npm install` for non-Expo projects.
  *
  * Usage:
- *   npx opticore-install-peers              # required + optional peers
- *   npx opticore-install-peers --required   # required peers only
- *   npx opticore-install-peers --optional   # optional peers only
- *   npx opticore-install-peers --dry-run    # print the command but don't run
+ *   npx opticore-install-peers                       # required + optional peers
+ *   npx opticore-install-peers --required            # required peers only
+ *   npx opticore-install-peers --optional            # optional peers only
+ *   npx opticore-install-peers expo-clipboard        # only the named peer(s)
+ *   npx opticore-install-peers expo-device expo-clipboard
+ *   npx opticore-install-peers --dry-run             # print the command but don't run
+ *
+ * Named peers are validated against the known OptiCore peer set; unknown names
+ * are rejected with the list of valid options. Named selection overrides the
+ * --required / --optional group flags.
  */
 
 import { spawnSync } from 'node:child_process';
@@ -33,12 +39,26 @@ const OPTIONAL = [
   'expo-application',
 ];
 
+// Bare React Native alternatives — only work in a custom dev build, not Expo Go.
+// Not installed by the default/group runs, but selectable by name.
+const BARE_RN = [
+  'react-native-device-info',
+  '@react-native-clipboard/clipboard',
+];
+
+// Every peer the CLI can install by name.
+const KNOWN_PEERS = new Set([...REQUIRED, ...OPTIONAL, ...BARE_RN]);
+
 function parseArgs(argv) {
-  const flags = new Set(argv.slice(2));
+  const args = argv.slice(2);
+  const flags = new Set(args.filter((a) => a.startsWith('--')));
+  // Positional (non-flag) args are explicit package names to install.
+  const explicit = args.filter((a) => !a.startsWith('--'));
   return {
     requiredOnly: flags.has('--required'),
     optionalOnly: flags.has('--optional'),
     dryRun: flags.has('--dry-run'),
+    explicit,
   };
 }
 
@@ -80,11 +100,27 @@ function buildCommand({ isExpo, manager, packages }) {
 
 function main() {
   const cwd = process.cwd();
-  const { requiredOnly, optionalOnly, dryRun } = parseArgs(process.argv);
+  const { requiredOnly, optionalOnly, dryRun, explicit } = parseArgs(process.argv);
 
-  let packages = [...REQUIRED, ...OPTIONAL];
-  if (requiredOnly) packages = REQUIRED;
-  if (optionalOnly) packages = OPTIONAL;
+  let packages;
+  if (explicit.length > 0) {
+    // Specific peers requested by name — validate before installing.
+    const unknown = explicit.filter((p) => !KNOWN_PEERS.has(p));
+    if (unknown.length > 0) {
+      console.error(
+        `\n❌ Unknown peer(s): ${unknown.join(', ')}\n` +
+          `   Installable peers:\n     ${[...KNOWN_PEERS].join('\n     ')}\n`,
+      );
+      process.exit(1);
+    }
+    packages = explicit;
+  } else if (requiredOnly) {
+    packages = REQUIRED;
+  } else if (optionalOnly) {
+    packages = OPTIONAL;
+  } else {
+    packages = [...REQUIRED, ...OPTIONAL];
+  }
 
   const isExpo = detectExpo(cwd);
   const manager = detectPackageManager(cwd);
@@ -100,7 +136,22 @@ function main() {
     return;
   }
 
-  const result = spawnSync(command, args, { stdio: 'inherit', cwd });
+  // `shell: true` is REQUIRED on Windows: npx/npm/yarn/pnpm are `.cmd` shims
+  // there, and Node's spawn won't resolve `.cmd`/`.bat` without a shell —
+  // it fails with ENOENT and a null exit status. Safe to enable everywhere
+  // since every package name here is a hardcoded constant (no injection risk).
+  const result = spawnSync(command, args, { stdio: 'inherit', cwd, shell: true });
+
+  // A spawn that never started (e.g. command not found) sets `result.error`
+  // and leaves `result.status` null. Surface the real cause instead of "exit null".
+  if (result.error) {
+    console.error(
+      `\n❌ Could not run \`${command}\`: ${result.error.message}\n` +
+        '   Make sure it is installed and available on your PATH.\n',
+    );
+    process.exit(1);
+  }
+
   if (result.status !== 0) {
     console.error(
       `\n❌ Peer install failed (exit ${result.status}). ` +

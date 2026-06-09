@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 
-export const VERSION = '1.1.0';
+export const VERSION = '1.2.0';
 
 // Infrastructure exports
 export { HttpMethod } from './infrastructure';
@@ -18,8 +18,11 @@ export * from './adapters';
 // Error classification exports
 export * from './error';
 
-// Navigation utilities exports
-export * from './navigation';
+// Navigation utilities are intentionally NOT re-exported from the main entry.
+// They depend on `expo-router` (an OPTIONAL peer). Re-exporting here would force
+// every consumer's bundler to resolve expo-router and break React Navigation /
+// non-router apps. Import them from the dedicated subpath instead:
+//   import { useRouteHelper } from 'opticore-react-native/navigation';
 
 // Utility functions exports
 export * from './utils';

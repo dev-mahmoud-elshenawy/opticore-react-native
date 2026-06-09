@@ -45,6 +45,26 @@ export const TouchableOpacity = class TouchableOpacity extends React.Component {
     return React.createElement('TouchableOpacity', this.props, this.props.children);
   }
 };
+// Native module registry stubs. OptiCore's `nativeModulePresent()` probes
+// `TurboModuleRegistry.get` / `NativeModules[name]` to decide whether to use a
+// native-backed adapter or fall back to the in-memory one. The peers that have
+// dedicated module mocks under `test/__mocks__` are reported as present here so
+// the adapter resolver wires up those mocks instead of the memory fallback.
+const PRESENT_NATIVE_MODULES = new Set([
+  'RNCNetInfo',
+  'RNCAsyncStorage',
+  'RNCClipboard',
+  'RNDeviceInfo',
+]);
+export const TurboModuleRegistry = {
+  get: jest.fn((name: string) => (PRESENT_NATIVE_MODULES.has(name) ? {} : null)),
+  getEnforcing: jest.fn(() => ({})),
+};
+export const NativeModules = new Proxy({} as Record<string, unknown>, {
+  get: (_target, prop: string) =>
+    PRESENT_NATIVE_MODULES.has(prop) ? {} : undefined,
+});
+
 export const StyleSheet = {
   create: (styles: any) => styles,
   flatten: (style: any) => {
@@ -62,6 +82,8 @@ export default {
   Text,
   TouchableOpacity,
   StyleSheet,
+  TurboModuleRegistry,
+  NativeModules,
 };
 
 export { mockAddEventListener, mockRemoveEventListener };

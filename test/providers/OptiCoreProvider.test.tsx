@@ -43,7 +43,7 @@ describe('OptiCoreProvider', () => {
             init: mockInit,
         });
         (ThemeManager.getInstance as jest.Mock).mockReturnValue(mockThemeManager);
-        (ConnectivityManager.getInstance as jest.Mock).mockReturnValue({ dispose: jest.fn() });
+        (ConnectivityManager.getInstance as jest.Mock).mockReturnValue({ configure: jest.fn(), dispose: jest.fn() });
         (LifecycleManager.getInstance as jest.Mock).mockReturnValue({ dispose: jest.fn() });
     });
 
@@ -61,6 +61,30 @@ describe('OptiCoreProvider', () => {
         await waitFor(() => {
             expect(mockInit).toHaveBeenCalledWith(config);
         });
+    });
+
+    it('should initialize CoreSetup BEFORE children render (init ordering — spec 028 ④)', async () => {
+        const config: any = { api: { baseURL: 'https://test.com' } };
+
+        // Captures how many times init() had been called at the moment the child
+        // renders. Children render AFTER the provider's synchronous setup block,
+        // so init must already have run exactly once. (With the old useEffect-based
+        // setup this would be 0 — child effects precede parent effects.)
+        let initCallsAtChildRender = -1;
+        const Child = () => {
+            initCallsAtChildRender = mockInit.mock.calls.length;
+            return <Text>child</Text>;
+        };
+
+        await render(
+            <OptiCoreProvider config={config}>
+                <Child />
+            </OptiCoreProvider>
+        );
+
+        // Captured DURING the child's render: init had already run exactly once.
+        expect(initCallsAtChildRender).toBe(1);
+        expect(mockInit).toHaveBeenCalledWith(config);
     });
 
     it('should provide ConfigContext to children', async () => {

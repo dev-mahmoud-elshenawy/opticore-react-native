@@ -165,7 +165,7 @@ describe('useAsyncState → AsyncState Pattern', () => {
     expect(result.current.error).toBeNull();
 
     // Transition: loading
-    let promise: Promise<string | undefined>;
+    let promise: Promise<void>;
     await act(async () => {
       const asyncOperation = new Promise<string>((resolve) => {
         setTimeout(() => resolve('Test Data'), 10);

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { CoreConfig } from '../config/types';
 import { CoreSetup } from '../config/CoreSetup';
 import { ConfigProvider } from './ConfigContext';
@@ -53,8 +53,14 @@ export const OptiCoreProvider: React.FC<OptiCoreProviderProps> = ({
         [config.adapters],
     );
 
-    // Wire adapters into singletons before any consumer code runs.
-    useEffect(() => {
+    // CRITICAL: configure the singletons SYNCHRONOUSLY during render, before any
+    // child renders. Child effects run BEFORE parent effects in React, so doing
+    // this in a useEffect would let a child's mount effect fire an API call
+    // against an un-configured ApiClient (no baseURL/auth). The ref guard keeps it
+    // idempotent across re-renders and React StrictMode double-invocation; the
+    // underlying configure()/init() calls are themselves idempotent.
+    const setupDone = useRef(false);
+    if (!setupDone.current) {
         StorageManager.getInstance().configure({
             secureAdapter: resolvedAdapters.secureStorage,
             localAdapter: resolvedAdapters.localStorage,
@@ -63,24 +69,25 @@ export const OptiCoreProvider: React.FC<OptiCoreProviderProps> = ({
             clipboard: resolvedAdapters.clipboard,
             device: resolvedAdapters.device,
         });
-    }, [resolvedAdapters]);
-
-    // Initialize CoreSetup on mount
-    useEffect(() => {
         CoreSetup.getInstance().init(config);
-    }, [config]);
+        if (enableConnectivity) {
+            ConnectivityManager.getInstance().configure(resolvedAdapters.connectivity);
+        }
+        setupDone.current = true;
+    }
 
-    // Initialize connectivity monitoring (uses resolved adapter)
+    // Disposal only — the configuration above already ran synchronously.
+    // Effects handle teardown on unmount (and re-subscribe if the toggle flips).
     useEffect(() => {
         if (!enableConnectivity) return;
         const connectivity = ConnectivityManager.getInstance();
+        // Re-apply on toggle changes (initial configure happened during render).
         connectivity.configure(resolvedAdapters.connectivity);
         return () => {
             connectivity.dispose();
         };
     }, [enableConnectivity, resolvedAdapters.connectivity]);
 
-    // Initialize lifecycle management
     useEffect(() => {
         if (!enableLifecycle) return;
         const lifecycle = LifecycleManager.getInstance();

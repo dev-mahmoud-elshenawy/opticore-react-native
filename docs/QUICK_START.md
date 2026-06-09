@@ -63,7 +63,7 @@ export default function RootLayout() {
 ## Step 3 — Make API Calls
 
 ```typescript
-import { ApiClient } from 'opticore-react-native';
+import { ApiClient, HttpMethod } from 'opticore-react-native';
 import { useAsyncState } from 'opticore-react-native/hooks';
 
 interface User {
@@ -74,7 +74,7 @@ interface User {
 
 // Define your API function
 async function fetchUsers(): Promise<User[]> {
-  const response = await ApiClient.getInstance().get<User[]>('/users');
+  const response = await ApiClient.getInstance().request<User[]>({ method: HttpMethod.GET, url: '/users' });
   return response.data;
 }
 
@@ -126,8 +126,10 @@ import { StorageManager } from 'opticore-react-native';
 **Login flow:**
 
 ```typescript
+import { ApiClient, HttpMethod } from 'opticore-react-native';
+
 async function login(email: string, password: string) {
-  const { data } = await ApiClient.getInstance().post('/auth/login', { email, password });
+  const { data } = await ApiClient.getInstance().request({ method: HttpMethod.POST, url: '/auth/login', data: { email, password } });
 
   await StorageManager.getInstance().secure.set('auth_token', data.token);
   await StorageManager.getInstance().local.set('user', data.user);
@@ -143,7 +145,7 @@ async function login(email: string, password: string) {
 Wrap screens with `OptiCoreErrorBoundary` to catch and display errors gracefully.
 
 ```typescript
-import { OptiCoreErrorBoundary, RenderError } from 'opticore-react-native';
+import { ApiClient, HttpMethod, OptiCoreErrorBoundary, RenderError } from 'opticore-react-native';
 
 function App() {
   return (
@@ -159,7 +161,7 @@ function App() {
 // Throw typed errors in your code
 async function fetchProfile(userId: string) {
   try {
-    return await ApiClient.getInstance().get(`/users/${userId}`);
+    return await ApiClient.getInstance().request({ method: HttpMethod.GET, url: `/users/${userId}` });
   } catch (e) {
     throw new RenderError('Failed to load profile', {
       cause: e,
@@ -248,7 +250,7 @@ if (!connectivity.isConnected) {
 ```typescript
 import React, { useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
-import { ApiClient, RenderError } from 'opticore-react-native';
+import { ApiClient, HttpMethod, RenderError } from 'opticore-react-native';
 import { useAsyncState } from 'opticore-react-native/hooks';
 
 interface Product {
@@ -258,7 +260,7 @@ interface Product {
 }
 
 async function fetchProducts(): Promise<Product[]> {
-  const { data } = await ApiClient.getInstance().get<Product[]>('/products');
+  const { data } = await ApiClient.getInstance().request<Product[]>({ method: HttpMethod.GET, url: '/products' });
   return data;
 }
 

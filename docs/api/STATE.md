@@ -50,7 +50,7 @@ if (isSuccess(state)) {
 
 ```typescript
 import { create } from 'zustand';
-import { AsyncState, toLoading, toSuccess, toError, createAsyncState } from 'opticore-react-native';
+import { ApiClient, HttpMethod, AsyncState, toLoading, toSuccess, toError, createAsyncState } from 'opticore-react-native';
 
 interface UserStore {
   users: AsyncState<User[]>;
@@ -62,7 +62,7 @@ const useUserStore = create<UserStore>((set) => ({
   fetchUsers: async () => {
     set({ users: toLoading() });
     try {
-      const data = await ApiClient.getInstance().get<User[]>('/users');
+      const data = await ApiClient.getInstance().request<User[]>({ method: HttpMethod.GET, url: '/users' });
       set({ users: toSuccess(data.data) });
     } catch (e) {
       set({ users: toError(e as Error) });
@@ -177,6 +177,7 @@ All `api` methods are optional. If a CRUD action is called but the corresponding
 ### Example
 
 ```typescript
+import { ApiClient, HttpMethod } from 'opticore-react-native';
 import { createCrudStore } from 'opticore-react-native/state';
 
 interface Product {
@@ -190,23 +191,23 @@ export const useProductStore = createCrudStore<Product>(
     name: 'ProductStore',
     api: {
       fetchAll: async () => {
-        const { data } = await ApiClient.getInstance().get<Product[]>('/products');
+        const { data } = await ApiClient.getInstance().request<Product[]>({ method: HttpMethod.GET, url: '/products' });
         return data;
       },
       fetchById: async (id) => {
-        const { data } = await ApiClient.getInstance().get<Product>(`/products/${id}`);
+        const { data } = await ApiClient.getInstance().request<Product>({ method: HttpMethod.GET, url: `/products/${id}` });
         return data;
       },
       create: async (data) => {
-        const { data: created } = await ApiClient.getInstance().post<Product>('/products', data);
+        const { data: created } = await ApiClient.getInstance().request<Product>({ method: HttpMethod.POST, url: '/products', data: data });
         return created;
       },
       update: async (id, data) => {
-        const { data: updated } = await ApiClient.getInstance().put<Product>(`/products/${id}`, data);
+        const { data: updated } = await ApiClient.getInstance().request<Product>({ method: HttpMethod.PUT, url: `/products/${id}`, data: data });
         return updated;
       },
       delete: async (id) => {
-        await ApiClient.getInstance().delete(`/products/${id}`);
+        await ApiClient.getInstance().request({ method: HttpMethod.DELETE, url: `/products/${id}` });
       },
     },
   }
@@ -268,12 +269,13 @@ unsubscribe();
 
 ```typescript
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ApiClient, HttpMethod } from 'opticore-react-native';
 
 // Fetch with caching
 function useProducts() {
   return useQuery({
     queryKey: ['products'],
-    queryFn: () => ApiClient.getInstance().get<Product[]>('/products').then(r => r.data),
+    queryFn: () => ApiClient.getInstance().request<Product[]>({ method: HttpMethod.GET, url: '/products' }).then(r => r.data),
     staleTime: 5 * 60 * 1000,  // 5 minutes
   });
 }
@@ -284,7 +286,7 @@ function useCreateProduct() {
 
   return useMutation({
     mutationFn: (product: Partial<Product>) =>
-      ApiClient.getInstance().post<Product>('/products', product).then(r => r.data),
+      ApiClient.getInstance().request<Product>({ method: HttpMethod.POST, url: '/products', data: product }).then(r => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
@@ -310,9 +312,12 @@ Hook for managing async operations.
 
 ```typescript
 import { useAsyncState } from 'opticore-react-native/hooks';
+import { ApiClient, HttpMethod } from 'opticore-react-native';
+
+const apiClient = ApiClient.getInstance();
 
 const fetchUsers = async () => {
-  const response = await apiClient.get('/users');
+  const response = await apiClient.request({ method: HttpMethod.GET, url: '/users' });
   return response.data;
 };
 
@@ -437,12 +442,16 @@ import { CoreProvider } from 'opticore-react-native';
 
 ```typescript
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ApiClient, HttpMethod } from 'opticore-react-native';
+
+const apiClient = ApiClient.getInstance();
 
 // Query
 function UserProfile({ userId }) {
   const { data, isLoading } = useQuery({
     queryKey: ['user', userId],
-    queryFn: () => apiClient.get(`/users/${userId}`).then(r => r.data),
+    queryFn: () =>
+      apiClient.request({ method: HttpMethod.GET, url: `/users/${userId}` }).then(r => r.data),
   });
   
   if (isLoading) return <Loading />;
@@ -454,7 +463,7 @@ function UpdateProfile() {
   const queryClient = useQueryClient();
   
   const mutation = useMutation({
-    mutationFn: (data) => apiClient.put('/profile', data),
+    mutationFn: (data) => apiClient.request({ method: HttpMethod.PUT, url: '/profile', data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },
@@ -477,7 +486,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   token: null,
   
   login: async (email, password) => {
-    const response = await apiClient.post('/auth/login', { email, password });
+    const response = await apiClient.request({
+      method: HttpMethod.POST,
+      url: '/auth/login',
+      data: { email, password },
+    });
     const { user, token } = response.data;
     
     await StorageManager.setSecure('auth_token', token);
@@ -556,7 +569,7 @@ function UserDashboard() {
 // 3. Async State (One-off Operations)
 function ExportData() {
   const { loading, execute } = useAsyncState(async () => {
-    const data = await apiClient.get('/export');
+    const data = await apiClient.request({ method: HttpMethod.GET, url: '/export' });
     await downloadFile(data);
   });
   

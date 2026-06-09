@@ -63,6 +63,9 @@ describe('Integration: ApiClient → Error Flow', () => {
     });
 
     client = ApiClient.getInstance();
+    // Initialize the client (as CoreSetup.init / OptiCoreProvider would) so
+    // request() passes the fail-fast init guard.
+    client.configure({ baseURL: 'https://api.test.com' });
 
     // Helper to setup mock rejection that returns proper ApiError
     (client as any).mockReject = (method: string, axiosError: any) => {

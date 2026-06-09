@@ -33,11 +33,13 @@ function useAsyncState<T>(initialData?: T): AsyncStateReturn<T>
 | `reset` | `() => void` | Clear data, error, loading |
 
 ```typescript
+import { ApiClient, HttpMethod } from 'opticore-react-native';
+
 function UserScreen({ id }: { id: string }) {
   const { data: user, isLoading, error, run } = useAsyncState<User>();
 
   useEffect(() => {
-    run(() => ApiClient.getInstance().get<User>(`/users/${id}`).then(r => r.data));
+    run(() => ApiClient.getInstance().request<User>({ method: HttpMethod.GET, url: `/users/${id}` }).then(r => r.data));
   }, [id]);
 
   if (isLoading) return <ActivityIndicator />;

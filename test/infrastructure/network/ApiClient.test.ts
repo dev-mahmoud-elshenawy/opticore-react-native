@@ -113,4 +113,25 @@ describe('ApiClient', () => {
 
     expect(ApiClient.getInstance()).toBe(apiClient);
   });
+
+  describe('initialization guard (spec 028 ④)', () => {
+    it('is not initialized on a fresh instance and request() rejects before configure()', async () => {
+      (ApiClient as unknown as { instance: ApiClient | null }).instance = null;
+      const fresh = ApiClient.getInstance();
+
+      expect(fresh.isInitialized()).toBe(false);
+      await expect(
+        fresh.request({ method: HttpMethod.GET, url: '/users' })
+      ).rejects.toThrow(/before initialization/);
+    });
+
+    it('is initialized after configure() and no longer throws the guard error', () => {
+      (ApiClient as unknown as { instance: ApiClient | null }).instance = null;
+      const fresh = ApiClient.getInstance();
+
+      expect(fresh.isInitialized()).toBe(false);
+      fresh.configure({ baseURL: 'https://api.example.com' });
+      expect(fresh.isInitialized()).toBe(true);
+    });
+  });
 });

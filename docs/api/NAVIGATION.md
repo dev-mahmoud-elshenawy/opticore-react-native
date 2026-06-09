@@ -2,6 +2,12 @@
 
 OptiCore provides a thin, type-safe wrapper over Expo Router's navigation primitives via `useRouteHelper`.
 
+> **Import path & peer**: Navigation helpers are exposed from the dedicated
+> **`opticore-react-native/navigation`** subpath — **not** the main entry. `expo-router` is a
+> **required** peer dependency (navigation is a first-class OptiCore feature); install it as part
+> of your Expo setup with `npx expo install expo-router`. It is only *bundled* when you import
+> this subpath, so the rest of OptiCore never pulls expo-router into your bundle.
+
 ---
 
 ## useRouteHelper
@@ -9,7 +15,7 @@ OptiCore provides a thin, type-safe wrapper over Expo Router's navigation primit
 A hook that returns safe navigation methods. Uses Expo Router under the hood, handles edge cases like calling `back()` when there is no history.
 
 ```typescript
-import { useRouteHelper } from 'opticore-react-native';
+import { useRouteHelper } from 'opticore-react-native/navigation';
 
 function ProfileScreen() {
   const { push, replace, back, backWithData, reset } = useRouteHelper();

@@ -128,4 +128,15 @@ describe('CoreSetup', () => {
       expect(() => coreSetup.getConfig()).toThrow();
     });
   });
+
+  describe('isInitialized()', () => {
+    it('should return false before init', () => {
+      expect(coreSetup.isInitialized()).toBe(false);
+    });
+
+    it('should return true after init', () => {
+      coreSetup.init(validConfig);
+      expect(coreSetup.isInitialized()).toBe(true);
+    });
+  });
 });

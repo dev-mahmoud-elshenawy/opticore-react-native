@@ -1,6 +1,6 @@
 {
   "name": "opticore-react-native",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Pure infrastructure library for React Native/Expo applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -54,6 +54,11 @@
       "types": "./dist/adapters/index.d.ts",
       "import": "./dist/adapters/index.js",
       "require": "./dist/adapters/index.js"
+    },
+    "./navigation": {
+      "types": "./dist/navigation/index.d.ts",
+      "import": "./dist/navigation/index.js",
+      "require": "./dist/navigation/index.js"
     },
     "./metro": {
       "require": "./metro.js",
@@ -112,6 +117,7 @@
     "react-native-device-info": "*"
   },
   "peerDependenciesMeta": {
+    "typescript": { "optional": true },
     "@react-native-async-storage/async-storage": { "optional": true },
     "@react-native-community/netinfo": { "optional": true },
     "expo-secure-store": { "optional": true },
@@ -131,22 +137,23 @@
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^14.0.0-beta.0",
     "@types/jest": "^29.5.0",
-    "@types/react": "^19.0.8",
-    "@types/react-native": "^0.73.0",
+    "@types/react": "~19.1.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "babel-jest": "^29.7.0",
     "babel-preset-expo": "^54.0.10",
     "eslint": "^9.0.0",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "expo": "54.0.32",
+    "expo-router": "~6.0.0",
     "expo-secure-store": "^15.0.8",
     "jest": "^29.7.0",
     "jest-expo": "^54.0.17",
     "prettier": "^3.4.0",
-    "react": "^19.2.4",
-    "react-native": "^0.83.1",
+    "react": "19.1.0",
+    "react-native": "~0.81.0",
     "react-native-device-info": "^15.0.1",
-    "test-renderer": "^0.14.0",
+    "test-renderer": "^1.0.0",
     "tsd": "^0.33.0",
     "typescript": "^5.7.0"
   },
@@ -161,6 +168,9 @@
     "zustand": "^5.0.11"
   },
   "overrides": {
-    "react-test-renderer": "19.2.4"
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-test-renderer": "19.1.0",
+    "react-native-screens": "~4.16.0"
   }
 }

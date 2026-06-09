@@ -163,7 +163,7 @@ utils/
 ```
 Component
   └─► useAsyncState(fetchUsers)           ← Hook manages loading/error state
-        └─► ApiClient.getInstance().get() ← Singleton HTTP client
+        └─► ApiClient.getInstance().request() ← Singleton HTTP client
               ├─► Request Interceptor     ← Attaches auth token
               ├─► HTTP Request → Server
               ├─► Response Interceptor    ← Logs response, handles errors

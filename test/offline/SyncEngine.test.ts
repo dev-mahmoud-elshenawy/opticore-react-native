@@ -220,14 +220,23 @@ describe('SyncEngine', () => {
 
             mockApiClient.request.mockRejectedValue(new Error('Network error'));
 
-            const startTime = Date.now();
+            // Assert on the actual backoff delay values rather than wall-clock
+            // elapsed time — the latter is flaky under parallel-test CPU load.
+            // With retryDelay=100, maxBackoff=150: 100ms, then capped at 150ms.
+            const delaySpy = jest.spyOn(
+                engine as unknown as { delay: (ms: number) => Promise<void> },
+                'delay'
+            );
+
             await expect(
                 engine.executeRequest(item, { maxRetries: 3, retryDelay: 100, maxBackoff: 150 })
             ).rejects.toThrow();
-            const endTime = Date.now();
 
-            // Backoff should be capped at 150ms: 100ms, 150ms, 150ms = 400ms
-            expect(endTime - startTime).toBeLessThan(600);
+            const backoffDelays = delaySpy.mock.calls.map(call => call[0]);
+            expect(backoffDelays).toEqual([100, 150, 150]);
+            expect(Math.max(...backoffDelays)).toBeLessThanOrEqual(150);
+
+            delaySpy.mockRestore();
         });
 
         it('should emit retry events', async () => {

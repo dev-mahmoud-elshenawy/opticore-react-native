@@ -48,7 +48,7 @@ describe('useAsyncState', () => {
       resolvePromise = resolve;
     });
 
-    let runPromise: Promise<string | undefined>;
+    let runPromise: Promise<void>;
     await actCompat(async () => {
       runPromise = result.current.run(promise);
     });
@@ -70,7 +70,7 @@ describe('useAsyncState', () => {
       resolvePromise = resolve;
     });
 
-    let runPromise: Promise<string | undefined>;
+    let runPromise: Promise<void>;
     await actCompat(async () => {
       runPromise = result.current.run(promise);
     });

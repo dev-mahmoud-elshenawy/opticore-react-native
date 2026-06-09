@@ -57,6 +57,7 @@ interface FormStateReturn<T> {
 ## Complete Example
 
 ```typescript
+import { ApiClient, HttpMethod } from 'opticore-react-native';
 import { useFormState } from 'opticore-react-native/forms';
 import { z } from 'zod';
 
@@ -84,7 +85,7 @@ function LoginScreen() {
   });
 
   const onSubmit = async (data: LoginForm) => {
-    await ApiClient.getInstance().post('/auth/login', data);
+    await ApiClient.getInstance().request({ method: HttpMethod.POST, url: '/auth/login', data: data });
   };
 
   return (
@@ -267,12 +268,14 @@ const schema = z.object({
 ## Async Validation
 
 ```typescript
+import { ApiClient, HttpMethod } from 'opticore-react-native';
+
 const schema = z.object({
   username: z.string()
     .min(3, 'Too short')
     .refine(
       async (val) => {
-        const { data } = await ApiClient.getInstance().get(`/check-username/${val}`);
+        const { data } = await ApiClient.getInstance().request({ method: HttpMethod.GET, url: `/check-username/${val}` });
         return data.available;
       },
       { message: 'Username already taken' }

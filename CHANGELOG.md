@@ -14,6 +14,35 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🌟 [1.2.0] — Consumer integration fixes
+
+### 💥 Breaking
+
+- **Navigation moved to a subpath.** Import `useRouteHelper` / `NavigationParams` from `opticore-react-native/navigation` (no longer the main entry) — this keeps `expo-router` out of the main bundle.
+
+### 🔧 Fixed
+
+- **No `--legacy-peer-deps` needed** on SDK-aligned installs. Required peers (`react`, `react-native`, `expo`, `expo-router`) use open `>=` ranges; `typescript` is now an **optional** peer (OptiCore ships its own `.d.ts`, so typed coding is unaffected). Also fixes the Metro build break for non-expo-router apps.
+- **Init ordering** — `OptiCoreProvider` now configures singletons synchronously *before children render* (was in `useEffect`, which let an early API call hit an unconfigured client).
+- **`ApiClient.request()` fails fast** with a clear error if called before `configure()` / `CoreSetup.init()`, instead of silently using axios defaults.
+- **`opticore-install-peers` on Windows** no longer fails with `exit null` (`spawnSync` now uses `shell: true`); the CLI also surfaces the real spawn error.
+
+### ✨ Added
+
+- `CoreSetup.isInitialized()` / `ApiClient.isInitialized()` for imperative readiness guards.
+- One-time `__DEV__` warning when a missing optional native peer triggers the in-memory fallback (never throws; silent in production).
+- `opticore-install-peers <name…>` installs specific peers (validated); `--required` / `--optional` / default still work.
+
+### 📝 Docs
+
+- Network examples use the enum API `apiClient.request({ method: HttpMethod.X, url })` (verb methods are private). Added an "optional native peers" table; navigation docs updated for the subpath + required `expo-router`. Documented `withOptiCoreMetroConfig` (monorepo / `file:` linking only — not needed for normal installs).
+
+### 🧰 Internal
+
+- Dev/test toolchain pinned to Expo SDK 54 (react 19.1, react-native 0.81, expo 54.0.32, expo-router 6.0).
+
+---
+
 ## 🛠 [1.1.1] — Fix documentation links
 
 ### 🔧 Changed

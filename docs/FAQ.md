@@ -100,8 +100,10 @@ const secondaryApi = axios.create({ baseURL: 'https://cdn.example.com' });
 `ApiClient` throws an `ApiError` with `status`, `url`, and `data` properties. You can catch it anywhere:
 
 ```typescript
+import { ApiClient, HttpMethod } from 'opticore-react-native';
+
 try {
-  await ApiClient.getInstance().get('/protected');
+  await ApiClient.getInstance().request({ method: HttpMethod.GET, url: '/protected' });
 } catch (e) {
   if (e instanceof ApiError && e.status === 401) {
     redirectToLogin();

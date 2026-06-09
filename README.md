@@ -56,13 +56,17 @@ OptiCore ships a tiny CLI that installs every peer in one shot, using `expo inst
 npx opticore-install-peers
 ```
 
-That installs both required and optional peers. Flags if you want finer control:
+That installs all the optional native-module peers. For finer control:
 
 ```bash
-npx opticore-install-peers --required   # storage + network only
-npx opticore-install-peers --optional   # clipboard + device only
-npx opticore-install-peers --dry-run    # show the command without running
+npx opticore-install-peers --required          # storage + network only
+npx opticore-install-peers --optional          # clipboard + device only
+npx opticore-install-peers expo-clipboard      # only the named peer(s)
+npx opticore-install-peers expo-device expo-clipboard
+npx opticore-install-peers --dry-run           # show the command without running
 ```
+
+Named peers are validated; an unknown name prints the list of installable peers.
 
 Behind the scenes it detects Expo / Yarn / pnpm / npm and runs the right tool. Prefer to run the bundled installer script directly (same flags):
 
@@ -75,7 +79,40 @@ node node_modules/opticore-react-native/bin/install-peers.mjs --dry-run  # print
 > bare peers `@react-native-clipboard/clipboard` and `react-native-device-info` as a
 > fallback — but they only work in a custom dev build, not in Expo Go.
 
-Any peer you skip falls back to an **in-memory adapter** at runtime — useful for tests and SSR, never a substitute for real native storage in production. If you'd rather inject a custom adapter (MMKV, Keychain, a JS-only stub), see [Custom Adapters](#-custom-adapters) below.
+Any optional native peer you skip falls back to an **in-memory adapter** at runtime — useful for tests and SSR, never a substitute for real native storage in production. If you'd rather inject a custom adapter (MMKV, Keychain, a JS-only stub), see [Custom Adapters](#-custom-adapters) below.
+
+### Optional native peers — what each is for
+
+These are the peers `opticore-install-peers` manages. Every one is **optional** — skip any and OptiCore falls back to an in-memory implementation and logs a one-time `__DEV__` warning naming what to install. Nothing throws.
+
+| Peer | Enables | If you don't install it |
+|------|---------|--------------------------|
+| `expo-secure-store` | `StorageManager.secure` (Keychain / Keystore) | In-memory fallback — **not persistent, not secure** |
+| `@react-native-async-storage/async-storage` | `StorageManager.local` | In-memory fallback — not persistent |
+| `@react-native-community/netinfo` | `ConnectivityManager`, `useConnectivity` | In-memory fallback (assumes online) |
+| `expo-clipboard` *(or `@react-native-clipboard/clipboard`)* | Clipboard utilities | In-memory fallback |
+| `expo-device` + `expo-application` *(or `react-native-device-info`)* | Device / app info | In-memory fallback (default values) |
+
+> **Why optional?** Native modules are feature-gated — your app installs only what it uses, and OptiCore resolves the backend at runtime (consumer override → installed peer → in-memory fallback). The dev warning means a missing peer is never a *silent* surprise.
+>
+> Two peers sit **outside** this CLI: `typescript` (optional — OptiCore ships its own `.d.ts`, so skipping it has no effect) and `expo-router` (required, install it with your navigation setup — only needed for the `opticore-react-native/navigation` subpath).
+
+### Monorepo or local (`file:`) linking only — Metro config
+
+**Normal npm install? Skip this.** A standard `npm install opticore-react-native` needs no Metro changes — `react`/`react-native` are peer deps, so there's only one copy.
+
+In a **monorepo** or when consuming OptiCore via a **`file:` link** (e.g. local testing), the package's own `react` can get duplicated, causing the classic *"Invalid hook call"*. Wrap your Metro config to force React (and peer deps) to resolve from your app:
+
+```js
+// metro.config.js
+const { getDefaultConfig } = require('expo/metro-config');
+const { withOptiCoreMetroConfig } = require('opticore-react-native/metro');
+
+const config = getDefaultConfig(__dirname);
+module.exports = withOptiCoreMetroConfig(config, __dirname);
+```
+
+> Tip: to test like a real consumer (no Metro tweak), install the packed tarball — `npm pack` then `npm install ../opticore-react-native-<version>.tgz` — instead of a `file:` link.
 
 ---
 
@@ -117,11 +154,14 @@ export default function RootLayout() {
 **Step 2 — Start using the library**
 
 ```typescript
-import { ApiClient, StorageManager, Logger } from 'opticore-react-native';
+import { ApiClient, HttpMethod, StorageManager, Logger } from 'opticore-react-native';
 import { useAsyncState } from 'opticore-react-native/hooks';
 
 // HTTP requests — auth token injected automatically
-const { data } = await ApiClient.getInstance().get<User[]>('/users');
+const { data } = await ApiClient.getInstance().request<User[]>({
+  method: HttpMethod.GET,
+  url: '/users',
+});
 
 // Storage — automatic JSON serialization
 await StorageManager.getInstance().local.set('user', { id: 1, name: 'Ali' });
@@ -131,7 +171,11 @@ Logger.getInstance().info('App ready', { userId: '123' });
 
 // Async state in components
 const { data: users, isLoading, error, run } = useAsyncState<User[]>();
-run(() => ApiClient.getInstance().get<User[]>('/users').then(r => r.data));
+run(() =>
+  ApiClient.getInstance()
+    .request<User[]>({ method: HttpMethod.GET, url: '/users' })
+    .then(r => r.data),
+);
 ```
 
 → **[Full setup guide](docs/QUICK_START.md)** — auth, error handling, offline sync, theming and more.

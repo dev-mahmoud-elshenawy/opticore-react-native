@@ -36,6 +36,10 @@ export class ApiClient {
   public client: AxiosInstance;
   private _config: NetworkConfig = {};
 
+  // Becomes true after the first configure() call (which CoreSetup.init performs).
+  // Guards against firing requests before the client is set up — see request().
+  private _initialized = false;
+
   // Track interceptors for removal
   private interceptors = new Map<InterceptorId, { type: 'request' | 'response'; axiosId: number }>();
   private nextInterceptorId = 1;
@@ -54,6 +58,15 @@ export class ApiClient {
 
   public get config(): NetworkConfig {
     return this._config;
+  }
+
+  /**
+   * Whether {@link configure} has run (i.e. the client is ready for requests).
+   * Lets imperative call sites guard gracefully instead of catching the
+   * "called before initialization" error thrown by {@link request}.
+   */
+  public isInitialized(): boolean {
+    return this._initialized;
   }
 
   /**
@@ -162,6 +175,7 @@ export class ApiClient {
    */
   public configure(config: NetworkConfig): void {
     this._config = { ...this._config, ...config };
+    this._initialized = true;
 
     // Update defaults without creating new instance (preserves interceptors)
     if (this._config.baseURL) this.client.defaults.baseURL = this._config.baseURL;
@@ -195,6 +209,18 @@ export class ApiClient {
     data?: unknown;
     headers?: Record<string, string>;
   }): Promise<ApiResponse<T>> {
+    // Fail fast instead of silently sending a request with no baseURL/auth.
+    // configure() runs via CoreSetup.init(), which OptiCoreProvider calls
+    // synchronously before children render — so this only fires for genuinely
+    // premature (pre-init) calls.
+    if (!this._initialized) {
+      throw new Error(
+        'ApiClient.request() was called before initialization. Wrap your app in ' +
+          '<OptiCoreProvider> (recommended), or call CoreSetup.getInstance().init(config) ' +
+          'or ApiClient.getInstance().configure(config) before making requests.',
+      );
+    }
+
     const axiosConfig: AxiosRequestConfig = { headers: config.headers };
 
     switch (config.method) {
