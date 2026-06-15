@@ -39,6 +39,35 @@ export interface PaginatedResponse<T> {
 }
 
 /**
+ * Generic API response body.
+ *
+ * The common metadata fields backends wrap their payloads in. This is the
+ * *body* shape (what arrives in `ApiResponse.data`), distinct from the
+ * transport-level `ApiResponse<T>`. All fields are optional so non-wrapped
+ * responses remain assignable. Extend it with your data source's payload:
+ *
+ * @example
+ * ```typescript
+ * interface TopHeadlinesResponse extends ApiResult {
+ *   totalResults?: number;
+ *   articles?: Article[];
+ * }
+ * ```
+ *
+ * @template T - Type of the wrapped payload when carried under a `data` field
+ */
+export interface ApiResult<T = unknown> {
+  /** Outcome flag (e.g. "ok" / "error" / "success") — convention is per-backend */
+  status?: string;
+  /** Human-readable status/error message */
+  message?: string;
+  /** Machine-readable status/error code */
+  code?: string;
+  /** Wrapped payload, for backends that nest data under a `data` field */
+  data?: T;
+}
+
+/**
  * HTTP request methods
  */
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS';

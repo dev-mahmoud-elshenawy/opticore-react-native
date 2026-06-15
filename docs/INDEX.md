@@ -22,8 +22,9 @@ Welcome to the complete documentation for **opticore-react-native** — the Type
 | [**State Management**](./api/STATE.md) | AsyncState · BaseStore · StoreFactory · StateObserver · CrudStore |
 | [**Hooks**](./api/HOOKS.md) | useAsyncState · useDebounce · useConnectivity · useKeyboard · +7 more |
 | [**Error Handling**](./api/ERRORS.md) | RenderError · NonRenderError · Result<T,E> · OptiCoreErrorBoundary |
-| [**Utilities**](./api/UTILITIES.md) | String · Number · Array · Date · Object · Format · Color · Platform |
+| [**Utilities**](./api/UTILITIES.md) | String · Number · Array · Date · Object · Format · Color · Platform · buildUrl |
 | [**Navigation**](./api/NAVIGATION.md) | useRouteHelper · Expo Router integration |
+| [**React Query**](./REACT_QUERY.md) | createQueryClient · error-aware retry · repository + query-hook pattern |
 
 ---
 
@@ -32,7 +33,8 @@ Welcome to the complete documentation for **opticore-react-native** — the Type
 | Guide | Description |
 |---|---|
 | [**Forms**](./FORMS.md) | Zod validation · React Hook Form · Input masks · Field-level validation |
-| [**Theme Engine**](./THEME.md) | Dynamic theming · Dark mode · Typography · Spacing · ThemeManager |
+| [**Theme Engine**](./THEME.md) | Dynamic theming · Dark mode · Semantic typography · Spacing · ThemeManager |
+| [**Tailwind / NativeWind**](./TAILWIND.md) | createTailwindPreset · theme-driven `className` tokens · `text-body`/`bg-card` |
 | [**Offline Sync**](./OFFLINE.md) | Request queue · Auto-sync · Conflict resolution · useOfflineSync |
 
 ---
@@ -103,7 +105,12 @@ import { useOfflineSync }        from 'opticore-react-native/offline';
 import { useTheme }              from 'opticore-react-native/theme';
 import { capitalize, clamp }     from 'opticore-react-native/utils';
 import { createBaseStore }       from 'opticore-react-native/state';
+import { useRouteHelper }        from 'opticore-react-native/navigation';
+import { createTailwindPreset }  from 'opticore-react-native/tailwind';
 ```
+
+> `createQueryClient`, `toMessage`, `buildUrl`, and `ApiResult` are also available from the main
+> entry (`opticore-react-native`).
 
 ---
 

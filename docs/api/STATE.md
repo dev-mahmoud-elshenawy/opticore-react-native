@@ -88,10 +88,46 @@ function createBaseStore<T>(
 
 ```typescript
 interface StoreConfig<T> {
-  name: string;           // DevTools display name
-  initialState: T;        // Used by reset()
-  devtools?: boolean;     // default: true in __DEV__
+  name: string;                          // DevTools display name + persistence key
+  initialState: T;                       // Used by reset()
+  devtools?: boolean;                    // default: true in __DEV__
+  persist?: boolean;                     // persist via OptiCore storage (default: false)
+  partialize?: (state: T) => Partial<T>; // only meaningful when persist is true
 }
+```
+
+### Persistence
+
+Set `persist: true` to save the store through OptiCore's storage layer (its auto-resolved
+AsyncStorage adapter) and rehydrate it on startup — no custom adapter needed. The store's `name`
+is used as the storage key. Use `partialize` to persist only a slice (excluding transient/derived
+fields keeps writes small):
+
+```typescript
+export const useSavedStore = createBaseStore<SavedState>(
+  {
+    name: 'saved-articles',
+    initialState,
+    persist: true,
+    partialize: (state) => ({ items: state.items }), // don't persist loading flags
+  },
+  (set) => ({ /* ...actions... */ }),
+);
+```
+
+For a store built **without** `createBaseStore` (e.g. a plain `create()(persist(...))`), use the
+storage factory directly:
+
+```typescript
+import { createPersistStorage } from 'opticore-react-native/state';
+import { persist } from 'zustand/middleware';
+
+export const useSavedStore = create<SavedState>()(
+  persist((set, get) => ({ /* ... */ }), {
+    name: 'saved-articles',
+    storage: createPersistStorage<SavedState>(),
+  }),
+);
 ```
 
 ### Example

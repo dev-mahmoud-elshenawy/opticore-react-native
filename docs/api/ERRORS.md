@@ -377,11 +377,34 @@ const clear = new ClearCacheStrategy(async () => {
 
 ---
 
+## toMessage(error, fallback?)
+
+Resolve a user-facing message from any thrown value — handy in `catch` blocks, toasts, and React
+Query error states where the caught value is `unknown`.
+
+```typescript
+import { toMessage } from 'opticore-react-native';
+
+try {
+  await something();
+} catch (e) {
+  toast(toMessage(e));                         // → RenderError.userMessage when available
+  toast(toMessage(e, 'Could not load news'));  // custom fallback
+}
+```
+
+Resolution order: `RenderError.userMessage` → `Error.message` → `fallback`
+(default `'Something went wrong'`). Because `ApiError extends RenderError`, API failures surface
+their friendly `userMessage` automatically.
+
+---
+
 ## See Also
 
 - [Configuration](../CONFIGURATION.md#errorclassification) — Custom classification rules
 - [OptiCoreProvider](../CONFIGURATION.md) — Global `onError` handler
 - [Infrastructure](./INFRASTRUCTURE.md#apierror) — ApiError from HTTP requests
+- [React Query Integration](../REACT_QUERY.md) — `toMessage` in query error states
 
 ## Error Types
 

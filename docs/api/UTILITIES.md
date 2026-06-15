@@ -536,8 +536,32 @@ const info = getDeviceInfo();
 // { platform: 'ios', version: '17.0', model: 'iPhone' }
 ```
 
+## URL Utilities
+
+### buildUrl(path, params?)
+
+Build a URL path with an encoded query string. Keys and values are URL-encoded;
+`null` / `undefined` / empty-string values are dropped. Replaces manual string concatenation and
+`encodeURIComponent` when constructing API paths.
+
+```typescript
+import { buildUrl } from 'opticore-react-native';
+
+buildUrl('/everything', { q: 'climate change', pageSize: 30 });
+// '/everything?q=climate%20change&pageSize=30'
+
+buildUrl('/top-headlines', { country: 'us', category: undefined });
+// '/top-headlines?country=us'   (undefined dropped)
+
+buildUrl('/top-headlines');
+// '/top-headlines'              (no params → unchanged)
+```
+
+Param values are typed as `QueryParamValue` (`string | number | boolean | null | undefined`).
+
 ---
 
 **See also**:
 - [Hooks API](./HOOKS.md)
+- [Infrastructure API](./INFRASTRUCTURE.md) — `ApiClient`
 - [QuickStart Guide](../QUICK_START.md)

@@ -1,12 +1,15 @@
 import { createStore } from 'zustand/vanilla';
-import { devtools } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { StoreConfig, BaseActions, AppStoreCreator } from './types/StoreConfig';
+import { createPersistStorage } from './persistStorage';
 
 /**
  * Creates a base store with immer and devtools middleware enabled by default.
+ * When `config.persist` is true, state is persisted through OptiCore's storage
+ * (see {@link createPersistStorage}) and rehydrated on startup.
  *
- * @param config Configuration for the store (name, initial state)
+ * @param config Configuration for the store (name, initial state, persist)
  * @param stateCreator Zustand state creator function
  * @returns Zustand vanilla store
  */
@@ -41,20 +44,34 @@ export function createBaseStore<T extends object>(
     };
   };
 
-  // Configure middleware stack
-  // 1. Immer (allows mutable state updates)
-  // 2. DevTools (Redux devtools integration)
+  // Configure middleware stack:
+  // 1. Immer    — mutable-style state updates (innermost)
+  // 2. Persist  — optional; persists via OptiCore storage
+  // 3. DevTools — Redux devtools integration (outermost)
 
   const enabledDevtools =
     config.devtools ??
     (typeof __DEV__ !== 'undefined' ? __DEV__ : process.env.NODE_ENV !== 'production');
 
-  const store = createStore<T & BaseActions>()(
-    devtools(immer(storeCreator), {
-      name: config.name,
-      enabled: enabledDevtools,
-    })
-  );
+  const devtoolsOptions = { name: config.name, enabled: enabledDevtools };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- middleware chain
+  const base = immer(storeCreator) as any;
+
+  const store = config.persist
+    ? createStore<T & BaseActions>()(
+        devtools(
+          persist(base, {
+            name: config.name,
+            storage: createPersistStorage<T & BaseActions>(),
+            ...(config.partialize
+              ? { partialize: config.partialize as (state: T & BaseActions) => T & BaseActions }
+              : {}),
+          }),
+          devtoolsOptions
+        )
+      )
+    : createStore<T & BaseActions>()(devtools(base, devtoolsOptions));
 
   return store;
 }

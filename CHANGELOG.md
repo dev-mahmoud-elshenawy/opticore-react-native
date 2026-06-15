@@ -14,6 +14,29 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🚀 [2.0.0] — Semantic theming, React Query integration, leaner deps
+
+> Upgrading from 1.x? See **[MIGRATION_v2.md](./MIGRATION_v2.md)**.
+
+### 💥 Breaking
+
+- `@tanstack/react-query` is now a required **peer** (`>=5`), no longer bundled — run `expo install @tanstack/react-query`.
+- `ThemeTypography` gained nine required semantic-variant fields; only **full** custom `Theme` literals need updating (spread overrides are unaffected).
+
+### ✨ Added
+
+- **Semantic typography** — `theme.typography.body` / `h1` / `caption` / … as `ThemeTextVariant` style objects. ([guide](./docs/THEME.md))
+- **React Query** — `createQueryClient()` with OptiCore-aware defaults + error-aware retry. ([guide](./docs/REACT_QUERY.md))
+- **Tailwind/NativeWind preset** — `createTailwindPreset` now emits `text-body` / `text-h1` / … classes; `nativewind` + `tailwindcss` added as optional peers. ([guide](./docs/TAILWIND.md))
+- **Store persistence** — `StoreConfig.persist` / `partialize` and `createPersistStorage()`. ([state docs](./docs/api/STATE.md#persistence))
+- **`toMessage(error, fallback?)`** — user-facing message from any thrown value. ([errors docs](./docs/api/ERRORS.md))
+- **`buildUrl(path, params?)`** — encoded query-string builder. ([utils docs](./docs/api/UTILITIES.md#url-utilities))
+- **`ApiResult<T>`** — generic API response-body envelope. ([types docs](./docs/TYPES.md))
+
+### 🔧 Changed
+
+- `withOptiCoreMetroConfig` now also pins `@tanstack/react-query` / `@tanstack/query-core` to a single instance for `file:`/monorepo setups.
+
 ## 🌟 [1.2.0] — Consumer integration fixes
 
 ### 💥 Breaking

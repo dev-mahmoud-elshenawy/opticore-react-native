@@ -39,7 +39,16 @@ function withOptiCoreMetroConfig(config, projectRoot) {
   // node_modules. extraNodeModules is a fallback — resolveRequest fires first,
   // before Metro's directory-walking finds a second copy of React inside
   // opticore's devDependencies (which breaks hooks with "Invalid hook call").
-  const SINGLETONS = ['react', 'react-native', 'react-dom'];
+  // React and React Query both rely on a single shared instance across the
+  // app + opticore boundary (shared context / hooks). Force them to the app's
+  // copy so a second copy inside opticore's devDependencies can't break them.
+  const SINGLETONS = [
+    'react',
+    'react-native',
+    'react-dom',
+    '@tanstack/react-query',
+    '@tanstack/query-core',
+  ];
   config.resolver.resolveRequest = (context, moduleName, platform) => {
     const isSingleton = SINGLETONS.some(
       s => moduleName === s || moduleName.startsWith(s + '/'),

@@ -7,3 +7,4 @@ export * from './types/AsyncStateTypes';
 export * from './types/ObserverTypes';
 export * from './types/StoreConfig';
 export * from './providers/StoreProvider';
+export * from './persistStorage';

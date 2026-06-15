@@ -22,7 +22,7 @@
 
 // API Types
 // Note: ApiError class and ApiResponse interface are exported from infrastructure
-export type { PaginatedResponse, PaginationMeta, RequestConfig, HttpMethod } from './Api.types';
+export type { ApiResult, PaginatedResponse, PaginationMeta, RequestConfig, HttpMethod } from './Api.types';
 
 // State Types
 export type {

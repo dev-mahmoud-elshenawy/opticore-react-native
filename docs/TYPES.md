@@ -20,6 +20,27 @@ const list: PaginatedResponse<Product> = await api.get('/products');
 console.log(`Page ${list.pagination.page} of ${list.pagination.totalPages}`);
 ```
 
+### ApiResult\<T\>
+
+The common **body** envelope backends wrap payloads in (`status` / `message` / `code` / `data`) —
+distinct from the transport-level `ApiResponse<T>` (which is what `ApiClient.request` returns). All
+fields are optional, so non-wrapped responses stay assignable. Extend it with your data source's
+payload:
+
+```typescript
+import type { ApiResult } from 'opticore-react-native';
+
+// newsapi.org /top-headlines body
+interface ArticlesResponse extends ApiResult {
+  totalResults?: number;
+  articles?: Article[];
+}
+
+const { data } = await ApiClient.getInstance().request<ArticlesResponse>({ method: HttpMethod.GET, url });
+if (data.status !== 'ok') throw new Error(data.message);
+return data.articles ?? [];
+```
+
 ## 🔄 State Management Types
 
 Types for common state patterns like loading states and async values.

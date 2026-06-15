@@ -60,14 +60,10 @@ function ProfileCard() {
       padding: spacing.md,
       borderRadius: 12,
     }}>
-      <Text style={{
-        color: colors.text,
-        fontSize: typography.h3,
-        fontWeight: '600',
-      }}>
+      <Text style={{ color: colors.text, ...typography.h3 }}>
         John Doe
       </Text>
-      <Text style={{ color: colors.textSecondary, fontSize: typography.body }}>
+      <Text style={{ color: colors.textSecondary, ...typography.body }}>
         @johndoe
       </Text>
       <Switch
@@ -98,12 +94,23 @@ interface Theme {
     border: string;
   };
   typography: {
-    h1: number;       // 32
-    h2: number;       // 28
-    h3: number;       // 24
-    body: number;     // 16
-    caption: number;  // 14
-    small: number;    // 12
+    fontFamily: string;
+
+    // Semantic variants (recommended) — each is { fontSize, fontWeight, lineHeight }.
+    // Read a token (typography.body.fontSize) or spread it (style={typography.body}).
+    h1: ThemeTextVariant;         // 32 / '700' / 40
+    h2: ThemeTextVariant;         // 28 / '700' / 36
+    h3: ThemeTextVariant;         // 24 / '600' / 32
+    title: ThemeTextVariant;      // 20 / '600' / 28
+    body: ThemeTextVariant;       // 14 / '400' / 20
+    bodySmall: ThemeTextVariant;  // 12 / '400' / 16
+    caption: ThemeTextVariant;    // 12 / '400' / 16
+    label: ThemeTextVariant;      // 12 / '500' / 16
+    button: ThemeTextVariant;     // 14 / '600' / 20
+
+    // Raw scale (backward compatible) — the tokens the variants are built from.
+    sizes: { xs; sm; md; lg; xl; xxl; h1; h2; h3 };  // numbers
+    weights: { regular; medium; semibold; bold };    // RN weight strings
   };
   spacing: {
     xs: number;   // 4
@@ -177,13 +184,10 @@ const brandTheme = createTheme({
     warning: '#F59E0B',
     border: '#E5E7EB',
   },
+  // Semantic variants are { fontSize, fontWeight, lineHeight }; override only what you need.
   typography: {
-    h1: 36,
-    h2: 28,
-    h3: 22,
-    body: 16,
-    caption: 14,
-    small: 12,
+    h1: { fontSize: 36, fontWeight: '700', lineHeight: 44 },
+    body: { fontSize: 16, fontWeight: '400', lineHeight: 24 },
   },
   spacing: {
     xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48,

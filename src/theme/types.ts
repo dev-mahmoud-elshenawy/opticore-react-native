@@ -48,6 +48,34 @@ export interface ThemeSpacing {
     xxl: number;  // 48
 }
 
+/**
+ * A semantic text style — ready to spread onto a `<Text>` style prop:
+ *
+ * ```tsx
+ * <Text style={theme.typography.body}>Hello</Text>
+ * // or read a single token:
+ * theme.typography.body.fontSize // 14
+ * ```
+ */
+export interface ThemeTextVariant {
+    /** Font size in points. */
+    fontSize: number;
+    /** Font weight as an RN style string (e.g. '400', '600', '700'). */
+    fontWeight: string;
+    /** Line height in points. */
+    lineHeight: number;
+}
+
+/**
+ * Theme typography.
+ *
+ * Two layers, both first-class:
+ * - **Semantic variants** (`body`, `caption`, `h1`, …) — the recommended API.
+ *   Each is a {@link ThemeTextVariant} you can read (`typography.body.fontSize`)
+ *   or spread (`style={typography.body}`). No knowledge of the raw scale needed.
+ * - **Raw scale** (`sizes`, `weights`) — the underlying tokens the variants are
+ *   built from. Kept for backward compatibility and ad-hoc composition.
+ */
 export interface ThemeTypography {
     fontFamily: string;
     sizes: {
@@ -67,6 +95,26 @@ export interface ThemeTypography {
         semibold: string;
         bold: string;
     };
+
+    // --- Semantic variants (recommended): typography.body.fontSize, etc. ---
+    /** Largest heading. */
+    h1: ThemeTextVariant;
+    /** Section heading. */
+    h2: ThemeTextVariant;
+    /** Sub-heading. */
+    h3: ThemeTextVariant;
+    /** Card / list-item title. */
+    title: ThemeTextVariant;
+    /** Default body text. */
+    body: ThemeTextVariant;
+    /** Secondary / dense body text. */
+    bodySmall: ThemeTextVariant;
+    /** Captions, metadata, helper text. */
+    caption: ThemeTextVariant;
+    /** Form labels, overlines. */
+    label: ThemeTextVariant;
+    /** Button text. */
+    button: ThemeTextVariant;
 }
 
 export interface ThemeBorderRadius {

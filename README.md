@@ -42,13 +42,15 @@ OptiCore is a **TypeScript-first**, production-ready infrastructure layer that e
 
 ```bash
 npm install opticore-react-native
-# or
-yarn add opticore-react-native
+# React Query is a required peer as of v2.0.0 — install it too:
+npx expo install @tanstack/react-query
 ```
 
-### Peer Dependencies — one command
-
+> **v2.0.0**: `@tanstack/react-query` is now a **required peer** (no longer bundled) — install it as shown above. Theme typography also gained semantic variants (`theme.typography.body`…). See [`MIGRATION_v2.md`](MIGRATION_v2.md) for the upgrade.
+>
 > **v1.1.0**: native modules are now **peer dependencies** managed by your app's Expo SDK — not pinned by OptiCore. This eliminates the SDK-version crashes that affected `1.0.0` (`AnyTypeProvider`, duplicate `expo-modules-core`, etc.). See [`MIGRATION_v1.1.md`](MIGRATION_v1.1.md) for the upgrade.
+
+### Peer Dependencies — one command
 
 OptiCore ships a tiny CLI that installs every peer in one shot, using `expo install` to pick versions that match your Expo SDK:
 
@@ -290,13 +292,15 @@ haptics?.trigger('impactLight'); // no-op in Expo Go, real haptics in a dev buil
 | ⚠️ **[Error Handling](docs/api/ERRORS.md)** | RenderError, NonRenderError, ApiError, Result\<T,E\>, ErrorBoundary |
 | 🛠 **[Utilities](docs/api/UTILITIES.md)** | 40+ pure functions — string, number, array, date, object, format, color, platform |
 | 🧭 **[Navigation](docs/api/NAVIGATION.md)** | useRouteHelper, Expo Router integration |
-| 🔷 **[Types](docs/TYPES.md)** | All shared TypeScript types — ApiResponse, AsyncState, PaginatedResponse & more |
+| 🔁 **[React Query](docs/REACT_QUERY.md)** | createQueryClient, error-aware retry, repository + query-hook pattern |
+| 🔷 **[Types](docs/TYPES.md)** | All shared TypeScript types — ApiResponse, ApiResult, AsyncState, PaginatedResponse & more |
 
 ### Feature Guides
 
 | Guide | Description |
 |---|---|
-| 🎨 **[Theme Engine](docs/THEME.md)** | Dynamic theming, dark mode, custom themes, ThemeManager |
+| 🎨 **[Theme Engine](docs/THEME.md)** | Dynamic theming, dark mode, semantic typography, custom themes, ThemeManager |
+| 🌬 **[Tailwind / NativeWind](docs/TAILWIND.md)** | createTailwindPreset — theme-driven `className` tokens (`text-body`, `bg-card`) |
 | 📋 **[Forms](docs/FORMS.md)** | useFormState, Zod validation, input masks, field-level validation |
 | 📡 **[Offline Sync](docs/OFFLINE.md)** | Request queue, auto-sync on reconnect, conflict resolution |
 

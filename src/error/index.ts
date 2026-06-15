@@ -19,3 +19,4 @@ export * from './DefaultErrorFallback';
 // Utilities
 export * from './ErrorClassifier';
 export * from './RecoveryStrategy';
+export * from './toMessage';

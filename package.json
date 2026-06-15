@@ -1,6 +1,6 @@
 {
   "name": "opticore-react-native",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Pure infrastructure library for React Native/Expo applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,7 +9,12 @@
     "bin",
     "metro.js",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md",
+    "MIGRATION.md",
+    "MIGRATION_v1.1.md",
+    "MIGRATION_v2.md",
+    "docs"
   ],
   "bin": {
     "opticore-install-peers": "./bin/install-peers.mjs"
@@ -60,6 +65,11 @@
       "import": "./dist/navigation/index.js",
       "require": "./dist/navigation/index.js"
     },
+    "./tailwind": {
+      "types": "./dist/tailwind/index.d.ts",
+      "import": "./dist/tailwind/index.js",
+      "require": "./dist/tailwind/index.js"
+    },
     "./metro": {
       "require": "./metro.js",
       "default": "./metro.js"
@@ -106,6 +116,7 @@
     "expo-router": ">=4.0.0",
     "react": ">=19.0.0",
     "react-native": ">=0.78.0",
+    "@tanstack/react-query": ">=5.0.0",
     "typescript": ">=5.0.0",
     "@react-native-async-storage/async-storage": "*",
     "@react-native-community/netinfo": "*",
@@ -114,10 +125,14 @@
     "expo-device": "*",
     "expo-application": "*",
     "@react-native-clipboard/clipboard": "*",
-    "react-native-device-info": "*"
+    "react-native-device-info": "*",
+    "nativewind": ">=4.0.0",
+    "tailwindcss": ">=3.4.0"
   },
   "peerDependenciesMeta": {
     "typescript": { "optional": true },
+    "nativewind": { "optional": true },
+    "tailwindcss": { "optional": true },
     "@react-native-async-storage/async-storage": { "optional": true },
     "@react-native-community/netinfo": { "optional": true },
     "expo-secure-store": { "optional": true },
@@ -134,6 +149,7 @@
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-clipboard/clipboard": "^1.16.3",
     "@react-native-community/netinfo": "^11.5.1",
+    "@tanstack/react-query": "^5.90.20",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^14.0.0-beta.0",
     "@types/jest": "^29.5.0",
@@ -159,7 +175,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
-    "@tanstack/react-query": "^5.90.20",
     "axios": "^1.13.4",
     "date-fns": "^4.1.0",
     "immer": "^10.2.0",

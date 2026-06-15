@@ -1,8 +1,8 @@
 # Claude Development Guide for OptiCore React Native
 
 **Package**: `opticore-react-native`
-**Version**: 1.2.0
-**Last Updated**: 2026-06-08 (spec 028: navigation→`/navigation` subpath, `expo-router` required-but-isolated, `typescript` optional peer, enum-based ApiClient docs + fail-fast init guard, synchronous provider init, adapter memory-fallback dev warnings, per-package install-peers CLI)
+**Version**: 2.0.0
+**Last Updated**: 2026-06-15 (v2.0.0: semantic typography variants (`theme.typography.body`…) + Tailwind classes; React Query now a **required peer** with `createQueryClient`; `toMessage`, `buildUrl`, `ApiResult`, zustand `persist`/`partialize` via `createPersistStorage`; NativeWind preset subpath + optional `nativewind`/`tailwindcss` peers)
 **Target Platforms**: iOS & Android ONLY
 
 > **📖 Spec Kit Reference**: See [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete specification-driven development guide
@@ -1579,8 +1579,13 @@ Note: Expo Go runs only the *latest* SDK — an SDK-54 app opens in a dev build,
 not necessarily in the store Expo Go if it has moved to a newer SDK.
 
 - **Required peers** (consumer-provided): `react >=19.0.0`, `react-native >=0.78.0`,
-  `expo >=54.0.0`, `expo-router >=4.0.0` — all use open `>=` ranges so an SDK-aligned RN+Expo
-  app satisfies them without `--legacy-peer-deps` (verified by simulated install).
+  `expo >=54.0.0`, `expo-router >=4.0.0`, **`@tanstack/react-query >=5.0.0`** — all use open
+  `>=` ranges so an SDK-aligned RN+Expo app satisfies them without `--legacy-peer-deps`
+  (verified by simulated install).
+  React Query became a **required peer in v2.0.0** (was a bundled dependency); consumers install
+  it themselves (`expo install @tanstack/react-query`). Keeping it a peer avoids duplicate copies
+  and lets the app pin the version. `withOptiCoreMetroConfig` treats it (and `@tanstack/query-core`)
+  as a forced singleton for `file:`/monorepo setups.
   `expo-router` is required because navigation (`useRouteHelper`) is a first-class,
   heavily-used feature — every consumer is expected to use it. Consumers install it via their
   normal Expo setup (`expo install expo-router`). Note: navigation still lives ONLY at the
@@ -1594,15 +1599,17 @@ not necessarily in the store Expo Go if it has moved to a newer SDK.
   `expo-secure-store`, `@react-native-async-storage/async-storage`,
   `@react-native-community/netinfo`, `react-native-device-info`,
   `@react-native-clipboard/clipboard` (install via `npx opticore-install-peers`)
-- **Bundled deps**: Zustand ^5 + React Query ^5 (state), Axios ^1.13 (network),
-  Zod ^3 + React Hook Form ^7 + @hookform/resolvers (forms), date-fns ^4, immer ^10
+- **Optional UI peers** (only for the Tailwind preset at `opticore-react-native/tailwind`):
+  `nativewind >=4`, `tailwindcss >=3.4` — marked optional in `peerDependenciesMeta`.
+- **Bundled deps**: Zustand ^5 (state — React Query is now a peer, see above), Axios ^1.13
+  (network), Zod ^3 + React Hook Form ^7 + @hookform/resolvers (forms), date-fns ^4, immer ^10
 - **Testing**: Jest ^29 with the **`jest-expo`** preset + React Native Testing Library;
   `tsd` for public-API type tests
 
 ---
 
-**Last Updated**: 2026-06-08
-**Version**: 1.2.0
+**Last Updated**: 2026-06-15
+**Version**: 2.0.0
 **Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**

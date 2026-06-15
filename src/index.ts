@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 
-export const VERSION = '1.2.0';
+export const VERSION = '2.0.0';
 
 // Infrastructure exports
 export { HttpMethod } from './infrastructure';
@@ -47,4 +47,7 @@ export * from './offline';
 
 // Theme infrastructure exports
 export * from './theme';
+
+// React Query integration (OptiCore-aware client factory)
+export * from './query';
 
