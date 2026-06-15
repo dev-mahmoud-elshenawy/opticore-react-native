@@ -60,26 +60,40 @@ export const queryClient = createQueryClient({
 
 ## Wiring it up
 
-`OptiCoreProvider` already mounts a React Query provider with a default client. To use a **custom**
-client (e.g. with `createQueryClient` overrides), wrap your tree in your own
-`QueryClientProvider` — the nearest provider wins:
+`OptiCoreProvider` mounts the React Query provider for you, and its default client already uses
+these OptiCore-aware defaults — so **nothing extra is needed** for the error-aware retry to apply:
 
 ```tsx
 // app/_layout.tsx
 import { OptiCoreProvider } from 'opticore-react-native';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/core/query/queryClient';
 import { opticoreConfig } from '@/core/opticore.config';
 
 export default function RootLayout() {
   return (
     <OptiCoreProvider config={opticoreConfig}>
-      <QueryClientProvider client={queryClient}>
-        <Stack />
-      </QueryClientProvider>
+      <Stack />
     </OptiCoreProvider>
   );
 }
+```
+
+To tune the defaults, set `config.query` (merged on top). To control the client fully (devtools,
+persistence, a shared instance), pass your own via the `queryClient` prop — no second
+`QueryClientProvider` needed:
+
+```tsx
+import { OptiCoreProvider, createQueryClient } from 'opticore-react-native';
+
+const queryClient = createQueryClient({
+  defaultOptions: { queries: { refetchOnReconnect: false } },
+});
+
+<OptiCoreProvider config={opticoreConfig} queryClient={queryClient}>
+  <Stack />
+</OptiCoreProvider>;
+
+// …or declaratively, without a custom client:
+// opticoreConfig.query = { defaultOptions: { queries: { staleTime: 0 } } };
 ```
 
 > **Monorepo / `file:` link:** `withOptiCoreMetroConfig` forces `@tanstack/react-query` and

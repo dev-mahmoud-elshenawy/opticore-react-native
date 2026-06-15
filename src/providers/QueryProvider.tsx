@@ -1,5 +1,6 @@
 import React from 'react';
 import { QueryClient, QueryClientProvider, QueryClientConfig } from '@tanstack/react-query';
+import { createQueryClient } from '../query/createQueryClient';
 
 /**
  * Configuration options for QueryProvider
@@ -19,47 +20,13 @@ export interface QueryProviderProps {
 }
 
 /**
- * Default React Query configuration
- * Provides opinionated defaults for:
- * - Stale time: 5 minutes
- * - Cache time: 10 minutes
- * - Retry: 3 attempts with exponential backoff
- * - Error handling: Console warnings in development
- */
-const defaultConfig: QueryClientConfig = {
-  defaultOptions: {
-    queries: {
-      // Consider data fresh for 5 minutes
-      staleTime: 5 * 60 * 1000,
-      // Keep unused data in cache for 10 minutes
-      gcTime: 10 * 60 * 1000,
-      // Retry failed queries 3 times
-      retry: 3,
-      // Exponential backoff for retries
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-      // Refetch on window focus in production
-      refetchOnWindowFocus: __DEV__ ? false : true,
-      // Refetch on reconnect
-      refetchOnReconnect: true,
-    },
-    mutations: {
-      // Retry mutations once
-      retry: 1,
-      // Exponential backoff for mutation retries
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    },
-  },
-};
-
-/**
  * QueryProvider Component
  *
- * Wraps the application with React Query's QueryClientProvider,
- * providing configured defaults for:
- * - Cache and stale time management
- * - Automatic retry logic with exponential backoff
- * - Development tools integration
- * - Error handling strategies
+ * Wraps the application with React Query's QueryClientProvider. The default
+ * client comes from {@link createQueryClient}, so the OptiCore-aware defaults
+ * (5-min staleTime, 10-min gcTime, **error-aware retry** that skips actionable
+ * 4xx `ApiError`s, no refetch-on-focus) apply everywhere — including inside
+ * `OptiCoreProvider`. Pass `config` to tweak, or `queryClient` to inject your own.
  *
  * @example
  * ```tsx
@@ -88,30 +55,12 @@ export const QueryProvider: React.FC<QueryProviderProps> = ({
   config,
   queryClient: customQueryClient,
 }) => {
-  // Use provided QueryClient or create a new one with merged config
-  const queryClient = React.useMemo(() => {
-    if (customQueryClient) {
-      return customQueryClient;
-    }
-
-    // Merge default config with custom config
-    const mergedConfig: QueryClientConfig = {
-      ...defaultConfig,
-      ...config,
-      defaultOptions: {
-        queries: {
-          ...defaultConfig.defaultOptions?.queries,
-          ...config?.defaultOptions?.queries,
-        },
-        mutations: {
-          ...defaultConfig.defaultOptions?.mutations,
-          ...config?.defaultOptions?.mutations,
-        },
-      },
-    };
-
-    return new QueryClient(mergedConfig);
-  }, [config, customQueryClient]);
+  // Use the injected client, otherwise build one from OptiCore's canonical
+  // defaults (createQueryClient) with the caller's config merged on top.
+  const queryClient = React.useMemo(
+    () => customQueryClient ?? createQueryClient(config),
+    [config, customQueryClient],
+  );
 
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };

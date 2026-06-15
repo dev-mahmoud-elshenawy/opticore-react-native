@@ -3,8 +3,12 @@ import { RenderError } from '../error/RenderError';
 
 /** Default time a query stays fresh before refetching (5 minutes). */
 const DEFAULT_STALE_TIME = 5 * 60 * 1000;
+/** Default time unused/inactive data stays cached before garbage collection (10 minutes). */
+const DEFAULT_GC_TIME = 10 * 60 * 1000;
 /** Default retry attempts for transient (non-actionable) failures. */
 const DEFAULT_MAX_RETRIES = 2;
+/** Exponential backoff capped at 30s. */
+const retryDelay = (attemptIndex: number): number => Math.min(1000 * 2 ** attemptIndex, 30000);
 
 /**
  * Create a React Query client pre-wired with OptiCore-aware defaults.
@@ -35,13 +39,20 @@ export function createQueryClient(overrides?: QueryClientConfig): QueryClient {
       ...overrides?.defaultOptions,
       queries: {
         staleTime: DEFAULT_STALE_TIME,
+        gcTime: DEFAULT_GC_TIME,
         retry: (failureCount, error) => {
           if (error instanceof RenderError && error.isActionable) return false;
           return failureCount < DEFAULT_MAX_RETRIES;
         },
+        retryDelay,
+        refetchOnReconnect: true,
+        // Mobile: don't refetch every time the app returns to the foreground.
+        refetchOnWindowFocus: false,
         ...overrides?.defaultOptions?.queries,
       },
       mutations: {
+        retry: 1,
+        retryDelay,
         ...overrides?.defaultOptions?.mutations,
       },
     },

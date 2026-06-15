@@ -77,6 +77,37 @@ function ProfileCard() {
 
 ---
 
+## useThemedStyles
+
+Build a theme-aware `StyleSheet` from a factory, **memoized per theme** — so it's safe to call on
+every render and updates automatically on light↔dark switches. Pairs with semantic typography:
+spread a variant straight into a style.
+
+```tsx
+import { useThemedStyles } from 'opticore-react-native';
+
+function ProfileCard() {
+  const styles = useThemedStyles((t) => ({
+    card: { backgroundColor: t.colors.card, padding: t.spacing.md, borderRadius: t.borderRadius.lg },
+    title: { color: t.colors.text, ...t.typography.h2 },
+    subtitle: { color: t.colors.textSecondary, ...t.typography.caption },
+  }));
+
+  return (
+    <View style={styles.card}>
+      <Text style={styles.title}>Jane Doe</Text>
+      <Text style={styles.subtitle}>@jane</Text>
+    </View>
+  );
+}
+```
+
+The factory receives the full `Theme` (`colors`, `spacing`, `typography`, `borderRadius`,
+`shadows`). It's expected to be stable (declare it inline as above, or hoist it) — the styles
+recompute only when the active theme changes, not on every render.
+
+---
+
 ## Theme Structure
 
 ```typescript

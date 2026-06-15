@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
+import type { QueryClient } from '@tanstack/react-query';
 import { CoreConfig } from '../config/types';
 import { CoreSetup } from '../config/CoreSetup';
 import { ConfigProvider } from './ConfigContext';
@@ -32,6 +33,14 @@ export interface OptiCoreProviderProps {
      * @default true
      */
     enableLifecycle?: boolean;
+
+    /**
+     * Inject a custom React Query client (e.g. from `createQueryClient(...)`).
+     * When omitted, the provider builds one from OptiCore's defaults merged with
+     * `config.query`. Use this to fully control the client (devtools, persistence,
+     * a shared instance) without wrapping your own `QueryClientProvider`.
+     */
+    queryClient?: QueryClient;
 }
 
 /**
@@ -47,6 +56,7 @@ export const OptiCoreProvider: React.FC<OptiCoreProviderProps> = ({
     children,
     enableConnectivity = true,
     enableLifecycle = true,
+    queryClient,
 }) => {
     const resolvedAdapters = useMemo(
         () => resolveAllAdapters(config.adapters),
@@ -98,7 +108,7 @@ export const OptiCoreProvider: React.FC<OptiCoreProviderProps> = ({
 
     return (
         <ConfigProvider config={config}>
-            <QueryProvider>
+            <QueryProvider queryClient={queryClient} config={config.query}>
                 <ThemeProvider defaultMode={config.theme?.defaultMode}>
                     {children}
                 </ThemeProvider>

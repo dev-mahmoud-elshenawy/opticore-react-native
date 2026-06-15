@@ -27,6 +27,13 @@ describe('createQueryClient', () => {
     expect(retry(2, new ApiError(500, 'server error'))).toBe(false);
   });
 
+  it('ships sensible cache/refetch defaults', () => {
+    const queries = createQueryClient().getDefaultOptions().queries;
+    expect(queries?.gcTime).toBe(10 * 60 * 1000);
+    expect(queries?.refetchOnReconnect).toBe(true);
+    expect(queries?.refetchOnWindowFocus).toBe(false);
+  });
+
   it('lets overrides win over the defaults', () => {
     const client = createQueryClient({ defaultOptions: { queries: { staleTime: 0, retry: false } } });
     const queries = client.getDefaultOptions().queries;

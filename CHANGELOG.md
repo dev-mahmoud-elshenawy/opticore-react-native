@@ -14,6 +14,17 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🌟 [2.1.0] — Provider-wired React Query, theme-aware styles
+
+### ✨ Added
+
+- **`OptiCoreProvider` now wires React Query for you** — its default client uses `createQueryClient`'s OptiCore-aware defaults (incl. **error-aware retry**), so no second `QueryClientProvider` is needed. Inject a custom client via the new `queryClient` prop, or tune defaults via `config.query`. ([guide](./docs/REACT_QUERY.md#wiring-it-up))
+- **`useThemedStyles(factory)`** — theme-aware `StyleSheet`, memoized per theme; recomputes on light↔dark switches and pairs with semantic typography (`...theme.typography.body`). ([guide](./docs/THEME.md#usethemedstyles))
+
+### 🔧 Changed
+
+- `createQueryClient` is now the single source of React Query defaults (adds `gcTime`, `retryDelay`, `refetchOnReconnect`, `refetchOnWindowFocus: false`, mutation retry). `QueryProvider` builds its default client from it — so the **default query retry is now error-aware** (skips actionable 4xx) instead of a blind 3 retries.
+
 ## 🚀 [2.0.0] — Semantic theming, React Query integration, leaner deps
 
 > Upgrading from 1.x? See **[MIGRATION_v2.md](./MIGRATION_v2.md)**.

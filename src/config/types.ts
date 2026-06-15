@@ -9,6 +9,7 @@ import { OfflineSyncConfig } from '../offline/types';
 import { ErrorClassificationRule } from '../error/ErrorClassifier';
 import { AuthStrategy } from '../infrastructure/network/AuthStrategy';
 import type { OptiCoreAdapters } from '../adapters/interfaces';
+import type { QueryClientConfig } from '@tanstack/react-query';
 
 // ... imports
 
@@ -150,6 +151,14 @@ export interface CoreThemeConfig extends ThemeConfig {
 export interface CoreConfig {
   /** API Client configuration */
   api: ApiConfig;
+
+  /**
+   * React Query configuration, merged on top of OptiCore's defaults
+   * (see `createQueryClient`). Passed through to the provider's QueryClient.
+   * To inject a fully custom client instead, use `OptiCoreProvider`'s
+   * `queryClient` prop.
+   */
+  query?: QueryClientConfig;
 
   /** Logger configuration */
   logger?: CoreLoggerConfig;
