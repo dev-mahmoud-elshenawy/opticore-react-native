@@ -25,9 +25,11 @@ npm install opticore-react-native@2.0.0
 
 ### 2. Install React Query (required)
 
-It is no longer installed for you. Add it to your app:
+It is no longer bundled. The peers CLI installs it for you:
 
 ```bash
+npx opticore-install-peers          # installs React Query + the native peers
+# or just React Query, manually:
 npx expo install @tanstack/react-query
 # or
 npm install @tanstack/react-query

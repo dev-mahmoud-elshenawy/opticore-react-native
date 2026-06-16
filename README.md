@@ -42,11 +42,10 @@ OptiCore is a **TypeScript-first**, production-ready infrastructure layer that e
 
 ```bash
 npm install opticore-react-native
-# React Query is a required peer as of v2.0.0 — install it too:
-npx expo install @tanstack/react-query
+npx opticore-install-peers            # installs all peers, including React Query
 ```
 
-> **v2.0.0**: `@tanstack/react-query` is now a **required peer** (no longer bundled) — install it as shown above. Theme typography also gained semantic variants (`theme.typography.body`…). See [`MIGRATION_v2.md`](MIGRATION_v2.md) for the upgrade.
+> **v2.0.0**: `@tanstack/react-query` is now a **required peer** (no longer bundled). `npx opticore-install-peers` installs it for you (or `npx expo install @tanstack/react-query` manually). Theme typography also gained semantic variants (`theme.typography.body`…). See [`MIGRATION_v2.md`](MIGRATION_v2.md) for the upgrade.
 >
 > **v1.1.0**: native modules are now **peer dependencies** managed by your app's Expo SDK — not pinned by OptiCore. This eliminates the SDK-version crashes that affected `1.0.0` (`AnyTypeProvider`, duplicate `expo-modules-core`, etc.). See [`MIGRATION_v1.1.md`](MIGRATION_v1.1.md) for the upgrade.
 
@@ -58,12 +57,12 @@ OptiCore ships a tiny CLI that installs every peer in one shot, using `expo inst
 npx opticore-install-peers
 ```
 
-That installs all the optional native-module peers. For finer control:
+That installs the **required** peers (storage, connectivity, **React Query**) plus the optional Expo modules (clipboard, device). For finer control:
 
 ```bash
-npx opticore-install-peers --required          # storage + network only
+npx opticore-install-peers --required          # storage + network + React Query
 npx opticore-install-peers --optional          # clipboard + device only
-npx opticore-install-peers expo-clipboard      # only the named peer(s)
+npx opticore-install-peers @tanstack/react-query  # only the named peer(s)
 npx opticore-install-peers expo-device expo-clipboard
 npx opticore-install-peers --dry-run           # show the command without running
 ```

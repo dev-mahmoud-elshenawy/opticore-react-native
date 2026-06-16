@@ -197,13 +197,14 @@ runtime via a **resolver chain**.
 ### Supporting pieces
 
 - **`bin/install-peers.mjs`** (CLI: `npx opticore-install-peers`) — detects Expo +
-  package manager and runs `expo install` (SDK-aligned) for the **optional native peers
-  only**. Flags: `--required` (secure-store, async-storage, netinfo), `--optional`
-  (expo-clipboard, expo-device, expo-application), `--dry-run`. Also accepts explicit peer
-  names (`npx opticore-install-peers expo-clipboard`), validated against `KNOWN_PEERS`
-  (includes the bare-RN variants); named selection overrides the group flags. Does NOT
-  install `react`/`react-native`/`expo`/`expo-router` (the app provides those) — the CLI's
-  "required/optional" labels are about feature importance, not npm peer requiredness.
+  package manager and runs `expo install` (SDK-aligned) for the adapter-backed peers.
+  Flags: `--required` (secure-store, async-storage, netinfo, **`@tanstack/react-query`**),
+  `--optional` (expo-clipboard, expo-device, expo-application), `--dry-run`. Also accepts
+  explicit peer names (`npx opticore-install-peers @tanstack/react-query`), validated against
+  `KNOWN_PEERS` (includes the bare-RN variants); named selection overrides the group flags.
+  `@tanstack/react-query` is in the `REQUIRED` group (it's a required JS peer, not SDK-coupled —
+  `expo install` just picks a compatible version). Does NOT install
+  `react`/`react-native`/`expo`/`expo-router` (the app already provides those).
 - **`metro.js`** (`withOptiCoreMetroConfig`, exported as `opticore-react-native/metro`)
   — only needed for `file:`/monorepo consumption. Forces `react`/`react-native`/
   `react-dom` to resolve from the **app's** `node_modules` (via `resolveRequest`),

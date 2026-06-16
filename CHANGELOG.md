@@ -14,6 +14,12 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🛠 [Unreleased]
+
+### 🔧 Changed
+
+- **`opticore-install-peers` now installs `@tanstack/react-query`** as part of the required peers — so `npx opticore-install-peers` (or `--required`) sets up React Query automatically; the manual `expo install @tanstack/react-query` step is no longer required.
+
 ## 🌟 [2.1.0] — Provider-wired React Query, theme-aware styles
 
 ### ✨ Added

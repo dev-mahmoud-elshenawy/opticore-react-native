@@ -24,9 +24,13 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const REQUIRED = [
+  // Native peers (storage + connectivity) — installed SDK-aligned via `expo install`.
   'expo-secure-store',
   '@react-native-async-storage/async-storage',
   '@react-native-community/netinfo',
+  // JS server-state peer — required by OptiCore's QueryProvider / createQueryClient.
+  // Not SDK-coupled; `expo install` just installs a compatible version.
+  '@tanstack/react-query',
 ];
 
 // Optional peers — Expo modules, because OptiCore's clipboard/device adapter
