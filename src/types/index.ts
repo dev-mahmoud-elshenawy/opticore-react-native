@@ -48,13 +48,13 @@ export type {
 } from './Error.types';
 
 // Storage Types
-// Note: StorageKeys const is exported from infrastructure/storage
+// Note: StorageKeys const is exported from infrastructure/storage.
+// The adapter contracts (LocalStorageAdapter/SecureStorageAdapter) live in adapters/interfaces.
 export type {
   StorageProvider,
   StorageValue,
   StorageConfig,
   StorageResult,
-  StorageAdapter,
 } from './Storage.types';
 
 // Navigation Types

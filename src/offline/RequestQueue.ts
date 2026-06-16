@@ -26,6 +26,7 @@ export class RequestQueue {
     private storageKey: string;
     private storage: LocalStorage;
     private logger: Logger;
+    private persistChain: Promise<void> = Promise.resolve();
 
     constructor(maxSize: number = 100, storageKey: string = 'offline_sync_queue') {
         this.maxSize = maxSize;
@@ -156,15 +157,20 @@ export class RequestQueue {
     }
 
     /**
-     * Persist queue to storage
+     * Persist queue to storage — serialized to prevent concurrent writes.
+     * Callers remain synchronous; writes are chained and never interleave.
      */
-    async persist(): Promise<void> {
-        try {
-            await this.storage.set(this.storageKey, this.items);
-            this.logger.debug(`[RequestQueue] Persisted ${this.items.length} requests`);
-        } catch (error) {
-            this.logger.error('[RequestQueue] Failed to persist queue', error as Error);
-        }
+    private persist(): void {
+        this.persistChain = this.persistChain.then(() =>
+            this.storage
+                .set(this.storageKey, this.items)
+                .then(() => {
+                    this.logger.debug(`[RequestQueue] Persisted ${this.items.length} requests`);
+                })
+                .catch((error: Error) => {
+                    this.logger.error('[RequestQueue] Failed to persist queue', error);
+                })
+        );
     }
 
     /**

@@ -181,28 +181,13 @@ export class OfflineSyncManager {
         this.logger.info(`[OfflineSyncManager] Starting sync of ${items.length} items`);
 
         try {
-            const result = await this.syncEngine.processQueue(items, {
+            // Queue cleanup happens in setupSyncListeners() as each item completes via
+            // SyncEngine events (request_success / request_failed). No post-sync loop needed.
+            return await this.syncEngine.processQueue(items, {
                 maxRetries: this.config.maxRetries!,
                 retryDelay: this.config.retryDelay!,
                 maxBackoff: this.config.maxBackoff!,
             });
-
-            // Deterministic cleanup based on results
-            if (result.results && result.results.length > 0) {
-                result.results.forEach(itemResult => {
-                    if (itemResult.success) {
-                        this.queue.remove(itemResult.requestId);
-                    } else if (itemResult.retryable === false) {
-                        this.queue.remove(itemResult.requestId);
-                        this.logger.warn(
-                            `[OfflineSyncManager] Removed non-retryable request "${itemResult.requestId}" from queue`,
-                        );
-                    }
-                });
-            }
-
-            return result;
-
         } catch (error) {
             this.logger.error('[OfflineSyncManager] Sync failed', error as Error);
             throw error;
@@ -307,6 +292,7 @@ export class OfflineSyncManager {
     /**
      * Dispose the manager and release all resources.
      * Removes connectivity and sync engine listeners, clears the queue, and resets state.
+     * After dispose, `getInstance()` returns a fresh instance.
      */
     public dispose(): void {
         if (this.disposeConnectivityListener) {
@@ -323,6 +309,8 @@ export class OfflineSyncManager {
         this.listeners = [];
         this.queue.clear();
         this.isPaused = false;
+        // Reset singleton so the next getInstance() creates a fresh, configured instance
+        OfflineSyncManager.instance = undefined as unknown as OfflineSyncManager;
         this.logger.info('[OfflineSyncManager] Disposed');
     }
 }

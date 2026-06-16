@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { ApiError } from '../ApiError';
 
 // Type guard for Axios errors
@@ -10,6 +10,12 @@ export class ErrorInterceptor {
   constructor() {}
 
   public onError(error: unknown): Promise<unknown> {
+    // Pass cancellations through unchanged — they are intentional (useEffect cleanup,
+    // AbortController, etc.) and must NOT be wrapped in ApiError or shown to users.
+    if (axios.isCancel(error)) {
+      return Promise.reject(error);
+    }
+
     if (!isAxiosError(error)) {
       // Non-Axios error
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -29,11 +35,11 @@ export class ErrorInterceptor {
 
       return Promise.reject(new ApiError(status, message, url, data, error));
     } else if (error.request) {
-      // The request was made but no response was received
-      // Network Error or Timeout
-
+      // The request was made but no response was received — network error or timeout.
+      // Use error.code (ECONNABORTED) for reliable timeout detection instead of
+      // string-matching the message (which varies across axios versions and locales).
       const message = error.message || 'Network Error';
-      const isTimeout = message.includes('timeout');
+      const isTimeout = error.code === 'ECONNABORTED';
       const status = isTimeout ? 408 : 0;
 
       const url = error.config?.url;

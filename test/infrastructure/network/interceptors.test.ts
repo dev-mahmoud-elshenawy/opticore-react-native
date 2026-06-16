@@ -130,6 +130,7 @@ describe('Interceptors', () => {
       const error = {
         isAxiosError: true,
         request: {},
+        code: 'ECONNABORTED',
         message: 'timeout of 5000ms exceeded',
         config: { url: '/api/slow' },
       };

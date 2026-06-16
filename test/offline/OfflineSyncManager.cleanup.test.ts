@@ -4,7 +4,7 @@ import { SyncEngine } from '../../src/offline/SyncEngine';
 import { RequestQueue } from '../../src/offline/RequestQueue';
 import { ApiClient } from '../../src/infrastructure/network/ApiClient';
 import { ConnectivityManager } from '../../src/infrastructure/connectivity/ConnectivityManager';
-import { SyncResult } from '../../src/offline/types';
+import { SyncResult, SyncListener } from '../../src/offline/types';
 
 // Mock dependencies
 import { Logger } from '../../src/infrastructure/logger/Logger';
@@ -20,10 +20,12 @@ describe('OfflineSyncManager Cleanup', () => {
     let mockQueue: jest.Mocked<RequestQueue>;
     let mockConnectivity: jest.Mocked<ConnectivityManager>;
     let mockLogger: jest.Mocked<Logger>;
+    let capturedSyncEngineListener: SyncListener | undefined;
 
     beforeEach(() => {
         // Clear all mocks
         jest.clearAllMocks();
+        capturedSyncEngineListener = undefined;
 
         // Setup mock logger
         mockLogger = {
@@ -34,11 +36,15 @@ describe('OfflineSyncManager Cleanup', () => {
         } as unknown as jest.Mocked<Logger>;
         (Logger.getInstance as jest.Mock).mockReturnValue(mockLogger);
 
-        // Setup mock instances
+        // Setup mock instances — addListener captures the manager's cleanup handler
         mockSyncEngine = {
             processQueue: jest.fn(),
             getSyncingStatus: jest.fn().mockReturnValue(false),
-            addListener: jest.fn(),
+            isRetryable: jest.fn().mockReturnValue(true),
+            addListener: jest.fn((listener: SyncListener) => {
+                capturedSyncEngineListener = listener;
+                return () => { capturedSyncEngineListener = undefined; };
+            }),
         } as unknown as jest.Mocked<SyncEngine>;
 
         mockQueue = {
@@ -68,13 +74,13 @@ describe('OfflineSyncManager Cleanup', () => {
         manager = OfflineSyncManager.getInstance();
     });
 
-    it('should remove successfully synced items from queue', async () => {
+    it('should remove successfully synced items from queue via SyncEngine events', async () => {
         // Setup queue with items
         const items = [{ id: '1' }, { id: '2' }];
         mockQueue.getAll.mockReturnValue(items as any);
         mockQueue.size.mockReturnValue(2);
 
-        // Setup SyncEngine response with results
+        // SyncEngine fires request_success during processQueue; manager's listener removes from queue
         const syncResult: SyncResult = {
             success: 1,
             failed: 1,
@@ -85,7 +91,11 @@ describe('OfflineSyncManager Cleanup', () => {
                 { requestId: '2', success: false, retryable: true }
             ]
         };
-        mockSyncEngine.processQueue.mockResolvedValue(syncResult);
+        mockSyncEngine.processQueue.mockImplementation(async () => {
+            // Simulate the real SyncEngine firing events as items complete
+            capturedSyncEngineListener?.({ type: 'request_success', requestId: '1' });
+            return syncResult;
+        });
 
         // Trigger sync
         await manager.sync();
@@ -93,20 +103,29 @@ describe('OfflineSyncManager Cleanup', () => {
         // Verify SyncEngine called
         expect(mockSyncEngine.processQueue).toHaveBeenCalledWith(items, expect.any(Object));
 
-        // Verify successful item removed
+        // Successful item removed via event listener
         expect(mockQueue.remove).toHaveBeenCalledWith('1');
 
-        // Verify failed item NOT removed
+        // Failed-but-retryable item NOT removed
         expect(mockQueue.remove).not.toHaveBeenCalledWith('2');
+
+        // Item removed exactly once (no double-remove from post-sync loop)
+        const removeCallsForItem1 = (mockQueue.remove as jest.Mock).mock.calls.filter(
+            ([id]) => id === '1'
+        );
+        expect(removeCallsForItem1).toHaveLength(1);
     });
 
-    it('should remove non-retryable failures from queue', async () => {
+    it('should remove non-retryable failures from queue via SyncEngine events', async () => {
         // Setup queue with items
         const items = [{ id: '3' }];
         mockQueue.getAll.mockReturnValue(items as any);
         mockQueue.size.mockReturnValue(1);
 
-        // Setup SyncEngine response
+        // isRetryable returns false for this error
+        mockSyncEngine.isRetryable = jest.fn().mockReturnValue(false);
+
+        const failureError = new Error('400 Bad Request');
         const syncResult: SyncResult = {
             success: 0,
             failed: 1,
@@ -116,12 +135,16 @@ describe('OfflineSyncManager Cleanup', () => {
                 { requestId: '3', success: false, retryable: false }
             ]
         };
-        mockSyncEngine.processQueue.mockResolvedValue(syncResult);
+        mockSyncEngine.processQueue.mockImplementation(async () => {
+            // Simulate SyncEngine firing request_failed with non-retryable error
+            capturedSyncEngineListener?.({ type: 'request_failed', requestId: '3', error: failureError });
+            return syncResult;
+        });
 
         // Trigger sync
         await manager.sync();
 
-        // Non-retryable failures (e.g. 4xx) are removed — they will never succeed on retry
+        // Non-retryable failures are removed via event listener
         expect(mockQueue.remove).toHaveBeenCalledWith('3');
     });
 });

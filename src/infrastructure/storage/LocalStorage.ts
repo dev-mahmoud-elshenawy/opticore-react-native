@@ -56,6 +56,12 @@ export class LocalStorage implements IStorage {
 
   async set<T>(key: string, value: T): Promise<void> {
     try {
+      // Reject null/undefined to match SecureStorage. Otherwise this would
+      // persist the literal string "null", and the two IStorage implementations
+      // would disagree on the same input. Use remove() to clear a key.
+      if (value === undefined || value === null) {
+        throw new Error(`[LocalStorage] Cannot store undefined or null value for key: ${key}`);
+      }
       await this.adapter.setItem(key, JSON.stringify(value));
     } catch (error) {
       Logger.getInstance().error(`[LocalStorage] Failed to write key "${key}"`, error as Error);

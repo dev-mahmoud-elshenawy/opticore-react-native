@@ -27,20 +27,26 @@ export function useConnectivity(adapter?: ConnectivityAdapter) {
 
   useEffect(() => {
     const resolved = adapter ?? resolveConnectivityAdapter();
+    let cancelled = false;
 
     const unsubscribe = resolved.addEventListener((state) => {
+      if (cancelled) return;
       setIsConnected(state.isConnected);
       setIsInternetReachable(state.isInternetReachable);
       setType(state.type);
     });
 
     resolved.fetch().then((state) => {
+      if (cancelled) return;
       setIsConnected(state.isConnected);
       setIsInternetReachable(state.isInternetReachable);
       setType(state.type);
+    }).catch(() => {
+      // Ignore: the addEventListener subscription provides ongoing connectivity updates.
     });
 
     return () => {
+      cancelled = true;
       unsubscribe();
     };
   }, [adapter]);

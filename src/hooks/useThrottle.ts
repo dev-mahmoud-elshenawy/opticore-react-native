@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 
 /**
  * Hook to throttle a value update.
- * Allows the value to update at most once every `limit` milliseconds.
+ * Applies the value immediately on the leading edge, then ignores changes
+ * until `limit` milliseconds have elapsed. The latest value during the
+ * quiet period is applied on the trailing edge.
  *
  * @param value - The value to throttle
  * @param limit - Time limit in milliseconds
@@ -10,22 +12,23 @@ import { useState, useEffect, useRef } from 'react';
  */
 export function useThrottle<T>(value: T, limit: number): T {
   const [throttledValue, setThrottledValue] = useState<T>(value);
-  const lastRan = useRef(Date.now());
+  // Initialize to `limit` ms in the past so the first call fires immediately.
+  const lastRan = useRef<number>(Date.now() - limit);
 
   useEffect(() => {
-    const handler = setTimeout(
-      function () {
-        if (Date.now() - lastRan.current >= limit) {
-          setThrottledValue(value);
-          lastRan.current = Date.now();
-        }
-      },
-      limit - (Date.now() - lastRan.current)
-    );
-
-    return () => {
-      clearTimeout(handler);
-    };
+    const elapsed = Date.now() - lastRan.current;
+    if (elapsed >= limit) {
+      // Leading edge: enough time has passed — apply immediately.
+      lastRan.current = Date.now();
+      setThrottledValue(value);
+      return undefined;
+    }
+    // Trailing edge: schedule the update for the remainder of the window.
+    const timer = setTimeout(() => {
+      lastRan.current = Date.now();
+      setThrottledValue(value);
+    }, limit - elapsed);
+    return () => clearTimeout(timer);
   }, [value, limit]);
 
   return throttledValue;

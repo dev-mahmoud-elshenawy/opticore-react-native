@@ -1,5 +1,6 @@
+import { useContext } from 'react';
 import { useWindowDimensions } from 'react-native';
-import { useConfig } from '../providers/useConfig';
+import { ConfigContext } from '../providers/ConfigContext';
 
 export interface Breakpoints {
   small?: number;
@@ -29,15 +30,9 @@ export const breakpoints = defaultBreakpoints;
  */
 export function useResponsive(overrides?: Partial<Breakpoints>) {
   const { width } = useWindowDimensions();
-
-  // Try to get config from context, but don't fail if outside provider
-  let contextBreakpoints: Partial<Breakpoints> | undefined;
-  try {
-    const config = useConfig();
-    contextBreakpoints = config.responsive;
-  } catch {
-    // Ignore error if used outside provider
-  }
+  // useContext is safe to call unconditionally; returns undefined when outside a provider.
+  const config = useContext(ConfigContext);
+  const contextBreakpoints = config?.responsive;
 
   const activeBreakpoints = {
     ...defaultBreakpoints, // Defaults

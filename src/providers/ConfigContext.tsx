@@ -19,9 +19,7 @@ const DEFAULT_BREAKPOINTS = {
     large: 1024,
 };
 
-export const ConfigContext = createContext<ConfigContextValue>({
-    responsive: DEFAULT_BREAKPOINTS,
-});
+export const ConfigContext = createContext<ConfigContextValue | undefined>(undefined);
 
 export const ConfigProvider: React.FC<{
     config: Partial<CoreConfig>;

@@ -3,6 +3,7 @@
    The generic middleware chain types are incompatible with strict inference here.
    This is a known Zustand limitation; all state is still typed externally via CrudStore<T>. */
 import { StateCreator } from 'zustand/vanilla';
+import { current } from 'immer';
 import { createBaseStore } from './BaseStore';
 import { AsyncState, toLoading, toSuccess, toError, toIdle } from './AsyncState';
 import { StoreConfig } from './types/StoreConfig';
@@ -80,7 +81,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
         }
 
         set((state: any) => {
-          state.status = toLoading(state.status);
+          state.status = toLoading(current(state.status));
         });
 
         try {
@@ -93,7 +94,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
           set((state: any) => {
             state.status = toError(
               error instanceof Error ? error : new Error(String(error)),
-              state.status
+              current(state.status)
             );
           });
         }
@@ -106,7 +107,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
         }
 
         set((state: any) => {
-          state.status = toLoading(state.status);
+          state.status = toLoading(current(state.status));
         });
 
         try {
@@ -119,7 +120,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
           set((state: any) => {
             state.status = toError(
               error instanceof Error ? error : new Error(String(error)),
-              state.status
+              current(state.status)
             );
           });
         }
@@ -132,7 +133,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
         }
 
         set((state: any) => {
-          state.status = toLoading(state.status);
+          state.status = toLoading(current(state.status));
         });
 
         try {
@@ -145,7 +146,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
           set((state: any) => {
             state.status = toError(
               error instanceof Error ? error : new Error(String(error)),
-              state.status
+              current(state.status)
             );
           });
         }
@@ -158,7 +159,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
         }
 
         set((state: any) => {
-          state.status = toLoading(state.status);
+          state.status = toLoading(current(state.status));
         });
 
         try {
@@ -177,7 +178,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
           set((state: any) => {
             state.status = toError(
               error instanceof Error ? error : new Error(String(error)),
-              state.status
+              current(state.status)
             );
           });
         }
@@ -190,7 +191,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
         }
 
         set((state: any) => {
-          state.status = toLoading(state.status);
+          state.status = toLoading(current(state.status));
         });
 
         try {
@@ -206,7 +207,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
           set((state: any) => {
             state.status = toError(
               error instanceof Error ? error : new Error(String(error)),
-              state.status
+              current(state.status)
             );
           });
         }

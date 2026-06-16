@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState, ReactNode } from 'react';
 import { ThemeManager } from './ThemeManager';
+import { Logger } from '../infrastructure/logger/Logger';
 import type { Theme, ThemeMode } from './types';
 
 export interface ThemeContextValue {
@@ -42,7 +43,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
         // Initialize manager (restores persistence)
         manager.init().catch(err => {
-            console.warn('[ThemeProvider] Failed to initialize ThemeManager:', err);
+            Logger.getInstance().warn('[ThemeProvider] Failed to initialize ThemeManager', err as Error);
         });
 
         // Subscribe to changes
@@ -61,7 +62,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     };
 
     const toggleMode = () => {
-        const nextMode = mode === 'light' ? 'dark' : 'light';
+        const nextMode = activeMode === 'dark' ? 'light' : 'dark';
         manager.setMode(nextMode);
     };
 

@@ -49,9 +49,12 @@ export function createBaseStore<T extends object>(
   // 2. Persist  — optional; persists via OptiCore storage
   // 3. DevTools — Redux devtools integration (outermost)
 
+  // Default to FALSE when the environment is indeterminate. Using
+  // `NODE_ENV !== 'production'` would enable devtools whenever NODE_ENV is unset
+  // (`undefined !== 'production'` is true) — i.e. devtools leaking into prod.
   const enabledDevtools =
     config.devtools ??
-    (typeof __DEV__ !== 'undefined' ? __DEV__ : process.env.NODE_ENV !== 'production');
+    (typeof __DEV__ !== 'undefined' ? __DEV__ : process.env.NODE_ENV === 'development');
 
   const devtoolsOptions = { name: config.name, enabled: enabledDevtools };
 

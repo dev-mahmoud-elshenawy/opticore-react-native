@@ -51,6 +51,38 @@ describe('StoreFactory', () => {
     expect(typeof state.reset).toBe('function');
   });
 
+  it('reset() should clear data but preserve action methods', () => {
+    const useStore = createCrudStore<User, CustomActions>(
+      {
+        name: 'reset-store',
+        api: {
+          fetchAll: async () => [{ id: '1', name: 'Alice' }],
+        },
+        devtools: false,
+      },
+      (_set: any) => ({ activate: () => {} })
+    );
+
+    // Seed some data
+    useStore.setState({ items: [{ id: '9', name: 'Seed' }] } as any);
+    expect(useStore.getState().items.length).toBe(1);
+
+    // Reset
+    (useStore.getState() as any).reset();
+
+    // Data cleared
+    expect(useStore.getState().items).toEqual([]);
+
+    // Methods MUST survive the reset (P0-5 regression guard)
+    const after = useStore.getState();
+    expect(typeof after.fetchAll).toBe('function');
+    expect(typeof after.create).toBe('function');
+    expect(typeof after.update).toBe('function');
+    expect(typeof after.delete).toBe('function');
+    expect(typeof after.activate).toBe('function');
+    expect(typeof (after as any).reset).toBe('function');
+  });
+
   it('should handle fetchAll flow', async () => {
     const useStore = createCrudStore<User>({
       name: 'user-store',

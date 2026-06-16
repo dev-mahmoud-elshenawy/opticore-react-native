@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { FieldValidationReturn, Validator, ValidationOptions } from './types';
 import { useDebounce } from '../hooks/useDebounce';
 
@@ -30,6 +30,12 @@ export function useFieldValidation<T>(
     // Debounced value for validation
     const debouncedValue = useDebounce(value, debounceMs);
 
+    // Don't show a validation error for an untouched, empty field on mount.
+    // We skip only the FIRST auto-validation, and only when the field started
+    // empty — a pre-filled field is still validated on mount.
+    const hasAutoValidated = useRef(false);
+    const startedEmpty = useRef(value === undefined || value === null || (value as unknown) === '');
+
     const validate = useCallback(async () => {
         setIsValidating(true);
         try {
@@ -50,6 +56,13 @@ export function useFieldValidation<T>(
 
     // Auto-validate when debounced value changes
     useEffect(() => {
+        if (!hasAutoValidated.current) {
+            hasAutoValidated.current = true;
+            // Skip the mount validation for a field that started empty.
+            if (startedEmpty.current) {
+                return;
+            }
+        }
         validate();
     }, [validate]);
 

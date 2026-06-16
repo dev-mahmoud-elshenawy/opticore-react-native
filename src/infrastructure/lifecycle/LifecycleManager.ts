@@ -1,5 +1,6 @@
 import { AppState, AppStateStatus, NativeEventSubscription } from 'react-native';
 import { LifecycleCallback, LifecycleState } from './LifecycleObserver';
+import { Logger } from '../logger/Logger';
 
 interface Observer {
   onActive?: LifecycleCallback;
@@ -24,7 +25,8 @@ interface Observer {
  */
 export class LifecycleManager {
   private static instance: LifecycleManager;
-  private observers: Map<LifecycleCallback, Observer> = new Map();
+  private observers: Map<number, Observer> = new Map();
+  private observerIdCounter = 0;
   private subscription: NativeEventSubscription | null = null;
   private currentState: LifecycleState = LifecycleState.ACTIVE;
 
@@ -80,26 +82,45 @@ export class LifecycleManager {
    *
    * @example
    * ```typescript
-   * lifecycle.addObserver(
+   * const unsubscribe = lifecycle.addObserver(
    *   () => resumeTimer(),
    *   () => pauseTimer()
    * );
+   * // later: unsubscribe();
    * ```
+   *
+   * @returns An unsubscribe function that removes exactly this observer.
    */
-  public addObserver(onActive?: LifecycleCallback, onInactive?: LifecycleCallback): void {
-    if (onActive || onInactive) {
-      const key = onActive || onInactive!;
-      this.observers.set(key, { onActive, onInactive });
+  public addObserver(onActive?: LifecycleCallback, onInactive?: LifecycleCallback): () => void {
+    if (!onActive && !onInactive) {
+      return () => {};
     }
+    // Key on a unique counter, not the callback reference — keying on the
+    // callback meant two observers sharing a handler silently overwrote each
+    // other. Each registration is now independent.
+    const id = ++this.observerIdCounter;
+    this.observers.set(id, { onActive, onInactive });
+    return () => {
+      this.observers.delete(id);
+    };
   }
 
   /**
-   * Remove a previously registered observer
+   * Remove a previously registered observer by its callback reference.
    *
-   * @param callback - The callback function used as key when adding the observer
+   * Prefer the unsubscribe function returned by {@link addObserver}. This
+   * removes the first observer registered with `callback` as either its
+   * onActive or onInactive handler.
+   *
+   * @param callback - A callback used when adding the observer
    */
   public removeObserver(callback: LifecycleCallback): void {
-    this.observers.delete(callback);
+    for (const [id, observer] of this.observers) {
+      if (observer.onActive === callback || observer.onInactive === callback) {
+        this.observers.delete(id);
+        return;
+      }
+    }
   }
 
   private notifyObservers(type: 'onActive' | 'onInactive'): void {
@@ -112,7 +133,7 @@ export class LifecycleManager {
           observer.onInactive();
         }
       } catch (error) {
-        console.error(`[LifecycleManager] Error in ${type} observer:`, error);
+        Logger.getInstance().error(`[LifecycleManager] Error in ${type} observer`, error as Error);
       }
     });
   }

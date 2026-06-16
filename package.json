@@ -1,6 +1,6 @@
 {
   "name": "opticore-react-native",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Pure infrastructure library for React Native/Expo applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -54,6 +54,31 @@
       "types": "./dist/theme/index.d.ts",
       "import": "./dist/theme/index.js",
       "require": "./dist/theme/index.js"
+    },
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "import": "./dist/config/index.js",
+      "require": "./dist/config/index.js"
+    },
+    "./error": {
+      "types": "./dist/error/index.d.ts",
+      "import": "./dist/error/index.js",
+      "require": "./dist/error/index.js"
+    },
+    "./infrastructure": {
+      "types": "./dist/infrastructure/index.d.ts",
+      "import": "./dist/infrastructure/index.js",
+      "require": "./dist/infrastructure/index.js"
+    },
+    "./providers": {
+      "types": "./dist/providers/index.d.ts",
+      "import": "./dist/providers/index.js",
+      "require": "./dist/providers/index.js"
+    },
+    "./query": {
+      "types": "./dist/query/index.d.ts",
+      "import": "./dist/query/index.js",
+      "require": "./dist/query/index.js"
     },
     "./adapters": {
       "types": "./dist/adapters/index.d.ts",

@@ -43,7 +43,7 @@ describe('RequestQueue', () => {
     });
 
     describe('add', () => {
-        it('should add a request to the queue', () => {
+        it('should add a request to the queue', async () => {
             const request: QueuedRequest = {
                 method: HttpMethod.POST,
                 url: '/api/test',
@@ -51,6 +51,7 @@ describe('RequestQueue', () => {
             };
 
             const id = queue.add(request);
+            await Promise.resolve(); // flush the serialized persist chain
 
             expect(id).toBeDefined();
             expect(queue.size()).toBe(1);
@@ -117,10 +118,11 @@ describe('RequestQueue', () => {
     });
 
     describe('remove', () => {
-        it('should remove a request from the queue', () => {
+        it('should remove a request from the queue', async () => {
             const id = queue.add({ method: HttpMethod.GET, url: '/test' });
-
             const removed = queue.remove(id);
+            // Drain the serialized persist chain (add + remove are chained microtasks)
+            await new Promise<void>(resolve => setImmediate(resolve));
 
             expect(removed).toBe(true);
             expect(queue.size()).toBe(0);
@@ -240,17 +242,22 @@ describe('RequestQueue', () => {
     });
 
     describe('persistence', () => {
-        it('should persist queue after adding', () => {
+        it('should persist queue after adding', async () => {
             queue.add({ method: HttpMethod.GET, url: '/test' });
+            await Promise.resolve(); // flush the serialized persist chain
 
             expect(mockStorage.set).toHaveBeenCalledWith('test_queue', expect.any(Array));
         });
 
-        it('should persist queue after removing', () => {
+        it('should persist queue after removing', async () => {
             const id = queue.add({ method: HttpMethod.GET, url: '/test' });
+            // Fully drain the add's serialized chain before clearing mocks
+            await new Promise<void>(resolve => setImmediate(resolve));
             jest.clearAllMocks();
 
             queue.remove(id);
+            // Drain remove's serialized chain
+            await new Promise<void>(resolve => setImmediate(resolve));
 
             expect(mockStorage.set).toHaveBeenCalled();
         });

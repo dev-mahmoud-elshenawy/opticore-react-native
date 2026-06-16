@@ -1,5 +1,8 @@
 import { CardType, CardPattern } from '../types';
 
+// Module-level convenience registry. Kept for backward compatibility, but the
+// `detectCardType`/`applyCreditCardMask` functions also accept an explicit
+// `patterns` argument so callers can avoid the shared mutable state entirely.
 let customPatterns: CardPattern[] = [];
 
 export function registerCustomCardPatterns(patterns: CardPattern[]) {
@@ -9,27 +12,17 @@ export function registerCustomCardPatterns(patterns: CardPattern[]) {
 /**
  * Detects the credit card type based on the number.
  * @param value The raw credit card number
+ * @param patterns Custom patterns to check first. Defaults to the globally
+ *   registered patterns (see {@link registerCustomCardPatterns}); pass an
+ *   explicit array to stay free of the shared module state.
  * @returns The detected card type (enum or custom name) or UNKNOWN
  */
-export function detectCardType(value: string): CardType | string {
+export function detectCardType(value: string, patterns: CardPattern[] = customPatterns): CardType | string {
     const cleanValue = value.replace(/\D/g, '');
 
-    // Check custom patterns first
-    for (const patternConfig of customPatterns) {
+    // Custom patterns take precedence; return the registered name on a match.
+    for (const patternConfig of patterns) {
         if (patternConfig.pattern.test(cleanValue)) {
-            // If the pattern matches, what do we return?
-            // The enum CardType does not have dynamic values.
-            // Requirement FR-006 says "support custom card patterns".
-            // If the user registers a pattern, they likely want to know it matched.
-            // But strict typing prevents returning arbitrary strings.
-            // We can return CardType.UNKNOWN or maybe we cast?
-            // For now, let's assume we return UNKNOWN but maybe we should rely on the caller checking the specific pattern if UNKNOWN?
-            // OR: We cast to any/unknown to allow returning the name?
-            // "The system MUST allow registering custom card patterns with: Pattern regex, Card name, Grouping format"
-            // If we return the name, we break `CardType` return type.
-            // Let's assume for this implementation we just return UNKNOWN for now as the type signature forbids otherwise,
-            // UNLESS we change the signature to `CardType | string`.
-            // Let's change the signature to `CardType | string` to support this.
             return patternConfig.name;
         }
     }
@@ -77,12 +70,13 @@ export function validateCardNumber(value: string): boolean {
 /**
  * Applies a mask to a credit card number.
  * @param value The raw credit card number
+ * @param patterns Custom patterns forwarded to {@link detectCardType}.
  * @returns The masked credit card number
  */
-export function applyCreditCardMask(value: string): string {
+export function applyCreditCardMask(value: string, patterns: CardPattern[] = customPatterns): string {
     if (!value) return '';
     const cleanValue = value.replace(/\D/g, '');
-    const cardType = detectCardType(cleanValue);
+    const cardType = detectCardType(cleanValue, patterns);
 
     if (cardType === CardType.AMEX) {
         // Amex: 4-6-5 format (15 digits)
@@ -90,13 +84,10 @@ export function applyCreditCardMask(value: string): string {
         if (cleanValue.length <= 10) return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4)}`;
         return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4, 10)} ${cleanValue.slice(10, 15)}`;
     } else if (cardType === CardType.DINERS) {
-        // Diners: 14 digits, usually 4-6-4 or 4-4-4-2? 
-        // Standard often 4-6-4 or 4-4-4-2. Let's assume 4-6-4 for now or stick to default 4s?
-        // Diners Club is often 14 digits.
-        // Let's use 4-4-4-2 if 14 digits, or 4-6-4.
-        // For simplicity and alignment with SC, let's keep default 4-4-4-4 unless specific overrides known.
-        // UnionPay (16-19), JCB (16).
-        // Let's stick to default 4-4-4-4 for everything else for now.
+        // Diners Club: 14 digits, 4-6-4 grouping.
+        if (cleanValue.length <= 4) return cleanValue;
+        if (cleanValue.length <= 10) return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4)}`;
+        return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4, 10)} ${cleanValue.slice(10, 14)}`;
     }
 
     // Default (Visa, MC, Discover, UnionPay, JCB, etc.): 4-4-4-4 format (16 digits)

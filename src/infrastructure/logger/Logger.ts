@@ -95,13 +95,11 @@ export class Logger implements ILogger {
   private log(level: LogLevel, message: string, args: unknown[], error?: Error): void {
     // Global filter first
     if (!this.config.enabled) return;
-    if (this.config.isProduction) return;
     if (level < this.config.level) return;
 
-    // Safety check: if no transports, add console
-    if (this.transports.length === 0) {
-      this.addTransport(new ConsoleTransport({ minLevel: this.config.level }));
-    }
+    // No self-heal: if a consumer called clearTransports(), honor it and stay
+    // silent until they add one. Auto-re-adding a console transport here would
+    // defeat clearTransports() and leak logs to the console in production.
 
     const entry: LogEntry = {
       level,
@@ -113,11 +111,25 @@ export class Logger implements ILogger {
 
     this.transports.forEach(transport => {
       try {
+        // In production, suppress the noisy device console but keep custom
+        // transports (e.g. remote error reporters) receiving entries — they
+        // are the whole reason to register transports for production.
+        if (this.config.isProduction && transport.name === 'console') {
+          return;
+        }
         // Transport-level filtering
         if (transport.minLevel !== undefined && level < transport.minLevel) {
           return;
         }
-        transport.write(entry);
+        // write() may be sync or async. The try/catch only catches synchronous
+        // throws; for an async transport, attach a .catch() so a rejected write
+        // surfaces instead of becoming an unhandled rejection.
+        const result = transport.write(entry) as void | Promise<void>;
+        if (result && typeof (result as Promise<void>).catch === 'function') {
+          (result as Promise<void>).catch(asyncErr => {
+            console.error('Logger transport (async) failed:', asyncErr);
+          });
+        }
       } catch (err) {
         // Cannot use Logger here (would cycle), so fall back to console
         console.error('Logger transport failed:', err);

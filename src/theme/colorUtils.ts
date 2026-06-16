@@ -42,10 +42,11 @@ export function contrast(color: string): 'light' | 'dark' {
 
     const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
 
-    // Threshold of 0.5 is standard, but 0.179 is strictly W3C for 4.5:1?
-    // Let's use a standard threshold for black/white text choice.
-    // Generally, if luminance > 0.5, use dark text.
-    return luminance > 0.5 ? 'dark' : 'light';
+    // 0.179 is the WCAG-correct crossover: it's the background luminance at which
+    // black text and white text yield equal 4.5:1 contrast. Above it, dark text
+    // wins; below it, light text. (The common 0.5 threshold picks low-contrast
+    // text on mid-tone backgrounds.)
+    return luminance > 0.179 ? 'dark' : 'light';
 }
 
 // Re-export existing utilities

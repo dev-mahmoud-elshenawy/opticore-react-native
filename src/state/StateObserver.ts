@@ -9,6 +9,8 @@ export class StateObserver {
   private static instance: StateObserver;
   private listeners: Map<string, Listener> = new Map();
   private storeUnSubscribers: Map<string, () => void> = new Map();
+  /** Monotonic counter for collision-free subscription IDs. */
+  private idCounter = 0;
 
   private constructor() {}
 
@@ -35,7 +37,7 @@ export class StateObserver {
     callback: StateCallback<T>,
     options?: SubscribeOptions<T>
   ): () => void {
-    const id = Math.random().toString(36).substring(7);
+    const id = `sub_${++this.idCounter}`;
 
     const listener: Listener<T> = {
       id,

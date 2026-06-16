@@ -5,6 +5,16 @@ import { Platform } from 'react-native';
 // Mock dependencies
 jest.mock('expo-secure-store');
 
+// Make nativeModulePresent report ExpoSecureStore as present so the adapter
+// resolver proceeds to require('expo-secure-store'), which is already mapped
+// to the test mock via jest.config.js moduleNameMapper.
+jest.mock('../../../src/adapters/defaults/nativeModulePresent', () => ({
+  nativeModulePresent: () => true,
+  loadOptionalNativeModule: (_name: string, load: () => unknown) => {
+    try { return load() ?? null; } catch { return null; }
+  },
+}));
+
 describe('SecureStorage', () => {
   let secureStorage: SecureStorage;
 

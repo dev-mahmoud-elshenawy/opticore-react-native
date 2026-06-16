@@ -8,7 +8,7 @@ import { ConfigContext, ConfigContextValue } from './ConfigContext';
  */
 export const useConfig = (): ConfigContextValue => {
     const context = useContext(ConfigContext);
-    if (!context) {
+    if (context === undefined) {
         throw new Error('useConfig must be used within an OptiCoreProvider');
     }
     return context;

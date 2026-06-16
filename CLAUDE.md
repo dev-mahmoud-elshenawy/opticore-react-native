@@ -1,8 +1,8 @@
 # Claude Development Guide for OptiCore React Native
 
 **Package**: `opticore-react-native`
-**Version**: 2.2.0
-**Last Updated**: 2026-06-16 (v2.2.0: `createQueryHook`, `useApiMutation`, `createQueryPersister`, `useTextStyle`; fixed `ThemeTextVariant.fontWeight` type, `QueryProvider` cache stability, `useThemedStyles` deps; public-API type guards; core examples genericized. v2.1.0: `OptiCoreProvider` wires React Query via `createQueryClient` + `queryClient` prop/`config.query`, error-aware retry default, `useThemedStyles`. v2.0.0: semantic typography + Tailwind classes; React Query required peer; `toMessage`/`buildUrl`/`ApiResult`/zustand persist)
+**Version**: 2.4.0
+**Last Updated**: 2026-06-16 (v2.4.0: core-hardening pass — logger prod-output, durable offline persistence, dispose/cleanup fixes, real `useThrottle`, single canonical `HttpMethod` enum, new `config`/`error`/`infrastructure`/`providers`/`query` subpath exports, WCAG contrast, plus assorted hook/theme/forms/storage correctness fixes. v2.3.0: offline conflict shape fix, single-flight token refresh, request cancellation. v2.2.0: `createQueryHook`, `useApiMutation`, `createQueryPersister`, `useTextStyle` + type guards.)
 **Target Platforms**: iOS & Android ONLY
 
 > **📖 Spec Kit Reference**: See [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete specification-driven development guide
@@ -1610,7 +1610,7 @@ not necessarily in the store Expo Go if it has moved to a newer SDK.
 ---
 
 **Last Updated**: 2026-06-16
-**Version**: 2.2.0
+**Version**: 2.4.0
 **Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**

@@ -1,6 +1,7 @@
 import type { ConnectivityCallback } from './ConnectivityListener';
 import type { ConnectivityAdapter } from '../../adapters/interfaces';
 import { resolveConnectivityAdapter } from '../../adapters/registry';
+import { Logger } from '../logger/Logger';
 
 /**
  * ConnectivityManager - Singleton network connectivity monitor
@@ -42,16 +43,14 @@ export class ConnectivityManager {
   }
 
   private initialize(): void {
-    this.adapter
-      .fetch()
-      .then((state) => {
-        this._isConnected = state.isConnected ?? false;
-      })
-      .catch(() => {
-        this._isConnected = false;
-      });
+    // Attach the event listener FIRST so no connectivity change is missed during
+    // the async fetch() seed. A live event is fresher than the initial fetch, so
+    // once one arrives the fetch result must not clobber it (avoids a stale seed
+    // landing after a real update).
+    let liveStateReceived = false;
 
     this.unsubscribe = this.adapter.addEventListener((state) => {
+      liveStateReceived = true;
       const wasConnected = this._isConnected;
       this._isConnected = state.isConnected ?? false;
 
@@ -59,6 +58,17 @@ export class ConnectivityManager {
         this.notifyListeners();
       }
     });
+
+    this.adapter
+      .fetch()
+      .then((state) => {
+        if (liveStateReceived) return;
+        this._isConnected = state.isConnected ?? false;
+      })
+      .catch(() => {
+        if (liveStateReceived) return;
+        this._isConnected = false;
+      });
   }
 
   /**
@@ -87,8 +97,7 @@ export class ConnectivityManager {
       try {
         callback(this._isConnected);
       } catch (error) {
-         
-        console.error('[ConnectivityManager] Error in listener:', error);
+        Logger.getInstance().error('[ConnectivityManager] Error in listener', error as Error);
       }
     });
   }

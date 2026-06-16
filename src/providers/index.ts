@@ -17,11 +17,13 @@ export { useConfig } from './useConfig';
 export type { ConfigContextValue } from './ConfigContext';
 
 /**
- * @deprecated Use OptiCoreProvider instead. CoreProvider will be removed in v2.0.
+ * @deprecated Use {@link OptiCoreProvider} instead. `CoreProvider` only wires
+ * QueryProvider + the connectivity/lifecycle singletons; it does NOT resolve the
+ * adapter chain or configure storage/CoreSetup. Scheduled for removal in v3.0.
  */
 export { CoreProvider } from './CoreProvider';
 /**
- * @deprecated Use OptiCoreProviderProps instead. CoreProviderProps will be removed in v2.0.
+ * @deprecated Use {@link OptiCoreProviderProps} instead. Scheduled for removal in v3.0.
  */
 export type { CoreProviderProps } from './CoreProvider';
 

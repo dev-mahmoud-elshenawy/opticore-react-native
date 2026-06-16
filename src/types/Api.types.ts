@@ -9,6 +9,13 @@
  * @note For Axios response types, use ApiResponse from infrastructure
  */
 
+import { HttpMethod } from '../infrastructure/network/HttpMethod';
+
+// Re-export the single canonical HttpMethod (the runtime enum). There is no
+// separate string-union HttpMethod — the enum is the one source of truth so
+// `RequestConfig.method` and `ApiClient.request()` agree.
+export { HttpMethod };
+
 /**
  * Pagination metadata
  */
@@ -67,11 +74,6 @@ export interface ApiResult<T = unknown> {
   /** Wrapped payload, for backends that nest data under a `data` field */
   data?: T;
 }
-
-/**
- * HTTP request methods
- */
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS';
 
 /**
  * Request configuration options

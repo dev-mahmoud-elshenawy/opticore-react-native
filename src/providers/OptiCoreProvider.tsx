@@ -70,6 +70,10 @@ export const OptiCoreProvider: React.FC<OptiCoreProviderProps> = ({
     // idempotent across re-renders and React StrictMode double-invocation; the
     // underlying configure()/init() calls are themselves idempotent.
     const setupDone = useRef(false);
+    // Track which adapter was last configured synchronously so the effect can
+    // detect whether it needs to re-configure (adapter changed after mount) or
+    // skip (initial mount — already done here synchronously).
+    const configuredConnectivity = useRef<typeof resolvedAdapters.connectivity | null>(null);
     if (!setupDone.current) {
         StorageManager.getInstance().configure({
             secureAdapter: resolvedAdapters.secureStorage,
@@ -82,18 +86,25 @@ export const OptiCoreProvider: React.FC<OptiCoreProviderProps> = ({
         CoreSetup.getInstance().init(config);
         if (enableConnectivity) {
             ConnectivityManager.getInstance().configure(resolvedAdapters.connectivity);
+            configuredConnectivity.current = resolvedAdapters.connectivity;
         }
         setupDone.current = true;
     }
 
-    // Disposal only — the configuration above already ran synchronously.
-    // Effects handle teardown on unmount (and re-subscribe if the toggle flips).
+    // Effects handle teardown on unmount and re-configure when the adapter
+    // reference changes after the initial synchronous setup.
     useEffect(() => {
         if (!enableConnectivity) return;
         const connectivity = ConnectivityManager.getInstance();
-        // Re-apply on toggle changes (initial configure happened during render).
-        connectivity.configure(resolvedAdapters.connectivity);
+        // Skip configure on initial mount (already done synchronously above).
+        // Re-configure only when the adapter reference changes after mount,
+        // or after a StrictMode cleanup/remount cycle where dispose() was called.
+        if (configuredConnectivity.current !== resolvedAdapters.connectivity) {
+            configuredConnectivity.current = resolvedAdapters.connectivity;
+            connectivity.configure(resolvedAdapters.connectivity);
+        }
         return () => {
+            configuredConnectivity.current = null;
             connectivity.dispose();
         };
     }, [enableConnectivity, resolvedAdapters.connectivity]);

@@ -14,6 +14,34 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🛠 [2.4.0] — Core hardening
+
+A reliability release. Everything keeps working as before — these fixes mostly remove sharp edges you may have hit. No changes needed in your app.
+
+### 🐞 Fixed
+
+- **Your production error logs work again.** With `isProduction: true`, your remote/Sentry log transport now receives errors (only noisy device-console logging is silenced in production).
+- **Offline requests aren't lost.** Queued requests now reliably save to storage, so closing the app mid-queue no longer drops them.
+- **Throttle now throttles.** `useThrottle` fires on the leading edge instead of behaving like a debounce.
+- **No more "can't update an unmounted component" warnings** from `useConnectivity`.
+- **`useConfig()` warns you** if you forget to wrap your app in `OptiCoreProvider` (instead of silently returning defaults).
+- **Dark/light toggle works from system mode.** `toggleMode()` now flips off whatever you're actually showing.
+- **Cancelled requests stay quiet.** Aborting a request (e.g. on screen unmount) no longer surfaces a spurious error; request timeouts are detected reliably.
+- **Better automatic text-color contrast** from `contrast()` (now WCAG-accurate).
+- **Diners Club cards** format correctly (4-6-4).
+- **No premature validation errors** on empty fields before the user types.
+- **Consistent storage behavior** — saving `null` is rejected on both local and secure storage.
+
+### 🔧 Changed
+
+- **More import paths available**: `opticore-react-native/config`, `/error`, `/infrastructure`, `/providers`, and `/query` now work as direct imports.
+- **One `HttpMethod`** — use the `HttpMethod` enum (e.g. `HttpMethod.GET`) everywhere; the old string form (`'GET'`) for `RequestConfig.method` is gone.
+- **`logger.clearTransports()` now fully silences the logger** until you add a transport back.
+- **`lifecycle.addObserver(...)` returns an unsubscribe function** you can call to remove that observer.
+- **`CoreProvider` is deprecated** (still works through v2.x; will be removed in v3.0) — prefer `OptiCoreProvider`.
+
+---
+
 ## 🛠 [2.3.0] — Offline conflict fix, single-flight token refresh, request cancellation
 
 ### 🐞 Fixed

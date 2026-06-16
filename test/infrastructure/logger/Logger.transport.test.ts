@@ -68,15 +68,49 @@ describe('Logger Transports', () => {
         expect(spy2).toHaveBeenCalled();
     });
 
-    it('should auto-add ConsoleTransport if no transports', () => {
+    it('should stay silent after clearTransports() until a transport is added', () => {
         (logger as any).clearTransports();
 
         const consoleSpy = jest.spyOn(console, 'info').mockImplementation();
         logger.info('test');
 
-        // It should have added console transport internally and logged
-        expect(consoleSpy).toHaveBeenCalled();
+        // clearTransports() is honored — no self-heal, so nothing is logged.
+        expect(consoleSpy).not.toHaveBeenCalled();
+
+        // Adding a transport restores delivery.
+        const spy = jest.fn();
+        logger.addTransport({ name: 'mock', write: spy });
+        logger.info('test2');
+        expect(spy).toHaveBeenCalled();
+
         consoleSpy.mockRestore();
+    });
+
+    it('should still deliver to custom transports in production (only console is suppressed)', () => {
+        logger.addTransport(mockTransport);
+        logger.configure({ isProduction: true });
+
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+        logger.error('prod failure', new Error('boom'));
+
+        // Remote/custom transport MUST receive the entry — it is the reason
+        // transports are registered for production.
+        expect(writeSpy).toHaveBeenCalled();
+        const entry = writeSpy.mock.calls[0][0] as LogEntry;
+        expect(entry.message).toBe('prod failure');
+        consoleSpy.mockRestore();
+    });
+
+    it('should suppress the console transport in production', () => {
+        (logger as any).clearTransports();
+        logger.configure({ isProduction: true });
+
+        const consoleInfoSpy = jest.spyOn(console, 'info').mockImplementation();
+        logger.info('should not reach console');
+
+        // Auto-added console transport must stay silent in production.
+        expect(consoleInfoSpy).not.toHaveBeenCalled();
+        consoleInfoSpy.mockRestore();
     });
 
     it('should catch transport errors without crashing', () => {

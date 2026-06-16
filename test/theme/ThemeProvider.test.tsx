@@ -74,11 +74,11 @@ describe('ThemeProvider & useTheme', () => {
         const { result } = await renderHook(() => useTheme(), { wrapper });
 
         await act(async () => {
-            // Current mode is system -> follows light (active=light)
+            // activeMode is 'light' (from mock), so toggle produces 'dark'
             result.current.toggleMode();
         });
 
-        expect(mockManager.setMode).toHaveBeenCalledWith('light');
+        expect(mockManager.setMode).toHaveBeenCalledWith('dark');
     });
 
     it('should provide shortcuts to theme properties', async () => {

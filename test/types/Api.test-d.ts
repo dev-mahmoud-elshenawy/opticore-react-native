@@ -1,9 +1,9 @@
 import { expectType } from 'tsd';
+import { HttpMethod } from '../../src/types/Api.types';
 import type {
   PaginatedResponse,
   PaginationMeta,
   RequestConfig,
-  HttpMethod,
 } from '../../src/types/Api.types';
 
 // Test PaginatedResponse (simplified structure without status/success)
@@ -39,7 +39,7 @@ expectType<boolean>(meta.hasMore);
 // Test RequestConfig
 // Test RequestConfig
 const config: RequestConfig = {
-  method: 'GET',
+  method: HttpMethod.GET,
   headers: { 'Content-Type': 'application/json' },
   timeout: 5000,
 };
@@ -47,6 +47,6 @@ expectType<HttpMethod | undefined>(config.method);
 expectType<Record<string, string> | undefined>(config.headers);
 expectType<number | undefined>(config.timeout);
 
-// Test HttpMethod
-const method: HttpMethod = 'POST';
+// Test HttpMethod (single canonical enum)
+const method: HttpMethod = HttpMethod.POST;
 expectType<HttpMethod>(method);

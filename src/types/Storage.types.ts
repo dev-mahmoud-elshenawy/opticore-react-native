@@ -54,20 +54,7 @@ export interface StorageConfig {
  */
 export type StorageResult<T> = { success: true; data: T } | { success: false; error: string };
 
-/**
- * Storage adapter interface
- */
-export interface StorageAdapter {
-  /** Get value by key */
-  get<T>(key: string): Promise<T | null>;
-  /** Set value by key */
-  set<T>(key: string, value: T, ttl?: number): Promise<void>;
-  /** Remove value by key */
-  remove(key: string): Promise<void>;
-  /** Clear all values */
-  clear(): Promise<void>;
-  /** Get all keys */
-  keys(): Promise<string[]>;
-  /** Check if key exists */
-  has(key: string): Promise<boolean>;
-}
+// NOTE: The pluggable adapter contracts are `LocalStorageAdapter` and
+// `SecureStorageAdapter` in `adapters/interfaces.ts` (getItem/setItem-style).
+// A legacy `StorageAdapter` (get/set-style) was removed in v2.4.0 — it collided
+// with those real adapter interfaces and was never wired into anything.
