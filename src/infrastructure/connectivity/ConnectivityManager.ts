@@ -87,7 +87,7 @@ export class ConnectivityManager {
       try {
         callback(this._isConnected);
       } catch (error) {
-        // eslint-disable-next-line no-console -- listener error is reported via console as a last resort
+         
         console.error('[ConnectivityManager] Error in listener:', error);
       }
     });

@@ -22,7 +22,7 @@ interface ExpoApplicationModule {
 export function createExpoDeviceAdapter(): DeviceAdapter | null {
   let device: ExpoDeviceModule;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports -- lazy require for optional peer
+     
     device = require('expo-device') as ExpoDeviceModule;
   } catch {
     return null;
@@ -34,7 +34,7 @@ export function createExpoDeviceAdapter(): DeviceAdapter | null {
 
   let application: ExpoApplicationModule | null = null;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports -- optional peer for a real unique id
+     
     application = require('expo-application') as ExpoApplicationModule;
   } catch {
     application = null;

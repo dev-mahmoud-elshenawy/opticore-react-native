@@ -45,14 +45,23 @@ describe('useThemedStyles', () => {
         expect(result.current.title.color).toBe(lightTheme.colors.text);
     });
 
-    it('returns a stable reference across re-renders while the theme is unchanged', async () => {
-        const { result, rerender } = await renderHook(
-            () => useThemedStyles((t) => ({ box: { padding: t.spacing.sm } })),
-            { wrapper },
-        );
+    it('returns a stable reference across re-renders when the factory is stable', async () => {
+        const factory = (t: { spacing: { sm: number } }) => ({ box: { padding: t.spacing.sm } });
+        const { result, rerender } = await renderHook(() => useThemedStyles(factory), { wrapper });
 
         const first = result.current;
-        rerender({});
+        await rerender({});
         expect(result.current).toBe(first);
+    });
+
+    it('recomputes when the factory closes over a changed value', async () => {
+        const { result, rerender } = await renderHook(
+            ({ pad }: { pad: number }) => useThemedStyles(() => ({ box: { padding: pad } })),
+            { wrapper, initialProps: { pad: 4 } },
+        );
+
+        expect(result.current.box.padding).toBe(4);
+        await rerender({ pad: 12 });
+        expect(result.current.box.padding).toBe(12);
     });
 });

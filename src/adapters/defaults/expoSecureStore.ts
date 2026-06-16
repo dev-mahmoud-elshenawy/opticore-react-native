@@ -14,7 +14,7 @@ interface ExpoSecureStoreModule {
 export function createExpoSecureStoreAdapter(): SecureStorageAdapter | null {
   let mod: ExpoSecureStoreModule;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports -- lazy require for optional peer
+     
     mod = require('expo-secure-store') as ExpoSecureStoreModule;
   } catch {
     return null;

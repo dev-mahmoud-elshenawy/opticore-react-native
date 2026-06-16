@@ -18,7 +18,7 @@ export function createReactNativeDeviceInfoAdapter(): DeviceAdapter | null {
 
   let deviceInfo: DeviceInfoModule;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports -- lazy require for optional peer
+     
     const mod = require('react-native-device-info');
     deviceInfo = (mod?.default ?? mod) as DeviceInfoModule;
   } catch {

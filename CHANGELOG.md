@@ -16,9 +16,16 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ## 🛠 [Unreleased]
 
+### 🐞 Fixed
+
+- **`theme.typography.*` variants now spread into RN `<Text>` styles without a type error** — `ThemeTextVariant.fontWeight` was typed `string` (not RN's `fontWeight` union), so `style={theme.typography.body}` / `{ ...theme.typography.h2 }` failed to type-check in consumer apps.
+- **`QueryProvider` no longer wipes the React Query cache on re-render** when given an inline `config` — the client is now created once (was rebuilt whenever the `config` object identity changed).
+- **`useThemedStyles` no longer goes stale** when the style factory closes over props/state — the factory is now a memo dependency.
+
 ### 🔧 Changed
 
 - **`opticore-install-peers` now installs `@tanstack/react-query`** as part of the required peers — so `npx opticore-install-peers` (or `--required`) sets up React Query automatically; the manual `expo install @tanstack/react-query` step is no longer required.
+- Public-API **type regression guards** added (`test/types/`, run by `npm run type-check`); `test:types` now runs the type-checker. Lint cleaned (removed stale `eslint-disable` directives).
 
 ## 🌟 [2.1.0] — Provider-wired React Query, theme-aware styles
 

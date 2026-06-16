@@ -55,12 +55,18 @@ export const QueryProvider: React.FC<QueryProviderProps> = ({
   config,
   queryClient: customQueryClient,
 }) => {
-  // Use the injected client, otherwise build one from OptiCore's canonical
-  // defaults (createQueryClient) with the caller's config merged on top.
-  const queryClient = React.useMemo(
-    () => customQueryClient ?? createQueryClient(config),
-    [config, customQueryClient],
-  );
+  // Create the client ONCE and keep it stable across re-renders. Using useMemo
+  // here would rebuild the client (wiping the cache) whenever `config` is an
+  // inline object literal — a common consumer pattern. A ref avoids that.
+  // An injected `customQueryClient` always wins, and a new one is adopted if
+  // its identity changes.
+  const clientRef = React.useRef<QueryClient | null>(null);
+  if (customQueryClient && clientRef.current !== customQueryClient) {
+    clientRef.current = customQueryClient;
+  } else if (!clientRef.current) {
+    clientRef.current = createQueryClient(config);
+  }
+  const queryClient = clientRef.current;
 
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };

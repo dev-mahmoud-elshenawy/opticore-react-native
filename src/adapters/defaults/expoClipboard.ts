@@ -17,7 +17,7 @@ interface ExpoClipboardModule {
 export function createExpoClipboardAdapter(): ClipboardAdapter | null {
   let mod: ExpoClipboardModule;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports -- lazy require for optional peer
+     
     mod = require('expo-clipboard') as ExpoClipboardModule;
   } catch {
     return null;

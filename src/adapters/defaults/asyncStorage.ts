@@ -18,7 +18,7 @@ export function createAsyncStorageAdapter(): LocalStorageAdapter | null {
 
   let asyncStorage: AsyncStorageModule;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports -- lazy require for optional peer
+     
     const mod = require('@react-native-async-storage/async-storage');
     asyncStorage = (mod?.default ?? mod) as AsyncStorageModule;
   } catch {

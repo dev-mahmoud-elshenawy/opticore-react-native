@@ -1,6 +1,7 @@
 /**
  * Theme Infrastructure Types
  */
+import type { TextStyle } from 'react-native';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
@@ -60,8 +61,11 @@ export interface ThemeSpacing {
 export interface ThemeTextVariant {
     /** Font size in points. */
     fontSize: number;
-    /** Font weight as an RN style string (e.g. '400', '600', '700'). */
-    fontWeight: string;
+    /**
+     * Font weight. Typed as RN's `TextStyle['fontWeight']` union (e.g. '400',
+     * '600', 'bold') so a variant spreads cleanly into a `<Text>` style.
+     */
+    fontWeight: NonNullable<TextStyle['fontWeight']>;
     /** Line height in points. */
     lineHeight: number;
 }

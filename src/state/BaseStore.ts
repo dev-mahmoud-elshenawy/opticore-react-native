@@ -65,7 +65,15 @@ export function createBaseStore<T extends object>(
             name: config.name,
             storage: createPersistStorage<T & BaseActions>(),
             ...(config.partialize
-              ? { partialize: config.partialize as (state: T & BaseActions) => T & BaseActions }
+              ? {
+                  // zustand types `partialize` as returning the full persisted shape,
+                  // but at runtime it shallow-merges the returned slice over the live
+                  // state — so returning a Partial is safe and base actions
+                  // (reset/hydrate) survive. The cast bridges that type gap.
+                  partialize: config.partialize as (
+                    state: T & BaseActions,
+                  ) => T & BaseActions,
+                }
               : {}),
           }),
           devtoolsOptions

@@ -29,7 +29,7 @@ export function createNetInfoAdapter(): ConnectivityAdapter | null {
 
   let netInfo: NetInfoModule;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports -- lazy require for optional peer
+     
     const mod = require('@react-native-community/netinfo');
     netInfo = (mod?.default ?? mod) as NetInfoModule;
   } catch {

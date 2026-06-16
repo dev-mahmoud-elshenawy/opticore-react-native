@@ -17,7 +17,12 @@ export type TailwindFontSize =
 
 /** Convert a semantic text variant into Tailwind's tuple fontSize form. */
 function variantToFontSize(variant: ThemeTextVariant): TailwindFontSize {
-  return [variant.fontSize, { lineHeight: variant.lineHeight, fontWeight: variant.fontWeight }];
+  // Tailwind expects fontWeight as a string; RN's union also allows numeric
+  // weights, so coerce.
+  return [
+    variant.fontSize,
+    { lineHeight: variant.lineHeight, fontWeight: String(variant.fontWeight) },
+  ];
 }
 
 /** OptiCore theme tokens needed to build a Tailwind preset. */

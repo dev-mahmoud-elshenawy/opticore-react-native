@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
 import { Text, View } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
 import { QueryProvider } from '../../src/providers/QueryProvider';
 
 // Test component that uses React Query
@@ -125,6 +125,46 @@ describe('QueryProvider', () => {
       },
       { timeout: 2000 }
     );
+  });
+
+  it('keeps the same QueryClient across re-renders with an inline config (no cache wipe)', async () => {
+    const seen: QueryClient[] = [];
+    const Capture = () => {
+      seen.push(useQueryClient());
+      return <Text>captured</Text>;
+    };
+
+    const { rerender } = await render(
+      <QueryProvider config={{ defaultOptions: { queries: { staleTime: 0 } } }}>
+        <Capture />
+      </QueryProvider>
+    );
+    // New inline config object on the re-render — must NOT rebuild the client.
+    await rerender(
+      <QueryProvider config={{ defaultOptions: { queries: { staleTime: 0 } } }}>
+        <Capture />
+      </QueryProvider>
+    );
+
+    expect(seen.length).toBeGreaterThanOrEqual(2);
+    expect(seen[seen.length - 1]).toBe(seen[0]);
+  });
+
+  it('uses an injected custom QueryClient', async () => {
+    const custom = new QueryClient();
+    let received: QueryClient | undefined;
+    const Capture = () => {
+      received = useQueryClient();
+      return <Text>captured</Text>;
+    };
+
+    await render(
+      <QueryProvider queryClient={custom}>
+        <Capture />
+      </QueryProvider>
+    );
+
+    expect(received).toBe(custom);
   });
 
   it('should handle multiple queries independently', async () => {
