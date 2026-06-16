@@ -14,40 +14,33 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
-## 🛠 [2.3.0] — Offline conflict fix, auth single-flight, request cancellation
+## 🛠 [2.3.0] — Offline conflict fix, single-flight token refresh, request cancellation
 
-### 🐛 Fixed
+### 🐞 Fixed
 
-- **Offline conflict resolution received `undefined` server data.** `SyncEngine`
-  read the server response from the axios error shape (`error.response.data`),
-  but `ApiClient` throws `ApiError` with `status`/`data` at the **top level**. As
-  a result the conflict resolver always got `undefined` server data, breaking the
-  `manual` (and any server-merge) strategy. Status/data are now extracted from the
-  `ApiError` shape first, with the axios shape kept as a fallback.
-- **`SyncEngine` mutated the shared queue item** (`item.data = resolved`) during
-  conflict retries. Resolution now updates a local copy, leaving the queued item
-  immutable.
-- **`ConflictResolver`** no longer silently swallows an unexpected resolution
-  error into a "server-wins" result — it rethrows so the sync loop's normal
-  retry/fail path handles it.
+- **Offline sync now passes real server data to your conflict handler.** With
+  `conflictStrategy: 'manual'` (or any merge logic), the `onConflict(local, server)`
+  handler was receiving `undefined` for the server value on a `409` conflict, breaking
+  manual and merge resolution — it now receives the actual server response. Queued
+  request data is also no longer corrupted across conflict retries.
 
 ### ✨ Added
 
-- **`ApiClient.request({ signal })`** — pass an `AbortSignal` to cancel an
-  in-flight request (e.g. on unmount/navigation). Additive and backward compatible.
-- **Single-flight token refresh.** Concurrent `401`s now collapse onto one shared
-  refresh in `AuthInterceptor` instead of each firing its own (refresh stampede);
-  every original request is still retried once the refresh settles.
+- **`ApiClient.request({ signal })`** — pass an `AbortSignal` to cancel an in-flight
+  request (e.g. on unmount/navigation). Additive and backward compatible.
 
-### 🔧 Improved
+### 🔧 Changed
 
-- **Full jitter on offline retry backoff** to avoid a thundering herd when many
-  clients reconnect at once (delay ∈ `[capped/2, capped]`).
-- **Documented the storage error contract** on `IStorage`: reads are best-effort
-  (`get()` never throws — returns `null`), mutations are strict (`set`/`remove`/
-  `clear` reject on failure).
-- **Hook stability notes** on `useConnectivity` (`adapter`) and `useFieldValidation`
-  (`validator`) — pass stable references to avoid re-subscription/re-validation.
+- **Single-flight token refresh** — when several requests hit `401` at once, your token
+  refresh (`onTokenRefresh` / a custom `AuthStrategy`) now runs **once** and every request
+  retries after it settles, instead of firing a separate refresh per request.
+- **Jittered retry backoff for offline sync** — avoids a reconnect stampede when many
+  clients come back online at the same time.
+- **Documented the storage error contract** — `LocalStorage` / `SecureStorage` reads are
+  best-effort (`get()` resolves `null` on miss/failure, never throws); writes are strict
+  (`set` / `remove` / `clear` reject on failure).
+- **Hook stability notes** for `useConnectivity` and `useFieldValidation` — pass a stable
+  (memoized) `adapter` / `validator` to avoid needless re-subscription/re-validation.
 
 ---
 
