@@ -62,7 +62,7 @@ Each section lists the changes in **chronological order**, with the **most recen
 ### 🔧 Changed
 
 - **`opticore-install-peers` now installs `@tanstack/react-query`** as part of the required peers — so `npx opticore-install-peers` (or `--required`) sets up React Query automatically; the manual `expo install @tanstack/react-query` step is no longer required.
-- Public-API **type regression guards** added (`test/types/`, run by `npm run type-check`); `test:types` now runs the type-checker. Lint cleaned (removed stale `eslint-disable` directives).
+- **Public-API type-stability guards** — breaking changes to the exported type surface are now caught before release.
 
 ## 🌟 [2.1.0] — Provider-wired React Query, theme-aware styles
 
@@ -109,7 +109,7 @@ Each section lists the changes in **chronological order**, with the **most recen
 - **No `--legacy-peer-deps` needed** on SDK-aligned installs. Required peers (`react`, `react-native`, `expo`, `expo-router`) use open `>=` ranges; `typescript` is now an **optional** peer (OptiCore ships its own `.d.ts`, so typed coding is unaffected). Also fixes the Metro build break for non-expo-router apps.
 - **Init ordering** — `OptiCoreProvider` now configures singletons synchronously *before children render* (was in `useEffect`, which let an early API call hit an unconfigured client).
 - **`ApiClient.request()` fails fast** with a clear error if called before `configure()` / `CoreSetup.init()`, instead of silently using axios defaults.
-- **`opticore-install-peers` on Windows** no longer fails with `exit null` (`spawnSync` now uses `shell: true`); the CLI also surfaces the real spawn error.
+- **`opticore-install-peers` on Windows** no longer fails with `exit null`; the CLI also surfaces the real underlying error.
 
 ### ✨ Added
 
@@ -131,7 +131,7 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ### 🔧 Changed
 
-- README doc links converted from absolute branch URLs (`/blob/develop/`) to relative paths — links now resolve correctly on any branch, tag, or npm package page.
+- README doc links converted from absolute GitHub branch URLs to relative paths — links now resolve correctly on any branch, tag, or npm package page.
 
 ---
 
@@ -145,7 +145,7 @@ Native modules were pinned `dependencies` in `1.0.0`, causing cross-SDK crashes 
 - **`OptiCoreProvider config.adapters`** — inject custom adapters (MMKV, Keychain, Jest doubles) without forking.
 - **Expo Go-safe** — `nativeModulePresent()` / `loadOptionalNativeModule()` probe before `require()`, so importing OptiCore never red-boxes in Expo Go.
 - Platform utils: `getDeviceModel()`, `getUniqueDeviceId()`, `configurePlatformAdapters()`.
-- `npx opticore-install-peers` CLI (`bin/install-peers.mjs`) + `withOptiCoreMetroConfig` Metro helper.
+- `npx opticore-install-peers` CLI + `withOptiCoreMetroConfig` Metro helper.
 
 ### 🔧 Changed
 
