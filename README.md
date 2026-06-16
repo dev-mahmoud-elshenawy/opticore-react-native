@@ -291,14 +291,14 @@ haptics?.trigger('impactLight'); // no-op in Expo Go, real haptics in a dev buil
 | ⚠️ **[Error Handling](docs/api/ERRORS.md)** | RenderError, NonRenderError, ApiError, Result\<T,E\>, ErrorBoundary |
 | 🛠 **[Utilities](docs/api/UTILITIES.md)** | 40+ pure functions — string, number, array, date, object, format, color, platform |
 | 🧭 **[Navigation](docs/api/NAVIGATION.md)** | useRouteHelper, Expo Router integration |
-| 🔁 **[React Query](docs/REACT_QUERY.md)** | createQueryClient, error-aware retry, repository + query-hook pattern |
+| 🔁 **[React Query](docs/REACT_QUERY.md)** | createQueryClient, createQueryHook, useApiMutation, createQueryPersister, error-aware retry |
 | 🔷 **[Types](docs/TYPES.md)** | All shared TypeScript types — ApiResponse, ApiResult, AsyncState, PaginatedResponse & more |
 
 ### Feature Guides
 
 | Guide | Description |
 |---|---|
-| 🎨 **[Theme Engine](docs/THEME.md)** | Dynamic theming, dark mode, semantic typography, custom themes, ThemeManager |
+| 🎨 **[Theme Engine](docs/THEME.md)** | Dynamic theming, dark mode, semantic typography, useThemedStyles, useTextStyle, ThemeManager |
 | 🌬 **[Tailwind / NativeWind](docs/TAILWIND.md)** | createTailwindPreset — theme-driven `className` tokens (`text-body`, `bg-card`) |
 | 📋 **[Forms](docs/FORMS.md)** | useFormState, Zod validation, input masks, field-level validation |
 | 📡 **[Offline Sync](docs/OFFLINE.md)** | Request queue, auto-sync on reconnect, conflict resolution |

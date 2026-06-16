@@ -30,15 +30,19 @@ payload:
 ```typescript
 import type { ApiResult } from 'opticore-react-native';
 
-// newsapi.org /top-headlines body
-interface ArticlesResponse extends ApiResult {
-  totalResults?: number;
-  articles?: Article[];
+// Extend with your endpoint's payload shape:
+interface ListResponse<T> extends ApiResult {
+  total?: number;
+  items?: T[];
 }
 
-const { data } = await ApiClient.getInstance().request<ArticlesResponse>({ method: HttpMethod.GET, url });
-if (data.status !== 'ok') throw new Error(data.message);
-return data.articles ?? [];
+// HTTP errors are already thrown by ApiClient (ApiError on non-2xx), so the body
+// you receive is from a successful response — just map it.
+const { data } = await ApiClient.getInstance().request<ListResponse<MyItem>>({
+  method: HttpMethod.GET,
+  url,
+});
+return data.items ?? [];
 ```
 
 ## 🔄 State Management Types

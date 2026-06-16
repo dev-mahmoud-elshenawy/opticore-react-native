@@ -24,7 +24,7 @@ Welcome to the complete documentation for **opticore-react-native** — the Type
 | [**Error Handling**](./api/ERRORS.md) | RenderError · NonRenderError · Result<T,E> · OptiCoreErrorBoundary |
 | [**Utilities**](./api/UTILITIES.md) | String · Number · Array · Date · Object · Format · Color · Platform · buildUrl |
 | [**Navigation**](./api/NAVIGATION.md) | useRouteHelper · Expo Router integration |
-| [**React Query**](./REACT_QUERY.md) | createQueryClient · error-aware retry · repository + query-hook pattern |
+| [**React Query**](./REACT_QUERY.md) | createQueryClient · createQueryHook · useApiMutation · createQueryPersister · error-aware retry |
 
 ---
 
@@ -33,7 +33,7 @@ Welcome to the complete documentation for **opticore-react-native** — the Type
 | Guide | Description |
 |---|---|
 | [**Forms**](./FORMS.md) | Zod validation · React Hook Form · Input masks · Field-level validation |
-| [**Theme Engine**](./THEME.md) | Dynamic theming · Dark mode · Semantic typography · Spacing · ThemeManager |
+| [**Theme Engine**](./THEME.md) | Dynamic theming · Dark mode · Semantic typography · useThemedStyles · useTextStyle · ThemeManager |
 | [**Tailwind / NativeWind**](./TAILWIND.md) | createTailwindPreset · theme-driven `className` tokens · `text-body`/`bg-card` |
 | [**Offline Sync**](./OFFLINE.md) | Request queue · Auto-sync · Conflict resolution · useOfflineSync |
 
@@ -109,8 +109,9 @@ import { useRouteHelper }        from 'opticore-react-native/navigation';
 import { createTailwindPreset }  from 'opticore-react-native/tailwind';
 ```
 
-> `createQueryClient`, `toMessage`, `buildUrl`, and `ApiResult` are also available from the main
-> entry (`opticore-react-native`).
+> `createQueryClient`, `createQueryHook`, `useApiMutation`, `createQueryPersister`, `useThemedStyles`,
+> `useTextStyle`, `toMessage`, `buildUrl`, and `ApiResult` are also available from the main entry
+> (`opticore-react-native`).
 
 ---
 

@@ -108,28 +108,60 @@ const queryClient = createQueryClient({
 Keep the data source behind a repository, wrap it in a query hook, and let UI consume the hook:
 
 ```typescript
-// repository — the only place that knows the API shape; throws ApiError on failure
-export const newsRepository = {
-  getTopHeadlines: (category: string) =>
+// repository — the only place that knows the API shape. ApiClient throws ApiError
+// on any non-2xx status, so this only maps the successful (2xx) body.
+export const repository = {
+  getById: (id: string) =>
     ApiClient.getInstance()
-      .request<ArticlesResponse>({ method: HttpMethod.GET, url: `/top-headlines?category=${category}` })
-      .then((res) => res.data.articles ?? []),
+      .request<ResourceResponse>({ method: HttpMethod.GET, url: buildUrl(`/resource/${id}`) })
+      .then((res) => res.data),
 };
 
 // query hook — caching/retry handled by the client defaults
-export function useTopHeadlines(category: string) {
+export function useResource(id: string) {
   return useQuery({
-    queryKey: ['news', 'top-headlines', category],
-    queryFn: () => newsRepository.getTopHeadlines(category),
+    queryKey: ['resource', id],
+    queryFn: () => repository.getById(id),
   });
 }
+// (or the same in one line: createQueryHook((id) => ['resource', id], repository.getById))
 ```
 
 In the UI, surface errors with [`toMessage`](./api/ERRORS.md#tomessageerror-fallback):
 
 ```tsx
-const { data, isError, error, refetch } = useTopHeadlines(category);
+const { data, isError, error, refetch } = useResource(id);
 if (isError) return <Text>{toMessage(error)}</Text>;
+```
+
+## Helpers
+
+**`createQueryHook(keyFn, fetcher, defaults?)`** — collapse the repository + key + `useQuery`
+wiring into one definition:
+
+```typescript
+const useResource = createQueryHook(
+  (id: string) => ['resource', id],
+  (id) => repository.getById(id),
+);
+const { data, isLoading } = useResource('id-1');
+```
+
+**`useApiMutation(mutationFn, options?)`** — `useMutation` plus a ready-to-display `errorMessage`
+(via `toMessage`):
+
+```tsx
+const save = useApiMutation((input: Input) => repository.create(input));
+<Button onPress={() => save.mutate(input)} />;
+{save.errorMessage && <Text>{save.errorMessage}</Text>}
+```
+
+**`createQueryPersister(key?)`** — persist/restore the query cache across restarts through OptiCore
+storage (structural match for `@tanstack/react-query-persist-client`):
+
+```typescript
+import { persistQueryClient } from '@tanstack/react-query-persist-client';
+persistQueryClient({ queryClient, persister: createQueryPersister() });
 ```
 
 ---

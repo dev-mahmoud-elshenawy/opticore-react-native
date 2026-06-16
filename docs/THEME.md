@@ -103,8 +103,27 @@ function ProfileCard() {
 ```
 
 The factory receives the full `Theme` (`colors`, `spacing`, `typography`, `borderRadius`,
-`shadows`). It's expected to be stable (declare it inline as above, or hoist it) — the styles
-recompute only when the active theme changes, not on every render.
+`shadows`). Styles recompute when the active theme changes **or** when the factory identity changes
+— so an inline factory closing over props/state stays correct. `StyleSheet.create` is cheap, so
+that's fine; pass a `useCallback`-stable factory if you want to skip recomputation.
+
+---
+
+## useTextStyle
+
+A ready-to-use `<Text>` style for a single semantic typography variant, with the theme's text color
+applied (memoized per theme/variant/overrides). Lighter than `useThemedStyles` when you just need
+one text style.
+
+```tsx
+import { useTextStyle } from 'opticore-react-native';
+
+<Text style={useTextStyle('h1')}>Title</Text>
+<Text style={useTextStyle('caption', { color: theme.colors.textSecondary })}>meta</Text>
+```
+
+The `variant` is one of the semantic typography names (`'body'`, `'h1'`, `'caption'`, …); `overrides`
+merge last.
 
 ---
 

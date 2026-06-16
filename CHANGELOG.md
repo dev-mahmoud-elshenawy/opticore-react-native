@@ -14,7 +14,14 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
-## 🛠 [Unreleased]
+## 🌟 [2.2.0] — Query/theme helpers, fixes, type guards
+
+### ✨ Added
+
+- **`createQueryHook(keyFn, fetcher, defaults?)`** — build a typed React Query hook from a key factory + fetcher, collapsing the repeated `useQuery({ queryKey, queryFn })` boilerplate.
+- **`useApiMutation(mutationFn, options?)`** — `useMutation` wrapper that surfaces a ready-to-display `errorMessage` (via `toMessage`, preferring `RenderError.userMessage`).
+- **`createQueryPersister(key?)`** — a React Query persister backed by OptiCore's local storage (structural match for `@tanstack/react-query-persist-client`), to persist/restore the query cache across restarts.
+- **`useTextStyle(variant, overrides?)`** — a ready-to-use `<Text>` style for a semantic typography variant, with the theme's text color applied (companion to `useThemedStyles`).
 
 ### 🐞 Fixed
 

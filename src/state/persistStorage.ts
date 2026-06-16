@@ -9,19 +9,20 @@ import { StorageManager } from '../infrastructure/storage/StorageManager';
  *
  * @example
  * ```typescript
- * export const useSavedStore = create<SavedState>()(
+ * export const useStore = create<State>()(
  *   persist((set, get) => ({ ... }), {
- *     name: 'saved-articles',
- *     storage: createPersistStorage<SavedState>(),
+ *     name: 'my-store',
+ *     storage: createPersistStorage<State>(),
  *   }),
  * );
  * ```
  */
 export function createPersistStorage<S>(): PersistStorage<S> {
-  const local = StorageManager.getInstance().local;
+  // Resolve `local` per call so it always reflects the adapter configured by
+  // OptiCoreProvider (no stale capture if the store is created before mount).
   return {
-    getItem: (name) => local.get<StorageValue<S>>(name),
-    setItem: (name, value) => local.set(name, value),
-    removeItem: (name) => local.remove(name),
+    getItem: (name) => StorageManager.getInstance().local.get<StorageValue<S>>(name),
+    setItem: (name, value) => StorageManager.getInstance().local.set(name, value),
+    removeItem: (name) => StorageManager.getInstance().local.remove(name),
   };
 }

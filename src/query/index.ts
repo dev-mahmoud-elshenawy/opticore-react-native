@@ -5,3 +5,6 @@
  * server-state layer.
  */
 export * from './createQueryClient';
+export * from './createQueryHook';
+export * from './useApiMutation';
+export * from './createQueryPersister';

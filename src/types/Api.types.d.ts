@@ -48,9 +48,10 @@ export interface PaginatedResponse<T> {
  *
  * @example
  * ```typescript
- * interface TopHeadlinesResponse extends ApiResult {
- *   totalResults?: number;
- *   articles?: Article[];
+ * // Extend with your endpoint's payload shape:
+ * interface ListResponse<T> extends ApiResult {
+ *   total?: number;
+ *   items?: T[];
  * }
  * ```
  *

@@ -10,9 +10,9 @@ export type QueryParamValue = string | number | boolean | null | undefined;
  *
  * @example
  * ```typescript
- * buildUrl('/everything', { q: 'climate change', pageSize: 30 });
- * // '/everything?q=climate%20change&pageSize=30'
- * buildUrl('/top-headlines'); // '/top-headlines'
+ * buildUrl('/search', { q: 'hello world', pageSize: 30 });
+ * // '/search?q=hello%20world&pageSize=30'
+ * buildUrl('/users'); // '/users'
  * ```
  */
 export function buildUrl(

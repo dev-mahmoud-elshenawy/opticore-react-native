@@ -547,14 +547,14 @@ Build a URL path with an encoded query string. Keys and values are URL-encoded;
 ```typescript
 import { buildUrl } from 'opticore-react-native';
 
-buildUrl('/everything', { q: 'climate change', pageSize: 30 });
-// '/everything?q=climate%20change&pageSize=30'
+buildUrl('/search', { q: 'hello world', pageSize: 30 });
+// '/search?q=hello%20world&pageSize=30'
 
-buildUrl('/top-headlines', { country: 'us', category: undefined });
-// '/top-headlines?country=us'   (undefined dropped)
+buildUrl('/users', { active: true, role: undefined });
+// '/users?active=true'   (undefined dropped)
 
-buildUrl('/top-headlines');
-// '/top-headlines'              (no params → unchanged)
+buildUrl('/users');
+// '/users'               (no params → unchanged)
 ```
 
 Param values are typed as `QueryParamValue` (`string | number | boolean | null | undefined`).

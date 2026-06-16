@@ -104,12 +104,12 @@ is used as the storage key. Use `partialize` to persist only a slice (excluding 
 fields keeps writes small):
 
 ```typescript
-export const useSavedStore = createBaseStore<SavedState>(
+export const useStore = createBaseStore<State>(
   {
-    name: 'saved-articles',
+    name: 'my-store',
     initialState,
     persist: true,
-    partialize: (state) => ({ items: state.items }), // don't persist loading flags
+    partialize: (state) => ({ items: state.items }), // don't persist transient/derived fields
   },
   (set) => ({ /* ...actions... */ }),
 );
@@ -122,10 +122,10 @@ storage factory directly:
 import { createPersistStorage } from 'opticore-react-native/state';
 import { persist } from 'zustand/middleware';
 
-export const useSavedStore = create<SavedState>()(
+export const useStore = create<State>()(
   persist((set, get) => ({ /* ... */ }), {
-    name: 'saved-articles',
-    storage: createPersistStorage<SavedState>(),
+    name: 'my-store',
+    storage: createPersistStorage<State>(),
   }),
 );
 ```
