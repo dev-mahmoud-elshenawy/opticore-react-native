@@ -54,7 +54,7 @@ export class ConsoleTransport implements LogTransport {
     }
 
     private formatDefault(entry: LogEntry): string {
-        const { level, message, timestamp } = entry;
+        const { level, message, timestamp, showTimestamp } = entry;
         const levelLabel = LogLevel[level];
 
         // ANSI Colors:
@@ -79,9 +79,10 @@ export class ConsoleTransport implements LogTransport {
             ? `${colorPrefix}[${levelLabel}]${reset}`
             : `[${levelLabel}]`;
 
-        // Format: [INFO] [2023-01-01T...] Message
-        // Note: Logger.ts used `[timestamp] ` spacing.
-        // timestamp is an ISO string.
-        return `${prefix} [${timestamp}] ${message}`;
+        // Format: [INFO] [2023-01-01T...] Message — timestamp omitted when
+        // LoggerConfig.showTimestamp is false (threaded via entry.showTimestamp).
+        return showTimestamp === false
+            ? `${prefix} ${message}`
+            : `${prefix} [${timestamp}] ${message}`;
     }
 }

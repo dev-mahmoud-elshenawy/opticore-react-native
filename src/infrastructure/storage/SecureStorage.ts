@@ -21,6 +21,13 @@ export class SecureStorage implements IStorage {
   private static readonly KEYS_STORAGE_KEY = '__secure_storage_keys__';
   /** Resolves when initial key-list load completes (or fails). All public methods await this. */
   private readyPromise: Promise<void>;
+  /**
+   * Serializes mutating operations (set/remove/clear). Without this, two
+   * concurrent set() calls both read the same `keys` snapshot and the second
+   * persist clobbers the first — silently dropping a key from the index and
+   * orphaning its vault entry.
+   */
+  private writeChain: Promise<unknown> = Promise.resolve();
 
   constructor(adapter?: SecureStorageAdapter) {
     if (Platform.OS === 'web') {
@@ -45,13 +52,20 @@ export class SecureStorage implements IStorage {
     }
   }
 
-  private async saveKeys(): Promise<void> {
-    try {
-      const keysJson = JSON.stringify(Array.from(this.keys));
-      await this.adapter.setItemAsync(SecureStorage.KEYS_STORAGE_KEY, keysJson);
-    } catch (error) {
-      Logger.getInstance().warn('[SecureStorage] Failed to persist keys list', error as Error);
-    }
+  /** Run a mutating op after all prior ones settle, keeping the chain alive on error. */
+  private enqueueWrite<T>(op: () => Promise<T>): Promise<T> {
+    const run = this.writeChain.then(op, op);
+    this.writeChain = run.then(
+      () => undefined,
+      () => undefined,
+    );
+    return run;
+  }
+
+  /** Persist a specific key set as the index (used for commit-after-persist). */
+  private async persistKeys(keys: Set<string>): Promise<void> {
+    const keysJson = JSON.stringify(Array.from(keys));
+    await this.adapter.setItemAsync(SecureStorage.KEYS_STORAGE_KEY, keysJson);
   }
 
   async get<T>(key: string): Promise<T | null> {
@@ -76,54 +90,66 @@ export class SecureStorage implements IStorage {
 
   async set<T>(key: string, value: T): Promise<void> {
     await this.readyPromise;
-    try {
-      if (value === undefined || value === null) {
-        throw new Error(`[SecureStorage] Cannot store undefined or null value for key: ${key}`);
-      }
-
-      const stringValue = JSON.stringify(value);
-      await this.adapter.setItemAsync(key, stringValue);
-
-      this.keys.add(key);
-      await this.saveKeys();
-    } catch (error) {
-      Logger.getInstance().error(`[SecureStorage] Failed to write key "${key}"`, error as Error);
-      throw error;
+    if (value === undefined || value === null) {
+      throw new Error(`[SecureStorage] Cannot store undefined or null value for key: ${key}`);
     }
+    return this.enqueueWrite(async () => {
+      try {
+        const stringValue = JSON.stringify(value);
+        await this.adapter.setItemAsync(key, stringValue);
+
+        // Commit the in-memory index ONLY after the persisted index write
+        // succeeds — so a failed persist can't leave memory and storage diverged.
+        const next = new Set(this.keys);
+        next.add(key);
+        await this.persistKeys(next);
+        this.keys = next;
+      } catch (error) {
+        Logger.getInstance().error(`[SecureStorage] Failed to write key "${key}"`, error as Error);
+        throw error;
+      }
+    });
   }
 
   async remove(key: string): Promise<void> {
     await this.readyPromise;
-    try {
-      await this.adapter.deleteItemAsync(key);
+    return this.enqueueWrite(async () => {
+      try {
+        await this.adapter.deleteItemAsync(key);
 
-      this.keys.delete(key);
-      await this.saveKeys();
-    } catch (error) {
-      Logger.getInstance().error(`[SecureStorage] Failed to remove key "${key}"`, error as Error);
-      throw error;
-    }
+        const next = new Set(this.keys);
+        next.delete(key);
+        await this.persistKeys(next);
+        this.keys = next;
+      } catch (error) {
+        Logger.getInstance().error(`[SecureStorage] Failed to remove key "${key}"`, error as Error);
+        throw error;
+      }
+    });
   }
 
   async clear(): Promise<void> {
     await this.readyPromise;
-    try {
-      const logger = Logger.getInstance();
+    return this.enqueueWrite(async () => {
+      try {
+        const logger = Logger.getInstance();
+        const snapshot = Array.from(this.keys);
 
-      const deletePromises = Array.from(this.keys).map((key) =>
-        this.adapter.deleteItemAsync(key).catch((error) => {
-          logger.warn(`[SecureStorage] Failed to delete key "${key}" during clear`, error as Error);
-        })
-      );
-      await Promise.all(deletePromises);
-      this.keys.clear();
+        const deletePromises = snapshot.map((key) =>
+          this.adapter.deleteItemAsync(key).catch((error) => {
+            logger.warn(`[SecureStorage] Failed to delete key "${key}" during clear`, error as Error);
+          })
+        );
+        await Promise.all(deletePromises);
 
-      await this.adapter.deleteItemAsync(SecureStorage.KEYS_STORAGE_KEY).catch((error) => {
-        logger.warn('[SecureStorage] Failed to delete keys-tracking entry during clear', error as Error);
-      });
-    } catch (error) {
-      Logger.getInstance().error('[SecureStorage] Failed to clear storage', error as Error);
-      throw error;
-    }
+        await this.adapter.deleteItemAsync(SecureStorage.KEYS_STORAGE_KEY).catch((error) => {
+          logger.warn('[SecureStorage] Failed to delete keys-tracking entry during clear', error as Error);
+        });
+        this.keys = new Set();
+      } catch (error) {
+        Logger.getInstance().error('[SecureStorage] Failed to clear storage', error as Error);
+        throw error;
+      }
+    });
   }
 }

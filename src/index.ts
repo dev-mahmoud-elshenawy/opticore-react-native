@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 
-export const VERSION = '2.4.0';
+export const VERSION = '2.5.0';
 
 // Infrastructure exports
 export { HttpMethod } from './infrastructure';

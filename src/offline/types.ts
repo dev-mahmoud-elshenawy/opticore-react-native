@@ -12,9 +12,20 @@ import { HttpMethod } from '../infrastructure/network/HttpMethod';
 export type RequestPriority = 'high' | 'normal' | 'low';
 
 /**
- * Conflict resolution strategies
+ * Conflict resolution strategies. Use these named constants instead of raw
+ * strings (e.g. `ConflictStrategy.SERVER_WINS`). The underlying string values
+ * are unchanged, so passing the literals still type-checks for compatibility.
  */
-export type ConflictStrategy = 'client-wins' | 'server-wins' | 'manual';
+export const ConflictStrategy = {
+  /** Re-push the local edit, overwriting the server (last-write-wins). */
+  CLIENT_WINS: 'client-wins',
+  /** Keep the server's data, drop the local edit (safe default). */
+  SERVER_WINS: 'server-wins',
+  /** Defer to an onConflict(local, server) handler. */
+  MANUAL: 'manual',
+} as const;
+
+export type ConflictStrategy = (typeof ConflictStrategy)[keyof typeof ConflictStrategy];
 
 /**
  * A queued request waiting to be synced
@@ -80,7 +91,7 @@ export interface OfflineSyncConfig {
     /** Delay before starting sync after reconnect in ms (default: 1000) */
     syncDelay?: number;
 
-    /** Conflict resolution strategy (default: 'client-wins') */
+    /** Conflict resolution strategy (default: ConflictStrategy.SERVER_WINS) */
     conflictStrategy?: ConflictStrategy;
 
     /** Manual conflict resolution callback (required if strategy is 'manual') */

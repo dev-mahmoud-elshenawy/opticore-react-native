@@ -49,6 +49,14 @@ export class CoreSetup {
      * ```
      */
     public init(config: CoreConfig): void {
+        // Idempotent: a React StrictMode remount (or a repeated provider mount)
+        // calls init() again with the SAME config object — skip the redundant
+        // re-configuration of every singleton. A genuine reconfigure (a different
+        // config reference) still re-applies.
+        if (this.initialized && this.config === config) {
+            return;
+        }
+
         ConfigValidator.validateOrThrow(config);
 
         this.config = config;

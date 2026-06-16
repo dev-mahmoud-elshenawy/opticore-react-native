@@ -7,6 +7,9 @@ import {
     UseFormSetValue,
     UseFormGetValues,
     UseFormWatch,
+    UseFormReset,
+    UseFormRegister,
+    Control,
     FieldValues,
     DefaultValues
 } from 'react-hook-form';
@@ -82,10 +85,15 @@ export interface FormStateReturn<T extends FieldValues> {
     isSubmitting: boolean;
     isDirty: boolean;
     handleSubmit: (onValid: SubmitHandler<T>, onInvalid?: SubmitErrorHandler<T>) => Promise<void>;
-    reset: (values?: DefaultValues<T>) => void;
+    /** RHF reset — accepts values AND a ResetOptions second arg (keepDirty/keepErrors/…). */
+    reset: UseFormReset<T>;
     setValue: UseFormSetValue<T>;
     getValue: UseFormGetValues<T>;
     watch: UseFormWatch<T>;
+    /** RHF control object, for `<Controller>`-based fields. */
+    control: Control<T>;
+    /** RHF register, for uncontrolled inputs. */
+    register: UseFormRegister<T>;
 }
 
 export type {
@@ -96,6 +104,9 @@ export type {
     UseFormSetValue,
     UseFormGetValues,
     UseFormWatch,
+    UseFormReset,
+    UseFormRegister,
+    Control,
     FieldValues,
     DefaultValues,
     ZodSchema,

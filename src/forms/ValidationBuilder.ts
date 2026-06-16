@@ -19,21 +19,23 @@ export const email = (message: string = 'Invalid email address') =>
 export const phone = (options: PhoneValidatorOptions = {}) => {
     const { required = true, message = 'Invalid phone number', format = PhoneFormat.US } = options;
 
-    const schema = z.string();
+    // Basic US phone regex: (123) 456-7890 or 123-456-7890 or 1234567890
+    const usPhoneRegex = /^(\+?1[-.]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    // International E.164: min 7 digits total (e.g. +1234567), max 15
+    const intlPhoneRegex = /^\+?[1-9]\d{6,14}$/;
+    const matchesFormat = (val: string): boolean =>
+        format === PhoneFormat.US ? usPhoneRegex.test(val) : intlPhoneRegex.test(val);
 
     if (!required) {
-        return schema.optional().or(z.literal(''));
+        // Optional: empty/undefined passes, but a PROVIDED value must still be a
+        // valid phone number (previously any non-empty string was accepted).
+        return z
+            .string()
+            .optional()
+            .refine((val) => !val || matchesFormat(val), { message });
     }
 
-    return schema.refine((val: string) => {
-        if (!val) return false;
-        // Basic US phone regex: (123) 456-7890 or 123-456-7890 or 1234567890
-        const usPhoneRegex = /^(\+?1[-.]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-        // International E.164: min 7 digits total (e.g. +1234567), max 15
-        const intlPhoneRegex = /^\+?[1-9]\d{6,14}$/;
-
-        return format === PhoneFormat.US ? usPhoneRegex.test(val) : intlPhoneRegex.test(val);
-    }, { message });
+    return z.string().refine((val: string) => !!val && matchesFormat(val), { message });
 };
 
 export const password = (options: PasswordValidatorOptions = {}) => {

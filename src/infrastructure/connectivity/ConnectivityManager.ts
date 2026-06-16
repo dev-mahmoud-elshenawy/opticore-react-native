@@ -17,6 +17,9 @@ export class ConnectivityManager {
   private _isConnected: boolean = true;
   private adapter: ConnectivityAdapter;
   private unsubscribe: (() => void) | null = null;
+  // Bumped on every initialize()/configure(). A pending fetch() from a previous
+  // generation must not write state after a re-configure attached a new listener.
+  private generation = 0;
 
   private constructor(adapter?: ConnectivityAdapter) {
     this.adapter = adapter ?? resolveConnectivityAdapter();
@@ -47,6 +50,7 @@ export class ConnectivityManager {
     // the async fetch() seed. A live event is fresher than the initial fetch, so
     // once one arrives the fetch result must not clobber it (avoids a stale seed
     // landing after a real update).
+    const gen = ++this.generation;
     let liveStateReceived = false;
 
     this.unsubscribe = this.adapter.addEventListener((state) => {
@@ -62,11 +66,13 @@ export class ConnectivityManager {
     this.adapter
       .fetch()
       .then((state) => {
-        if (liveStateReceived) return;
+        // Ignore a seed from a superseded generation (configure() ran) or after a
+        // live event already set fresher state.
+        if (gen !== this.generation || liveStateReceived) return;
         this._isConnected = state.isConnected ?? false;
       })
       .catch(() => {
-        if (liveStateReceived) return;
+        if (gen !== this.generation || liveStateReceived) return;
         this._isConnected = false;
       });
   }

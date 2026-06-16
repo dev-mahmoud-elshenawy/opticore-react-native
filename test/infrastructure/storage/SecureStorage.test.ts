@@ -157,6 +157,33 @@ describe('SecureStorage', () => {
     });
   });
 
+  describe('Concurrency', () => {
+    it('should not drop keys when set() is called concurrently', async () => {
+      // Real backing store so the key index round-trips through the mock.
+      const store: Record<string, string> = {};
+      (SecureStore.getItemAsync as jest.Mock).mockImplementation((k: string) =>
+        Promise.resolve(k in store ? store[k] : null)
+      );
+      (SecureStore.setItemAsync as jest.Mock).mockImplementation((k: string, v: string) => {
+        store[k] = v;
+        return Promise.resolve(undefined);
+      });
+
+      const storage = new SecureStorage();
+      // Fire many writes in the same tick — the serialized write chain must
+      // persist EVERY key into the index (no last-write-wins clobber).
+      await Promise.all([
+        storage.set('a', 1),
+        storage.set('b', 2),
+        storage.set('c', 3),
+      ]);
+
+      const indexJson = store['__secure_storage_keys__'];
+      const keys = JSON.parse(indexJson) as string[];
+      expect(keys.sort()).toEqual(['a', 'b', 'c']);
+    });
+  });
+
   describe('on Web Platform', () => {
     it('should throw error when instantiated on web', () => {
       Platform.OS = 'web';

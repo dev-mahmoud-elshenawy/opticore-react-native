@@ -51,7 +51,12 @@ export function createQueryClient(overrides?: QueryClientConfig): QueryClient {
         ...overrides?.defaultOptions?.queries,
       },
       mutations: {
-        retry: 1,
+        // Same error-awareness as queries: never retry an actionable 4xx
+        // (validation/permission) mutation; retry transient failures once.
+        retry: (failureCount, error) => {
+          if (error instanceof RenderError && error.isActionable) return false;
+          return failureCount < 1;
+        },
         retryDelay,
         ...overrides?.defaultOptions?.mutations,
       },

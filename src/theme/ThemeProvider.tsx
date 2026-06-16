@@ -52,8 +52,16 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
             setModeState(newMode);
         });
 
+        // Dispose the manager on unmount ONLY when this provider owns the default
+        // singleton (no custom `manager` prop). Otherwise the Appearance change
+        // listener added by ThemeManager leaks past the provider's lifetime.
+        const ownsManager = manager === ThemeManager.getInstance();
+
         return () => {
             unsubscribe();
+            if (ownsManager && typeof manager.dispose === 'function') {
+                manager.dispose();
+            }
         };
     }, [manager, defaultMode]);
 

@@ -10,6 +10,7 @@ import {
     SyncResult,
     SyncListener,
     SyncEvent,
+    ConflictStrategy,
 } from './types';
 
 /**
@@ -35,17 +36,14 @@ export class OfflineSyncManager {
 
     private constructor() {
         this.logger = Logger.getInstance();
-        this.queue = new RequestQueue();
-        this.conflictResolver = new ConflictResolver();
-        this.syncEngine = new SyncEngine(ApiClient.getInstance(), this.conflictResolver);
-        this.connectivity = ConnectivityManager.getInstance();
 
-        // Initialize ready promise
-        this.readyPromise = new Promise<void>((resolve) => {
-            this.readyResolver = resolve;
-        });
-
-        // Default configuration
+        // Default configuration — set BEFORE constructing the ConflictResolver so
+        // the resolver's strategy matches the manager's default.
+        //
+        // Default is 'server-wins': on a 409 we keep the server's state rather than
+        // re-pushing the local edit, so a stale offline write never silently
+        // clobbers a newer server-side change. Consumers who want last-write-wins
+        // can opt into 'client-wins', or 'manual' with an onConflict handler.
         this.config = {
             maxRetries: 3,
             retryDelay: 1000,
@@ -54,8 +52,18 @@ export class OfflineSyncManager {
             persistQueue: true,
             syncOnReconnect: true,
             syncDelay: 1000,
-            conflictStrategy: 'client-wins',
+            conflictStrategy: ConflictStrategy.SERVER_WINS,
         };
+
+        this.queue = new RequestQueue();
+        this.conflictResolver = new ConflictResolver(this.config.conflictStrategy);
+        this.syncEngine = new SyncEngine(ApiClient.getInstance(), this.conflictResolver);
+        this.connectivity = ConnectivityManager.getInstance();
+
+        // Initialize ready promise
+        this.readyPromise = new Promise<void>((resolve) => {
+            this.readyResolver = resolve;
+        });
 
         this.setupSyncListeners();
         this.initialize();
@@ -105,21 +113,29 @@ export class OfflineSyncManager {
     }
 
     /**
-     * Configure the manager
+     * Configure the manager.
+     *
+     * NOTE: `storageKey` and `persistQueue` are CONSTRUCTOR-ONLY — they are read
+     * once when the queue is created and changing them here has no effect. All
+     * other options (retries, backoff, conflict strategy, queue size, sync timing)
+     * are applied live.
+     *
      * @param config - Configuration options
      */
     public configure(config: Partial<OfflineSyncConfig>): void {
         this.config = { ...this.config, ...config };
 
-        // Update components if needed
+        // Update components if needed. `this.config.conflictStrategy` always has a
+        // value (set in the constructor), so no fallback is needed.
         if (config.conflictStrategy || config.onConflict) {
             this.conflictResolver.updateStrategy(
-                this.config.conflictStrategy || 'server-wins',
+                // Always set in the constructor; the `??` only satisfies the
+                // optional type and matches that same default.
+                this.config.conflictStrategy ?? ConflictStrategy.SERVER_WINS,
                 this.config.onConflict
             );
         }
 
-        // Re-initialize queue if storage settings changed (simplified for now)
         if (config.maxQueueSize) {
             this.queue.setMaxSize(config.maxQueueSize);
         }

@@ -36,21 +36,42 @@ export function useFieldValidation<T>(
     const hasAutoValidated = useRef(false);
     const startedEmpty = useRef(value === undefined || value === null || (value as unknown) === '');
 
+    // Guard against setState-after-unmount and out-of-order async resolutions:
+    // only the latest validate() run (and only while mounted) may write state.
+    const isMounted = useRef(true);
+    const runIdRef = useRef(0);
+    useEffect(() => {
+        isMounted.current = true;
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
+
     const validate = useCallback(async () => {
+        const runId = ++runIdRef.current;
         setIsValidating(true);
         try {
             const validationError = await validator(debouncedValue);
+            // A newer run started, or we unmounted — drop this (stale) result.
+            if (!isMounted.current || runId !== runIdRef.current) {
+                return !validationError;
+            }
             setError(validationError);
             setIsValid(!validationError);
             return !validationError;
         } catch (err) {
+            if (!isMounted.current || runId !== runIdRef.current) {
+                return false;
+            }
             // If validator throws, treat as validation error
             const message = err instanceof Error ? err.message : 'Validation failed';
             setError(message);
             setIsValid(false);
             return false;
         } finally {
-            setIsValidating(false);
+            if (isMounted.current && runId === runIdRef.current) {
+                setIsValidating(false);
+            }
         }
     }, [debouncedValue, validator]);
 

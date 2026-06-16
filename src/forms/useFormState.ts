@@ -39,6 +39,8 @@ export function useFormState<T extends FieldValues>(
         setValue,
         getValues, // Renamed to getValue in return interface for consistency
         watch,
+        control,
+        register,
     } = form;
 
     // Safe async submission wrapper
@@ -60,5 +62,7 @@ export function useFormState<T extends FieldValues>(
         setValue,
         getValue: getValues,
         watch,
+        control,
+        register,
     };
 }

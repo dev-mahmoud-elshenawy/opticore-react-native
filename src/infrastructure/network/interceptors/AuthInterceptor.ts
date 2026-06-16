@@ -59,7 +59,15 @@ export class AuthInterceptor {
         );
       }
 
-      const retryConfig = await this.refreshPromise;
+      let retryConfig: AuthRetryResult | null;
+      try {
+        retryConfig = await this.refreshPromise;
+      } catch {
+        // The refresh itself failed (e.g. refresh endpoint 500/timeout). Reject
+        // with the ORIGINAL 401 error, not the refresh error — the caller cares
+        // that their request was unauthorized, not how the refresh failed.
+        return Promise.reject(error);
+      }
 
       if (retryConfig?.retry) {
         config._retry = true;

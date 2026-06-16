@@ -144,6 +144,23 @@ describe('Interceptors', () => {
       }
     });
 
+    it('should redact Authorization/Cookie headers when logging requests', () => {
+      const loggingInterceptor = new LoggingInterceptor();
+      const logger = Logger.getInstance();
+      const infoSpy = jest.spyOn(logger, 'info').mockImplementation();
+
+      loggingInterceptor.onRequest({
+        method: 'get',
+        url: '/secure',
+        headers: { Authorization: 'Bearer super-secret', 'X-Trace': 'abc' },
+      } as any);
+
+      const loggedHeaders = infoSpy.mock.calls[0][1] as Record<string, unknown>;
+      expect(loggedHeaders.Authorization).toBe('[REDACTED]');
+      expect(loggedHeaders['X-Trace']).toBe('abc');
+      infoSpy.mockRestore();
+    });
+
     it('should handle request setup errors', async () => {
       const error = new Error('Invalid request configuration');
 

@@ -23,6 +23,7 @@ const NON_RETRYABLE_STATUS_CODES = [
 ];
 
 import { ConflictResolver } from './ConflictResolver';
+import { ConflictStrategy } from './types';
 
 /**
  * Sync engine for processing queued requests
@@ -126,29 +127,38 @@ export class SyncEngine {
         item: QueueItem,
         config: { maxRetries: number; retryDelay: number; maxBackoff: number }
     ): Promise<void> {
-        const { maxRetries, retryDelay, maxBackoff } = config;
-        let lastError: Error | undefined;
+        const { retryDelay, maxBackoff } = config;
+        // Per-item maxRetries overrides the global default when provided, so a
+        // critical idempotent request can ask for more attempts than the default.
+        const maxRetries = item.maxRetries ?? config.maxRetries;
 
         // Track the data to send per attempt locally so conflict resolution can
         // update it WITHOUT mutating the shared queue item (immutability).
         let currentData = item.data;
 
-        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        // Don't replay a stale Authorization captured at enqueue time — if the
+        // client has auth configured, drop it so the interceptor injects a FRESH
+        // token. Otherwise a long-queued request 401s and is dropped (data loss).
+        const replayHeaders = this.buildReplayHeaders(item.headers);
+
+        // Network retries and conflict resolutions have SEPARATE budgets — a 409
+        // write-storm must not exhaust the network-retry slots and cause a
+        // premature permanent drop.
+        let attempt = 0;
+        let conflictAttempts = 0;
+
+        for (;;) {
             try {
-                // Execute the request via ApiClient
                 await this.apiClient.request({
                     method: item.method,
                     url: item.url,
                     data: currentData,
-                    headers: item.headers,
+                    headers: replayHeaders,
                 });
 
-                // Success - exit retry loop
                 this.logger.debug(`[SyncEngine] Request ${item.id} succeeded`);
                 return;
             } catch (error) {
-                lastError = error as Error;
-
                 // Handle Conflict (409). ApiClient throws ApiError, which exposes
                 // `status`/`data` at the top level (no `.response`). Read that shape
                 // first, falling back to the raw axios shape for resilience.
@@ -160,29 +170,28 @@ export class SyncEngine {
                     try {
                         const resolvedData = await this.conflictResolver.resolve(currentData, serverData);
 
-                        // Strategy check
-                        if (this.conflictResolver.getStrategy() === 'server-wins') {
-                            // Server wins means we accept server state and consider request "done"
-                            // No need to retry.
+                        if (this.conflictResolver.getStrategy() === ConflictStrategy.SERVER_WINS) {
+                            // Server wins: accept server state, request is done.
                             this.logger.info(`[SyncEngine] Resolved conflict with server-wins for ${item.id}`);
                             return;
                         }
 
-                        // Client wins or Manual: retry with resolved data (local only).
+                        // Client-wins / manual: retry with resolved data.
                         currentData = resolvedData;
+                        conflictAttempts++;
+                        if (conflictAttempts > maxRetries) {
+                            this.logger.error(`[SyncEngine] Max conflict retries (${maxRetries}) reached for ${item.id}`, error as Error);
+                            throw error;
+                        }
                         this.logger.info(`[SyncEngine] Resolved conflict, retrying with new data for ${item.id}`);
-
-                        // Continue loop to retry immediately
+                        // Does NOT consume a network-retry slot or wait for backoff.
                         continue;
-
-
                     } catch (resolveError) {
                         this.logger.error(`[SyncEngine] Conflict resolution failed for ${item.id}`, resolveError as Error);
                         // Fall through to normal error handling (retry or fail)
                     }
                 }
 
-                // Check if error is retryable
                 if (!this.isRetryable(error)) {
                     this.logger.error(
                         `[SyncEngine] Non-retryable error for ${item.id}`,
@@ -191,7 +200,6 @@ export class SyncEngine {
                     throw error;
                 }
 
-                // Check if we've exhausted retries
                 if (attempt >= maxRetries) {
                     this.logger.error(
                         `[SyncEngine] Max retries (${maxRetries}) reached for ${item.id}`,
@@ -215,13 +223,35 @@ export class SyncEngine {
                     attempt: attempt + 1,
                 });
 
-                // Wait before retrying
+                attempt++;
                 await this.delay(backoffDelay);
             }
         }
+    }
 
-        // If we reach here, all retries failed
-        throw lastError || new Error('Request failed');
+    /**
+     * Build the headers to use when replaying a queued request. When the client
+     * has an auth strategy / token provider, strip any stored `Authorization` /
+     * `Cookie` so the request interceptor attaches a fresh credential instead of
+     * a stale one captured at enqueue time. With no auth configured, the stored
+     * headers are used as-is.
+     */
+    private buildReplayHeaders(
+        headers?: Record<string, string>
+    ): Record<string, string> | undefined {
+        if (!headers) return headers;
+        const cfg = this.apiClient.config;
+        const hasAuth = !!(cfg?.authStrategy || cfg?.getAuthToken);
+        if (!hasAuth) return headers;
+
+        const out = { ...headers };
+        for (const key of Object.keys(out)) {
+            const lower = key.toLowerCase();
+            if (lower === 'authorization' || lower === 'cookie') {
+                delete out[key];
+            }
+        }
+        return out;
     }
 
     /**

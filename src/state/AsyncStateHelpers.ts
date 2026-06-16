@@ -44,17 +44,21 @@ export function mapSuccess<T, U>(state: AsyncState<T>, fn: (data: T) => U): Asyn
     return { type: 'success', data: fn(state.data) };
   }
 
-  // Cast other states to new type (safe because they don't hold T data, or hold it optionally)
-  // For loading/error with previousData, we drop previousData if we can't transform it
-  // Or we could try to transform previousData too, but that's complex.
-  // Simple approach: drop previousData when mapping type
-
+  // Preserve previousData across the type map so a refresh keeps showing stale
+  // data (the whole point of previousData) instead of flashing a loading state.
   if (state.type === 'loading') {
-    return { type: 'loading', previousData: undefined };
+    return {
+      type: 'loading',
+      previousData: state.previousData !== undefined ? fn(state.previousData) : undefined,
+    };
   }
 
   if (state.type === 'error') {
-    return { type: 'error', error: state.error, previousData: undefined };
+    return {
+      type: 'error',
+      error: state.error,
+      previousData: state.previousData !== undefined ? fn(state.previousData) : undefined,
+    };
   }
 
   return { type: 'idle' };

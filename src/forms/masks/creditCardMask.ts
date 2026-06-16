@@ -90,9 +90,11 @@ export function applyCreditCardMask(value: string, patterns: CardPattern[] = cus
         return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4, 10)} ${cleanValue.slice(10, 14)}`;
     }
 
-    // Default (Visa, MC, Discover, UnionPay, JCB, etc.): 4-4-4-4 format (16 digits)
-    const groups = cleanValue.match(/.{1,4}/g);
-    return groups ? groups.join(' ') : cleanValue;
+    // Default (Visa, MC, Discover, UnionPay, JCB, etc.): 4-4-4-4 format. Cap at
+    // 16 digits so a pasted/autofilled overlong string doesn't render a 5th group.
+    const capped = cleanValue.slice(0, 16);
+    const groups = capped.match(/.{1,4}/g);
+    return groups ? groups.join(' ') : capped;
 }
 
 /**

@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext } from 'react';
 import { StoreApi } from 'zustand';
 
 /**
@@ -24,9 +24,10 @@ interface StoreProviderProps<T> {
  * ```
  */
 export const StoreProvider = <T,>({ children, store, context }: StoreProviderProps<T>) => {
-  const storeRef = useRef(store);
-
-  return <context.Provider value={storeRef.current}>{children}</context.Provider>;
+  // Pass `store` through directly. A `useRef(store)` snapshot would ignore a
+  // changed `store` prop (e.g. on hot reload or intentional store rotation),
+  // leaving consumers bound to the stale store.
+  return <context.Provider value={store}>{children}</context.Provider>;
 };
 
 /**

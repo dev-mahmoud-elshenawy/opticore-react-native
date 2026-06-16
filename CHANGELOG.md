@@ -14,6 +14,37 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🛠 [2.5.0] — Core hardening (round 2)
+
+Another reliability pass from a full core review. Mostly fixes that remove sharp edges; one behavior change to call out below.
+
+### ⚠️ Behavior change
+
+- **Default offline conflict strategy is now `server-wins`** (was `client-wins`). On a sync conflict (409), OptiCore now keeps the **server's** data instead of overwriting it with your queued offline edit — so a stale offline write can't silently clobber a newer server change. If you relied on the old behavior, set `conflictStrategy: 'client-wins'` (or `ConflictStrategy.CLIENT_WINS`) explicitly. Conflict strategies are now exposed as the named `ConflictStrategy` constant.
+
+### 🐞 Fixed
+
+- **Auth tokens no longer leak into logs.** Request logging now redacts `Authorization`/`Cookie` headers (they were being sent to every log transport in full).
+- **Offline data-loss fixes:** a queued request that hits repeated conflicts no longer exhausts its network-retry budget and gets dropped; replayed requests now attach a **fresh** auth token instead of the stale one captured when queued; and per-request `maxRetries` is now honored.
+- **Secure storage is concurrency-safe** — rapid parallel `set`/`remove` calls no longer drop keys.
+- **Validation:** async field validators no longer show a stale result when the value changes mid-check (and no more setState-after-unmount warnings).
+- **`useAsyncState`** ignores an earlier in-flight result when a newer call supersedes it (no flicker of stale data).
+- **Credit-card masking** caps at 16 digits (a pasted/overlong number no longer renders a broken 5th group).
+- **Optional phone validation** (`phone({ required: false })`) now rejects a non-empty invalid number instead of accepting anything.
+- **Request timeouts of `0`** ("no timeout") are now honored instead of being ignored.
+- **Token-refresh failures** surface the original `401` to your code, not the refresh endpoint's error.
+- **Logger `showTimestamp: false`** is now respected.
+- **Android startup** no longer fires a spurious "app became active" lifecycle event.
+
+### 🔧 Changed / Added
+
+- **`request()` accepts `params`** (query parameters, properly serialized) and forwards a body on `DELETE`.
+- **`useFormState`** now returns `control` and `register` (for `<Controller>` / uncontrolled inputs), and `reset()` accepts RHF's full options (`keepDirty`, `keepErrors`, …).
+- **Tree-shaking enabled** (`sideEffects: false`) and a `react-native` export condition added — smaller bundles for apps using subpath imports.
+- **Provider setup is idempotent** under React StrictMode; the theme system listener is cleaned up on unmount.
+
+---
+
 ## 🛠 [2.4.0] — Core hardening
 
 A reliability release. Everything keeps working as before — these fixes mostly remove sharp edges you may have hit. No changes needed in your app.

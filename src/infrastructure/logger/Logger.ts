@@ -107,6 +107,7 @@ export class Logger implements ILogger {
       timestamp: new Date().toISOString(),
       args: args.length > 0 ? args : undefined,
       error,
+      showTimestamp: this.config.showTimestamp,
     };
 
     this.transports.forEach(transport => {

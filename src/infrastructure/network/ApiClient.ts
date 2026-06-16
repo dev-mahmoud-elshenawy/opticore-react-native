@@ -177,9 +177,11 @@ export class ApiClient {
     this._config = { ...this._config, ...config };
     this._initialized = true;
 
-    // Update defaults without creating new instance (preserves interceptors)
-    if (this._config.baseURL) this.client.defaults.baseURL = this._config.baseURL;
-    if (this._config.timeout) this.client.defaults.timeout = this._config.timeout;
+    // Update defaults without creating new instance (preserves interceptors).
+    // Use `!== undefined` so legitimate values like `timeout: 0` ("no timeout")
+    // and `baseURL: ''` are honored instead of dropped by a truthiness check.
+    if (this._config.baseURL !== undefined) this.client.defaults.baseURL = this._config.baseURL;
+    if (this._config.timeout !== undefined) this.client.defaults.timeout = this._config.timeout;
     if (this._config.headers) {
       this.client.defaults.headers.common = {
         ...this.client.defaults.headers.common,
@@ -210,6 +212,8 @@ export class ApiClient {
     url: string;
     data?: unknown;
     headers?: Record<string, string>;
+    /** Query parameters — serialized by Axios (handles arrays/encoding). */
+    params?: Record<string, unknown>;
     /** Optional AbortSignal to cancel the in-flight request (e.g. on unmount/navigation). */
     signal?: AbortSignal;
   }): Promise<ApiResponse<T>> {
@@ -227,6 +231,7 @@ export class ApiClient {
 
     const axiosConfig: AxiosRequestConfig = { headers: config.headers };
     if (config.signal) axiosConfig.signal = config.signal;
+    if (config.params !== undefined) axiosConfig.params = config.params;
 
     switch (config.method) {
       case HttpMethod.GET:
@@ -236,7 +241,8 @@ export class ApiClient {
       case HttpMethod.PUT:
         return this.put<T>(config.url, config.data, axiosConfig);
       case HttpMethod.DELETE:
-        return this.delete<T>(config.url, axiosConfig);
+        // Forward `data` so DELETE-with-body endpoints work (Axios supports it).
+        return this.delete<T>(config.url, { ...axiosConfig, data: config.data });
       case HttpMethod.PATCH:
         return this.patch<T>(config.url, config.data, axiosConfig);
       default:

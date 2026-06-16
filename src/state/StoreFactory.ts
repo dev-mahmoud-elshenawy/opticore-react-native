@@ -140,7 +140,7 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
           const newItem = await config.api.create(data);
           set((state: any) => {
             state.items.push(newItem);
-            state.status = toSuccess(state.items);
+            state.status = toSuccess(current(state.items));
           });
         } catch (error) {
           set((state: any) => {
@@ -165,14 +165,14 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
         try {
           const updatedItem = await config.api.update(id, data);
           set((state: any) => {
-            const index = state.items.findIndex((item: any) => item.id == id);
+            const index = state.items.findIndex((item: any) => String(item.id) === String(id));
             if (index !== -1) {
               state.items[index] = updatedItem;
             }
-            if (state.selectedItem && state.selectedItem.id == id) {
+            if (state.selectedItem && String(state.selectedItem.id) === String(id)) {
               state.selectedItem = updatedItem;
             }
-            state.status = toSuccess(state.items);
+            state.status = toSuccess(current(state.items));
           });
         } catch (error) {
           set((state: any) => {
@@ -197,8 +197,11 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
         try {
           await config.api.delete(id);
           set((state: any) => {
-            state.items = state.items.filter((item: any) => item.id != id);
-            if (state.selectedItem && state.selectedItem.id == id) {
+            // Reassigning state.items to a NEW (plain) array — so it's already a
+            // safe snapshot; current() must NOT be used here (it throws on a
+            // non-draft). create/update mutate in place, so they use current().
+            state.items = state.items.filter((item: any) => String(item.id) !== String(id));
+            if (state.selectedItem && String(state.selectedItem.id) === String(id)) {
               state.selectedItem = undefined;
             }
             state.status = toSuccess(state.items);

@@ -13,11 +13,11 @@ export class ConflictResolver {
      * @param strategy - Resolution strategy ('client-wins', 'server-wins', 'manual')
      * @param onConflict - Callback for manual resolution (required if strategy is 'manual')
      */
-    constructor(strategy: ConflictStrategy = 'server-wins', onConflict?: ConflictHandler) {
+    constructor(strategy: ConflictStrategy = ConflictStrategy.SERVER_WINS, onConflict?: ConflictHandler) {
         this.strategy = strategy;
         this.onConflict = onConflict;
 
-        if (this.strategy === 'manual' && !this.onConflict) {
+        if (this.strategy === ConflictStrategy.MANUAL && !this.onConflict) {
             Logger.getInstance().warn('ConflictResolver: Strategy is "manual" but no onConflict handler provided. Falling back to "server-wins".');
         }
     }
@@ -33,13 +33,13 @@ export class ConflictResolver {
 
         try {
             switch (this.strategy) {
-                case 'client-wins':
+                case ConflictStrategy.CLIENT_WINS:
                     return localData;
 
-                case 'server-wins':
+                case ConflictStrategy.SERVER_WINS:
                     return serverData;
 
-                case 'manual':
+                case ConflictStrategy.MANUAL:
                     if (this.onConflict) {
                         try {
                             const result = await this.onConflict(localData, serverData);
@@ -78,7 +78,7 @@ export class ConflictResolver {
             this.onConflict = onConflict;
         }
 
-        if (this.strategy === 'manual' && !this.onConflict) {
+        if (this.strategy === ConflictStrategy.MANUAL && !this.onConflict) {
             Logger.getInstance().warn('ConflictResolver: Strategy set to "manual" but no onConflict handler provided. Falling back to "server-wins".');
         }
     }

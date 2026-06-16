@@ -1,5 +1,4 @@
 import { ErrorType } from './ErrorType';
-import { BaseError } from './BaseError';
 
 /**
  * A custom rule for error classification.
@@ -28,10 +27,4 @@ export interface ClassificationRule {
 
   /** The ErrorType to assign when this rule matches. */
   type: ErrorType;
-
-  /**
-   * Optional factory to produce a typed BaseError from the raw error.
-   * Used when the classified error should be a specific subclass.
-   */
-  factory?: (error: unknown) => BaseError;
 }

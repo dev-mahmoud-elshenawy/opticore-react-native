@@ -89,5 +89,14 @@ describe('Credit Card Mask', () => {
         test('should handle empty input', () => {
             expect(applyCreditCardMask('')).toBe('');
         });
+
+        test('should cap the default format at 16 digits (paste/autofill overflow)', () => {
+            // 19 digits starting with 4 (Visa → default branch) must not produce a 5th group.
+            expect(applyCreditCardMask('4111222233334444555')).toBe('4111 2222 3333 4444');
+        });
+
+        test('should format Diners as 4-6-4 (14 digits)', () => {
+            expect(applyCreditCardMask('36001234567890')).toBe('3600 123456 7890');
+        });
     });
 });

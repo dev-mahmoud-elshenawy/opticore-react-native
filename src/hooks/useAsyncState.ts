@@ -36,6 +36,9 @@ export function useAsyncState<T>(initialData: T | null = null): UseAsyncStateRet
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const isMounted = useRef(true);
+  // Generation counter: only the most recent run() may write state, so a slower
+  // earlier promise can't overwrite a newer one (e.g. rapid id changes).
+  const runIdRef = useRef(0);
 
   useEffect(() => {
     isMounted.current = true;
@@ -45,29 +48,36 @@ export function useAsyncState<T>(initialData: T | null = null): UseAsyncStateRet
   }, []);
 
   const run = useCallback(async (promise: Promise<T>): Promise<void> => {
+    const runId = ++runIdRef.current;
+    const isCurrent = () => isMounted.current && runId === runIdRef.current;
+
+    if (!isMounted.current) return;
     setIsLoading(true);
     setError(null);
     setData(null);
 
     try {
       const result = await promise;
-      if (isMounted.current) {
+      if (isCurrent()) {
         setData(result);
         setError(null);
       }
     } catch (e: unknown) {
-      if (isMounted.current) {
+      if (isCurrent()) {
         setError(e instanceof Error ? e : new Error(String(e)));
         setData(null);
       }
     } finally {
-      if (isMounted.current) {
+      if (isCurrent()) {
         setIsLoading(false);
       }
     }
   }, []);
 
   const reset = useCallback(() => {
+    // Invalidate any in-flight run so its resolution won't clobber the reset.
+    runIdRef.current++;
+    if (!isMounted.current) return;
     setData(initialData);
     setError(null);
     setIsLoading(false);

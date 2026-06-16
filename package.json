@@ -1,9 +1,10 @@
 {
   "name": "opticore-react-native",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Pure infrastructure library for React Native/Expo applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "sideEffects": false,
   "files": [
     "dist",
     "bin",
@@ -22,76 +23,91 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "react-native": "./dist/index.js",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
+      "react-native": "./dist/utils/index.js",
       "import": "./dist/utils/index.js",
       "require": "./dist/utils/index.js"
     },
     "./state": {
       "types": "./dist/state/index.d.ts",
+      "react-native": "./dist/state/index.js",
       "import": "./dist/state/index.js",
       "require": "./dist/state/index.js"
     },
     "./hooks": {
       "types": "./dist/hooks/index.d.ts",
+      "react-native": "./dist/hooks/index.js",
       "import": "./dist/hooks/index.js",
       "require": "./dist/hooks/index.js"
     },
     "./forms": {
       "types": "./dist/forms/index.d.ts",
+      "react-native": "./dist/forms/index.js",
       "import": "./dist/forms/index.js",
       "require": "./dist/forms/index.js"
     },
     "./offline": {
       "types": "./dist/offline/index.d.ts",
+      "react-native": "./dist/offline/index.js",
       "import": "./dist/offline/index.js",
       "require": "./dist/offline/index.js"
     },
     "./theme": {
       "types": "./dist/theme/index.d.ts",
+      "react-native": "./dist/theme/index.js",
       "import": "./dist/theme/index.js",
       "require": "./dist/theme/index.js"
     },
     "./config": {
       "types": "./dist/config/index.d.ts",
+      "react-native": "./dist/config/index.js",
       "import": "./dist/config/index.js",
       "require": "./dist/config/index.js"
     },
     "./error": {
       "types": "./dist/error/index.d.ts",
+      "react-native": "./dist/error/index.js",
       "import": "./dist/error/index.js",
       "require": "./dist/error/index.js"
     },
     "./infrastructure": {
       "types": "./dist/infrastructure/index.d.ts",
+      "react-native": "./dist/infrastructure/index.js",
       "import": "./dist/infrastructure/index.js",
       "require": "./dist/infrastructure/index.js"
     },
     "./providers": {
       "types": "./dist/providers/index.d.ts",
+      "react-native": "./dist/providers/index.js",
       "import": "./dist/providers/index.js",
       "require": "./dist/providers/index.js"
     },
     "./query": {
       "types": "./dist/query/index.d.ts",
+      "react-native": "./dist/query/index.js",
       "import": "./dist/query/index.js",
       "require": "./dist/query/index.js"
     },
     "./adapters": {
       "types": "./dist/adapters/index.d.ts",
+      "react-native": "./dist/adapters/index.js",
       "import": "./dist/adapters/index.js",
       "require": "./dist/adapters/index.js"
     },
     "./navigation": {
       "types": "./dist/navigation/index.d.ts",
+      "react-native": "./dist/navigation/index.js",
       "import": "./dist/navigation/index.js",
       "require": "./dist/navigation/index.js"
     },
     "./tailwind": {
       "types": "./dist/tailwind/index.d.ts",
+      "react-native": "./dist/tailwind/index.js",
       "import": "./dist/tailwind/index.js",
       "require": "./dist/tailwind/index.js"
     },

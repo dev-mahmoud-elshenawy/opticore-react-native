@@ -42,7 +42,15 @@ export class LifecycleManager {
   }
 
   private initialize(): void {
-    this.currentState = this.mapAppStateToLifecycleState(AppState.currentState);
+    // On Android, AppState.currentState is 'unknown' until the first change event.
+    // Mapping that to INACTIVE makes the first real 'active' event fire a spurious
+    // onActive (premature reconnect/timer-restart). The app is in the foreground at
+    // launch, so seed ACTIVE when the initial state is unknown.
+    const initial = AppState.currentState;
+    this.currentState =
+      !initial || initial === 'unknown'
+        ? LifecycleState.ACTIVE
+        : this.mapAppStateToLifecycleState(initial);
 
     this.subscription = AppState.addEventListener('change', this.handleAppStateChange);
   }

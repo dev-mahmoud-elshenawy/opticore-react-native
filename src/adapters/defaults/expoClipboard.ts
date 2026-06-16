@@ -1,4 +1,5 @@
 import type { ClipboardAdapter } from '../interfaces';
+import { nativeModulePresent } from './nativeModulePresent';
 
 interface ExpoClipboardModule {
   setStringAsync(value: string): Promise<boolean | void>;
@@ -15,9 +16,11 @@ interface ExpoClipboardModule {
  * custom development build.
  */
 export function createExpoClipboardAdapter(): ClipboardAdapter | null {
+  // Gate on the native module like every other adapter (Expo Go-safe).
+  if (!nativeModulePresent('ExpoClipboard')) return null;
+
   let mod: ExpoClipboardModule;
   try {
-     
     mod = require('expo-clipboard') as ExpoClipboardModule;
   } catch {
     return null;

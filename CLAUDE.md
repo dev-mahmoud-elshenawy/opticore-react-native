@@ -1,8 +1,8 @@
 # Claude Development Guide for OptiCore React Native
 
 **Package**: `opticore-react-native`
-**Version**: 2.4.0
-**Last Updated**: 2026-06-16 (v2.4.0: core-hardening pass — logger prod-output, durable offline persistence, dispose/cleanup fixes, real `useThrottle`, single canonical `HttpMethod` enum, new `config`/`error`/`infrastructure`/`providers`/`query` subpath exports, WCAG contrast, plus assorted hook/theme/forms/storage correctness fixes. v2.3.0: offline conflict shape fix, single-flight token refresh, request cancellation. v2.2.0: `createQueryHook`, `useApiMutation`, `createQueryPersister`, `useTextStyle` + type guards.)
+**Version**: 2.5.0
+**Last Updated**: 2026-06-17 (v2.5.0: core-hardening round 2 — log token redaction, offline data-loss fixes (conflict-retry budget, fresh-token replay, per-item maxRetries), **default conflict strategy now server-wins** + `ConflictStrategy` constant, SecureStorage concurrency safety, useFieldValidation/useAsyncState race guards, credit-card 16-digit cap, `request()` params/DELETE-body, `useFormState` control/register, `sideEffects:false` + `react-native` export condition, CoreSetup StrictMode idempotency, theme listener cleanup. Spec 029. v2.4.0: core-hardening pass — logger prod-output, durable offline persistence, dispose/cleanup fixes, real `useThrottle`, single canonical `HttpMethod` enum, new `config`/`error`/`infrastructure`/`providers`/`query` subpath exports, WCAG contrast, plus assorted hook/theme/forms/storage correctness fixes. v2.3.0: offline conflict shape fix, single-flight token refresh, request cancellation. v2.2.0: `createQueryHook`, `useApiMutation`, `createQueryPersister`, `useTextStyle` + type guards.)
 **Target Platforms**: iOS & Android ONLY
 
 > **📖 Spec Kit Reference**: See [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete specification-driven development guide
@@ -1609,8 +1609,8 @@ not necessarily in the store Expo Go if it has moved to a newer SDK.
 
 ---
 
-**Last Updated**: 2026-06-16
-**Version**: 2.4.0
+**Last Updated**: 2026-06-17
+**Version**: 2.5.0
 **Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**

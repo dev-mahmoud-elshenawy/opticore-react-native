@@ -1,4 +1,5 @@
 import type { DeviceAdapter } from '../interfaces';
+import { nativeModulePresent } from './nativeModulePresent';
 
 interface ExpoDeviceModule {
   osVersion: string | null;
@@ -20,9 +21,12 @@ interface ExpoApplicationModule {
  * development build.
  */
 export function createExpoDeviceAdapter(): DeviceAdapter | null {
+  // Gate on the native module like every other adapter, so a missing native
+  // module in Expo Go doesn't throw at require() time.
+  if (!nativeModulePresent('ExpoDevice')) return null;
+
   let device: ExpoDeviceModule;
   try {
-     
     device = require('expo-device') as ExpoDeviceModule;
   } catch {
     return null;

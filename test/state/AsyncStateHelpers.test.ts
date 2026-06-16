@@ -70,17 +70,23 @@ describe('AsyncStateHelpers', () => {
       expect(mapped).toEqual({ type: 'idle' });
     });
 
-    it('should return loading state with undefined previousData', () => {
+    it('should map previousData through fn for loading state', () => {
       const state = toLoading(toSuccess(10));
       const mapped = mapSuccess(state, (n) => n * 2);
-      expect(mapped).toEqual({ type: 'loading', previousData: undefined });
+      // previousData is preserved AND transformed so stale data keeps showing.
+      expect(mapped).toEqual({ type: 'loading', previousData: 20 });
     });
 
-    it('should return error state with undefined previousData', () => {
+    it('should map previousData through fn for error state', () => {
       const error = new Error('fail');
       const state = toError<number>(error, toSuccess(10));
       const mapped = mapSuccess(state, (n) => n * 2);
-      expect(mapped).toEqual({ type: 'error', error, previousData: undefined });
+      expect(mapped).toEqual({ type: 'error', error, previousData: 20 });
+    });
+
+    it('should leave previousData undefined when there is none to map', () => {
+      const loading = mapSuccess(toLoading<number>(), (n) => n * 2);
+      expect(loading).toEqual({ type: 'loading', previousData: undefined });
     });
   });
 
