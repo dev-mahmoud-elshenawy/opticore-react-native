@@ -129,13 +129,17 @@ export class SyncEngine {
         const { maxRetries, retryDelay, maxBackoff } = config;
         let lastError: Error | undefined;
 
+        // Track the data to send per attempt locally so conflict resolution can
+        // update it WITHOUT mutating the shared queue item (immutability).
+        let currentData = item.data;
+
         for (let attempt = 0; attempt <= maxRetries; attempt++) {
             try {
                 // Execute the request via ApiClient
                 await this.apiClient.request({
                     method: item.method,
                     url: item.url,
-                    data: item.data,
+                    data: currentData,
                     headers: item.headers,
                 });
 
@@ -145,15 +149,16 @@ export class SyncEngine {
             } catch (error) {
                 lastError = error as Error;
 
-                // Handle Conflict (409)
-                const errorWithResponse = error as { response?: { status?: number; data?: unknown }; status?: number };
-                const statusCode = errorWithResponse?.response?.status || errorWithResponse?.status;
+                // Handle Conflict (409). ApiClient throws ApiError, which exposes
+                // `status`/`data` at the top level (no `.response`). Read that shape
+                // first, falling back to the raw axios shape for resilience.
+                const statusCode = SyncEngine.extractStatus(error);
                 if (statusCode === 409) {
-                    const serverData = errorWithResponse?.response?.data;
+                    const serverData = SyncEngine.extractData(error);
                     this.logger.info(`[SyncEngine] Conflict detected for ${item.id}, resolving with strategy: ${this.conflictResolver.getStrategy()}`);
 
                     try {
-                        const resolvedData = await this.conflictResolver.resolve(item.data, serverData);
+                        const resolvedData = await this.conflictResolver.resolve(currentData, serverData);
 
                         // Strategy check
                         if (this.conflictResolver.getStrategy() === 'server-wins') {
@@ -163,9 +168,8 @@ export class SyncEngine {
                             return;
                         }
 
-                        // Client wins or Manual: Retry with resolved data
-                        // Update item data for next attempt
-                        item.data = resolvedData;
+                        // Client wins or Manual: retry with resolved data (local only).
+                        currentData = resolvedData;
                         this.logger.info(`[SyncEngine] Resolved conflict, retrying with new data for ${item.id}`);
 
                         // Continue loop to retry immediately
@@ -196,11 +200,10 @@ export class SyncEngine {
                     throw error;
                 }
 
-                // Calculate backoff delay with exponential backoff
-                const backoffDelay = Math.min(
-                    retryDelay * Math.pow(2, attempt),
-                    maxBackoff
-                );
+                // Exponential backoff capped at maxBackoff, plus full jitter to
+                // avoid a thundering herd when many clients reconnect at once.
+                const cappedDelay = Math.min(retryDelay * Math.pow(2, attempt), maxBackoff);
+                const backoffDelay = Math.round(cappedDelay / 2 + Math.random() * (cappedDelay / 2));
 
                 this.logger.info(
                     `[SyncEngine] Retrying ${item.id} in ${backoffDelay}ms (attempt ${attempt + 1}/${maxRetries})`
@@ -240,8 +243,7 @@ export class SyncEngine {
         }
 
         // Check HTTP status code if available
-        const errorWithResponse = error as { response?: { status?: number; data?: unknown }; status?: number; statusCode?: number };
-        const statusCode = errorWithResponse?.response?.status || errorWithResponse?.status || errorWithResponse?.statusCode;
+        const statusCode = SyncEngine.extractStatus(error);
 
         if (statusCode) {
             // Don't retry client errors (4xx except 408, 429)
@@ -298,5 +300,28 @@ export class SyncEngine {
      */
     getSyncingStatus(): boolean {
         return this.isSyncing;
+    }
+
+    /**
+     * Extract an HTTP status code from an error, regardless of shape.
+     * ApiClient throws {@link ApiError} (top-level `status`); raw axios errors
+     * nest it under `response.status`. Prefer the ApiError shape.
+     */
+    private static extractStatus(error: unknown): number | undefined {
+        const e = error as {
+            status?: number;
+            statusCode?: number;
+            response?: { status?: number };
+        };
+        return e?.status ?? e?.statusCode ?? e?.response?.status;
+    }
+
+    /**
+     * Extract the server response body from an error, regardless of shape.
+     * ApiError exposes it as top-level `data`; raw axios errors as `response.data`.
+     */
+    private static extractData(error: unknown): unknown {
+        const e = error as { data?: unknown; response?: { data?: unknown } };
+        return e?.data ?? e?.response?.data;
     }
 }

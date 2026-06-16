@@ -60,8 +60,11 @@ export class ConflictResolver {
                     return serverData;
             }
         } catch (error) {
+            // Don't silently swallow an unexpected failure into a "server-wins"
+            // result — the caller (SyncEngine) already handles a thrown resolve
+            // error by falling through to normal retry/fail logic.
             logger.error('ConflictResolver: Unexpected error during resolution', error as Error);
-            return serverData;
+            throw error;
         }
     }
     /**

@@ -1,9 +1,13 @@
 import { InternalAxiosRequestConfig } from 'axios';
 import { ApiClient } from '../ApiClient';
-import { BearerTokenStrategy } from '../AuthStrategy';
+import { AuthRetryResult, BearerTokenStrategy } from '../AuthStrategy';
 
 export class AuthInterceptor {
   private client: ApiClient;
+
+  // Shared in-flight refresh so concurrent 401s collapse into ONE refresh call
+  // instead of each firing its own (token-refresh stampede).
+  private refreshPromise: Promise<AuthRetryResult | null> | null = null;
 
   constructor(client: ApiClient) {
     this.client = client;
@@ -43,22 +47,23 @@ export class AuthInterceptor {
     }
 
     if (axiosError.response?.status === 401 && config && !config._retry && strategy) {
-      const retryConfig = await strategy.handleUnauthorized(error);
+      // Collapse concurrent 401s onto a single refresh. The first caller starts
+      // it; the rest await the same promise. Cleared on settle so a later 401
+      // (e.g. token expired again) triggers a fresh refresh.
+      if (!this.refreshPromise) {
+        const activeStrategy = strategy;
+        this.refreshPromise = Promise.resolve(activeStrategy.handleUnauthorized(error)).finally(
+          () => {
+            this.refreshPromise = null;
+          },
+        );
+      }
+
+      const retryConfig = await this.refreshPromise;
 
       if (retryConfig?.retry) {
         config._retry = true;
-        // If the strategy refreshed the token, we might need to update the header
-        // For BearerTokenStrategy, applyAuth fetches the new token.
-        // So we just re-run the request via the client.
-
-        // However, applyAuth modifies the config passed to it.
-        // We should re-apply auth to the config before retrying?
-        // Or just let the new request go through the interceptor chain again?
-
-        // If we call client.request(config), it runs interceptors again.
-        // BUT config already has headers.
-        // BearerTokenStrategy.applyAuth will overwrite Authorization header if token exists.
-
+        // Re-run through the client so applyAuth re-attaches the refreshed token.
         return this.client.client.request(config);
       }
     }

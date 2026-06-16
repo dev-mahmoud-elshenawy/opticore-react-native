@@ -195,11 +195,13 @@ export class ApiClient {
    * @returns Promise resolving to ApiResponse with typed data
    * @example
    * ```typescript
+   * const controller = new AbortController();
    * await apiClient.request({
    *   method: HttpMethod.POST,
    *   url: '/users',
    *   data: { name: 'John' },
-   *   headers: { 'Content-Type': 'application/json' }
+   *   headers: { 'Content-Type': 'application/json' },
+   *   signal: controller.signal, // controller.abort() cancels (e.g. on unmount)
    * });
    * ```
    */
@@ -208,6 +210,8 @@ export class ApiClient {
     url: string;
     data?: unknown;
     headers?: Record<string, string>;
+    /** Optional AbortSignal to cancel the in-flight request (e.g. on unmount/navigation). */
+    signal?: AbortSignal;
   }): Promise<ApiResponse<T>> {
     // Fail fast instead of silently sending a request with no baseURL/auth.
     // configure() runs via CoreSetup.init(), which OptiCoreProvider calls
@@ -222,6 +226,7 @@ export class ApiClient {
     }
 
     const axiosConfig: AxiosRequestConfig = { headers: config.headers };
+    if (config.signal) axiosConfig.signal = config.signal;
 
     switch (config.method) {
       case HttpMethod.GET:

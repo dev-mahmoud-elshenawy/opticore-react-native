@@ -14,6 +14,43 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🛠 [2.3.0] — Offline conflict fix, auth single-flight, request cancellation
+
+### 🐛 Fixed
+
+- **Offline conflict resolution received `undefined` server data.** `SyncEngine`
+  read the server response from the axios error shape (`error.response.data`),
+  but `ApiClient` throws `ApiError` with `status`/`data` at the **top level**. As
+  a result the conflict resolver always got `undefined` server data, breaking the
+  `manual` (and any server-merge) strategy. Status/data are now extracted from the
+  `ApiError` shape first, with the axios shape kept as a fallback.
+- **`SyncEngine` mutated the shared queue item** (`item.data = resolved`) during
+  conflict retries. Resolution now updates a local copy, leaving the queued item
+  immutable.
+- **`ConflictResolver`** no longer silently swallows an unexpected resolution
+  error into a "server-wins" result — it rethrows so the sync loop's normal
+  retry/fail path handles it.
+
+### ✨ Added
+
+- **`ApiClient.request({ signal })`** — pass an `AbortSignal` to cancel an
+  in-flight request (e.g. on unmount/navigation). Additive and backward compatible.
+- **Single-flight token refresh.** Concurrent `401`s now collapse onto one shared
+  refresh in `AuthInterceptor` instead of each firing its own (refresh stampede);
+  every original request is still retried once the refresh settles.
+
+### 🔧 Improved
+
+- **Full jitter on offline retry backoff** to avoid a thundering herd when many
+  clients reconnect at once (delay ∈ `[capped/2, capped]`).
+- **Documented the storage error contract** on `IStorage`: reads are best-effort
+  (`get()` never throws — returns `null`), mutations are strict (`set`/`remove`/
+  `clear` reject on failure).
+- **Hook stability notes** on `useConnectivity` (`adapter`) and `useFieldValidation`
+  (`validator`) — pass stable references to avoid re-subscription/re-validation.
+
+---
+
 ## 🌟 [2.2.0] — Query/theme helpers, fixes, type guards
 
 ### ✨ Added

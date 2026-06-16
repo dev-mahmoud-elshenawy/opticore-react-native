@@ -10,6 +10,11 @@ import { resolveConnectivityAdapter } from '../adapters/registry';
  * argument to override — e.g. to provide a test-only adapter or a custom
  * implementation supplied via `OptiCoreProvider`.
  *
+ * NOTE: if you pass `adapter`, give it a STABLE reference (module-level or
+ * `useMemo`'d). An inline object is a new identity each render, which tears down
+ * and re-creates the subscription every render. Calling with no argument is
+ * always stable.
+ *
  * @returns Object containing:
  * - isConnected: boolean | null
  * - isInternetReachable: boolean | null

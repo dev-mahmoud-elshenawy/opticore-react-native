@@ -60,7 +60,7 @@ describe('OfflineSyncManager Cleanup', () => {
         (OfflineSyncManager as any).instance = null;
 
         // Mock constructors/getters
-        (SyncEngine as jest.Mock).mockImplementation(() => mockSyncEngine);
+        (SyncEngine as unknown as jest.Mock).mockImplementation(() => mockSyncEngine);
         (RequestQueue as jest.Mock).mockImplementation(() => mockQueue);
         (ConnectivityManager.getInstance as jest.Mock).mockReturnValue(mockConnectivity);
         (ApiClient.getInstance as jest.Mock).mockReturnValue({});

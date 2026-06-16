@@ -202,8 +202,12 @@ describe('SyncEngine', () => {
             ).rejects.toThrow();
             const endTime = Date.now();
 
-            // Should have delays: 50ms, 100ms, 200ms = 350ms minimum
-            expect(endTime - startTime).toBeGreaterThanOrEqual(300);
+            // Un-jittered delays would be 50/100/200ms (=350ms). Full jitter halves
+            // the floor, so each delay falls in [capped/2, capped]; the total lands
+            // in roughly [175ms, 350ms]. Assert it's clearly non-trivial but bounded.
+            const elapsed = endTime - startTime;
+            expect(elapsed).toBeGreaterThanOrEqual(150);
+            expect(elapsed).toBeLessThanOrEqual(450);
         });
 
         it('should cap backoff at maxBackoff', async () => {
@@ -222,7 +226,9 @@ describe('SyncEngine', () => {
 
             // Assert on the actual backoff delay values rather than wall-clock
             // elapsed time — the latter is flaky under parallel-test CPU load.
-            // With retryDelay=100, maxBackoff=150: 100ms, then capped at 150ms.
+            // Backoff uses full jitter: each delay falls in [capped/2, capped],
+            // where capped = min(retryDelay * 2^attempt, maxBackoff).
+            // With retryDelay=100, maxBackoff=150 the caps are [100, 150, 150].
             const delaySpy = jest.spyOn(
                 engine as unknown as { delay: (ms: number) => Promise<void> },
                 'delay'
@@ -233,7 +239,12 @@ describe('SyncEngine', () => {
             ).rejects.toThrow();
 
             const backoffDelays = delaySpy.mock.calls.map(call => call[0]);
-            expect(backoffDelays).toEqual([100, 150, 150]);
+            const expectedCaps = [100, 150, 150];
+            expect(backoffDelays).toHaveLength(expectedCaps.length);
+            backoffDelays.forEach((delay, i) => {
+                expect(delay).toBeLessThanOrEqual(expectedCaps[i]); // never exceeds the cap
+                expect(delay).toBeGreaterThanOrEqual(Math.floor(expectedCaps[i] / 2)); // jitter floor
+            });
             expect(Math.max(...backoffDelays)).toBeLessThanOrEqual(150);
 
             delaySpy.mockRestore();

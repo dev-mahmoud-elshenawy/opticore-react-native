@@ -8,7 +8,11 @@ import { useDebounce } from '../hooks/useDebounce';
  * 
  * Hook for validating individual fields, supporting async validation
  * and debouncing.
- * 
+ *
+ * NOTE: pass a STABLE `validator` reference (module-level or `useCallback`'d).
+ * An inline function is a new identity each render, so the auto-validate effect
+ * would re-run on every render instead of only when the debounced value changes.
+ *
  * @param value The value to validate
  * @param validator The validation function
  * @param options Validation options (debounceMs, message)

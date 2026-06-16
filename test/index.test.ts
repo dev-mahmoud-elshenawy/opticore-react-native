@@ -7,7 +7,7 @@ import { VERSION } from '../src/index';
 
 describe('OptiCore Package', () => {
   it('should export VERSION constant', () => {
-    expect(VERSION).toBe('2.2.0');
+    expect(VERSION).toBe('2.3.0');
   });
 
   it('should have valid semver version', () => {

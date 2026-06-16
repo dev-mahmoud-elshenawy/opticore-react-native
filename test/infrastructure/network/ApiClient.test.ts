@@ -104,6 +104,42 @@ describe('ApiClient', () => {
     expect(response.data).toEqual({ id: 1, name: 'Patched User' });
   });
 
+  it('should forward an AbortSignal to the underlying request', async () => {
+    const mockResponse = { data: { ok: true }, status: 200, headers: {} };
+    mockedAxios.get.mockResolvedValue(mockResponse);
+    const controller = new AbortController();
+
+    await apiClient.request<{ ok: boolean }>({
+      method: HttpMethod.GET,
+      url: '/users/1',
+      signal: controller.signal,
+    });
+
+    expect(mockedAxios.get).toHaveBeenCalledWith('/users/1', {
+      headers: undefined,
+      signal: controller.signal,
+    });
+  });
+
+  it('should forward an AbortSignal on POST requests', async () => {
+    const mockResponse = { data: { id: 2 }, status: 201, headers: {} };
+    mockedAxios.post.mockResolvedValue(mockResponse);
+    const controller = new AbortController();
+
+    await apiClient.request<{ id: number }>({
+      method: HttpMethod.POST,
+      url: '/users',
+      data: { name: 'x' },
+      signal: controller.signal,
+    });
+
+    expect(mockedAxios.post).toHaveBeenCalledWith(
+      '/users',
+      { name: 'x' },
+      { headers: undefined, signal: controller.signal },
+    );
+  });
+
   it('should update configuration when configure is called', () => {
     const newConfig: NetworkConfig = {
       baseURL: 'https://api2.example.com',

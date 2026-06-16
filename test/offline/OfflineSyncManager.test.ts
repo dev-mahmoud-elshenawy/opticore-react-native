@@ -61,7 +61,7 @@ describe('OfflineSyncManager', () => {
             addListener: jest.fn().mockReturnValue(() => { }),
             isRetryable: jest.fn().mockReturnValue(true),
         };
-        (SyncEngine as jest.Mock).mockImplementation(() => mockSyncEngine);
+        (SyncEngine as unknown as jest.Mock).mockImplementation(() => mockSyncEngine);
 
         manager = OfflineSyncManager.getInstance();
     });
