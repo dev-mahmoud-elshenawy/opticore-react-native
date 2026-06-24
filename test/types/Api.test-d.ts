@@ -37,15 +37,15 @@ expectType<number>(meta.totalItems);
 expectType<boolean>(meta.hasMore);
 
 // Test RequestConfig
-// Test RequestConfig
 const config: RequestConfig = {
   method: HttpMethod.GET,
+  url: '/articles',
   headers: { 'Content-Type': 'application/json' },
-  timeout: 5000,
+  params: { category: 'tech', pageSize: 20 },
 };
-expectType<HttpMethod | undefined>(config.method);
+expectType<HttpMethod>(config.method);
+expectType<string>(config.url);
 expectType<Record<string, string> | undefined>(config.headers);
-expectType<number | undefined>(config.timeout);
 
 // Test HttpMethod (single canonical enum)
 const method: HttpMethod = HttpMethod.POST;

@@ -10,6 +10,7 @@
  */
 
 import { HttpMethod } from '../infrastructure/network/HttpMethod';
+import type { QueryParamValue } from '../utils/url';
 
 // Re-export the single canonical HttpMethod (the runtime enum). There is no
 // separate string-union HttpMethod — the enum is the one source of truth so
@@ -76,25 +77,23 @@ export interface ApiResult<T = unknown> {
 }
 
 /**
- * Request configuration options
+ * Configuration for {@link ApiClient.request} — the canonical request contract.
+ *
+ * `ApiClient.request()` accepts exactly this shape. Build endpoint descriptors
+ * against it and spread them into the call, e.g.
+ * `Pick<RequestConfig, 'url' | 'params'>` for a GET endpoint.
  */
 export interface RequestConfig {
   /** HTTP method */
-  method?: HttpMethod;
+  method: HttpMethod;
+  /** Request URL (relative to the configured baseURL) */
+  url: string;
+  /** Request body (POST/PUT/PATCH, and DELETE-with-body) */
+  data?: unknown;
   /** Request headers */
   headers?: Record<string, string>;
-  /** Query parameters */
-  params?: Record<string, string | number | boolean>;
-  /** Request body */
-  body?: unknown;
-  /** Request timeout in milliseconds */
-  timeout?: number;
-  /** Whether to include credentials */
-  withCredentials?: boolean;
-  /** Response type expected */
-  responseType?: 'json' | 'text' | 'blob' | 'arraybuffer';
-  /** Callback for upload progress */
-  onUploadProgress?: (progress: number) => void;
-  /** Callback for download progress */
-  onDownloadProgress?: (progress: number) => void;
+  /** Query parameters — serialized by Axios (encoding handled for you). */
+  params?: Record<string, QueryParamValue>;
+  /** AbortSignal to cancel the in-flight request (e.g. on unmount/navigation). */
+  signal?: AbortSignal;
 }

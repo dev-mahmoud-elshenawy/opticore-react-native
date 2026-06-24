@@ -113,7 +113,7 @@ Keep the data source behind a repository, wrap it in a query hook, and let UI co
 export const repository = {
   getById: (id: string) =>
     ApiClient.getInstance()
-      .request<ResourceResponse>({ method: HttpMethod.GET, url: buildUrl(`/resource/${id}`) })
+      .request<ResourceResponse>({ method: HttpMethod.GET, url: `/resource/${id}` })
       .then((res) => res.data),
 };
 

@@ -559,6 +559,10 @@ buildUrl('/users');
 
 Param values are typed as `QueryParamValue` (`string | number | boolean | null | undefined`).
 
+> For requests, prefer passing a `params` object straight to `ApiClient.request({ url, params })` —
+> the client serializes the query string for you. Reach for `buildUrl` only to build a URL string
+> *outside* a request.
+
 ---
 
 **See also**:

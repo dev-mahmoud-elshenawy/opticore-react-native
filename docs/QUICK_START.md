@@ -97,6 +97,21 @@ function UserListScreen() {
 }
 ```
 
+> **Query parameters:** pass a `params` object — `ApiClient` serializes the query string for you
+> (via Axios), so you never build URLs by hand:
+>
+> ```typescript
+> // GET /articles?category=tech&pageSize=20
+> ApiClient.getInstance().request<Article[]>({
+>   method: HttpMethod.GET,
+>   url: '/articles',
+>   params: { category: 'tech', pageSize: 20 },
+> });
+> ```
+>
+> Reach for the `buildUrl` helper (`opticore-react-native/utils`) only when you need a pre-built URL
+> string *outside* a request.
+
 ---
 
 ## Step 4 — Add Authentication

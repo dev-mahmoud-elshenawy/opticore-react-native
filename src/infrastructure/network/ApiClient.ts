@@ -11,6 +11,7 @@ import { AuthInterceptor } from './interceptors/AuthInterceptor';
 import { LoggingInterceptor } from './interceptors/LoggingInterceptor';
 import { ErrorInterceptor } from './interceptors/ErrorInterceptor';
 import { Interceptor, InterceptorId } from './Interceptor';
+import type { RequestConfig } from '../../types/Api.types';
 
 /**
  * ApiClient - Singleton HTTP client for making API requests
@@ -207,16 +208,7 @@ export class ApiClient {
    * });
    * ```
    */
-  public async request<T>(config: {
-    method: HttpMethod;
-    url: string;
-    data?: unknown;
-    headers?: Record<string, string>;
-    /** Query parameters — serialized by Axios (handles arrays/encoding). */
-    params?: Record<string, unknown>;
-    /** Optional AbortSignal to cancel the in-flight request (e.g. on unmount/navigation). */
-    signal?: AbortSignal;
-  }): Promise<ApiResponse<T>> {
+  public async request<T>(config: RequestConfig): Promise<ApiResponse<T>> {
     // Fail fast instead of silently sending a request with no baseURL/auth.
     // configure() runs via CoreSetup.init(), which OptiCoreProvider calls
     // synchronously before children render — so this only fires for genuinely

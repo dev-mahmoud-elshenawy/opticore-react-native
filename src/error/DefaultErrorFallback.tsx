@@ -15,6 +15,12 @@ export interface DefaultErrorFallbackProps {
  * Replace via the `fallback` prop on OptiCoreErrorBoundary if you need custom UI.
  */
 export function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps): React.ReactElement {
+  // Build styles lazily on first render rather than at module load. Keeping
+  // `StyleSheet.create` out of module scope means importing the library (e.g.
+  // for `ApiClient` or `buildUrl`) does not eagerly evaluate React Native's
+  // StyleSheet/native modules — which keeps non-UI usage and tests side-effect free.
+  const styles = React.useMemo(() => createStyles(), []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.message}>{error.userMessage}</Text>
@@ -25,7 +31,8 @@ export function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackPro
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = () =>
+  StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
