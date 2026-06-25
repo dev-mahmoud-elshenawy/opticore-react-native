@@ -45,42 +45,69 @@ describe('RenderError', () => {
   });
 });
 
-// NonRenderError: getDerivedStateFromError + componentDidCatch tested directly
-// (React 19 concurrent mode prevents reliable React-render testing for showFallback=false)
-describe('NonRenderError', () => {
-  it('getDerivedStateFromError sets showFallback=false for NonRenderError', () => {
+// A NonRenderError thrown during render is misuse, but the boundary MUST converge
+// to a fallback — never re-render the throwing children (which re-throws → loops).
+describe('NonRenderError reaching the boundary (converges to fallback)', () => {
+  it('getDerivedStateFromError shows a fallback and tags errorType NON_RENDER', () => {
     const nonRenderError = new NonRenderError('background sync failed');
     const state = (OptiCoreErrorBoundary as any).getDerivedStateFromError(nonRenderError);
 
     expect(state.hasError).toBe(true);
-    expect(state.showFallback).toBe(false);
+    expect(state.showFallback).toBe(true);
     expect(state.errorType).toBe(ErrorType.NON_RENDER);
-    expect(state.renderError).toBeNull();
+    expect(state.renderError).toBeInstanceOf(RenderError);
+    expect((state.renderError as RenderError).getCause()).toBe(nonRenderError);
   });
 
-  it('componentDidCatch logs NonRenderError via Logger and does not show fallback', () => {
-    const logSpy = jest.spyOn(Logger.getInstance(), 'error');
+  it('renders the fallback for a child that throws a NonRenderError (no loop)', async () => {
+    const nonRenderError = new NonRenderError('background sync failed');
+    const ThrowingComponent = makeAlwaysThrowingComponent(nonRenderError);
+
+    const { getByText } = await render(
+      <OptiCoreErrorBoundary>
+        <ThrowingComponent />
+      </OptiCoreErrorBoundary>
+    );
+
+    expect(getByText('Try Again')).toBeTruthy();
+  });
+
+  it('componentDidCatch does not throw even if the Logger throws', () => {
+    const logSpy = jest.spyOn(Logger.getInstance(), 'error').mockImplementation(() => {
+      throw new Error('logger not configured');
+    });
     const nonRenderError = new NonRenderError('background sync failed');
 
-    // Simulate the error boundary lifecycle directly
     const instance = new OptiCoreErrorBoundary({ children: React.createElement(Text, null, 'test') });
     (instance as any).state = {
       hasError: true,
-      showFallback: false,
-      renderError: null,
+      showFallback: true,
+      renderError: new RenderError('internal'),
       errorType: ErrorType.NON_RENDER,
       rawError: nonRenderError,
     };
 
-    instance.componentDidCatch(nonRenderError as unknown as Error, { componentStack: '' });
+    expect(() =>
+      instance.componentDidCatch(nonRenderError as unknown as Error, { componentStack: '' })
+    ).not.toThrow();
+    expect(logSpy).toHaveBeenCalled();
+  });
+});
 
-    expect(logSpy).toHaveBeenCalledWith(
-      expect.stringContaining('NonRenderError'),
-      nonRenderError
+// A plain error classified NON_RENDER must also converge to a fallback (no loop).
+describe('error classified NON_RENDER (converges to fallback)', () => {
+  it('shows the fallback instead of re-rendering children', async () => {
+    jest.spyOn(ErrorClassifier, 'classify').mockReturnValue(ErrorType.NON_RENDER);
+    const err = new Error('classified as non-render');
+    const ThrowingComponent = makeAlwaysThrowingComponent(err);
+
+    const { getByText } = await render(
+      <OptiCoreErrorBoundary>
+        <ThrowingComponent />
+      </OptiCoreErrorBoundary>
     );
 
-    // Verify no fallback would be shown (showFallback=false means children are rendered)
-    expect((instance as any).state.showFallback).toBe(false);
+    expect(getByText('Try Again')).toBeTruthy();
   });
 });
 

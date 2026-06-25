@@ -53,7 +53,12 @@ export class OptiCoreErrorBoundary extends React.Component<
   }
 
   static getDerivedStateFromError(error: unknown): ErrorBoundaryState {
-    // 1. Already a typed RenderError
+    // Any error that reaches a React error boundary came from the render path,
+    // so it MUST resolve to a fallback. Never re-render the throwing children
+    // silently — that re-throws and loops. errorType is computed for telemetry
+    // only; it no longer changes whether the fallback is shown.
+
+    // Already a typed RenderError — use it directly.
     if (error instanceof RenderError) {
       return {
         hasError: true,
@@ -64,31 +69,11 @@ export class OptiCoreErrorBoundary extends React.Component<
       };
     }
 
-    // 2. Already a typed NonRenderError — don't show fallback
-    if (error instanceof NonRenderError) {
-      return {
-        hasError: true,
-        showFallback: false,
-        renderError: null,
-        errorType: ErrorType.NON_RENDER,
-        rawError: error,
-      };
-    }
+    // Classify for telemetry; a NonRenderError reaching render is misuse but
+    // must still converge to a fallback rather than loop.
+    const errorType =
+      error instanceof NonRenderError ? ErrorType.NON_RENDER : ErrorClassifier.classify(error);
 
-    // 3. Unclassified error — use ErrorClassifier
-    const errorType = ErrorClassifier.classify(error);
-
-    if (errorType === ErrorType.NON_RENDER) {
-      return {
-        hasError: true,
-        showFallback: false,
-        renderError: null,
-        errorType: ErrorType.NON_RENDER,
-        rawError: error,
-      };
-    }
-
-    // For RENDER or NONE (unknown) — show fallback
     const message =
       error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.';
     const renderError = new RenderError(message, undefined, {
@@ -108,9 +93,16 @@ export class OptiCoreErrorBoundary extends React.Component<
     // Notify consumer for any caught error
     this.props.onError?.(error);
 
-    // Log NonRenderErrors silently — no fallback UI shown
+    // Log render-path errors classified as NON_RENDER for monitoring. The
+    // fallback is still shown (see getDerivedStateFromError). Logging is wrapped
+    // so an unconfigured/failing Logger can never throw inside the boundary while
+    // it is already handling an error.
     if (this.state.errorType === ErrorType.NON_RENDER) {
-      Logger.getInstance().error('NonRenderError caught by OptiCoreErrorBoundary', error);
+      try {
+        Logger.getInstance().error('NonRenderError caught by OptiCoreErrorBoundary', error);
+      } catch {
+        // Intentionally swallowed: a logging failure must not crash the boundary.
+      }
     }
   }
 

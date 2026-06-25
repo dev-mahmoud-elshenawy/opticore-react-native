@@ -14,7 +14,28 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
-## 🚧 [Unreleased]
+## 🌟 [2.7.0] — Error system RN alignment
+
+Aligns the error model with how React Native actually intercepts errors. Non-breaking: no public type/signature changes. (Spec 031.)
+
+### ⚠️ Behavior change
+
+- **`OptiCoreErrorBoundary` now always resolves a caught error to a fallback.** Previously, an error classified `NON_RENDER` set `showFallback: false` and re-rendered the children — which re-threw and could spin into an **infinite render loop**. Any error that reaches a React Error Boundary came from the render path, so it now converges to a fallback. `errorType` is still classified for telemetry/`onError` but no longer controls whether the fallback shows.
+
+### 🐞 Fixed
+
+- **Eliminated the infinite-render loop** in `OptiCoreErrorBoundary` for `NON_RENDER`-classified (or thrown `NonRenderError`) render-path errors.
+- **Logging inside the boundary can no longer crash it** — `componentDidCatch` wraps the `Logger` call so an unconfigured/failing logger cannot throw while the boundary is already handling an error.
+
+### 🗑 Deprecated
+
+- **Throwing `NonRenderError` as control flow is deprecated.** In RN the async/event errors it describes are never caught by an Error Boundary, so the throw is silently lost. Construct it and pass it to the `Logger`, or read its fields at the catch site (a toast is a state update, not a thrown error); for recoverable operations prefer `Result<T, E>`. The class remains fully supported as a **descriptor/log payload** (no `@deprecated` tag on the class, so valid descriptor use is not flagged). The boundary's `NON_RENDER` special-casing and the deprecated throw semantics are scheduled for removal in **3.0**.
+
+### 📝 Docs
+
+- Rewrote the error guidance in `CLAUDE.md`, `docs/api/ERRORS.md`, and `docs/FAQ.md` to the three-outcome RN model — **replace screen** (`RenderError` + boundary), **notify** (state update → re-render of the host), **silent** (`Logger` / `Result<T, E>`) — and removed the Flutter-style "render vs non-render, no re-render" framing.
+
+---
 
 ## 🛠 [2.6.0] — Transient retry handling + consumer fixes
 

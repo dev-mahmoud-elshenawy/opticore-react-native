@@ -62,7 +62,15 @@ try {
 
 ### NonRenderError
 
-Errors that should be **logged silently** — analytics failures, background sync errors, non-critical warnings.
+A **descriptor / log payload** for background failures — analytics, background sync,
+non-critical warnings. **Construct it and pass it to the `Logger`, or read its
+fields at the catch site — do NOT `throw` it.**
+
+> **Why not throw it?** In React Native these failures are async (sync jobs,
+> telemetry, event handlers). React Error Boundaries only catch errors thrown
+> **synchronously during render**, so a thrown `NonRenderError` is never caught —
+> the throw is silently lost. Throwing is **deprecated**; the boundary's
+> `NON_RENDER` handling is removed in 3.0. Use `Logger` or `Result<T, E>` instead.
 
 ```typescript
 class NonRenderError extends BaseError {
@@ -80,15 +88,24 @@ interface NonRenderErrorOptions {
 ```
 
 ```typescript
+import { Logger } from 'opticore-react-native';
+
+// ✅ Construct + log (never thrown). Read isSilent to decide on user feedback.
 try {
   await trackAnalyticsEvent('purchase');
-} catch (e) {
-  throw new NonRenderError('Analytics failed', {
-    cause: e,
+} catch (cause) {
+  const err = new NonRenderError('Analytics failed', {
+    isSilent: true,
     shouldMonitor: true,
     metadata: { event: 'purchase' },
+    cause: cause instanceof Error ? cause : undefined,
   });
+  Logger.getInstance().error('analytics failed', err);
+  if (!err.isSilent) toast.error(err.metadata.userMessage as string);
 }
+
+// ❌ Anti-pattern — a boundary cannot catch this; the throw is lost:
+// throw new NonRenderError('Analytics failed', { ... });
 ```
 
 ---
@@ -331,6 +348,14 @@ if (result.isOk()) {
 ## OptiCoreErrorBoundary
 
 React Error Boundary that integrates with the error classification system.
+
+**Behavior:** any error that reaches the boundary came from the **render path**, so
+it always resolves to a **fallback** — the boundary never silently re-renders the
+throwing children (which would re-throw and loop). `errorType` is still classified
+for telemetry/`onError`, but it no longer changes whether the fallback shows. A
+thrown `NonRenderError` is misuse, but it too converges to a fallback rather than
+looping. (Background/async failures should be logged, not thrown — see
+`NonRenderError` above.)
 
 ```typescript
 interface OptiCoreErrorBoundaryProps {

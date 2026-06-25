@@ -169,17 +169,34 @@ await StorageManager.getInstance().clearAll();
 
 ## Error Handling
 
-### When should I throw `RenderError` vs `NonRenderError`?
+### When should I use `RenderError` vs `NonRenderError`?
 
-- `RenderError`: The user needs to know — show an alert, error screen, or toast
-- `NonRenderError`: Purely operational — log to monitoring, but don't interrupt UX
+- `RenderError`: a **render-path** failure the user must see — **throw it**, and
+  `OptiCoreErrorBoundary` shows a fallback.
+- `NonRenderError`: a **background/async** failure (analytics, sync). It's a
+  **descriptor/log payload — do NOT throw it.** Construct it and pass it to the
+  `Logger`, or read its fields at the catch site. (A React Error Boundary can't
+  catch async/event errors, so throwing it is lost. Throwing is deprecated → 3.0.)
 
 ```typescript
-// User can't proceed without their data → RenderError
+import { Logger } from 'opticore-react-native';
+
+// User can't proceed without their data → throw RenderError (boundary shows fallback)
 throw new RenderError('Could not load your profile');
 
-// Analytics ping failed → NonRenderError
-throw new NonRenderError('Analytics event dropped', { shouldMonitor: true });
+// Analytics ping failed → construct + log, never throw
+try {
+  await trackAnalytics('event');
+} catch (cause) {
+  Logger.getInstance().error(
+    'analytics dropped',
+    new NonRenderError('Analytics event dropped', {
+      isSilent: true,
+      shouldMonitor: true,
+      cause: cause instanceof Error ? cause : undefined,
+    })
+  );
+}
 ```
 
 ### How does `Result<T, E>` differ from try/catch?

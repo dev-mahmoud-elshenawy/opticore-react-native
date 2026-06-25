@@ -1,8 +1,8 @@
 # Claude Development Guide for OptiCore React Native
 
 **Package**: `opticore-react-native`
-**Version**: 2.6.0
-**Last Updated**: 2026-06-25 (v2.6.0: transient retry handling — `ApiError` gains `isRetryable`/`retryAfterMs`; `408`/`429` reclassified as retryable not actionable; `createQueryClient` retry/retryDelay honor `Retry-After`; `RequestConfig` contract fix (`body`→`data`); side-effect-free imports. Spec 030. v2.5.0: core-hardening round 2 — log token redaction, offline data-loss fixes (conflict-retry budget, fresh-token replay, per-item maxRetries), **default conflict strategy now server-wins** + `ConflictStrategy` constant, SecureStorage concurrency safety, useFieldValidation/useAsyncState race guards, credit-card 16-digit cap, `request()` params/DELETE-body, `useFormState` control/register, `sideEffects:false` + `react-native` export condition, CoreSetup StrictMode idempotency, theme listener cleanup. Spec 029. v2.4.0: core-hardening pass — logger prod-output, durable offline persistence, dispose/cleanup fixes, real `useThrottle`, single canonical `HttpMethod` enum, new `config`/`error`/`infrastructure`/`providers`/`query` subpath exports, WCAG contrast, plus assorted hook/theme/forms/storage correctness fixes. v2.3.0: offline conflict shape fix, single-flight token refresh, request cancellation. v2.2.0: `createQueryHook`, `useApiMutation`, `createQueryPersister`, `useTextStyle` + type guards.)
+**Version**: 2.7.0
+**Last Updated**: 2026-06-25 (v2.7.0: error system RN alignment — `OptiCoreErrorBoundary` now always converges a caught error to a fallback (removed the `NON_RENDER` re-render branch that could infinite-loop); boundary logging wrapped so a failing `Logger` can't crash it; **throwing `NonRenderError` is deprecated** — it's a descriptor/log payload (RN Error Boundaries can't catch the async/event errors it describes), use `Logger`/`Result<T,E>` instead; boundary `NON_RENDER` handling + throw semantics slated for removal in 3.0; error docs realigned to the three-outcome RN model. Non-breaking. Spec 031. v2.6.0: transient retry handling — `ApiError` gains `isRetryable`/`retryAfterMs`; `408`/`429` reclassified as retryable not actionable; `createQueryClient` retry/retryDelay honor `Retry-After`; `RequestConfig` contract fix (`body`→`data`); side-effect-free imports. Spec 030. v2.5.0: core-hardening round 2 — log token redaction, offline data-loss fixes (conflict-retry budget, fresh-token replay, per-item maxRetries), **default conflict strategy now server-wins** + `ConflictStrategy` constant, SecureStorage concurrency safety, useFieldValidation/useAsyncState race guards, credit-card 16-digit cap, `request()` params/DELETE-body, `useFormState` control/register, `sideEffects:false` + `react-native` export condition, CoreSetup StrictMode idempotency, theme listener cleanup. Spec 029. v2.4.0: core-hardening pass — logger prod-output, durable offline persistence, dispose/cleanup fixes, real `useThrottle`, single canonical `HttpMethod` enum, new `config`/`error`/`infrastructure`/`providers`/`query` subpath exports, WCAG contrast, plus assorted hook/theme/forms/storage correctness fixes. v2.3.0: offline conflict shape fix, single-flight token refresh, request cancellation. v2.2.0: `createQueryHook`, `useApiMutation`, `createQueryPersister`, `useTextStyle` + type guards.)
 **Target Platforms**: iOS & Android ONLY
 
 > **📖 Spec Kit Reference**: See [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete specification-driven development guide
@@ -318,7 +318,7 @@ complete set at the single gate in step 3.
 **Step 1: Numbering**
 
 - List existing specs: `ls .specify/specs/`
-- Use next sequential number (last is `028-*`, so the next new spec is `029-`)
+- Use next sequential number (last is `031-*`, so the next new spec is `032-`)
 
 **Step 2: Create Directory**
 
@@ -481,31 +481,53 @@ function parseJsonSafely(json: string): any {
 
 ### Error Handling
 
-**ALL errors must be classified and handled**:
+**Three outcomes — pick by what should happen in the UI, not by a Flutter-style
+"render vs non-render" split.** React Error Boundaries catch ONLY synchronous
+errors thrown during render; they do NOT catch event handlers, async/promises, or
+timers. So the model below maps to how RN actually intercepts errors:
+
+| Outcome | Mechanism | Type |
+|---------|-----------|------|
+| **Replace the screen** (render-path crash) | thrown → `OptiCoreErrorBoundary` → fallback | `RenderError` (thrown) |
+| **Notify** (toast/banner, screen stays) | catch site updates state → re-render of the host | `NonRenderError` as a **payload**, not thrown |
+| **Silent** (log / retry only) | `Logger` / `Result<T, E>` | `NonRenderError` as payload, or none |
 
 ```typescript
 import { RenderError, NonRenderError } from 'opticore-react-native/error';
+import { Logger } from 'opticore-react-native';
 
-// RenderError: Requires UI update
-try {
-  const user = await fetchUser();
-} catch (error) {
-  throw new RenderError('Failed to load user profile', {
-    cause: error,
-    userMessage: 'Unable to load your profile. Please try again.',
-  });
+// (1) Replace the screen — throw a RenderError; the boundary shows a fallback.
+function renderProfile(user: User | null) {
+  if (!user) {
+    throw new RenderError('Failed to load user profile', undefined, {
+      userMessage: 'Unable to load your profile. Please try again.',
+    });
+  }
+  // ...render
 }
 
-// NonRenderError: Log but don't show to user
+// (2)/(3) Background/async failure — DO NOT throw NonRenderError (a boundary can't
+// catch async/event errors). Construct it as a descriptor and log it; read its
+// fields to decide whether to surface feedback. Showing a toast = a state update.
 try {
   await trackAnalytics('page_view');
-} catch (error) {
-  throw new NonRenderError('Analytics tracking failed', {
-    cause: error,
-    context: { page: 'home' },
+} catch (cause) {
+  const err = new NonRenderError('Analytics tracking failed', {
+    isSilent: true,
+    metadata: { page: 'home' },
+    cause: cause instanceof Error ? cause : undefined,
   });
+  Logger.getInstance().error('analytics failed', err);
+  if (!err.isSilent) toast.error(err.metadata.userMessage as string);
 }
+
+// Recoverable/expected operations: prefer Result<T, E> over throwing at all.
 ```
+
+> **Anti-pattern:** `throw new NonRenderError(...)`. The async/event errors it
+> describes never reach an Error Boundary, so the throw is silently lost. Log it
+> or return `Result<T, E>` instead. (Deprecated; boundary `NON_RENDER` handling
+> is removed in 3.0.)
 
 **Safe execution pattern**:
 
@@ -1572,6 +1594,9 @@ Browse `.specify/specs/` for examples of completed specs:
 - `026-test-stabilization/` - Test suite stabilization
 - `027-lint-cleanup/` - Lint cleanup
 - `028-consumer-integration-fixes/` - expo-router decoupling (subpath), enum-based ApiClient docs, synchronous provider init + `request()` init guard, optional `typescript` peer, adapter memory-fallback dev warnings (shipped in 1.2.0)
+- `029-core-hardening-v2.5.0/` - core-hardening round 2 (log redaction, offline data-loss fixes, server-wins default, concurrency/race guards)
+- `030-transient-retry-handling/` - `ApiError.isRetryable`/`retryAfterMs`, `Retry-After`-aware retry policy, `RequestConfig` contract fix
+- `031-error-system-rn-alignment/` - boundary converges to fallback (no infinite loop), `NonRenderError` repositioned as descriptor/log payload (throwing deprecated → 3.0), three-outcome RN error docs (2.7.0)
 
 ### Technology Stack
 
@@ -1612,7 +1637,7 @@ not necessarily in the store Expo Go if it has moved to a newer SDK.
 ---
 
 **Last Updated**: 2026-06-25
-**Version**: 2.6.0
+**Version**: 2.7.0
 **Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**
