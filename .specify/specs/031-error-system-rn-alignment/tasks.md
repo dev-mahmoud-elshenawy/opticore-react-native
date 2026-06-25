@@ -27,7 +27,7 @@ description: 'Task list for spec 031 — Error System RN Alignment'
 
 **Purpose**: Branch + baseline green before changing anything.
 
-- [ ] T001 Create/checkout branch `031-error-system-rn-alignment` from `develop` (ASK before branching, per git rule) — PENDING user approval to branch
+- [x] T001 Created branch `031-error-system-rn-alignment` from `main` (NOT develop — develop is stale/behind; releases + tags live on main, base needed v2.6.0). User-approved.
 - [x] T002 Baseline established: `npm run type-check` clean + `test/error` green (61 tests). (Used type-check + targeted tests; repo-wide `format:check` is known-broken per project notes.)
 
 **Checkpoint**: Clean baseline, all gates green.
@@ -117,7 +117,7 @@ description: 'Task list for spec 031 — Error System RN Alignment'
 - [x] T022 Full suite green: 95 suites / 734 tests; type-check clean; lint clean on changed files. (Skipped repo-wide `format:check` — known-broken per project notes, unrelated to this change.)
 - [x] T023 [P] No `console.log` in changed source (only a Result.ts JSDoc example, pre-existing); no `!!`; no `any` introduced
 - [x] T024 Updated CLAUDE.md header note, version (2.7.0), spec-numbering hint, Existing Specifications list (029/030/031), and footer
-- [ ] T025 Final commit + push — PENDING user approval (do NOT branch/commit/push or open PR without asking, per git rule)
+- [x] T025 Two separate commits pushed to `origin/031-error-system-rn-alignment`: `ac8c11d chore: consolidate spec workflow to a single approval gate` + `3cd1b80 feat(error): align error system with React Native (v2.7.0)`. Annotated tag `v2.7.0` created on the feat commit and pushed. No PR opened (not requested).
 
 ---
 
