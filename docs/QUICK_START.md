@@ -39,6 +39,10 @@ npx opticore-install-peers
 
 Add `OptiCoreProvider` at the root of your application. It initializes all infrastructure and wires up React Query, theming, and config in one step.
 
+> **This is the one setup path for apps.** `OptiCoreProvider` is what you use.
+> `CoreSetup.init()` is the internal step the provider calls for you — don't call it
+> directly unless you're doing advanced/manual (non-React) setup.
+
 ```typescript
 // app/_layout.tsx (Expo Router)
 import { OptiCoreProvider } from 'opticore-react-native';

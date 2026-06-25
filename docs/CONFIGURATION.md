@@ -352,6 +352,9 @@ export default function App() {
 
 `CoreSetup.init()` validates your config automatically and throws a `ConfigValidationError` if anything is invalid. You can also validate manually.
 
+> In an app you don't call `CoreSetup.init()` yourself — `OptiCoreProvider` calls it
+> for you. This section is for understanding validation / advanced manual setup.
+
 ### Automatic (via init)
 
 ```typescript

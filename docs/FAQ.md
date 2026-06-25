@@ -169,6 +169,8 @@ await StorageManager.getInstance().clearAll();
 
 ## Error Handling
 
+> Full decision tree: [**Error Handling — Which Tool, When**](ERROR_HANDLING.md).
+
 ### When should I use `RenderError` vs `NonRenderError`?
 
 - `RenderError`: a **render-path** failure the user must see — **throw it**, and

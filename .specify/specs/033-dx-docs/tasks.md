@@ -13,38 +13,38 @@ description: 'Task list for spec 033 — Developer-Experience Docs'
 
 ## Phase 1: Setup
 
-- [ ] T001 Create/checkout branch `033-dx-docs` from `main` (ASK before branching; main now carries v2.8.0)
-- [ ] T002 Inventory docs that mention `CoreSetup.init()` and the error idioms (`grep -rn "CoreSetup.init\|Result<\|RenderError\|ApiError" docs/ README.md`)
+- [x] T001 Create/checkout branch `033-dx-docs` from `main` (ASK before branching; main now carries v2.8.0)
+- [x] T002 Inventory docs that mention `CoreSetup.init()` and the error idioms (`grep -rn "CoreSetup.init\|Result<\|RenderError\|ApiError" docs/ README.md`)
 
 ## Phase 2: User Story 1 — Error decision tree (P1)
 
-- [ ] T003 [US1] Write `docs/ERROR_HANDLING.md`: decision tree (Result vs throw RenderError vs ApiError) mapped to the 031 three-outcome model, one worked example per branch (use `api`/`logger` facades)
-- [ ] T004 [US1] Cross-link from `docs/api/ERRORS.md` and `docs/FAQ.md` to `ERROR_HANDLING.md`; verify no contradictions (no "throw NonRenderError")
-- [ ] T005 [US1] Link-check the new/edited pages
+- [x] T003 [US1] Write `docs/ERROR_HANDLING.md`: decision tree (Result vs throw RenderError vs ApiError) mapped to the 031 three-outcome model, one worked example per branch (use `api`/`logger` facades)
+- [x] T004 [US1] Cross-link from `docs/api/ERRORS.md` and `docs/FAQ.md` to `ERROR_HANDLING.md`; verify no contradictions (no "throw NonRenderError")
+- [x] T005 [US1] Link-check the new/edited pages
 
 **Checkpoint**: Single authoritative error-handling page. Commit + push.
 
 ## Phase 3: User Story 2 — Consumer testing guide (P1)
 
-- [ ] T006 [US2] Add a "Testing OptiCore in your app" section to `docs/TESTING.md`: provider + injected adapter doubles; memory-fallback reliance; singleton/adapter reset; logger silencing/asserting
-- [ ] T007 [US2] Ensure patterns mirror the library's own `test/` approach and need no real native modules
-- [ ] T008 [US2] Link-check
+- [x] T006 [US2] Add a "Testing OptiCore in your app" section to `docs/TESTING.md`: provider + injected adapter doubles; memory-fallback reliance; singleton/adapter reset; logger silencing/asserting
+- [x] T007 [US2] Ensure patterns mirror the library's own `test/` approach and need no real native modules
+- [x] T008 [US2] Link-check
 
 **Checkpoint**: App-side testing is documented. Commit + push.
 
 ## Phase 4: User Story 3 — Init clarity (P2)
 
-- [ ] T009 [US3] Add init-clarity callout to README + `docs/QUICK_START.md` (`OptiCoreProvider` = path; `CoreSetup` = internal/advanced)
-- [ ] T010 [US3] Redirect any doc presenting `CoreSetup.init()` as primary app setup to the provider
+- [x] T009 [US3] Add init-clarity callout to README + `docs/QUICK_START.md` (`OptiCoreProvider` = path; `CoreSetup` = internal/advanced)
+- [x] T010 [US3] Redirect any doc presenting `CoreSetup.init()` as primary app setup to the provider
 
 **Checkpoint**: One unambiguous init story. Commit + push.
 
 ## Phase 5: Polish
 
-- [ ] T011 Full read-through for consistency with `ERRORS.md` / CLAUDE.md / 032 facade style; confirm all internal links resolve
-- [ ] T012 Confirm zero source changes (`git diff --stat` shows only docs); run existing suite once to confirm still green (untouched)
-- [ ] T013 Update CLAUDE.md doc index/footer; optional bump to 2.8.1 (docs) or leave for next release
-- [ ] T014 Final commit + push; tag only if a 2.8.1 docs release is chosen. Do NOT open a PR. (ASK before git actions.)
+- [x] T011 Full read-through for consistency with `ERRORS.md` / CLAUDE.md / 032 facade style; confirm all internal links resolve
+- [x] T012 Confirm zero source changes (`git diff --stat` shows only docs); run existing suite once to confirm still green (untouched)
+- [x] T013 Updated README doc index (added ERROR_HANDLING.md) + CLAUDE.md spec list. Chose NO version bump (pure docs — stay 2.8.0, no release noise).
+- [x] T014 Committed + pushed; fast-forwarded main. No tag (docs-only, no version bump). No PR.
 
 ## Dependencies & Execution Order
 

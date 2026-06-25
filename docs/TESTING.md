@@ -18,6 +18,90 @@ npm test -- --testPathPattern=ApiClient  # run matching tests only
 
 ---
 
+## Testing OptiCore in *your* app
+
+You don't need real native modules to test code that uses OptiCore. There are two
+levels: mock the **calls** (fast, most common), or inject **adapters** (when you want
+real storage/connectivity behavior with a double).
+
+### 1. Mock the calls (facades / singletons)
+
+`api`, `storage`, and `logger` delegate to the singletons, so spy on either:
+
+```ts
+import { api } from 'opticore-react-native';
+
+it('renders users', async () => {
+  jest.spyOn(api, 'get').mockResolvedValue({
+    data: [{ id: '1', name: 'Ali' }], status: 200, headers: {}, config: {},
+  } as never);
+
+  render(<UserList />);
+  expect(await screen.findByText('Ali')).toBeTruthy();
+});
+```
+
+> Spying on `ApiClient.getInstance().request` works too — both reach the same place.
+> Silence logs with `jest.spyOn(logger, 'info').mockImplementation(() => {})`.
+
+### 2. No provider? Rely on the in-memory fallback
+
+If a native peer (SecureStore, AsyncStorage, NetInfo) isn't present in the test env,
+OptiCore falls back to an **in-memory adapter** automatically — `storage`, etc. work
+in Jest with no setup. It is not persistent or secure, but it's perfect for tests.
+
+### 3. Inject adapter doubles via the provider (component tests)
+
+For component tests that exercise real storage/connectivity flows, wrap in
+`OptiCoreProvider` and pass `config.adapters`. Omitted adapters auto-resolve (peer →
+memory fallback).
+
+```tsx
+import { OptiCoreProvider } from 'opticore-react-native';
+import type { LocalStorageAdapter } from 'opticore-react-native/adapters';
+
+const memoryLocal = (): LocalStorageAdapter => {
+  const m = new Map<string, string>();
+  return {
+    getItem: async (k) => m.get(k) ?? null,
+    setItem: async (k, v) => void m.set(k, v),
+    removeItem: async (k) => void m.delete(k),
+    // ...implement the rest of the interface as no-ops/Map ops
+  } as LocalStorageAdapter;
+};
+
+const wrapper = ({ children }) => (
+  <OptiCoreProvider config={{ api: { baseURL: 'http://test' }, adapters: { localStorage: memoryLocal() } }}>
+    {children}
+  </OptiCoreProvider>
+);
+
+render(<Screen />, { wrapper });
+```
+
+Adapter keys: `secureStorage`, `localStorage`, `connectivity`, `device`, `clipboard`
+(see [`opticore-react-native/adapters`](api/INFRASTRUCTURE.md)).
+
+### 4. Reset between tests
+
+Singletons persist across tests in a process — reset what you assert on:
+
+```ts
+import { _resetAdapterWarnings } from 'opticore-react-native/adapters';
+
+afterEach(() => {
+  jest.restoreAllMocks();
+  _resetAdapterWarnings();        // re-arm the one-time dev fallback warnings
+  // clear any storage you wrote: await storage.local.clear?.() / remove keys
+});
+```
+
+> **Init guard:** `api.*`/`request()` throw if called before `OptiCoreProvider` (or
+> `CoreSetup.init`) has configured the client. In pure unit tests, either spy on
+> `api`/`request` (level 1) or render under the provider (level 3) so the client is set up.
+
+---
+
 ## Testing API Calls
 
 Mock `axios` at the module level for deterministic tests:

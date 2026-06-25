@@ -151,6 +151,9 @@ export default function RootLayout() {
 ```
 
 > `OptiCoreProvider` initializes all singletons, sets up React Query, wires theming, and handles cleanup — no extra setup needed.
+>
+> **This is the one setup path.** `CoreSetup.init()` is the internal step the provider
+> calls for you; don't call it directly unless you're doing advanced/manual setup.
 
 **Step 2 — Start using the library**
 
@@ -301,7 +304,8 @@ haptics?.trigger('impactLight'); // no-op in Expo Go, real haptics in a dev buil
 | 🏗 **[Infrastructure](docs/api/INFRASTRUCTURE.md)** | ApiClient, Logger, StorageManager, ConnectivityManager, LifecycleManager |
 | 🗄 **[State Management](docs/api/STATE.md)** | AsyncState, BaseStore, CrudStore, StoreFactory, StateObserver |
 | 🪝 **[Hooks](docs/api/HOOKS.md)** | 11 custom hooks — useAsyncState, useDebounce, useKeyboard, useConnectivity & more |
-| ⚠️ **[Error Handling](docs/api/ERRORS.md)** | RenderError, NonRenderError, ApiError, Result\<T,E\>, ErrorBoundary |
+| ⚠️ **[Error Handling — Which Tool, When](docs/ERROR_HANDLING.md)** | Decision tree: `Result` vs throw `RenderError` vs `ApiError` vs `NonRenderError` |
+| ⚠️ **[Error Handling API](docs/api/ERRORS.md)** | RenderError, NonRenderError, ApiError, Result\<T,E\>, ErrorBoundary |
 | 🛠 **[Utilities](docs/api/UTILITIES.md)** | 40+ pure functions — string, number, array, date, object, format, color, platform |
 | 🧭 **[Navigation](docs/api/NAVIGATION.md)** | useRouteHelper, Expo Router integration |
 | 🔁 **[React Query](docs/REACT_QUERY.md)** | createQueryClient, createQueryHook, useApiMutation, createQueryPersister, error-aware retry |

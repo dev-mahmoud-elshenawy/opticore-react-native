@@ -1598,6 +1598,8 @@ Browse `.specify/specs/` for examples of completed specs:
 - `030-transient-retry-handling/` - `ApiError.isRetryable`/`retryAfterMs`, `Retry-After`-aware retry policy, `RequestConfig` contract fix
 - `031-error-system-rn-alignment/` - boundary converges to fallback (no infinite loop), `NonRenderError` repositioned as descriptor/log payload (throwing deprecated → 3.0), three-outcome RN error docs (2.7.0)
 - `032-ergonomic-facades/` - `api`/`storage`/`logger` facades (no `.getInstance()`) + `api` verb sugar over `request()`; root barrel + `/facades` subpath; additive/non-breaking (2.8.0)
+- `033-dx-docs/` - DX docs: error-handling decision tree (`docs/ERROR_HANDLING.md`), consumer testing/mocking guide, init clarity (provider vs CoreSetup). Docs-only, no version bump
+- `034-response-data-convenience/` - DRAFT (needs option decision): additive `api.data.*` unwrapped surface returning `T` instead of `ApiResponse<T>` (would be 2.9.0)
 
 ### Technology Stack
 

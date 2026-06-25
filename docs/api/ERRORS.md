@@ -2,6 +2,8 @@
 
 A complete error system: typed error classes, automatic classification, `Result<T,E>` for functional error handling, and React Error Boundary integration.
 
+> **New here?** Start with [**Error Handling — Which Tool, When**](../ERROR_HANDLING.md) for the decision tree (`Result` vs throw `RenderError` vs `ApiError` vs `NonRenderError`). This page is the API reference for each type.
+
 ### Import
 
 ```typescript
