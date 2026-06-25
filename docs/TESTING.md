@@ -1,6 +1,6 @@
 # Testing Guide
 
-OptiCore maintains **83%+ code coverage** with 604 passing tests across 84 test suites.
+OptiCore maintains **80%+ code coverage** with 744 passing tests across 99 test suites.
 Stack: **Jest** + **React Native Testing Library** + **jest-expo**.
 
 ---

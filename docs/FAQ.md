@@ -102,10 +102,10 @@ const secondaryApi = axios.create({ baseURL: 'https://cdn.example.com' });
 `ApiClient` rejects with an `ApiError` (it extends `RenderError`) carrying the HTTP `status`, `url`, and response `data`. Branch on `status`, and use `toMessage()` for a user-facing message:
 
 ```typescript
-import { ApiClient, HttpMethod, ApiError, toMessage } from 'opticore-react-native';
+import { api, ApiError, toMessage } from 'opticore-react-native';
 
 try {
-  await ApiClient.getInstance().request({ method: HttpMethod.GET, url: '/protected' });
+  await api.get('/protected');
 } catch (e) {
   if (e instanceof ApiError && e.status === 401) {
     redirectToLogin();
