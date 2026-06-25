@@ -14,6 +14,28 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🚧 [Unreleased]
+
+### `api.data.*` — unwrapped response data
+
+Removes the `.data` papercut. Purely additive — no breaking changes. (Spec 034, Option A.) Version bump + tag deferred until the improvement batch is complete.
+
+### ✨ Added
+
+- **`api.data.{get,post,put,patch,delete}`** — the same verbs as `api.*` but resolving to the response **body (`T`)** directly instead of `ApiResponse<T>`:
+  ```ts
+  const users = await api.data.get<User[]>('/users');     // User[]
+  const created = await api.data.post<Created>('/users', body);
+  ```
+  Signatures match `api.*` (`get/delete(url, cfg?)`, `post/put/patch(url, data?, cfg?)`); `T` defaults to `unknown`.
+
+### 🧩 Notes
+
+- `api.get/post/...` and `api.request` are **unchanged** — they still return `ApiResponse<T>` (use them when you need `status`/`headers`). Pick `api.data.*` when you just want the payload.
+- `api.data.*` forwards identical `request()` args to its `api.*` counterpart (parity) and stays lazy/side-effect-free on import. Errors propagate identically; unwrapping only touches the success path.
+
+---
+
 ## 🌟 [2.8.0] — Ergonomic facades + verb sugar
 
 Removes call-site friction. Purely additive — no breaking changes, no deprecations. (Spec 032.)

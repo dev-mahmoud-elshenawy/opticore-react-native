@@ -25,6 +25,9 @@ await api.patch<User>('/users/1', partial);
 await api.delete('/users/1');
 await api.request({ method: HttpMethod.GET, url: '/raw' }); // full-control passthrough
 
+// api.data.* — same verbs, but resolve to the payload (T) instead of ApiResponse<T>:
+const users = await api.data.get<User[]>('/users'); // User[] (no .data)
+
 // storage — exposes secure / local (clearAll stays on StorageManager)
 await storage.secure.set('token', t);
 await storage.local.get<User>('user');
@@ -39,7 +42,7 @@ logger.info('ready', { userId: '123' });
 | `storage` | `secure`, `local` | `StorageManager.getInstance()` (`clearAll`, configure) |
 | `logger` | `debug`, `info`, `warn`, `error` | `Logger.getInstance()` (`addTransport`, configure) |
 
-`api` verb signatures: `get(url, cfg?)` / `delete(url, cfg?)`; `post|put|patch(url, data?, cfg?)`, where `cfg = { headers?, params?, signal? }`. All return `Promise<ApiResponse<T>>`.
+`api` verb signatures: `get(url, cfg?)` / `delete(url, cfg?)`; `post|put|patch(url, data?, cfg?)`, where `cfg = { headers?, params?, signal? }`. All return `Promise<ApiResponse<T>>`. **`api.data.*`** has the identical signatures but returns `Promise<T>` (just the response body) — use it when you don't need `status`/`headers`.
 
 ---
 

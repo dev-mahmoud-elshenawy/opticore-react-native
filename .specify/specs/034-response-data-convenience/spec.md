@@ -2,7 +2,7 @@
 
 **Feature Branch**: `034-response-data-convenience`
 **Created**: 2026-06-25
-**Status**: Draft — **NEEDS DECISION** (return-shape approach) before execution
+**Status**: Implemented — **Option A chosen** (`api.data.*`). Code landed; version bump + tag deferred until the improvement batch is complete (will be 2.9.0).
 **Input**: Remove the recurring `.data` papercut from the facade. After spec 032, `api.get<T>()` returns `ApiResponse<T>`, so consumers write `(await api.get<User[]>('/users')).data` constantly. Add an unwrapped variant that returns `T` directly — additively, without splitting the mental model or breaking 032.
 
 ## Context / Problem

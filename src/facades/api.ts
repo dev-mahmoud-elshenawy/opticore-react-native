@@ -6,6 +6,9 @@ import type { ApiResponse } from '../infrastructure/network/ApiResponse';
 /** Per-request options shared by every verb (everything except method/url/data). */
 export type VerbConfig = Omit<RequestConfig, 'method' | 'url' | 'data'>;
 
+/** Resolve a request to just its response body (the `.data`). */
+const unwrapData = <T>(p: Promise<ApiResponse<T>>): Promise<T> => p.then((r) => r.data);
+
 /**
  * Ergonomic facade over the {@link ApiClient} singleton.
  *
@@ -40,4 +43,27 @@ export const api = {
 
   patch: <T = unknown>(url: string, data?: unknown, config?: VerbConfig): Promise<ApiResponse<T>> =>
     ApiClient.getInstance().request<T>({ method: HttpMethod.PATCH, url, data, ...config }),
+
+  /**
+   * Unwrapped variants — return the response body (`T`) directly instead of
+   * `ApiResponse<T>`. Same signatures as the verbs above, minus the wrapper.
+   * `api.data.get<User[]>('/users')` resolves to `User[]`. Errors propagate
+   * identically (the underlying request rejects); unwrapping only touches success.
+   */
+  data: {
+    get: <T = unknown>(url: string, config?: VerbConfig): Promise<T> =>
+      unwrapData(ApiClient.getInstance().request<T>({ method: HttpMethod.GET, url, ...config })),
+
+    delete: <T = unknown>(url: string, config?: VerbConfig): Promise<T> =>
+      unwrapData(ApiClient.getInstance().request<T>({ method: HttpMethod.DELETE, url, ...config })),
+
+    post: <T = unknown>(url: string, data?: unknown, config?: VerbConfig): Promise<T> =>
+      unwrapData(ApiClient.getInstance().request<T>({ method: HttpMethod.POST, url, data, ...config })),
+
+    put: <T = unknown>(url: string, data?: unknown, config?: VerbConfig): Promise<T> =>
+      unwrapData(ApiClient.getInstance().request<T>({ method: HttpMethod.PUT, url, data, ...config })),
+
+    patch: <T = unknown>(url: string, data?: unknown, config?: VerbConfig): Promise<T> =>
+      unwrapData(ApiClient.getInstance().request<T>({ method: HttpMethod.PATCH, url, data, ...config })),
+  },
 } as const;

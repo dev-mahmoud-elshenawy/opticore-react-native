@@ -318,7 +318,7 @@ complete set at the single gate in step 3.
 **Step 1: Numbering**
 
 - List existing specs: `ls .specify/specs/`
-- Use next sequential number (last is `034-*` (033/034 are drafted, pending execution), so the next new spec is `035-`)
+- Use next sequential number (last is `034-*`, so the next new spec is `035-`)
 
 **Step 2: Create Directory**
 
@@ -1599,7 +1599,7 @@ Browse `.specify/specs/` for examples of completed specs:
 - `031-error-system-rn-alignment/` - boundary converges to fallback (no infinite loop), `NonRenderError` repositioned as descriptor/log payload (throwing deprecated → 3.0), three-outcome RN error docs (2.7.0)
 - `032-ergonomic-facades/` - `api`/`storage`/`logger` facades (no `.getInstance()`) + `api` verb sugar over `request()`; root barrel + `/facades` subpath; additive/non-breaking (2.8.0)
 - `033-dx-docs/` - DX docs: error-handling decision tree (`docs/ERROR_HANDLING.md`), consumer testing/mocking guide, init clarity (provider vs CoreSetup). Docs-only, no version bump
-- `034-response-data-convenience/` - DRAFT (needs option decision): additive `api.data.*` unwrapped surface returning `T` instead of `ApiResponse<T>` (would be 2.9.0)
+- `034-response-data-convenience/` - additive `api.data.{get,post,put,patch,delete}` returning `T` (payload) instead of `ApiResponse<T>` (Option A). Implemented; **unreleased** — version bump + tag deferred until the improvement batch is complete (will be 2.9.0)
 
 ### Technology Stack
 

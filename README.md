@@ -164,9 +164,12 @@ import { api, storage, logger } from 'opticore-react-native';
 import { useAsyncState } from 'opticore-react-native/hooks';
 
 // HTTP — verb sugar; auth token injected automatically. `T` is per-call:
-const { data } = await api.get<User[]>('/users');        // array
+const { data } = await api.get<User[]>('/users');        // ApiResponse<User[]>
 const me = await api.get<User>('/users/me');             // object
 await api.post<Created>('/users', { name: 'Ali' });      // body + different result type
+
+// Just want the payload? Use api.data.* (returns T, no .data unwrap):
+const users = await api.data.get<User[]>('/users');      // User[]
 
 // Storage — automatic JSON serialization
 await storage.local.set('user', { id: 1, name: 'Ali' });

@@ -77,6 +77,9 @@ export default function RootLayout() {
 > sugar — no `.getInstance()`, no `HttpMethod` enum. The type parameter is per-call
 > (`User[]`, `User`, a paginated wrapper, anything) and defaults to `unknown`. The
 > singletons + enum-based `request()` remain available for advanced use.
+>
+> Just want the payload (no `.data`)? Use `api.data.get<User[]>('/users')` → `User[]`.
+> Use `api.get` when you need `status`/`headers`.
 
 ```typescript
 import { api } from 'opticore-react-native';
