@@ -11,13 +11,12 @@ Execute this workflow at the start of any new Specification or Phase.
   - `view_file .specify/specs/[ID]-[NAME]/plan.md`
   - `view_file .specify/specs/[ID]-[NAME]/tasks.md`
 
-# 2. Implementation Loop (Repeat for each Task)
-- [ ] Select a task from `.specify/specs/[ID]-[NAME]/tasks.md`.
+# 2. Implementation Loop (Repeat for each Task — one task at a time)
+- [ ] Select the NEXT task from `.specify/specs/[ID]-[NAME]/tasks.md`.
 - [ ] **Implement**: Write tests (TDD) and implementation code.
 - [ ] **Verify**: Run `npm test` and `npm run type-check`.
-- [ ] **Update Tasks**:
-  - Mark the task as `[x]` in `.specify/specs/[ID]-[NAME]/tasks.md`.
-  - Update any `task.md` artifacts to match.
+- [ ] **Mark done FIRST**: Immediately mark the task `[x]` in `.specify/specs/[ID]-[NAME]/tasks.md` BEFORE starting the next task. Never batch-mark at the end. Update any `task.md` artifacts to match.
+- [ ] Only then continue to the next task.
 
 # 3. Phase Checkpoint (After Completing a Group/Phase)
 - [ ] Confirm all tasks in the current Phase are marked `[x]`.

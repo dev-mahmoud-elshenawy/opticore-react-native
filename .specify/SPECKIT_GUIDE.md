@@ -252,34 +252,22 @@ Next: What feature would you like to specify first?
 **Every time user starts new feature:**
 
 ```
-1. Run /speckit.specify
-   → Focus on WHAT and WHY (not HOW)
-   → Define requirements clearly
-   → Set success criteria
-   → Present to user for approval
+1. Generate spec + plan + tasks in ONE pass (no gate between them)
+   → /speckit.specify  — WHAT and WHY: requirements, success criteria
+   → /speckit.plan     — HOW: architecture, tech choices with rationale
+   → /speckit.tasks    — <30 min tasks, grouped into phases, clear acceptance criteria
+   → Use /speckit.clarify for ambiguities before presenting
 
-2. WAIT for approval
-   → Never proceed without explicit approval
-   → Address all questions first
+2. ONE approval gate
+   → Present the COMPLETE set (spec + plan + tasks) to the user together
+   → WAIT for a single explicit approval
+   → Address all questions first; never write code before approval
 
-3. Run /speckit.plan
-   → Focus on HOW to build
-   → Architecture decisions
-   → Technology choices with rationale
-   → Present to user for approval
-
-4. WAIT for approval
-
-5. Run /speckit.tasks
-   → Break into <30 min tasks
-   → Define clear acceptance criteria
-   → Present to user
-
-6. Run /speckit.implement
+3. Run /speckit.implement
    → Follow TDD (tests before implementation)
-   → Commit with spec references
-   → Run quality gates after each task
-   → Update progress in tasks.md
+   → Work tasks in order, phase by phase
+   → After EACH task/phase: mark it [x] in tasks.md FIRST, then start the next (never batch at the end)
+   → Run quality gates after each task; commit with spec references
 ```
 
 ### Before ANY Code Change
@@ -1085,10 +1073,10 @@ your-project/
 
 **Compliance**:
 
-- ✅ Specification written and approved first
-- ✅ Plan created only after spec approval
-- ✅ Tasks created only after plan approval
-- ✅ Implementation only after tasks defined
+- ✅ Spec + plan + tasks generated together in one pass
+- ✅ ONE approval gate on the complete set before any code
+- ✅ Implementation only after the set is approved
+- ✅ Each task marked `[x]` in tasks.md before the next is started
 - ❌ Skipping workflow steps
 - ❌ Coding before specification
 
@@ -2690,14 +2678,14 @@ vim .specify/specs/003-feature/spec.md  # From scratch
 
 ---
 
-### 5. Approval Before Planning
+### 5. One Approval Gate for the Whole Set
 
-Never create plan until spec approved.
+Generate spec + plan + tasks together, then get a single approval before code.
 
 ```
-SPEC (DRAFT) → Review → Approval
+SPEC + PLAN + TASKS (one pass) → Review → ONE Approval
    ↓ (approved)
-PLAN
+IMPLEMENT  (mark each task [x] before starting the next)
 ```
 
 ---

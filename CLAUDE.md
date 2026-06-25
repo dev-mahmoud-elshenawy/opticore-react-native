@@ -264,7 +264,7 @@ The constitution is the **supreme authority** for this project and defines:
 ### The Mandatory Workflow Order
 
 ```
-Constitution → Specify → Plan → Tasks → Implement → Verify
+Constitution → (Specify + Plan + Tasks, one pass) → Approve (ONE gate) → Implement → Verify
 ```
 
 #### 1. Constitution (Already Exists)
@@ -274,36 +274,33 @@ Constitution → Specify → Plan → Tasks → Implement → Verify
 - Understand project principles and constraints
 - Verify your proposed change aligns with constitutional principles
 
-#### 2. Specify (REQUIRED for ALL changes)
+#### 2. Specify + Plan + Tasks — Generate ALL THREE in one pass (REQUIRED for ALL changes)
 
-- Create specification in `.specify/specs/[NNN]-[feature-name]/spec.md`
-- Use template: [.specify/templates/spec-template.md](.specify/templates/spec-template.md)
-- Define WHAT to build (user scenarios, requirements, success criteria)
-- Use `/speckit.clarify` to resolve ambiguities
-- **WAIT for user approval before proceeding**
+Generate all three artifacts together. Do NOT pause between them — the user reviews the
+complete set at the single gate in step 3.
 
-#### 3. Plan (REQUIRED for ALL changes)
+- **spec.md** — `.specify/specs/[NNN]-[feature-name]/spec.md` (template: [spec-template.md](.specify/templates/spec-template.md))
+  WHAT to build: user scenarios, requirements, success criteria.
+- **plan.md** — `.specify/specs/[NNN]-[feature-name]/plan.md` (template: [plan-template.md](.specify/templates/plan-template.md))
+  HOW to build: technical approach, architecture, file structure, test strategy, migration plan.
+- **tasks.md** — `.specify/specs/[NNN]-[feature-name]/tasks.md` (template: [tasks-template.md](.specify/templates/tasks-template.md))
+  Actionable checklist grouped into phases; each task < 30 minutes.
+- Use `/speckit.clarify` to resolve ambiguities before presenting.
 
-- Create plan in `.specify/specs/[NNN]-[feature-name]/plan.md`
-- Use template: [.specify/templates/plan-template.md](.specify/templates/plan-template.md)
-- Define HOW to build (technical approach, architecture, file structure)
-- Include test strategy and migration plan if needed
+#### 3. ONE Approval Gate (REQUIRED)
 
-#### 4. Tasks (REQUIRED for ALL changes)
+- Present the complete set (spec + plan + tasks) to the user **together**.
+- **WAIT for a single approval before writing ANY code.**
+- Do NOT proceed to implementation without explicit approval.
 
-- Create tasks in `.specify/specs/[NNN]-[feature-name]/tasks.md`
-- Use template: [.specify/templates/tasks-template.md](.specify/templates/tasks-template.md)
-- Break plan into actionable checklist items
-- Each task should be < 30 minutes of work
+#### 4. Implement (Code Execution)
 
-#### 5. Implement (Code Execution)
+- Follow Test-Driven Development (TDD): tests FIRST, then implementation.
+- Work tasks in order, phase by phase.
+- **After finishing each task/phase, mark it `[x]` in `tasks.md` FIRST — before starting the next task.** Never batch-mark at the end.
+- Adhere to all code standards and quality gates; update documentation as you go.
 
-- Follow Test-Driven Development (TDD)
-- Write tests FIRST, then implementation
-- Adhere to all code standards and quality gates
-- Update documentation as you go
-
-#### 6. Verify (Quality Gates)
+#### 5. Verify (Quality Gates)
 
 - Run all tests: `npm test`
 - Type check: `npm run type-check`
@@ -353,15 +350,20 @@ Include these sections:
 /speckit.clarify
 ```
 
-**Step 6: Submit for Review**
+**Step 6: Immediately create plan.md and tasks.md (same pass — do NOT wait for approval)**
 
-- Present spec to user
-- **WAIT for approval**
-- Do NOT proceed to planning without approval
+- Generate `plan.md` (template: plan-template.md) and `tasks.md` (template: tasks-template.md) for the same spec, right away.
+- All three files exist before the user reviews anything.
+
+**Step 7: Submit the COMPLETE set for Review (ONE gate)**
+
+- Present spec + plan + tasks to the user **together**.
+- **WAIT for a single approval.**
+- Do NOT write code until the set is approved.
 
 ### Creating Plan and Tasks
 
-**After spec approval**, create plan and tasks:
+**In the same pass as the spec (before the single approval gate)**, create plan and tasks:
 
 ```bash
 # Create plan from template
@@ -1486,9 +1488,9 @@ export * from './config';
 
 - [ ] Read constitution.md
 - [ ] Verify task aligns with constitutional principles
-- [ ] Create specification in `.specify/specs/`
-- [ ] Get user approval on spec
-- [ ] Create plan and tasks
+- [ ] Create spec.md + plan.md + tasks.md together (one pass)
+- [ ] Get ONE user approval on the complete set
+- [ ] Implement in order; mark each task `[x]` in tasks.md before starting the next
 - [ ] Set up tests first (TDD)
 
 ### Before Committing ANY Code
