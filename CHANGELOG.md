@@ -20,6 +20,15 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 Removes the `.data` papercut. Purely additive — no breaking changes. (Spec 034, Option A.) Version bump + tag deferred until the improvement batch is complete.
 
+### `opticore-react-native/testing` — official test utilities
+
+New subpath shipping the helpers consumers previously hand-rolled (Spec 035):
+
+- **`createMemoryAdapters(overrides?)`** — a full in-memory `OptiCoreAdapters` bundle (secure/local storage, connectivity, device, clipboard) to pass to `OptiCoreProvider`'s `config.adapters`. Isolated per call; override any single adapter.
+- **`resetOptiCore()`** — async, best-effort cross-test reset (adapter fallback warnings, logger transports, secure + local storage); safe to call even when OptiCore was never configured.
+
+Exposed only via `opticore-react-native/testing` (kept out of the main barrel, so production bundles exclude it). No test-framework imports. Additive, non-breaking.
+
 ### ✨ Added
 
 - **`api.data.{get,post,put,patch,delete}`** — the same verbs as `api.*` but resolving to the response **body (`T`)** directly instead of `ApiResponse<T>`:

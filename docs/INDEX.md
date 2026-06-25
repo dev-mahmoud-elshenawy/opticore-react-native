@@ -46,7 +46,7 @@ Welcome to the complete documentation for **opticore-react-native** — the Type
 
 | Guide | Description |
 |---|---|
-| [**Testing**](./TESTING.md) | Test patterns · Mocks · Coverage · Jest setup |
+| [**Testing**](./TESTING.md) | Test patterns · `createMemoryAdapters` / `resetOptiCore` (via `opticore-react-native/testing`) · Mocks · Jest setup |
 | [**Migration**](./MIGRATION.md) | Migrate from Redux · MobX · plain Axios |
 | [**FAQ**](./FAQ.md) | Common questions and troubleshooting |
 

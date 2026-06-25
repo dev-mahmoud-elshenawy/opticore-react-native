@@ -1600,7 +1600,7 @@ Browse `.specify/specs/` for examples of completed specs:
 - `032-ergonomic-facades/` - `api`/`storage`/`logger` facades (no `.getInstance()`) + `api` verb sugar over `request()`; root barrel + `/facades` subpath; additive/non-breaking (2.8.0)
 - `033-dx-docs/` - DX docs: error-handling decision tree (`docs/ERROR_HANDLING.md`), consumer testing/mocking guide, init clarity (provider vs CoreSetup). Docs-only, no version bump
 - `034-response-data-convenience/` - additive `api.data.{get,post,put,patch,delete}` returning `T` (payload) instead of `ApiResponse<T>` (Option A). Implemented; **unreleased** — version bump + tag deferred until the improvement batch is complete (will be 2.9.0)
-- `035-testing-utilities/` - DRAFT (ready): `opticore-react-native/testing` subpath shipping `createMemoryAdapters()` + `resetOptiCore()` (the helpers spec 033 documented). Additive, subpath-only (out of main barrel)
+- `035-testing-utilities/` - `opticore-react-native/testing` subpath: `createMemoryAdapters()` + `resetOptiCore()` (the helpers spec 033 documented). Additive, subpath-only (out of main barrel). Implemented; **unreleased** (batched into 2.9.0)
 
 ### Technology Stack
 

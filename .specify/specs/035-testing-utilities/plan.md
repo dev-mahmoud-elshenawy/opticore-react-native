@@ -108,10 +108,13 @@ export function createMemoryAdapters(overrides: Partial<OptiCoreAdapters> = {}):
 ```ts
 import { _resetAdapterWarnings } from '../adapters/registry';
 
-export function resetOptiCore(): void {
+export async function resetOptiCore(): Promise<void> {
   try { _resetAdapterWarnings(); } catch { /* unconfigured — ignore */ }
-  // clear in-memory storage + extra logger transports via safe APIs / __resetForTest()
-  // each step guarded so it never throws when OptiCore was not configured
+  try { Logger.getInstance().clearTransports(); } catch { /* ignore */ }
+  try { await StorageManager.getInstance().clearAll(); } catch { /* ignore */ }
+  // async because clearAll() is async; each step guarded so it never throws
+  // when OptiCore was not configured. (Logger.clearTransports already exists —
+  // no __resetForTest() needed.)
 }
 ```
 

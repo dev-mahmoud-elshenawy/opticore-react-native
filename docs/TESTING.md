@@ -53,30 +53,24 @@ in Jest with no setup. It is not persistent or secure, but it's perfect for test
 ### 3. Inject adapter doubles via the provider (component tests)
 
 For component tests that exercise real storage/connectivity flows, wrap in
-`OptiCoreProvider` and pass `config.adapters`. Omitted adapters auto-resolve (peer →
-memory fallback).
+`OptiCoreProvider` and pass `config.adapters`. Use **`createMemoryAdapters()`** from
+`opticore-react-native/testing` — a full in-memory bundle, no native peers, no
+hand-rolling:
 
 ```tsx
 import { OptiCoreProvider } from 'opticore-react-native';
-import type { LocalStorageAdapter } from 'opticore-react-native/adapters';
-
-const memoryLocal = (): LocalStorageAdapter => {
-  const m = new Map<string, string>();
-  return {
-    getItem: async (k) => m.get(k) ?? null,
-    setItem: async (k, v) => void m.set(k, v),
-    removeItem: async (k) => void m.delete(k),
-    // ...implement the rest of the interface as no-ops/Map ops
-  } as LocalStorageAdapter;
-};
+import { createMemoryAdapters } from 'opticore-react-native/testing';
 
 const wrapper = ({ children }) => (
-  <OptiCoreProvider config={{ api: { baseURL: 'http://test' }, adapters: { localStorage: memoryLocal() } }}>
+  <OptiCoreProvider config={{ api: { baseURL: 'http://test' }, adapters: createMemoryAdapters() }}>
     {children}
   </OptiCoreProvider>
 );
 
 render(<Screen />, { wrapper });
+
+// Override just one adapter (the rest stay in-memory):
+createMemoryAdapters({ connectivity: offlineDouble });
 ```
 
 Adapter keys: `secureStorage`, `localStorage`, `connectivity`, `device`, `clipboard`
@@ -84,15 +78,17 @@ Adapter keys: `secureStorage`, `localStorage`, `connectivity`, `device`, `clipbo
 
 ### 4. Reset between tests
 
-Singletons persist across tests in a process — reset what you assert on:
+Singletons persist across tests in a process. Call **`resetOptiCore()`** from
+`opticore-react-native/testing` to clear cross-test state (adapter fallback warnings,
+logger transports, secure + local storage) — it's async and safe even if OptiCore was
+never configured:
 
 ```ts
-import { _resetAdapterWarnings } from 'opticore-react-native/adapters';
+import { resetOptiCore } from 'opticore-react-native/testing';
 
-afterEach(() => {
+afterEach(async () => {
+  await resetOptiCore();
   jest.restoreAllMocks();
-  _resetAdapterWarnings();        // re-arm the one-time dev fallback warnings
-  // clear any storage you wrote: await storage.local.clear?.() / remove keys
 });
 ```
 

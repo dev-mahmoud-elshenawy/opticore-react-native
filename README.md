@@ -34,7 +34,9 @@ OptiCore is a **TypeScript-first**, production-ready infrastructure layer that e
 
 - **Theme Engine** — Dynamic theming with dark mode, spacing, typography & shadows
 
-- **647 Tests Passing** — Battle-tested, production-grade quality
+- **Test-Ready** — Ship-in helpers (`createMemoryAdapters`, `resetOptiCore`) to mock OptiCore in your app's tests — no native modules, no hand-rolling
+
+- **760 Tests Passing** — Battle-tested, production-grade quality
 
 ---
 
@@ -196,6 +198,7 @@ run(() => api.get<User[]>('/users').then(r => r.data));
 | Hooks (`useAsyncState`, …) | `opticore-react-native` (root) or `…/hooks` |
 | Errors (`RenderError`, `Result`, `OptiCoreErrorBoundary`) | `opticore-react-native` (root) or `…/error` |
 | `useRouteHelper`, `NavigationParams` | **`opticore-react-native/navigation` only** (not the root barrel) |
+| `createMemoryAdapters`, `resetOptiCore` (test helpers) | **`opticore-react-native/testing` only** (not the root barrel) |
 | Utilities · forms · theme · offline · state · query | root or the matching subpath |
 
 → **[Full setup guide](docs/QUICK_START.md)** — auth, error handling, offline sync, theming and more.
