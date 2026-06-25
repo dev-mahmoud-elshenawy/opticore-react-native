@@ -39,6 +39,7 @@ const {
   activeMode,      // 'light' | 'dark' (resolved — 'system' maps to actual mode)
   isDark,          // boolean
   isLight,         // boolean
+  isSystem,        // boolean — true when mode === 'system'
   setMode,         // (mode: ThemeMode) => void
   toggleMode,      // () => void
   colors,          // shortcut for theme.colors
@@ -131,17 +132,35 @@ merge last.
 
 ```typescript
 interface Theme {
+  name: string;
+  mode: 'light' | 'dark';
   colors: {
+    // Primary
     primary: string;
+    primaryLight: string;
+    primaryDark: string;
+    // Secondary
     secondary: string;
+    secondaryLight: string;
+    secondaryDark: string;
+    // Backgrounds
     background: string;
     surface: string;
+    card: string;
+    // Text
     text: string;
     textSecondary: string;
-    error: string;
-    success: string;
-    warning: string;
+    textDisabled: string;
+    // Borders
     border: string;
+    divider: string;
+    // Status
+    error: string;
+    warning: string;
+    success: string;
+    info: string;
+    // Extensible — additional keys allowed
+    [key: string]: string;
   };
   typography: {
     fontFamily: string;
@@ -171,15 +190,20 @@ interface Theme {
     xxl: number;  // 48
   };
   borderRadius: {
+    none: number; // 0
     sm: number;   // 4
     md: number;   // 8
-    lg: number;   // 16
-    full: number; // 999
+    lg: number;   // 12
+    xl: number;   // 16
+    full: number; // 9999
   };
   shadows: {
-    sm: object;   // React Native shadow props
-    md: object;
-    lg: object;
+    // Each is a ThemeShadowValue, not a CSS string:
+    // { shadowColor, shadowOffset: { width, height }, shadowOpacity, shadowRadius, elevation }
+    sm: ThemeShadowValue;
+    md: ThemeShadowValue;
+    lg: ThemeShadowValue;
+    [key: string]: ThemeShadowValue;
   };
 }
 ```
@@ -196,56 +220,50 @@ import { lightTheme, darkTheme } from 'opticore-react-native/theme';
 
 | Token | Value |
 |---|---|
-| `primary` | `#007AFF` |
+| `primary` | `#1976D2` |
 | `background` | `#FFFFFF` |
-| `surface` | `#F2F2F7` |
-| `text` | `#000000` |
-| `textSecondary` | `#6E6E73` |
+| `surface` | `#F5F5F5` |
+| `text` | `#212121` |
+| `textSecondary` | `#757575` |
 
 ### darkTheme
 
 | Token | Value |
 |---|---|
-| `primary` | `#0A84FF` |
-| `background` | `#000000` |
-| `surface` | `#1C1C1E` |
+| `primary` | `#90CAF9` |
+| `background` | `#121212` |
+| `surface` | `#1E1E1E` |
 | `text` | `#FFFFFF` |
-| `textSecondary` | `#98989D` |
+| `textSecondary` | `#B0BEC5` |
 
 ---
 
 ## Custom Themes
 
-### createTheme
+There is no `createTheme` helper — build a full `Theme` object (all fields are required:
+`name`, `mode`, `colors`, `spacing`, `typography`, `borderRadius`, `shadows`). The easiest way is
+to spread a built-in theme and override what you need.
 
 ```typescript
-import { createTheme } from 'opticore-react-native/theme';
+import { lightTheme } from 'opticore-react-native/theme';
+import type { Theme } from 'opticore-react-native/theme';
 
-const brandTheme = createTheme({
+const brandTheme: Theme = {
+  ...lightTheme,
+  name: 'brand',
+  mode: 'light',
   colors: {
+    ...lightTheme.colors,
     primary: '#6C63FF',
     secondary: '#FF6584',
-    background: '#FAFAFA',
-    surface: '#FFFFFF',
-    text: '#1A1A2E',
-    textSecondary: '#6B7280',
-    error: '#EF4444',
-    success: '#10B981',
-    warning: '#F59E0B',
-    border: '#E5E7EB',
   },
   // Semantic variants are { fontSize, fontWeight, lineHeight }; override only what you need.
   typography: {
+    ...lightTheme.typography,
     h1: { fontSize: 36, fontWeight: '700', lineHeight: 44 },
     body: { fontSize: 16, fontWeight: '400', lineHeight: 24 },
   },
-  spacing: {
-    xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48,
-  },
-  borderRadius: {
-    sm: 6, md: 12, lg: 20, full: 999,
-  },
-});
+};
 ```
 
 ### Register and Use
@@ -262,9 +280,8 @@ theme: {
 // Register programmatically
 ThemeManager.getInstance().registerTheme('brand', brandTheme);
 
-// Switch to custom theme
-ThemeManager.getInstance().setMode('light'); // must be 'light' or 'dark'
-// Custom themes extend the active mode — register as light or dark variant
+// Activate a registered theme by name
+ThemeManager.getInstance().setTheme('brand');
 ```
 
 ---
@@ -290,7 +307,6 @@ const active = manager.getActiveMode();  // 'light' | 'dark'
 // Change mode
 manager.setMode('dark');
 manager.setMode('system');
-manager.toggleMode();
 
 // Listen to changes
 const unsubscribe = manager.addThemeListener((theme, mode) => {
@@ -298,8 +314,9 @@ const unsubscribe = manager.addThemeListener((theme, mode) => {
 });
 unsubscribe(); // cleanup
 
-// Register custom themes
+// Register / activate custom themes
 manager.registerTheme('brand', brandTheme);
+manager.setTheme('brand');        // activate a registered theme by name
 manager.unregisterTheme('brand');
 ```
 
@@ -347,13 +364,19 @@ const styles = {
 
 ## Color Utilities
 
-```typescript
-import { colorUtils } from 'opticore-react-native/theme';
+These are individual named exports (there is no `colorUtils` object):
 
-colorUtils.hexToRgb('#6C63FF');           // { r: 108, g: 99, b: 255 }
-colorUtils.rgbToHex(108, 99, 255);        // '#6c63ff'
-colorUtils.lighten('#6C63FF', 0.2);       // lighter shade
-colorUtils.darken('#6C63FF', 0.2);        // darker shade
+```typescript
+import {
+  hexToRgb, rgbToHex, lighten, darken, alpha, contrast,
+} from 'opticore-react-native/theme';
+
+hexToRgb('#6C63FF');           // { r: 108, g: 99, b: 255 }
+rgbToHex(108, 99, 255);        // '#6c63ff'
+lighten('#6C63FF', 0.2);       // lighter shade
+darken('#6C63FF', 0.2);        // darker shade
+alpha('#6C63FF', 0.5);         // 'rgba(108, 99, 255, 0.5)'
+contrast('#6C63FF');           // 'light' | 'dark' — best text color for this background (WCAG)
 ```
 
 ---

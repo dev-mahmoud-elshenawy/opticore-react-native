@@ -217,6 +217,43 @@ describe('Interceptors', () => {
       }
     });
 
+    it('should parse Retry-After header from the response into retryAfterMs', async () => {
+      const error = {
+        isAxiosError: true,
+        response: {
+          status: 429,
+          data: { message: 'Too Many Requests' },
+          headers: { 'retry-after': '2' },
+        },
+        config: { url: '/api/rate-limited' },
+        message: 'Request failed',
+      };
+
+      try {
+        await errorInterceptor.onError(error);
+      } catch (e) {
+        expect((e as ApiError).retryAfterMs).toBe(2000);
+        expect((e as ApiError).isRetryable).toBe(true);
+        expect((e as ApiError).isActionable).toBe(false);
+      }
+    });
+
+    it('should leave retryAfterMs undefined when the header is absent', async () => {
+      const error = {
+        isAxiosError: true,
+        response: { status: 503, data: { message: 'Service Unavailable' } },
+        config: { url: '/api/down' },
+        message: 'Request failed',
+      };
+
+      try {
+        await errorInterceptor.onError(error);
+      } catch (e) {
+        expect((e as ApiError).retryAfterMs).toBeUndefined();
+        expect((e as ApiError).isRetryable).toBe(true);
+      }
+    });
+
     it('should set isActionable for client errors', async () => {
       const clientError = {
         isAxiosError: true,

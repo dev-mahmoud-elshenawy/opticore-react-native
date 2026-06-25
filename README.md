@@ -5,7 +5,7 @@
 OptiCore is a **TypeScript-first**, production-ready infrastructure layer that eliminates boilerplate and accelerates development. One library. Every layer covered.
 
 [![npm version](https://img.shields.io/npm/v/opticore-react-native?color=blue&label=npm)](https://www.npmjs.com/package/opticore-react-native)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-3178C6)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6)](https://www.typescriptlang.org/)
 [![React Native](https://img.shields.io/badge/React%20Native-0.78+-61DAFB)](https://reactnative.dev/)
 [![Tests](https://img.shields.io/badge/Tests-647%20passing-brightgreen)](docs/TESTING.md)
 [![Coverage](https://img.shields.io/badge/Coverage-89%25+-brightgreen)](docs/TESTING.md)

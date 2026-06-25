@@ -123,8 +123,10 @@ React context providers that wire up the entire library with a single component.
 Custom React hooks that bridge infrastructure services with React components. 11 hooks covering async state, device state, and performance.
 
 ```typescript
-// Async state management
-const { data, isLoading, error, run } = useAsyncState(fetchUsers);
+// Async state management — useAsyncState takes initial data (not a function);
+// pass a promise to run() to track it.
+const { data, isLoading, error, run } = useAsyncState<User[]>();
+run(fetchUsers()); // run accepts a Promise<T>
 
 // Device sensors
 const { isConnected } = useConnectivity();
@@ -162,7 +164,7 @@ utils/
 
 ```
 Component
-  └─► useAsyncState(fetchUsers)           ← Hook manages loading/error state
+  └─► run(fetchUsers())                   ← useAsyncState tracks the promise (loading/error)
         └─► ApiClient.getInstance().request() ← Singleton HTTP client
               ├─► Request Interceptor     ← Attaches auth token
               ├─► HTTP Request → Server
@@ -322,12 +324,14 @@ coreSetup.init({
 ### Custom Theme
 
 ```typescript
-import { createTheme } from 'opticore-react-native/theme';
+import { ThemeManager, lightTheme } from 'opticore-react-native/theme';
 
-const brandTheme = createTheme({
-  colors: { primary: '#6C63FF', background: '#FAFAFA' },
-  typography: { body: 16, h1: 32 },
-});
+// There is no `createTheme` helper — build a full Theme by spreading a built-in
+// one and overriding the tokens you want (registerTheme expects a complete Theme).
+const brandTheme = {
+  ...lightTheme,
+  colors: { ...lightTheme.colors, primary: '#6C63FF', background: '#FAFAFA' },
+};
 
 ThemeManager.getInstance().registerTheme('brand', brandTheme);
 ```

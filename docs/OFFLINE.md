@@ -42,9 +42,9 @@ const {
   isOnline,       // boolean — current connectivity
   isSyncing,      // boolean — sync in progress
   pendingCount,   // number — queued requests awaiting sync
-  enqueue,        // (request) => Promise<void>
-  sync,           // () => Promise<void>
-  remove,         // (id: string) => void
+  enqueue,        // (request) => Promise<string> — resolves with the queued request id
+  sync,           // () => Promise<SyncResult>
+  remove,         // (id: string) => boolean
   clearQueue,     // () => void
 } = useOfflineSync();
 ```
@@ -76,16 +76,21 @@ await enqueue({
 
 ```typescript
 interface QueuedRequest<T = unknown> {
-  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  id?: string;                              // auto-generated if omitted
+  method: HttpMethod;                       // enum from 'opticore-react-native'
   url: string;
   data?: T;
   headers?: Record<string, string>;
   priority?: 'low' | 'normal' | 'high';   // default: 'normal'
-  maxRetries?: number;                      // overrides global config
-  retryDelay?: number;                      // ms between retries
-  conflictStrategy?: 'client-wins' | 'server-wins' | 'manual';
+  maxRetries?: number;                      // overrides global config for this request
+  retryCount?: number;                      // current attempt count (managed internally)
+  createdAt?: number;                       // timestamp (managed internally)
+  lastAttempt?: number;                     // timestamp of last sync attempt
 }
 ```
+
+`retryDelay` and `conflictStrategy` are **global** options on `OfflineSyncConfig` (see
+Configuration Reference) — they are not per-request fields on `QueuedRequest`.
 
 Priority order during sync: `high` → `normal` → `low`
 
@@ -99,19 +104,14 @@ Priority order during sync: `high` → `normal` → `low`
 | `client-wins` | Local queued data takes precedence, retries with client data |
 | `manual` | Custom conflict handler — you decide the resolution |
 
-Set globally:
-```typescript
-offline: { conflictStrategy: 'server-wins' }
-```
+The conflict strategy is a **global** setting (`OfflineSyncConfig.conflictStrategy`); it is
+not overridable per request. The default is `server-wins`.
 
-Override per request:
+Set globally using the `ConflictStrategy` constant (recommended) or the raw string value:
 ```typescript
-await enqueue({
-  method: 'PUT',
-  url: '/profile',
-  data: profileData,
-  conflictStrategy: 'client-wins',  // this request uses client-wins
-});
+import { ConflictStrategy } from 'opticore-react-native/offline';
+
+offline: { conflictStrategy: ConflictStrategy.SERVER_WINS }  // or 'server-wins'
 ```
 
 Custom manual handler:

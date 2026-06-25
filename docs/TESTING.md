@@ -36,33 +36,43 @@ jest.mock('axios', () => ({
   })),
 }));
 
+import { ApiClient, HttpMethod } from 'opticore-react-native';
+
 describe('UserService', () => {
   let api: ApiClient;
 
   beforeEach(() => {
     api = ApiClient.getInstance();
+    // request() throws if not initialized — configure once for the suite.
+    api.configure({ baseURL: 'https://test.api.com' });
     jest.clearAllMocks();
   });
 
   it('fetches users successfully', async () => {
+    // The underlying axios instance is exposed as the public `client` field.
+    // request({ method: GET }) delegates to client.get(url, axiosConfig).
     const mockGet = jest.fn().mockResolvedValue({
       data: [{ id: '1', name: 'Alice' }],
       status: 200,
+      headers: {},
+      config: {},
     });
-    (api as any).axiosInstance.get = mockGet;
+    api.client.get = mockGet;
 
-    const { data } = await api.get<User[]>('/users');
+    const { data } = await api.request<User[]>({ method: HttpMethod.GET, url: '/users' });
 
-    expect(mockGet).toHaveBeenCalledWith('/users', undefined);
+    expect(mockGet).toHaveBeenCalledWith('/users', expect.any(Object));
     expect(data).toHaveLength(1);
     expect(data[0].name).toBe('Alice');
   });
 
   it('handles HTTP errors', async () => {
     const mockGet = jest.fn().mockRejectedValue({ response: { status: 404 } });
-    (api as any).axiosInstance.get = mockGet;
+    api.client.get = mockGet;
 
-    await expect(api.get('/users/999')).rejects.toThrow();
+    await expect(
+      api.request({ method: HttpMethod.GET, url: '/users/999' })
+    ).rejects.toThrow();
   });
 });
 ```
@@ -91,9 +101,12 @@ function renderWithProviders(component: React.ReactElement) {
 
 describe('UserList', () => {
   it('displays users after fetch', async () => {
-    // Mock the API
-    jest.spyOn(ApiClient.getInstance(), 'get').mockResolvedValue({
+    // Mock the API — request() is the public entry point.
+    jest.spyOn(ApiClient.getInstance(), 'request').mockResolvedValue({
       data: [{ id: '1', name: 'Alice' }],
+      status: 200,
+      headers: {},
+      config: {},
     });
 
     const { getByText } = renderWithProviders(<UserList />);
@@ -117,30 +130,31 @@ describe('useAsyncState', () => {
   it('starts in idle state', () => {
     const { result } = renderHook(() => useAsyncState<string>());
 
-    expect(result.current.data).toBeUndefined();
+    expect(result.current.data).toBeNull();
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeNull();
   });
 
   it('transitions through loading to success', async () => {
-    const mockFn = jest.fn().mockResolvedValue('hello');
+    // run() takes a Promise<T>, not a function — pass the promise itself.
     const { result } = renderHook(() => useAsyncState<string>());
 
-    act(() => { result.current.run(mockFn); });
+    let pending: Promise<void>;
+    act(() => { pending = result.current.run(Promise.resolve('hello')); });
     expect(result.current.isLoading).toBe(true);
 
-    await act(async () => { await mockFn(); });
+    await act(async () => { await pending; });
     expect(result.current.data).toBe('hello');
     expect(result.current.isLoading).toBe(false);
   });
 
   it('captures errors', async () => {
     const error = new Error('Network failed');
-    const mockFn = jest.fn().mockRejectedValue(error);
     const { result } = renderHook(() => useAsyncState<string>());
 
+    // run() never rejects — it captures the error into state.
     await act(async () => {
-      await result.current.run(mockFn).catch(() => {});
+      await result.current.run(Promise.reject(error));
     });
 
     expect(result.current.error).toBe(error);

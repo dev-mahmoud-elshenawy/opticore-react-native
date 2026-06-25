@@ -14,6 +14,29 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🚧 [Unreleased]
+
+## 🛠 [2.6.0] — Transient retry handling + consumer fixes
+
+### ⚠️ Behavior change
+
+- **`408`/`429` are no longer `isActionable`.** They're transient (rate limiting, timeouts), not the caller's fault. If you branched on `isActionable` specifically for these statuses, check `status` directly instead.
+
+### 🐞 Fixed
+
+- **`429`/`503`/`408`/network failures now retry automatically**, honoring a server's `Retry-After` header when present (else exponential backoff, capped 30s). `ApiError` gains `isRetryable` and `retryAfterMs`; `createQueryClient`'s retry policy reads `isRetryable` instead of `isActionable`. `400/401/403/404/409/422` still fail immediately with zero retries.
+- **Importing the library is now side-effect-free** — no longer eagerly evaluates React Native's `StyleSheet`/native modules on import (e.g. `ApiClient`, `buildUrl`), fixing crashes under Jest/SSR or non-UI imports.
+
+### 🔧 Changed
+
+- **`RequestConfig` now matches the real `ApiClient.request()` contract**: `method`/`url` required, body field renamed `body` → `data`, `params` typed as `QueryParamValue`, `signal` included; unused fields (`timeout`, `withCredentials`, `responseType`, upload/download progress) removed.
+
+### 📝 Docs
+
+- Documented `request({ url, params })` for query parameters, with `buildUrl` for building URL strings outside a request; documented `ApiError.isRetryable`/`retryAfterMs` and the `createQueryClient` retry policy.
+
+---
+
 ## 🛠 [2.5.0] — Core hardening (round 2)
 
 Another reliability pass from a full core review. Mostly fixes that remove sharp edges; one behavior change to call out below.

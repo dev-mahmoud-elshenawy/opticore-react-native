@@ -16,7 +16,7 @@ You can. OptiCore wires them all together with:
 - Error classification (user-visible vs silent)
 - Pluggable log transports (Sentry, remote, etc.)
 - Offline request queue with auto-sync
-- 604 tests and 83%+ coverage — you don't have to write that
+- 700+ tests, 80%+ coverage — you don't have to write that
 
 ### Does it support Expo and bare React Native?
 
@@ -33,8 +33,10 @@ iOS and Android are fully supported. **SecureStore does not work on web** — us
 ### What peer dependencies do I need?
 
 ```bash
-npx install-peerdeps opticore-react-native
+npx opticore-install-peers
 ```
+
+**Required peers** (consumer-provided): `react`, `react-native`, `expo`, `expo-router`, and `@tanstack/react-query`. **Optional native peers** (auto-detected via adapters, fall back to in-memory if missing): `expo-secure-store`, `@react-native-async-storage/async-storage`, `@react-native-community/netinfo`, `expo-device`, `@react-native-clipboard/clipboard`.
 
 ### Do I need to call `coreSetup.init()` manually?
 
@@ -97,19 +99,23 @@ const secondaryApi = axios.create({ baseURL: 'https://cdn.example.com' });
 
 ### What happens when a request fails?
 
-`ApiClient` throws an `ApiError` with `status`, `url`, and `data` properties. You can catch it anywhere:
+`ApiClient` rejects with an `ApiError` (it extends `RenderError`) carrying the HTTP `status`, `url`, and response `data`. Branch on `status`, and use `toMessage()` for a user-facing message:
 
 ```typescript
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { ApiClient, HttpMethod, ApiError, toMessage } from 'opticore-react-native';
 
 try {
   await ApiClient.getInstance().request({ method: HttpMethod.GET, url: '/protected' });
 } catch (e) {
   if (e instanceof ApiError && e.status === 401) {
     redirectToLogin();
+  } else {
+    toast(toMessage(e)); // friendly message from RenderError.userMessage, with a safe fallback
   }
 }
 ```
+
+> A network failure or aborted request surfaces as `ApiError` with `status === -1`.
 
 ---
 
@@ -246,8 +252,8 @@ username: z.string().refine(
 Yes — masks are pure functions:
 
 ```typescript
-import { phoneMask } from 'opticore-react-native/forms';
-const formatted = phoneMask.apply('5551234567'); // '(555) 123-4567'
+import { applyPhoneMask } from 'opticore-react-native/forms';
+const formatted = applyPhoneMask('5551234567'); // '(555) 123-4567'
 ```
 
 ---

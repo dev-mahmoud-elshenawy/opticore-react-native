@@ -7,17 +7,25 @@ This package provides a comprehensive set of TypeScript definitions to ensure ty
 Standardized types for API interactions ensure consistent response handling.
 
 ```typescript
+import { ApiClient, HttpMethod } from 'opticore-react-native';
 import type { ApiResponse, ApiError, PaginatedResponse } from 'opticore-react-native';
 
-// Standard Response
-const response: ApiResponse<User> = await api.get('/user');
-if (response.success && response.data) {
-  console.log(response.data.name);
-}
+// Standard Response — request() resolves with ApiResponse<T> ({ data, status, headers, config }).
+// Non-2xx responses reject with an ApiError, so reaching here means success.
+const response: ApiResponse<User> = await ApiClient.getInstance().request<User>({
+  method: HttpMethod.GET,
+  url: '/user',
+});
+console.log(response.data.name);
 
 // Paginated Response
-const list: PaginatedResponse<Product> = await api.get('/products');
-console.log(`Page ${list.pagination.page} of ${list.pagination.totalPages}`);
+const list: ApiResponse<PaginatedResponse<Product>> = await ApiClient.getInstance().request<
+  PaginatedResponse<Product>
+>({
+  method: HttpMethod.GET,
+  url: '/products',
+});
+console.log(`Page ${list.data.pagination.page} of ${list.data.pagination.totalPages}`);
 ```
 
 ### ApiResult\<T\>

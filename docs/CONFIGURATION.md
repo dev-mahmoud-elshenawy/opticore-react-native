@@ -37,6 +37,7 @@ coreSetup.init({
 ```typescript
 interface CoreConfig {
   api: ApiConfig;                                    // Required
+  query?: QueryClientConfig;                         // React Query options, merged onto defaults
   logger?: CoreLoggerConfig;
   theme?: CoreThemeConfig;
   offline?: OfflineSyncConfig;
@@ -44,7 +45,8 @@ interface CoreConfig {
   forms?: FormsConfig;
   errorClassification?: ErrorClassificationConfig;
   features?: FeaturesConfig;
-  onError?: (error: unknown) => void;
+  onError?: ErrorHandler;                            // (error: unknown) => void
+  adapters?: OptiCoreAdapters;                       // Override native module adapters
 }
 ```
 
@@ -57,7 +59,7 @@ interface ApiConfig {
   baseURL: string;
   timeout?: number;                                  // default: 30000 ms
   headers?: Record<string, string>;
-  getAuthToken?: () => Promise<string | null>;
+  getAuthToken?: () => string | null | Promise<string | null>;
   onTokenRefresh?: () => Promise<string | null>;
   authStrategy?: AuthStrategy;
 }
@@ -68,7 +70,7 @@ interface ApiConfig {
 | `baseURL` | `string` | — | Base URL for all requests |
 | `timeout` | `number` | `30000` | Request timeout in milliseconds |
 | `headers` | `object` | `{}` | Default headers on every request |
-| `getAuthToken` | `() => Promise<string \| null>` | — | Called before each request to get the current auth token |
+| `getAuthToken` | `() => string \| null \| Promise<string \| null>` | — | Called before each request to get the current auth token |
 | `onTokenRefresh` | `() => Promise<string \| null>` | — | Called on 401 to refresh the token, then retries the original request |
 | `authStrategy` | `AuthStrategy` | `NoAuthStrategy` | Auth strategy instance — overrides `getAuthToken`/`onTokenRefresh` |
 
@@ -191,7 +193,6 @@ interface ResponsiveConfig {
     small?: number;     // default: 360
     medium?: number;    // default: 768
     large?: number;     // default: 1024
-    xlarge?: number;    // default: 1280
   };
 }
 ```
@@ -212,9 +213,9 @@ responsive: {
 
 ```typescript
 interface FormsConfig {
-  defaultPhoneFormat?: 'US' | 'International';  // default: 'US'
-  defaultCurrencySymbol?: string;               // default: '$'
-  defaultCurrencyDecimals?: number;             // default: 2
+  defaultPhoneFormat?: string;                  // default format pattern for phone numbers
+  defaultCurrency?: string;                     // default currency code
+  customCardPatterns?: Record<string, RegExp>;  // custom credit-card validation patterns
 }
 ```
 
@@ -222,37 +223,33 @@ interface FormsConfig {
 
 ## `errorClassification` — Optional
 
-Add custom rules to the error classifier.
-
 ```typescript
 interface ErrorClassificationConfig {
   customRules?: ErrorClassificationRule[];
 }
 
+// The legacy, parameter-based rule interface (this is the type `customRules` accepts):
 interface ErrorClassificationRule {
-  name: string;
-  match: (error: unknown) => boolean;
-  type: ErrorType;
-  factory?: (error: unknown) => BaseError;
+  classify: (error: unknown) => ErrorType | undefined | null;
 }
 ```
 
+> **Recommended:** register rules directly on `ErrorClassifier` instead of through config.
+> The preferred rule shape is `ClassificationRule` (`{ name, match, type }`), registered via
+> `ErrorClassifier.addRule(...)`. Custom rules run before the built-in defaults (LIFO — last
+> added wins).
+
 ```typescript
-errorClassification: {
-  customRules: [
-    {
-      name: 'payment-decline',
-      match: (e) => (e as any)?.code === 'PAYMENT_DECLINED',
-      type: ErrorType.RENDER,
-      factory: (e) => new RenderError('Payment was declined', { severity: 'warning' }),
-    },
-    {
-      name: 'analytics-failure',
-      match: (e) => (e as any)?.service === 'analytics',
-      type: ErrorType.NON_RENDER,
-    },
-  ],
-}
+import { ErrorClassifier, ErrorType } from 'opticore-react-native';
+
+// Treat 429 as a background (non-render) error instead of the default RENDER
+ErrorClassifier.addRule({
+  name: 'rate-limit',
+  match: (error) => (error as { status?: number })?.status === 429,
+  type: ErrorType.NON_RENDER,
+});
+
+// ErrorType values: ErrorType.RENDER | ErrorType.NON_RENDER | ErrorType.NONE
 ```
 
 ---

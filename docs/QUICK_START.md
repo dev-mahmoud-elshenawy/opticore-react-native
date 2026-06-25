@@ -7,8 +7,9 @@ Get OptiCore fully integrated into your React Native or Expo app in under 10 min
 ## Prerequisites
 
 - Node.js 18+
-- React Native 0.78+ or Expo SDK 54+
-- TypeScript 5+
+- Expo SDK 54+ (or React Native 0.78+) with React 19+
+- `expo-router` 4+ (from your normal Expo setup) and `@tanstack/react-query` 5+ — required peers (the install CLI in Step 1 adds React Query for you)
+- TypeScript 5+ — *optional*; OptiCore ships its own type definitions, so JS-only apps work without it
 
 ---
 
@@ -22,9 +23,15 @@ yarn add opticore-react-native
 
 ### Install peer dependencies
 
+OptiCore ships a CLI that installs the adapter-backed native peers (secure-store, async-storage,
+netinfo, …) and required JS peers at versions aligned to your Expo SDK:
+
 ```bash
-npx install-peerdeps opticore-react-native
+npx opticore-install-peers
 ```
+
+> This does **not** install `react`, `react-native`, `expo`, or `expo-router` — your app already
+> provides those. Pass `--optional` to also add the optional native peers (clipboard, device info).
 
 ---
 

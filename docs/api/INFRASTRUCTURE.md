@@ -22,36 +22,51 @@ Returns the singleton instance. Must be called after `OptiCoreProvider` mounts o
 const api = ApiClient.getInstance();
 ```
 
+> **`request()` fails fast.** Calling `request()` before the client has been configured
+> (via `OptiCoreProvider`, `CoreSetup.getInstance().init(config)`, or
+> `ApiClient.getInstance().configure(config)`) **throws** an error rather than silently
+> sending a request with no `baseURL`/auth. Use `api.isInitialized()` to guard imperative
+> call sites:
+>
+> ```typescript
+> if (api.isInitialized()) {
+>   await api.request({ method: HttpMethod.GET, url: '/users' });
+> }
+> ```
+
 ---
 
-### HTTP Methods
+### Making Requests
 
-All methods return `Promise<AxiosResponse<T>>`.
+The single public method is `request<T>(config: RequestConfig): Promise<ApiResponse<T>>`.
+The HTTP verb is selected with the `HttpMethod` enum — there are no public `get`/`post`/
+`put`/`patch`/`delete` methods.
 
 ```typescript
+import { ApiClient, HttpMethod } from 'opticore-react-native';
+
+const api = ApiClient.getInstance();
+
 // GET
-const { data } = await api.get<User[]>('/users');
-const { data } = await api.get<User>('/users/1', { params: { include: 'profile' } });
+const { data } = await api.request<User[]>({ method: HttpMethod.GET, url: '/users' });
+const { data } = await api.request<User>({ method: HttpMethod.GET, url: '/users/1', params: { include: 'profile' } });
 
 // POST
-const { data } = await api.post<User>('/users', { name: 'Alice', email: 'alice@example.com' });
-
-// PUT
-const { data } = await api.put<User>('/users/1', { name: 'Alice Updated' });
-
-// PATCH
-const { data } = await api.patch<User>('/users/1', { name: 'Alice' });
+const created = await api.request<User>({ method: HttpMethod.POST, url: '/users', data: { name: 'Alice' } });
 
 // DELETE
-await api.delete('/users/1');
+await api.request({ method: HttpMethod.DELETE, url: '/users/1' });
 ```
 
-**Parameters:**
-| Param | Type | Description |
+**`RequestConfig` fields:**
+| Field | Type | Description |
 |---|---|---|
+| `method` | `HttpMethod` | `HttpMethod.GET` / `POST` / `PUT` / `PATCH` / `DELETE` |
 | `url` | `string` | Endpoint path (appended to `baseURL`) |
-| `data` | `unknown` | Request body (POST/PUT/PATCH) |
-| `config` | `AxiosRequestConfig` | Optional Axios request config |
+| `data` | `unknown` | Request body (POST/PUT/PATCH; also forwarded on DELETE) |
+| `params` | `Record<string, unknown>` | Query parameters |
+| `headers` | `Record<string, string>` | Per-request headers |
+| `signal` | `AbortSignal` | Cancellation signal (e.g. `controller.abort()` on unmount) |
 
 ---
 
@@ -134,15 +149,22 @@ Thrown when an HTTP request fails. Extends `RenderError`.
 
 ```typescript
 try {
-  await api.get('/protected');
+  await api.request({ method: HttpMethod.GET, url: '/protected' });
 } catch (e) {
   if (e instanceof ApiError) {
     console.warn(e.status);          // 401
     console.warn(e.url);             // '/protected'
     console.warn(e.message);         // 'Unauthorized'
+    console.warn(e.isRetryable);     // true for network/408/429/5xx, false otherwise
+    console.warn(e.retryAfterMs);    // parsed `Retry-After` header, if the server sent one
   }
 }
 ```
+
+`isRetryable`/`retryAfterMs` are what `createQueryClient` (see
+[State docs](./STATE.md#createqueryclient)) reads to decide whether/when to retry — `429`/`503`/`408`/network
+failures retry automatically with backoff (honoring `Retry-After` when present), while
+`400/401/403/404/409/422` fail immediately since those require the caller to fix something.
 
 ---
 

@@ -17,20 +17,30 @@ import { useAsyncState } from 'opticore-react-native';
 Manage the complete lifecycle of any async operation — loading, data, and error — in one hook.
 
 ```typescript
-function useAsyncState<T>(initialData?: T): AsyncStateReturn<T>
+function useAsyncState<T>(initialData?: T | null): UseAsyncStateReturn<T>
 ```
 
 ### Return Value
 
 | Property | Type | Description |
 |---|---|---|
-| `data` | `T \| undefined` | Result from last successful run |
-| `isLoading` | `boolean` | `true` while async function is running |
+| `data` | `T \| null` | Result from last successful run |
+| `isLoading` | `boolean` | `true` while the promise is running |
 | `error` | `Error \| null` | Error from last failed run |
-| `run` | `(fn: () => Promise<T>) => Promise<void>` | Execute and track an async function |
-| `setData` | `(data: T) => void` | Manually update data |
-| `setError` | `(error: Error) => void` | Manually set error |
+| `run` | `(promise: Promise<T>) => Promise<void>` | Track an already-created promise |
+| `setData` | `(data: T \| null) => void` | Manually update data |
+| `setError` | `(error: Error \| null) => void` | Manually set error |
 | `reset` | `() => void` | Clear data, error, loading |
+
+> `run` takes a `Promise<T>` directly (not a thunk). Create the promise inline and pass it.
+>
+> **The work starts when you create the promise, not when `run` is called.** Calling `fetchUser(id)`
+> (or `request(...)`) fires the request immediately and returns a hot promise; `run` does **not**
+> trigger execution — it binds that promise's lifecycle to `isLoading`/`data`/`error` (with an
+> unmount guard and a generation guard so a stale earlier call can't overwrite a newer one).
+> Without `run`, the request still runs, but the hook's state never updates. Because `run` receives
+> an already-running promise, it can't defer *when* the work starts — create the promise at the
+> moment you want it to fire (e.g. inside the effect, as above).
 
 ```typescript
 import { ApiClient, HttpMethod } from 'opticore-react-native';
@@ -39,7 +49,7 @@ function UserScreen({ id }: { id: string }) {
   const { data: user, isLoading, error, run } = useAsyncState<User>();
 
   useEffect(() => {
-    run(() => ApiClient.getInstance().request<User>({ method: HttpMethod.GET, url: `/users/${id}` }).then(r => r.data));
+    run(ApiClient.getInstance().request<User>({ method: HttpMethod.GET, url: `/users/${id}` }).then(r => r.data));
   }, [id]);
 
   if (isLoading) return <ActivityIndicator />;
@@ -259,7 +269,7 @@ function useProductSearch() {
 
   useEffect(() => {
     if (!debouncedQuery || !isConnected) return;
-    run(() => searchProducts(debouncedQuery));
+    run(searchProducts(debouncedQuery));
   }, [debouncedQuery, isConnected]);
 
   return { query, setQuery, results: data, isLoading, error };

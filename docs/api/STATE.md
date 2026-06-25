@@ -17,10 +17,10 @@ Type-safe representation of async operation state.
 
 ```typescript
 type AsyncState<T> =
-  | { status: 'idle' }
-  | { status: 'loading' }
-  | { status: 'success'; data: T }
-  | { status: 'error'; error: Error }
+  | { type: 'idle' }
+  | { type: 'loading'; previousData?: T }
+  | { type: 'success'; data: T }
+  | { type: 'error'; error: Error; previousData?: T }
 ```
 
 ### Helper Functions
@@ -33,12 +33,12 @@ import {
 } from 'opticore-react-native/state';
 
 // Create initial state
-const state = createAsyncState<User[]>(); // { status: 'idle' }
+const state = createAsyncState<User[]>(); // { type: 'idle' }
 
-// Transition helpers
-const loading = toLoading<User[]>();              // { status: 'loading' }
-const success = toSuccess([user1, user2]);        // { status: 'success', data: [...] }
-const error   = toError(new Error('Failed'));     // { status: 'error', error: Error }
+// Transition helpers (toLoading/toError accept the prior state to preserve previousData)
+const loading = toLoading<User[]>();              // { type: 'loading' }
+const success = toSuccess([user1, user2]);        // { type: 'success', data: [...] }
+const error   = toError(new Error('Failed'));     // { type: 'error', error: Error }
 
 // Type guards
 if (isSuccess(state)) {
@@ -279,18 +279,21 @@ function ProductList() {
 Subscribe to Zustand store changes outside of React.
 
 ```typescript
-import { StateObserverImpl } from 'opticore-react-native/state';
+import { StateObserver } from 'opticore-react-native/state';
 
-const observer = new StateObserverImpl(useCartStore);
+// StateObserver is a singleton — use getInstance(), never `new`.
+const observer = StateObserver.getInstance();
 
-// Subscribe to specific state slice
-const unsubscribe = observer.observe(
-  (state) => state.total,
-  (total, previousTotal) => {
-    if (total > 100) {
+// Subscribe to a store. The callback receives (newState, oldState, storeName).
+// Use the optional `filter` to only fire when a slice you care about changes.
+const unsubscribe = observer.subscribe(
+  useCartStore,
+  (newState, oldState) => {
+    if (newState.total > 100) {
       showFreeShippingBanner();
     }
-  }
+  },
+  { filter: (newState, oldState) => newState.total !== oldState.total }
 );
 
 // Cleanup
@@ -302,6 +305,30 @@ unsubscribe();
 ## React Query Integration
 
 `OptiCoreProvider` wraps your app with `QueryClientProvider`. Use `@tanstack/react-query` hooks directly.
+
+### createQueryClient
+
+`createQueryClient()` builds the `QueryClient` OptiCore wires into `OptiCoreProvider`, pre-configured with an
+error-aware retry policy. It reads `ApiError`'s `isRetryable`/`retryAfterMs` (see
+[Error Handling](./ERRORS.md#apierror)) instead of inspecting raw status codes:
+
+- **Actionable failures** (`400/401/403/404/409/422`) are **never retried** — the caller must fix something first.
+- **Transient failures** (network errors, `408`, `429`, all `5xx`) **are retried** — up to 2 times for queries, 1 time
+  for mutations — with exponential backoff capped at 30s.
+- When the server sends a `Retry-After` header (e.g. on a `429`), the retry delay **honors it** (clamped to 30s)
+  instead of using the generic backoff curve.
+
+```typescript
+import { createQueryClient } from 'opticore-react-native';
+
+// Defaults are usually enough — pass overrides only when you need to deviate:
+const queryClient = createQueryClient({
+  defaultOptions: { queries: { staleTime: 0 } }, // your values win over the defaults
+});
+```
+
+`createQueryHook` and `useApiMutation` build on the same client and need no special handling for `429`/`503` —
+retries and backoff happen automatically.
 
 ```typescript
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -338,284 +365,49 @@ function useCreateProduct() {
 - [Error Handling](./ERRORS.md) — RenderError, NonRenderError
 - [Infrastructure](./INFRASTRUCTURE.md) — ApiClient for data fetching
 
-## AsyncState Pattern
+---
 
-Manage async operations with loading, error, and data states.
+## Component-Level Async State (useAsyncState)
 
-### useAsyncState\<T\>(asyncFn, options?)
-
-Hook for managing async operations.
+For one-off async operations inside a component (not store-backed), use the
+`useAsyncState` hook. It exposes `isLoading` (not `loading`) and a `run` function
+that takes a `Promise<T>` directly — there is no `execute`.
 
 ```typescript
 import { useAsyncState } from 'opticore-react-native/hooks';
 import { ApiClient, HttpMethod } from 'opticore-react-native';
 
-const apiClient = ApiClient.getInstance();
-
-const fetchUsers = async () => {
-  const response = await apiClient.request({ method: HttpMethod.GET, url: '/users' });
-  return response.data;
-};
-
 function UserList() {
-  const { data, loading, error, execute } = useAsyncState(fetchUsers);
-  
+  const { data, isLoading, error, run } = useAsyncState<User[]>();
+
   useEffect(() => {
-    execute();
+    // request() returns ApiResponse<T>, so unwrap `.data`
+    run(
+      ApiClient.getInstance()
+        .request<User[]>({ method: HttpMethod.GET, url: '/users' })
+        .then((r) => r.data)
+    );
   }, []);
-  
-  if (loading) return <Loading />;
+
+  if (isLoading) return <Loading />;
   if (error) return <Error message={error.message} />;
   return <List data={data} />;
 }
 ```
 
-**Parameters**:
-- `asyncFn`: () => Promise\<T\> - Async function to execute
-- `options?`: { initialData?: T } - Optional initial data
+**Signature**: `useAsyncState<T>(initialData: T | null = null)`
 
 **Returns**:
 ```typescript
 {
+  isLoading: boolean;
   data: T | null;
-  loading: boolean;
   error: Error | null;
-  execute:() => Promise<void>;
+  run: (promise: Promise<T>) => Promise<void>;
+  setData: React.Dispatch<React.SetStateAction<T | null>>;
+  setError: React.Dispatch<React.SetStateAction<Error | null>>;
   reset: () => void;
 }
 ```
 
----
-
-## Zustand Stores
-
-### BaseStore Pattern
-
-Foundation for creating Zustand stores.
-
-```typescript
-import { create } from 'zustand';
-
-interface CounterState {
-  count: number;
-  increment: () => void;
-  decrement: () => void;
-}
-
-export const useCounterStore = create<CounterState>((set) => ({
-  count: 0,
-  increment: () => set((state) => ({ count: state.count + 1 })),
-  decrement: () => set((state) => ({ count: state.count - 1 })),
-}));
-
-// Use in component
-function Counter() {
-  const count = useCounterStore((state) => state.count);
-  const increment = useCounterStore((state) => state.increment);
-  
-  return <Button title={`Count: ${count}`} onPress={increment} />;
-}
-```
-
----
-
-### With Persistence
-
-```typescript
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-export const useUserStore = create(
-  persist<UserState>(
-    (set) => ({
-      user: null,
-      setUser: (user) => set({ user }),
-    }),
-    {
-      name: 'user-storage',
-      storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
-);
-```
-
----
-
-### With DevTools
-
-```typescript
-import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
-
-export const useStore = create(
-  devtools<State>((set) => ({
-    // state
-  }), { name: 'MyStore' })
-);
-```
-
----
-
-## React Query Integration
-
-### QueryProvider
-
-Configured React Query provider (wrapped by CoreProvider).
-
-```typescript
-import { CoreProvider } from 'opticore-react-native';
-
-// CoreProvider includes QueryProvider automatically
-<CoreProvider>
-  <App />
-</CoreProvider>
-```
-
----
-
-### Using React Query
-
-```typescript
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ApiClient, HttpMethod } from 'opticore-react-native';
-
-const apiClient = ApiClient.getInstance();
-
-// Query
-function UserProfile({ userId }) {
-  const { data, isLoading } = useQuery({
-    queryKey: ['user', userId],
-    queryFn: () =>
-      apiClient.request({ method: HttpMethod.GET, url: `/users/${userId}` }).then(r => r.data),
-  });
-  
-  if (isLoading) return <Loading />;
-  return <Profile user={data} />;
-}
-
-// Mutation
-function UpdateProfile() {
-  const queryClient = useQueryClient();
-  
-  const mutation = useMutation({
-    mutationFn: (data) => apiClient.request({ method: HttpMethod.PUT, url: '/profile', data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-    },
-  });
-  
-  return <Button onPress={() => mutation.mutate(newData)} />;
-}
-```
-
----
-
-## State Patterns
-
-### Global State
-
-```typescript
-// stores/useAuthStore.ts
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  token: null,
-  
-  login: async (email, password) => {
-    const response = await apiClient.request({
-      method: HttpMethod.POST,
-      url: '/auth/login',
-      data: { email, password },
-    });
-    const { user, token } = response.data;
-    
-    await StorageManager.setSecure('auth_token', token);
-    set({ user, token });
-  },
-  
-  logout: async () => {
-    await StorageManager.remove('auth_token');
-    set({ user: null, token: null });
-  },
-}));
-```
-
----
-
-### Local State with useState
-
-```typescript
-function SearchForm() {
-  const [query, setQuery] = useState('');
-  const debouncedQuery = useDebounce(query, 500);
-  
-  const { data } = useQuery({
-    queryKey: ['search', debouncedQuery],
-    queryFn: () => searchAPI(debouncedQuery),
-    enabled: debouncedQuery.length > 0,
-  });
-  
-  return <TextInput value={query} onChangeText={setQuery} />;
-}
-```
-
----
-
-### Server State vs Client State
-
-**Client State** (Zustand):
-- User preferences
-- UI state (modals, tabs)
-- Form state
-- App settings
-
-**Server State** (React Query):
-- API data
-- User profiles
-- Lists and collections
-- Real-time data
-
----
-
-## Example: Complete State Setup
-
-```typescript
-// 1. Auth Store (Global Client State)
-export const useAuthStore = create<AuthState>(persist(
-  (set) => ({
-    user: null,
-    login: async (credentials) => { /* ... */ },
-    logout: async () => { /* ... */ },
-  }),
-  { name: 'auth-storage' }
-));
-
-// 2. API Data (Server State)
-function UserDashboard() {
-  const { user } = useAuthStore();
-  
-  const { data: stats } = useQuery({
-    queryKey: ['stats', user?.id],
-    queryFn: () => fetchStats(user.id),
-  });
-  
-  return <Dashboard stats={stats} />;
-}
-
-// 3. Async State (One-off Operations)
-function ExportData() {
-  const { loading, execute } = useAsyncState(async () => {
-    const data = await apiClient.request({ method: HttpMethod.GET, url: '/export' });
-    await downloadFile(data);
-  });
-  
-  return <Button loading={loading} onPress={execute} title="Export" />;
-}
-```
-
----
-
-**See also**:
-- [Hooks API](./HOOKS.md)
-- [Architecture](../ARCHITECTURE.md)
-- [Examples](../../examples/)
+> See [HOOKS.md](./HOOKS.md) for full `useAsyncState` documentation.

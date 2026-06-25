@@ -43,14 +43,20 @@ interface FormStateReturn<T> {
   isValid: boolean;           // All fields pass validation
   isSubmitting: boolean;      // True during async onSubmit
   isDirty: boolean;           // At least one field changed
-  handleSubmit: (fn: (data: T) => Promise<void> | void) => () => void;
-  reset: (values?: Partial<T>) => void;
-  setValue: (name: keyof T, value: unknown) => void;
-  getValue: (name: keyof T) => unknown;
-  watch: (name?: keyof T) => unknown;
-  clearErrors: (name?: keyof T | Array<keyof T>) => void;
+  // Runs validation, then awaits onValid (or onInvalid). Returns a Promise — NOT a thunk.
+  handleSubmit: (onValid: SubmitHandler<T>, onInvalid?: SubmitErrorHandler<T>) => Promise<void>;
+  reset: UseFormReset<T>;     // RHF reset — accepts values AND a ResetOptions second arg
+  setValue: UseFormSetValue<T>;
+  getValue: UseFormGetValues<T>;
+  watch: UseFormWatch<T>;
+  control: Control<T>;        // RHF control object, for <Controller>-based fields
+  register: UseFormRegister<T>; // RHF register, for uncontrolled inputs
 }
 ```
+
+> `handleSubmit` returns a `Promise<void>` directly — call it as `handleSubmit(onSubmit)`, not
+> `handleSubmit(onSubmit)()`. Other field-level helpers (e.g. `clearErrors`) live on the
+> `form` instance: `form.clearErrors()`.
 
 ---
 
@@ -121,55 +127,67 @@ function LoginScreen() {
 
 ## Input Masks
 
-Pure functions that format input as the user types.
+Pure standalone functions that format input as the user types. Each has a matching `unmask*`
+function that strips formatting back to raw input.
 
 ```typescript
-import { phoneMask, creditCardMask, currencyMask } from 'opticore-react-native/forms';
+import {
+  applyPhoneMask, unmaskPhone,
+  applyCreditCardMask, unmaskCreditCard, validateCardNumber, detectCardType,
+  applyCurrencyMask, unmaskCurrency,
+} from 'opticore-react-native/forms';
 ```
 
-### phoneMask
+### applyPhoneMask
 
 ```typescript
-phoneMask.apply('5551234567')   // '(555) 123-4567'
-phoneMask.apply('555123')       // '(555) 123'
+applyPhoneMask('5551234567')   // '(555) 123-4567'
+applyPhoneMask('555123')       // '(555) 123'
 ```
 
 ```typescript
 <TextInput
-  value={phoneMask.apply(String(watch('phone') ?? ''))}
-  onChangeText={(v) => setValue('phone', v.replace(/\D/g, ''))} // store raw digits
+  value={applyPhoneMask(String(watch('phone') ?? ''))}
+  onChangeText={(v) => setValue('phone', unmaskPhone(v))} // store raw digits
   keyboardType="phone-pad"
   placeholder="(555) 123-4567"
 />
 ```
 
-### creditCardMask
+### applyCreditCardMask
+
+`detectCardType` returns the card brand and `validateCardNumber` runs a Luhn check.
 
 ```typescript
-creditCardMask.apply('4111111111111111')  // '4111 1111 1111 1111'
+applyCreditCardMask('4111111111111111')  // '4111 1111 1111 1111'
+detectCardType('4111111111111111')       // CardType.VISA
+validateCardNumber('4111111111111111')   // true
 ```
 
 ```typescript
 <TextInput
-  value={creditCardMask.apply(String(watch('card') ?? ''))}
-  onChangeText={(v) => setValue('card', v.replace(/\D/g, ''))}
+  value={applyCreditCardMask(String(watch('card') ?? ''))}
+  onChangeText={(v) => setValue('card', unmaskCreditCard(v))}
   keyboardType="numeric"
   maxLength={19}
   placeholder="4111 1111 1111 1111"
 />
 ```
 
-### currencyMask
+### applyCurrencyMask
+
+`applyCurrencyMask` takes a **number** (not a string) plus optional `CurrencyOptions`
+(`currency`, `locale`, `symbol`, `precision`).
 
 ```typescript
-currencyMask.apply('1234.56')   // '$1,234.56'
-currencyMask.apply('1000')      // '$1,000.00'
+applyCurrencyMask(1234.56)   // '$1,234.56'
+applyCurrencyMask(1000)      // '$1,000.00'
 ```
 
 ```typescript
 <TextInput
-  value={currencyMask.apply(String(watch('amount') ?? ''))}
-  onChangeText={(v) => setValue('amount', parseFloat(v.replace(/[^0-9.]/g, '')))}
+  value={applyCurrencyMask(Number(watch('amount') ?? 0))}
+  onChangeText={(v) => setValue('amount', unmaskCurrency(v))}
   keyboardType="numeric"
   placeholder="$0.00"
 />
@@ -181,31 +199,48 @@ currencyMask.apply('1000')      // '$1,000.00'
 
 Standalone per-field validation with optional debounce. Use for async validation or inline field feedback.
 
+It takes the field `value`, a `Validator<T>` function (NOT a Zod schema), and options. The
+returned `validate()` takes **no arguments** — it validates the hook's debounced `value`.
+
 ```typescript
-function useFieldValidation<T>(config: FieldValidationConfig<T>): FieldValidationReturn
+function useFieldValidation<T>(
+  value: T,
+  validator: Validator<T>,
+  options?: ValidationOptions
+): FieldValidationReturn
 ```
 
 ```typescript
-interface FieldValidationConfig<T> {
-  schema: ZodSchema<T>;
-  debounceMs?: number;        // default: 0 (immediate)
+// A Validator returns an error message string, or undefined when valid (may be async).
+type Validator<T> = (value: T) => string | undefined | Promise<string | undefined>;
+
+interface ValidationOptions {
+  debounceMs?: number;        // default: 300
+  message?: string;
 }
 
 interface FieldValidationReturn {
   error: string | undefined;
   isValid: boolean;
   isValidating: boolean;
-  validate: (value: unknown) => Promise<boolean>;
+  validate: () => Promise<boolean>;   // validates the hook's (debounced) value — no args
 }
 ```
 
+> Pass a **stable** `validator` reference (module-level or `useCallback`'d). An inline function
+> is a new identity each render, so the auto-validate effect would re-run every render.
+
 ```typescript
+const validateEmail = (v: string) =>
+  /^[^@]+@[^@]+$/.test(v) ? undefined : 'Invalid email';
+
 function EmailField() {
   const [value, setValue] = useState('');
-  const { error, isValid, isValidating, validate } = useFieldValidation({
-    schema: z.string().email('Invalid email'),
-    debounceMs: 300,
-  });
+  const { error, isValid, isValidating, validate } = useFieldValidation(
+    value,
+    validateEmail,
+    { debounceMs: 300 }
+  );
 
   return (
     <View>
@@ -213,7 +248,7 @@ function EmailField() {
         value={value}
         onChangeText={async (v) => {
           setValue(v);
-          await validate(v);
+          await validate(); // no args — validates the debounced value
         }}
         style={{
           borderColor: error ? '#EF4444' : isValid ? '#10B981' : '#D1D5DB',
@@ -235,18 +270,18 @@ function EmailField() {
 Pre-built Zod validators for common fields:
 
 ```typescript
-import { validators } from 'opticore-react-native/forms';
+import { validators, PhoneFormat } from 'opticore-react-native/forms';
 ```
 
 ```typescript
 const schema = z.object({
   email: validators.email('Please enter a valid email'),
-  phone: validators.phone({ format: 'US' }),
+  phone: validators.phone({ format: PhoneFormat.US }),
   password: validators.password({ minLength: 8, requireUppercase: true }),
-  website: validators.common.url('Enter a valid URL'),
-  name: validators.common.required('Name is required')
-    .pipe(validators.common.minLength(2, 'Name too short'))
-    .pipe(validators.common.maxLength(50, 'Name too long')),
+  website: validators.url('Enter a valid URL'),
+  name: validators.required('Name is required')
+    .pipe(validators.minLength(2, 'Name too short'))
+    .pipe(validators.maxLength(50, 'Name too long')),
 });
 ```
 
@@ -255,13 +290,13 @@ const schema = z.object({
 | Validator | Options | Description |
 |---|---|---|
 | `validators.email(msg?)` | — | Valid email format |
-| `validators.phone(opts?)` | `format: 'US' \| 'International'` | Phone number |
-| `validators.password(opts?)` | `minLength, requireUppercase, requireNumber, requireSpecial` | Password strength |
-| `validators.common.required(msg?)` | — | Non-empty string |
-| `validators.common.minLength(n, msg?)` | — | Minimum length |
-| `validators.common.maxLength(n, msg?)` | — | Maximum length |
-| `validators.common.matches(regex, msg?)` | — | Regex pattern |
-| `validators.common.url(msg?)` | — | Valid URL |
+| `validators.phone(opts?)` | `format: PhoneFormat.US \| PhoneFormat.INTERNATIONAL` | Phone number |
+| `validators.password(opts?)` | `minLength, requireUppercase, requireLowercase, requireNumbers, requireSpecial` | Password strength |
+| `validators.required(msg?)` | — | Non-empty string |
+| `validators.minLength(n, msg?)` | — | Minimum length |
+| `validators.maxLength(n, msg?)` | — | Maximum length |
+| `validators.matches(regex, msg?)` | — | Regex pattern |
+| `validators.url(msg?)` | — | Valid URL |
 
 ---
 

@@ -2,6 +2,8 @@
 
 Welcome to the complete documentation for **opticore-react-native** — the TypeScript-first infrastructure library for React Native & Expo.
 
+> **OptiCore v2.6.0** · `@tanstack/react-query` is a required peer — run `npx opticore-install-peers`.
+
 ---
 
 ## 🚀 Getting Started

@@ -26,14 +26,18 @@ export class ErrorInterceptor {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
 
-      const { status, data } = error.response;
+      const { status, data, headers } = error.response;
 
       const url = error.config?.url;
 
       const message =
         ((data as Record<string, unknown>)?.message as string) || error.message || 'API Error';
 
-      return Promise.reject(new ApiError(status, message, url, data, error));
+      const retryAfterHeader = (headers as Record<string, unknown> | undefined)?.[
+        'retry-after'
+      ] as string | undefined;
+
+      return Promise.reject(new ApiError(status, message, url, data, error, retryAfterHeader));
     } else if (error.request) {
       // The request was made but no response was received — network error or timeout.
       // Use error.code (ECONNABORTED) for reliable timeout detection instead of

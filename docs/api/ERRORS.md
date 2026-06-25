@@ -18,7 +18,7 @@ Errors that **must be shown to the user** — validation failures, permission de
 
 ```typescript
 class RenderError extends BaseError {
-  constructor(message: string, options?: RenderErrorOptions)
+  constructor(message: string, userMessage?: string, options?: RenderErrorOptions)
 }
 
 interface RenderErrorOptions {
@@ -26,17 +26,22 @@ interface RenderErrorOptions {
   severity?: 'warning' | 'error' | 'critical';  // default: 'error'
   isDismissible?: boolean;                        // default: true
   isActionable?: boolean;                         // default: false
-  cause?: unknown;
+  cause?: Error;
   metadata?: Record<string, unknown>;
 }
 ```
 
+> `message` is the technical/internal message. `userMessage` (2nd arg) is the
+> friendly text surfaced to users (defaults to a generic message when omitted).
+
 ```typescript
-// Basic
+import { ApiClient, HttpMethod } from 'opticore-react-native';
+
+// Basic — technical message only
 throw new RenderError('Profile not found');
 
-// With options
-throw new RenderError('Payment was declined', {
+// With a user-facing message + options
+throw new RenderError('Payment declined by gateway', 'Your payment was declined.', {
   severity: 'warning',
   isDismissible: true,
   metadata: { orderId: '123', amount: 49.99 },
@@ -44,9 +49,12 @@ throw new RenderError('Payment was declined', {
 
 // Wrapping a caught error
 try {
-  await api.post('/payment', data);
+  await ApiClient.getInstance().request({ method: HttpMethod.POST, url: '/payment', data });
 } catch (e) {
-  throw new RenderError('Failed to process payment', { cause: e, severity: 'critical' });
+  throw new RenderError('Failed to process payment', 'Could not process your payment.', {
+    cause: e instanceof Error ? e : undefined,
+    severity: 'critical',
+  });
 }
 ```
 
@@ -63,10 +71,10 @@ class NonRenderError extends BaseError {
 
 interface NonRenderErrorOptions {
   code?: string;
-  isSilent?: boolean;         // default: true — no user notification
+  isSilent?: boolean;         // default: false — no user notification
   shouldMonitor?: boolean;    // default: true — send to monitoring tools
-  retryConfig?: RetryConfig;
-  cause?: unknown;
+  retryConfig?: RetryConfig;  // { maxRetries: number; delayMs: number }
+  cause?: Error;
   metadata?: Record<string, unknown>;
 }
 ```
@@ -91,12 +99,23 @@ Thrown automatically by `ApiClient` for HTTP failures. Extends `RenderError`.
 
 ```typescript
 class ApiError extends RenderError {
-  status: number;         // HTTP status code (401, 404, 500, ...)
-  url: string;            // Request URL
-  data?: unknown;         // Response body
-  originalError: unknown; // Original Axios error
+  status: number;            // HTTP status code (401, 404, 500; -1 = network failure)
+  url?: string;              // Request URL
+  data?: unknown;            // Response body
+  originalError?: unknown;   // Original Axios error
+  isRetryable: boolean;      // true for transient failures (network, 408, 429, 5xx)
+  retryAfterMs?: number;     // parsed `Retry-After` header, when present (capped at 30s)
 }
 ```
+
+`isActionable` (inherited from `RenderError`) and `isRetryable` are deliberately
+distinct: `isActionable` means *the caller must change something* (`400/401/403/
+404/409/422`); `isRetryable` means *this is transient and safe to retry*
+(network failures, `408`, `429`, all `5xx`). A `429`/`408` is **not** actionable —
+rate limiting isn't the caller's fault — but it **is** retryable. The query/mutation
+retry policy in [`createQueryClient`](./STATE.md#react-query-integration) reads
+`isRetryable`/`retryAfterMs` directly, so consumers get backoff-aware retries for
+free.
 
 ```typescript
 import { ApiClient, HttpMethod } from 'opticore-react-native';
@@ -160,8 +179,8 @@ abstract class BaseError extends Error {
 class PaymentError extends RenderError {
   readonly orderId: string;
 
-  constructor(message: string, orderId: string, options?: RenderErrorOptions) {
-    super(message, { ...options, metadata: { orderId } });
+  constructor(message: string, orderId: string, userMessage?: string) {
+    super(message, userMessage, { metadata: { orderId } });
     this.orderId = orderId;
   }
 }
@@ -213,7 +232,6 @@ ErrorClassifier.addRule({
   name: 'rate-limit',
   match: (e) => e instanceof ApiError && e.status === 429,
   type: ErrorType.NON_RENDER,
-  factory: (e) => new NonRenderError('Rate limited', { cause: e }),
 });
 
 // Clear custom rules (useful in tests)
@@ -276,6 +294,8 @@ const withContext = result.mapErr(e => new RenderError(e.message));
 ### Real-World Example
 
 ```typescript
+import { ApiClient, HttpMethod, RenderError, Result } from 'opticore-react-native';
+
 async function processOrder(orderId: string): Promise<Result<Order, RenderError>> {
   const idResult = parseUserId(orderId);
   if (idResult.isErr()) {
@@ -283,10 +303,17 @@ async function processOrder(orderId: string): Promise<Result<Order, RenderError>
   }
 
   try {
-    const { data } = await api.get<Order>(`/orders/${idResult.unwrap()}`);
+    const { data } = await ApiClient.getInstance().request<Order>({
+      method: HttpMethod.GET,
+      url: `/orders/${idResult.unwrap()}`,
+    });
     return Result.ok(data);
   } catch (e) {
-    return Result.err(new RenderError('Failed to load order', { cause: e }));
+    return Result.err(
+      new RenderError('Failed to load order', 'Could not load your order.', {
+        cause: e instanceof Error ? e : undefined,
+      })
+    );
   }
 }
 
@@ -405,359 +432,3 @@ their friendly `userMessage` automatically.
 - [OptiCoreProvider](../CONFIGURATION.md) — Global `onError` handler
 - [Infrastructure](./INFRASTRUCTURE.md#apierror) — ApiError from HTTP requests
 - [React Query Integration](../REACT_QUERY.md) — `toMessage` in query error states
-
-## Error Types
-
-### BaseError (abstract)
-
-Base class for all opticore errors.
-
-```typescript
-abstract class BaseError extends Error {
-  code?: string;
-  timestamp: Date;
-}
-```
-
----
-
-### RenderError
-
-Errors that should be shown to users.
-
-```typescript
-import { RenderError } from 'opticore-react-native';
-
-throw new RenderError('Invalid email address', 'VALIDATION_ERROR');
-```
-
-**Use for**:
-- Validation errors
-- User input errors
-- Business logic errors
-- API errors with user-friendly messages
-
----
-
-### NonRenderError
-
-Errors that should only be logged (not shown to users).
-
-```typescript
-import { NonRenderError } from 'opticore-react-native';
-
-throw new NonRenderError('Database connection failed', 'DB_ERROR');
-```
-
-**Use for**:
-- System errors
-- Developer errors
-- Infrastructure failures
-- Unexpected errors
-
----
-
-## Custom Error Types
-
-### Creating Custom Errors
-
-```typescript
-// Custom RenderError
-export class PaymentError extends RenderError {
-  constructor(message: string, public amount?: number) {
-    super(message, 'PAYMENT_ERROR');
-    this.name = 'PaymentError';
-  }
-}
-
-// Custom NonRenderError
-export class DatabaseError extends NonRenderError {
-  constructor(message: string, public query?: string) {
-    super(message, 'DB_ERROR');
-    this.name = 'DatabaseError';
-  }
-}
-
-// Usage
-throw new PaymentError('Insufficient funds', 1000);
-throw new DatabaseError('Query failed', 'SELECT * FROM users');
-```
-
----
-
-## Error Handling Patterns
-
-### Try-Catch with Classification
-
-```typescript
-import { ApiClient, HttpMethod, RenderError, NonRenderError, Logger } from 'opticore-react-native';
-
-const apiClient = ApiClient.getInstance();
-
-async function fetchUserData() {
-  try {
-    const response = await apiClient.request({ method: HttpMethod.GET, url: '/user' });
-    return response.data;
-  } catch (error) {
-    if (error instanceof RenderError) {
-      // Show to user
-      Alert.alert('Error', error.message);
-    } else if (error instanceof NonRenderError) {
-      // Log only
-      Logger.error('Background error', error);
-    } else {
-      // Unknown error - log and show generic message
-      Logger.error('Unexpected error', error);
-      Alert.alert('Error', 'Something went wrong');
-    }
-    throw error;
-  }
-}
-```
-
----
-
-### Error Boundaries
-
-```typescript
-import { Component, ReactNode } from 'react';
-import { Logger } from 'opticore-react-native';
-
-interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-}
-
-interface State {
-  hasError: boolean;
-  error?: Error;
-}
-
-export class ErrorBoundary extends Component<Props, State> {
-  state = { hasError: false, error: undefined };
-
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: any) {
-    Logger.error('React Error Boundary caught error', {
-      error,
-      errorInfo,
-    });
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return this.props.fallback || <DefaultErrorScreen />;
-    }
-    return this.props.children;
-  }
-}
-
-// Usage
-<ErrorBoundary fallback={<ErrorScreen />}>
-  <App />
-</ErrorBoundary>
-```
-
----
-
-### Global Error Handler
-
-```typescript
-import { Logger } from 'opticore-react-native';
-import { ErrorUtils } from 'react-native';
-
-// Set global error handler
-const globalErrorHandler = (error: Error, isFatal: boolean) => {
-  Logger.error('Global error', { error, isFatal });
-  
-  if (isFatal) {
-    // Show crash screen or restart app
-    Alert.alert(
-      'Unexpected Error',
-      'The app has encountered an error and needs to restart.',
-      [{ text: 'Restart', onPress: () => /* restart */ }]
-    );
-  }
-};
-
-ErrorUtils.setGlobalHandler(globalErrorHandler);
-```
-
----
-
-## API Error Handling
-
-### Axios Interceptor
-
-```typescript
-import { ApiClient } from 'opticore-react-native';
-
-const apiClient = ApiClient.getInstance();
-
-apiClient.client.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response) {
-      const { status, data } = error.response;
-      
-      switch (status) {
-        case 400:
-          throw new RenderError(data.message || 'Invalid request', 'BAD_REQUEST');
-        case 401:
-          throw new RenderError('Please log in again', 'UNAUTHORIZED');
-        case 403:
-          throw new RenderError('Access denied', 'FORBIDDEN');
-        case 404:
-          throw new RenderError('Resource not found', 'NOT_FOUND');
-        case 500:
-          throw new NonRenderError('Server error', 'SERVER_ERROR');
-        default:
-          throw new NonRenderError(`HTTP ${status}`, 'HTTP_ERROR');
-      }
-    }
-    
-    throw new NonRenderError('Network error', 'NETWORK_ERROR');
-  }
-);
-```
-
----
-
-## Validation Errors
-
-```typescript
-import { RenderError } from 'opticore-react-native';
-
-export class ValidationError extends RenderError {
-  constructor(
-    message: string,
-    public field?: string,
-    public value?: any
-  ) {
-    super(message, 'VALIDATION_ERROR');
-    this.name = 'ValidationError';
-  }
-}
-
-// Usage
-function validateEmail(email: string) {
-  if (!email.includes('@')) {
-    throw new ValidationError('Invalid email format', 'email', email);
-  }
-}
-
-// In form
-try {
-  validateEmail(formData.email);
-  await submitForm(formData);
-} catch (error) {
-  if (error instanceof ValidationError) {
-    setFieldError(error.field, error.message);
-  }
-}
-```
-
----
-
-## Error Logging
-
-### With Logger
-
-```typescript
-import { Logger } from 'opticore-react-native';
-
-try {
-  await riskyOperation();
-} catch (error) {
-  Logger.error('Operation failed', {
-    error,
-    context: 'user_action',
-    userId: currentUser.id,
-  });
-}
-```
-
----
-
-### With Remote Logging
-
-```typescript
-import { Logger } from 'opticore-react-native';
-
-// Configure remote logging (e.g., Sentry)
-CoreSetup.initialize({
-  enableLogging: true,
-  remoteLogging: {
-    enabled: true,
-    endpoint: 'https://logging.example.com',
-    apiKey: 'xxx',
-  },
-});
-
-// Errors will be sent to remote service
-Logger.error('Critical error', error);
-```
-
----
-
-## Best Practices
-
-### 1. Use Specific Error Types
-
-```typescript
-// ❌ Bad
-throw new Error('Invalid input');
-
-// ✅ Good
-throw new ValidationError('Email is required', 'email');
-```
-
-### 2. Provide Context
-
-```typescript
-// ❌ Bad
-throw new RenderError('Failed');
-
-// ✅ Good
-throw new RenderError('Failed to save profile. Please check your connection.');
-```
-
-### 3. Log NonRenderErrors
-
-```typescript
-// ❌ Bad
-catch (error) {
-  // Silent failure
-}
-
-// ✅ Good
-catch (error) {
-  if (error instanceof NonRenderError) {
-    Logger.error('Background error', error);
-  }
-}
-```
-
-### 4. Don't Show Technical Details to Users
-
-```typescript
-// ❌ Bad
-Alert.alert('Error', error.stack);
-
-// ✅ Good
-if (error instanceof RenderError) {
-  Alert.alert('Error', error.message);
-} else {
-  Alert.alert('Error', 'Something went wrong. Please try again.');
-}
-```
-
----
-
-**See also**:
-- [Infrastructure API](./INFRASTRUCTURE.md)
-- [Testing Guide](../TESTING.md)
-- [Architecture](../ARCHITECTURE.md)
