@@ -69,8 +69,13 @@ export default function RootLayout() {
 
 ## Step 3 — Make API Calls
 
+> **Recommended: the `api` facade.** Import `api` from the package root and use verb
+> sugar — no `.getInstance()`, no `HttpMethod` enum. The type parameter is per-call
+> (`User[]`, `User`, a paginated wrapper, anything) and defaults to `unknown`. The
+> singletons + enum-based `request()` remain available for advanced use.
+
 ```typescript
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 import { useAsyncState } from 'opticore-react-native/hooks';
 
 interface User {
@@ -81,7 +86,7 @@ interface User {
 
 // Define your API function
 async function fetchUsers(): Promise<User[]> {
-  const response = await ApiClient.getInstance().request<User[]>({ method: HttpMethod.GET, url: '/users' });
+  const response = await api.get<User[]>('/users');
   return response.data;
 }
 
@@ -104,16 +109,14 @@ function UserListScreen() {
 }
 ```
 
-> **Query parameters:** pass a `params` object — `ApiClient` serializes the query string for you
+> **Query parameters:** pass a `params` object — the query string is serialized for you
 > (via Axios), so you never build URLs by hand:
 >
 > ```typescript
 > // GET /articles?category=tech&pageSize=20
-> ApiClient.getInstance().request<Article[]>({
->   method: HttpMethod.GET,
->   url: '/articles',
->   params: { category: 'tech', pageSize: 20 },
-> });
+> api.get<Article[]>('/articles', { params: { category: 'tech', pageSize: 20 } });
+>
+> // Full control (equivalent): ApiClient.getInstance().request({ method: HttpMethod.GET, url, params })
 > ```
 >
 > Reach for the `buildUrl` helper (`opticore-react-native/utils`) only when you need a pre-built URL
@@ -198,9 +201,7 @@ async function fetchProfile(userId: string) {
 ## Step 6 — Use Storage
 
 ```typescript
-import { StorageManager } from 'opticore-react-native';
-
-const storage = StorageManager.getInstance();
+import { storage } from 'opticore-react-native'; // facade — no .getInstance()
 
 // Regular storage (AsyncStorage)
 await storage.local.set('theme', 'dark');
@@ -210,19 +211,18 @@ await storage.local.remove('theme');
 // Secure storage (iOS Keychain / Android Keystore)
 await storage.secure.set('auth_token', 'eyJhbGc...');
 const token = await storage.secure.get<string>('auth_token');
-
-// Clear all
-await storage.clearAll();
 ```
+
+> The `storage` facade exposes `local` and `secure`. Manager-level operations like
+> `clearAll()` stay on the singleton:
+> `import { StorageManager } from 'opticore-react-native'; await StorageManager.getInstance().clearAll();`
 
 ---
 
 ## Step 7 — Add Logging
 
 ```typescript
-import { Logger, LogLevel } from 'opticore-react-native';
-
-const logger = Logger.getInstance();
+import { logger } from 'opticore-react-native'; // facade — no .getInstance()
 
 logger.debug('User data loaded', { userId: '123' });
 logger.info('App started');
@@ -230,10 +230,12 @@ logger.warn('Token expiring soon');
 logger.error('Network request failed', new Error('timeout'));
 ```
 
-**Add a custom transport (e.g., Sentry):**
+**Add a custom transport (e.g., Sentry)** — transport setup stays on the singleton:
 
 ```typescript
-logger.addTransport({
+import { Logger, LogLevel } from 'opticore-react-native';
+
+Logger.getInstance().addTransport({
   name: 'sentry',
   minLevel: LogLevel.ERROR,
   write(entry) {

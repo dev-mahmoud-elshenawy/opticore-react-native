@@ -14,6 +14,30 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🌟 [2.8.0] — Ergonomic facades + verb sugar
+
+Removes call-site friction. Purely additive — no breaking changes, no deprecations. (Spec 032.)
+
+### ✨ Added
+
+- **Ready-to-use facades — no more `.getInstance()`.** Import `api`, `storage`, and `logger` directly from the package root (or `opticore-react-native/facades`):
+  ```ts
+  import { api, storage, logger } from 'opticore-react-native';
+  await api.get<User[]>('/users');           // verb sugar over request()
+  await storage.secure.get<string>('token');
+  logger.info('ready');
+  ```
+- **Verb sugar on `api`** — `get/post/put/patch/delete` over the enum-based `request()`. `get(url, cfg?)` / `delete(url, cfg?)`; `post/put/patch(url, data?, cfg?)` where `cfg` is `headers`/`params`/`signal`. The generic `T` is caller-controlled per call and defaults to `unknown` (never `any`); methods return `ApiResponse<T>`, consistent with `request()`.
+- **`opticore-react-native/facades` subpath** export.
+
+### 🧩 Notes
+
+- Facades resolve their singleton **lazily per call**, so importing them is side-effect-free (spec 030 preserved).
+- `ApiClient`'s own verb methods stay **private** (spec 028); the sugar lives on the `api` facade and delegates to the public `request()`. `api.*` inherits `request()`'s init guard — no new failure modes.
+- The existing singletons (`ApiClient`/`StorageManager`/`Logger`), `request()`, and `HttpMethod` are unchanged and fully supported. Facades are opt-in.
+
+---
+
 ## 🌟 [2.7.0] — Error system RN alignment
 
 Aligns the error model with how React Native actually intercepts errors. Non-breaking: no public type/signature changes. (Spec 031.)

@@ -154,30 +154,43 @@ export default function RootLayout() {
 
 **Step 2 — Start using the library**
 
+Use the **facades** (`api`, `storage`, `logger`) — no `.getInstance()`, and no `HttpMethod` enum for the common case:
+
 ```typescript
-import { ApiClient, HttpMethod, StorageManager, Logger } from 'opticore-react-native';
+import { api, storage, logger } from 'opticore-react-native';
 import { useAsyncState } from 'opticore-react-native/hooks';
 
-// HTTP requests — auth token injected automatically
-const { data } = await ApiClient.getInstance().request<User[]>({
-  method: HttpMethod.GET,
-  url: '/users',
-});
+// HTTP — verb sugar; auth token injected automatically. `T` is per-call:
+const { data } = await api.get<User[]>('/users');        // array
+const me = await api.get<User>('/users/me');             // object
+await api.post<Created>('/users', { name: 'Ali' });      // body + different result type
 
 // Storage — automatic JSON serialization
-await StorageManager.getInstance().local.set('user', { id: 1, name: 'Ali' });
+await storage.local.set('user', { id: 1, name: 'Ali' });
 
 // Logging — level-filtered, transport-ready
-Logger.getInstance().info('App ready', { userId: '123' });
+logger.info('App ready', { userId: '123' });
 
 // Async state in components
 const { data: users, isLoading, error, run } = useAsyncState<User[]>();
-run(() =>
-  ApiClient.getInstance()
-    .request<User[]>({ method: HttpMethod.GET, url: '/users' })
-    .then(r => r.data),
-);
+run(() => api.get<User[]>('/users').then(r => r.data));
 ```
+
+> **Advanced / full control** stays available — the singletons and the enum-based
+> `request()` are unchanged. `api`/`storage`/`logger` simply delegate to them:
+> `ApiClient.getInstance().request({ method: HttpMethod.GET, url })`.
+
+**Where to import from**
+
+| Symbol | Import from |
+|--------|------------|
+| `api`, `storage`, `logger` (facades) | `opticore-react-native` (root) or `…/facades` |
+| `ApiClient`, `StorageManager`, `Logger`, `HttpMethod` | `opticore-react-native` (root) or `…/infrastructure` |
+| `OptiCoreProvider`, `useConfig` | `opticore-react-native` (root) or `…/providers` |
+| Hooks (`useAsyncState`, …) | `opticore-react-native` (root) or `…/hooks` |
+| Errors (`RenderError`, `Result`, `OptiCoreErrorBoundary`) | `opticore-react-native` (root) or `…/error` |
+| `useRouteHelper`, `NavigationParams` | **`opticore-react-native/navigation` only** (not the root barrel) |
+| Utilities · forms · theme · offline · state · query | root or the matching subpath |
 
 → **[Full setup guide](docs/QUICK_START.md)** — auth, error handling, offline sync, theming and more.
 

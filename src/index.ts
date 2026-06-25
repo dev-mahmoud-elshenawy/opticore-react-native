@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 
-export const VERSION = '2.7.0';
+export const VERSION = '2.8.0';
 
 // Infrastructure exports
 export { HttpMethod } from './infrastructure';
@@ -50,4 +50,7 @@ export * from './theme';
 
 // React Query integration (OptiCore-aware client factory)
 export * from './query';
+
+// Ergonomic facades — ready-to-use api / storage / logger (no .getInstance())
+export * from './facades';
 

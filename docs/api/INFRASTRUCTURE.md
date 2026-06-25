@@ -4,6 +4,45 @@ Core services: networking, storage, logging, and device monitoring.
 
 ---
 
+## Facades (recommended entry point)
+
+`api`, `storage`, and `logger` are thin facades over the singletons below — they
+remove `.getInstance()` boilerplate (and, for `api`, the `HttpMethod` enum for the
+common case). They delegate lazily, so importing them is side-effect-free, and
+`api.*` inherits `request()`'s init guard. Use them for everyday calls; drop to the
+singletons for advanced operations (interceptors, auth strategies, `addTransport`,
+`clearAll`, etc.).
+
+```typescript
+import { api, storage, logger } from 'opticore-react-native';
+// or: import { api, storage, logger } from 'opticore-react-native/facades';
+
+// api — verb sugar over request(); T is per-call, defaults to unknown; returns ApiResponse<T>
+const { data } = await api.get<User[]>('/users', { params: { page: 1 } });
+await api.post<Created>('/users', { name: 'Ali' }, { headers: { 'X-Trace': '1' } });
+await api.put<User>('/users/1', body);
+await api.patch<User>('/users/1', partial);
+await api.delete('/users/1');
+await api.request({ method: HttpMethod.GET, url: '/raw' }); // full-control passthrough
+
+// storage — exposes secure / local (clearAll stays on StorageManager)
+await storage.secure.set('token', t);
+await storage.local.get<User>('user');
+
+// logger — debug / info / warn / error (addTransport stays on Logger)
+logger.info('ready', { userId: '123' });
+```
+
+| Facade | Methods | For advanced ops use |
+|--------|---------|----------------------|
+| `api` | `request`, `get`, `post`, `put`, `patch`, `delete` | `ApiClient.getInstance()` (interceptors, auth strategies) |
+| `storage` | `secure`, `local` | `StorageManager.getInstance()` (`clearAll`, configure) |
+| `logger` | `debug`, `info`, `warn`, `error` | `Logger.getInstance()` (`addTransport`, configure) |
+
+`api` verb signatures: `get(url, cfg?)` / `delete(url, cfg?)`; `post|put|patch(url, data?, cfg?)`, where `cfg = { headers?, params?, signal? }`. All return `Promise<ApiResponse<T>>`.
+
+---
+
 ## ApiClient
 
 HTTP client built on Axios. Supports interceptors, auth strategies, automatic token refresh, and retry logic.

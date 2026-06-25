@@ -1,8 +1,8 @@
 # Claude Development Guide for OptiCore React Native
 
 **Package**: `opticore-react-native`
-**Version**: 2.7.0
-**Last Updated**: 2026-06-25 (v2.7.0: error system RN alignment — `OptiCoreErrorBoundary` now always converges a caught error to a fallback (removed the `NON_RENDER` re-render branch that could infinite-loop); boundary logging wrapped so a failing `Logger` can't crash it; **throwing `NonRenderError` is deprecated** — it's a descriptor/log payload (RN Error Boundaries can't catch the async/event errors it describes), use `Logger`/`Result<T,E>` instead; boundary `NON_RENDER` handling + throw semantics slated for removal in 3.0; error docs realigned to the three-outcome RN model. Non-breaking. Spec 031. v2.6.0: transient retry handling — `ApiError` gains `isRetryable`/`retryAfterMs`; `408`/`429` reclassified as retryable not actionable; `createQueryClient` retry/retryDelay honor `Retry-After`; `RequestConfig` contract fix (`body`→`data`); side-effect-free imports. Spec 030. v2.5.0: core-hardening round 2 — log token redaction, offline data-loss fixes (conflict-retry budget, fresh-token replay, per-item maxRetries), **default conflict strategy now server-wins** + `ConflictStrategy` constant, SecureStorage concurrency safety, useFieldValidation/useAsyncState race guards, credit-card 16-digit cap, `request()` params/DELETE-body, `useFormState` control/register, `sideEffects:false` + `react-native` export condition, CoreSetup StrictMode idempotency, theme listener cleanup. Spec 029. v2.4.0: core-hardening pass — logger prod-output, durable offline persistence, dispose/cleanup fixes, real `useThrottle`, single canonical `HttpMethod` enum, new `config`/`error`/`infrastructure`/`providers`/`query` subpath exports, WCAG contrast, plus assorted hook/theme/forms/storage correctness fixes. v2.3.0: offline conflict shape fix, single-flight token refresh, request cancellation. v2.2.0: `createQueryHook`, `useApiMutation`, `createQueryPersister`, `useTextStyle` + type guards.)
+**Version**: 2.8.0
+**Last Updated**: 2026-06-25 (v2.8.0: ergonomic facades — new `api`/`storage`/`logger` exports (root barrel + `opticore-react-native/facades` subpath) remove `.getInstance()` boilerplate; `api` adds verb sugar `get/post/put/patch/delete` over the enum `request()` (generic `T` per-call, defaults to `unknown`, returns `ApiResponse<T>`). Facades delegate lazily (side-effect-free import) and inherit `request()`'s init guard; `ApiClient` verbs stay private (spec 028). Advanced ops (interceptors, `addTransport`, `clearAll`) stay on the singletons. Purely additive, non-breaking. Spec 032. v2.7.0: error system RN alignment — `OptiCoreErrorBoundary` now always converges a caught error to a fallback (removed the `NON_RENDER` re-render branch that could infinite-loop); boundary logging wrapped so a failing `Logger` can't crash it; **throwing `NonRenderError` is deprecated** — it's a descriptor/log payload (RN Error Boundaries can't catch the async/event errors it describes), use `Logger`/`Result<T,E>` instead; boundary `NON_RENDER` handling + throw semantics slated for removal in 3.0; error docs realigned to the three-outcome RN model. Non-breaking. Spec 031. v2.6.0: transient retry handling — `ApiError` gains `isRetryable`/`retryAfterMs`; `408`/`429` reclassified as retryable not actionable; `createQueryClient` retry/retryDelay honor `Retry-After`; `RequestConfig` contract fix (`body`→`data`); side-effect-free imports. Spec 030. v2.5.0: core-hardening round 2 — log token redaction, offline data-loss fixes (conflict-retry budget, fresh-token replay, per-item maxRetries), **default conflict strategy now server-wins** + `ConflictStrategy` constant, SecureStorage concurrency safety, useFieldValidation/useAsyncState race guards, credit-card 16-digit cap, `request()` params/DELETE-body, `useFormState` control/register, `sideEffects:false` + `react-native` export condition, CoreSetup StrictMode idempotency, theme listener cleanup. Spec 029. v2.4.0: core-hardening pass — logger prod-output, durable offline persistence, dispose/cleanup fixes, real `useThrottle`, single canonical `HttpMethod` enum, new `config`/`error`/`infrastructure`/`providers`/`query` subpath exports, WCAG contrast, plus assorted hook/theme/forms/storage correctness fixes. v2.3.0: offline conflict shape fix, single-flight token refresh, request cancellation. v2.2.0: `createQueryHook`, `useApiMutation`, `createQueryPersister`, `useTextStyle` + type guards.)
 **Target Platforms**: iOS & Android ONLY
 
 > **📖 Spec Kit Reference**: See [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete specification-driven development guide
@@ -318,7 +318,7 @@ complete set at the single gate in step 3.
 **Step 1: Numbering**
 
 - List existing specs: `ls .specify/specs/`
-- Use next sequential number (last is `031-*`, so the next new spec is `032-`)
+- Use next sequential number (last is `032-*`, so the next new spec is `033-`)
 
 **Step 2: Create Directory**
 
@@ -1597,6 +1597,7 @@ Browse `.specify/specs/` for examples of completed specs:
 - `029-core-hardening-v2.5.0/` - core-hardening round 2 (log redaction, offline data-loss fixes, server-wins default, concurrency/race guards)
 - `030-transient-retry-handling/` - `ApiError.isRetryable`/`retryAfterMs`, `Retry-After`-aware retry policy, `RequestConfig` contract fix
 - `031-error-system-rn-alignment/` - boundary converges to fallback (no infinite loop), `NonRenderError` repositioned as descriptor/log payload (throwing deprecated → 3.0), three-outcome RN error docs (2.7.0)
+- `032-ergonomic-facades/` - `api`/`storage`/`logger` facades (no `.getInstance()`) + `api` verb sugar over `request()`; root barrel + `/facades` subpath; additive/non-breaking (2.8.0)
 
 ### Technology Stack
 
@@ -1637,7 +1638,7 @@ not necessarily in the store Expo Go if it has moved to a newer SDK.
 ---
 
 **Last Updated**: 2026-06-25
-**Version**: 2.7.0
+**Version**: 2.8.0
 **Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**
