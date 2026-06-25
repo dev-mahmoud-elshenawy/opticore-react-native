@@ -318,7 +318,7 @@ complete set at the single gate in step 3.
 **Step 1: Numbering**
 
 - List existing specs: `ls .specify/specs/`
-- Use next sequential number (last is `032-*`, so the next new spec is `033-`)
+- Use next sequential number (last is `034-*` (033/034 are drafted, pending execution), so the next new spec is `035-`)
 
 **Step 2: Create Directory**
 
