@@ -24,6 +24,7 @@ Welcome to the complete documentation for **opticore-react-native** — the Type
 | [**State Management**](./api/STATE.md) | AsyncState · BaseStore · StoreFactory · StateObserver · CrudStore |
 | [**Hooks**](./api/HOOKS.md) | useAsyncState · useDebounce · useConnectivity · useKeyboard · +7 more |
 | [**Error Handling**](./api/ERRORS.md) | RenderError · NonRenderError · Result<T,E> · OptiCoreErrorBoundary |
+| [**Error Handling — Which Tool, When**](./ERROR_HANDLING.md) | Decision tree: `Result` vs throw `RenderError` vs `ApiError` vs `NonRenderError` |
 | [**Utilities**](./api/UTILITIES.md) | String · Number · Array · Date · Object · Format · Color · Platform · buildUrl |
 | [**Navigation**](./api/NAVIGATION.md) | useRouteHelper · Expo Router integration |
 | [**React Query**](./REACT_QUERY.md) | createQueryClient · createQueryHook · useApiMutation · createQueryPersister · error-aware retry |
