@@ -50,7 +50,7 @@ if (isSuccess(state)) {
 
 ```typescript
 import { create } from 'zustand';
-import { ApiClient, HttpMethod, AsyncState, toLoading, toSuccess, toError, createAsyncState } from 'opticore-react-native';
+import { api, AsyncState, toLoading, toSuccess, toError, createAsyncState } from 'opticore-react-native';
 
 interface UserStore {
   users: AsyncState<User[]>;
@@ -62,8 +62,8 @@ const useUserStore = create<UserStore>((set) => ({
   fetchUsers: async () => {
     set({ users: toLoading() });
     try {
-      const data = await ApiClient.getInstance().request<User[]>({ method: HttpMethod.GET, url: '/users' });
-      set({ users: toSuccess(data.data) });
+      const data = await api.get<User[]>('/users');
+      set({ users: toSuccess(data) });
     } catch (e) {
       set({ users: toError(e as Error) });
     }
@@ -213,7 +213,7 @@ All `api` methods are optional. If a CRUD action is called but the corresponding
 ### Example
 
 ```typescript
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 import { createCrudStore } from 'opticore-react-native/state';
 
 interface Product {
@@ -227,23 +227,23 @@ export const useProductStore = createCrudStore<Product>(
     name: 'ProductStore',
     api: {
       fetchAll: async () => {
-        const { data } = await ApiClient.getInstance().request<Product[]>({ method: HttpMethod.GET, url: '/products' });
+        const data = await api.get<Product[]>('/products');
         return data;
       },
       fetchById: async (id) => {
-        const { data } = await ApiClient.getInstance().request<Product>({ method: HttpMethod.GET, url: `/products/${id}` });
+        const data = await api.get<Product>(`/products/${id}`);
         return data;
       },
       create: async (data) => {
-        const { data: created } = await ApiClient.getInstance().request<Product>({ method: HttpMethod.POST, url: '/products', data: data });
+        const created = await api.post<Product>('/products', data);
         return created;
       },
       update: async (id, data) => {
-        const { data: updated } = await ApiClient.getInstance().request<Product>({ method: HttpMethod.PUT, url: `/products/${id}`, data: data });
+        const updated = await api.put<Product>(`/products/${id}`, data);
         return updated;
       },
       delete: async (id) => {
-        await ApiClient.getInstance().request({ method: HttpMethod.DELETE, url: `/products/${id}` });
+        await api.delete(`/products/${id}`);
       },
     },
   }
@@ -332,13 +332,13 @@ retries and backoff happen automatically.
 
 ```typescript
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 
 // Fetch with caching
 function useProducts() {
   return useQuery({
     queryKey: ['products'],
-    queryFn: () => ApiClient.getInstance().request<Product[]>({ method: HttpMethod.GET, url: '/products' }).then(r => r.data),
+    queryFn: () => api.get<Product[]>('/products'),
     staleTime: 5 * 60 * 1000,  // 5 minutes
   });
 }
@@ -349,7 +349,7 @@ function useCreateProduct() {
 
   return useMutation({
     mutationFn: (product: Partial<Product>) =>
-      ApiClient.getInstance().request<Product>({ method: HttpMethod.POST, url: '/products', data: product }).then(r => r.data),
+      api.post<Product>('/products', product),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
@@ -375,18 +375,14 @@ that takes a `Promise<T>` directly — there is no `execute`.
 
 ```typescript
 import { useAsyncState } from 'opticore-react-native/hooks';
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 
 function UserList() {
   const { data, isLoading, error, run } = useAsyncState<User[]>();
 
   useEffect(() => {
-    // request() returns ApiResponse<T>, so unwrap `.data`
-    run(
-      ApiClient.getInstance()
-        .request<User[]>({ method: HttpMethod.GET, url: '/users' })
-        .then((r) => r.data)
-    );
+    // api.get returns the response body (User[]) directly
+    run(api.get<User[]>('/users'));
   }, []);
 
   if (isLoading) return <Loading />;

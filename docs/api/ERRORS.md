@@ -37,7 +37,7 @@ interface RenderErrorOptions {
 > friendly text surfaced to users (defaults to a generic message when omitted).
 
 ```typescript
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 
 // Basic — technical message only
 throw new RenderError('Profile not found');
@@ -51,7 +51,7 @@ throw new RenderError('Payment declined by gateway', 'Your payment was declined.
 
 // Wrapping a caught error
 try {
-  await ApiClient.getInstance().request({ method: HttpMethod.POST, url: '/payment', data });
+  await api.post('/payment', data);
 } catch (e) {
   throw new RenderError('Failed to process payment', 'Could not process your payment.', {
     cause: e instanceof Error ? e : undefined,
@@ -90,7 +90,7 @@ interface NonRenderErrorOptions {
 ```
 
 ```typescript
-import { Logger } from 'opticore-react-native';
+import { logger } from 'opticore-react-native';
 
 // ✅ Construct + log (never thrown). Read isSilent to decide on user feedback.
 try {
@@ -102,7 +102,7 @@ try {
     metadata: { event: 'purchase' },
     cause: cause instanceof Error ? cause : undefined,
   });
-  Logger.getInstance().error('analytics failed', err);
+  logger.error('analytics failed', err);
   if (!err.isSilent) toast.error(err.metadata.userMessage as string);
 }
 
@@ -137,10 +137,10 @@ retry policy in [`createQueryClient`](./STATE.md#react-query-integration) reads
 free.
 
 ```typescript
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 
 try {
-  await ApiClient.getInstance().request({ method: HttpMethod.GET, url: '/users/999' });
+  await api.get('/users/999');
 } catch (e) {
   if (e instanceof ApiError) {
     switch (e.status) {
@@ -225,7 +225,7 @@ function handleError(error: unknown) {
   if (type === ErrorType.RENDER) {
     showErrorToUser(error as RenderError);
   } else if (type === ErrorType.NON_RENDER) {
-    Logger.getInstance().error('Silent error', error as Error);
+    logger.error('Silent error', error as Error);
   }
 }
 ```
@@ -313,7 +313,7 @@ const withContext = result.mapErr(e => new RenderError(e.message));
 ### Real-World Example
 
 ```typescript
-import { ApiClient, HttpMethod, RenderError, Result } from 'opticore-react-native';
+import { api, RenderError, Result } from 'opticore-react-native';
 
 async function processOrder(orderId: string): Promise<Result<Order, RenderError>> {
   const idResult = parseUserId(orderId);
@@ -322,10 +322,7 @@ async function processOrder(orderId: string): Promise<Result<Order, RenderError>
   }
 
   try {
-    const { data } = await ApiClient.getInstance().request<Order>({
-      method: HttpMethod.GET,
-      url: `/orders/${idResult.unwrap()}`,
-    });
+    const data = await api.get<Order>(`/orders/${idResult.unwrap()}`);
     return Result.ok(data);
   } catch (e) {
     return Result.err(
@@ -424,7 +421,7 @@ const refresh = new RefreshTokenStrategy(async () => {
 
 // Clear cache and reload
 const clear = new ClearCacheStrategy(async () => {
-  await StorageManager.getInstance().local.clear();
+  await storage.local.clear();
   await fetchData();
 });
 ```

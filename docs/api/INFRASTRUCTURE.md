@@ -6,43 +6,63 @@ Core services: networking, storage, logging, and device monitoring.
 
 ## Facades (recommended entry point)
 
-`api`, `storage`, and `logger` are thin facades over the singletons below — they
-remove `.getInstance()` boilerplate (and, for `api`, the `HttpMethod` enum for the
-common case). They delegate lazily, so importing them is side-effect-free, and
-`api.*` inherits `request()`'s init guard. Use them for everyday calls; drop to the
-singletons for advanced operations (interceptors, auth strategies, `addTransport`,
-`clearAll`, etc.).
+`api`, `storage`, `logger`, and `connectivity` are the **entire app-facing API**. Everything
+you need is on them — **app code never calls `.getInstance()`**, and `api` never needs the
+`HttpMethod` enum. (The singleton classes documented below are internal; the facades cover
+their full feature set.)
 
 ```typescript
-import { api, storage, logger } from 'opticore-react-native';
-// or: import { api, storage, logger } from 'opticore-react-native/facades';
+import { api, storage, logger, connectivity } from 'opticore-react-native';
+// or from 'opticore-react-native/facades'
 
-// api — verb sugar over request(); T is per-call, defaults to unknown; returns ApiResponse<T>
-const { data } = await api.get<User[]>('/users', { params: { page: 1 } });
-await api.post<Created>('/users', { name: 'Ali' }, { headers: { 'X-Trace': '1' } });
+// api — HTTP verbs return the response body (T) directly; T defaults to unknown.
+const users = await api.get<User[]>('/users', { params: { page: 1 } });
+const created = await api.post<Created>('/users', { name: 'Ali' }, { headers: { 'X-Trace': '1' } });
 await api.put<User>('/users/1', body);
-await api.patch<User>('/users/1', partial);
 await api.delete('/users/1');
-await api.request({ method: HttpMethod.GET, url: '/raw' }); // full-control passthrough
 
-// api.data.* — same verbs, but resolve to the payload (T) instead of ApiResponse<T>:
-const users = await api.data.get<User[]>('/users'); // User[] (no .data)
+// api — dynamic global headers (no getInstance):
+api.setHeader('Accept-Language', 'ar');
+api.setHeaders({ 'X-Tenant': 't1' });
+api.removeHeader('Accept-Language');
 
-// storage — exposes secure / local (clearAll stays on StorageManager)
+// api — custom interceptors + readiness:
+const id = api.onRequest({ onRequest: (c) => c });
+api.onResponse({ onResponse: (r) => r });
+api.removeInterceptor(id);
+if (api.isReady()) { /* client configured */ }
+
+// storage — secure (Keychain/Keystore) + local (AsyncStorage) + clearAll
 await storage.secure.set('token', t);
 await storage.local.get<User>('user');
+await storage.clearAll();
 
-// logger — debug / info / warn / error (addTransport stays on Logger)
+// logger — log, set level, manage transports
 logger.info('ready', { userId: '123' });
+logger.setLevel(LogLevel.WARN);
+logger.addTransport(sentryTransport);
+
+// connectivity — status + subscribe (in components, prefer the useConnectivity hook)
+if (connectivity.isConnected) await sync();
+const unsubscribe = connectivity.subscribe((s) => logger.debug(`online: ${s.isConnected}`));
 ```
 
-| Facade | Methods | For advanced ops use |
-|--------|---------|----------------------|
-| `api` | `request`, `get`, `post`, `put`, `patch`, `delete` | `ApiClient.getInstance()` (interceptors, auth strategies) |
-| `storage` | `secure`, `local` | `StorageManager.getInstance()` (`clearAll`, configure) |
-| `logger` | `debug`, `info`, `warn`, `error` | `Logger.getInstance()` (`addTransport`, configure) |
+| Facade | Full surface | In components, also |
+|--------|--------------|---------------------|
+| `api` | `get` `post` `put` `patch` `delete` (→ `T`) · `setHeader` `setHeaders` `removeHeader` · `onRequest` `onResponse` `removeInterceptor` · `isReady` | `useAsyncState` |
+| `storage` | `secure` `local` (each: `get`/`set`/`remove`/`clear`) · `clearAll` | — |
+| `logger` | `debug` `info` `warn` `error` · `setLevel` · `addTransport` `removeTransport` `clearTransports` | — |
+| `connectivity` | `isConnected` · `subscribe(cb) → unsubscribe` | `useConnectivity` |
+| `offline` | `enqueue` `sync` `remove` `clearQueue` `pause` `resume` `getPendingCount` `isSyncing` · `subscribe` | `useOfflineSync` |
+| `themeControl` | `current` `mode` `activeMode` · `setMode` `setTheme` `registerTheme` `unregisterTheme` · `subscribe` | `useTheme` |
+| `lifecycle` | `onChange(onActive?, onInactive?) → unsubscribe` | `useLifecycle` |
+| `stateObserver` | `subscribe(store, cb, opts?) → unsubscribe` · `cleanup` | store hooks |
 
-`api` verb signatures: `get(url, cfg?)` / `delete(url, cfg?)`; `post|put|patch(url, data?, cfg?)`, where `cfg = { headers?, params?, signal? }`. All return `Promise<ApiResponse<T>>`. **`api.data.*`** has the identical signatures but returns `Promise<T>` (just the response body) — use it when you don't need `status`/`headers`.
+**App code never calls `.getInstance()`** — these eight facades cover every feature. In
+components, the hooks (right column) are the reactive equivalent; the facades are for
+imperative/non-component code. Setup (`configure`/`init`) is done once by `OptiCoreProvider`.
+
+`api` verb signatures: `get(url, cfg?)` / `delete(url, cfg?)`; `post|put|patch(url, data?, cfg?)`, where `cfg = { headers?, params?, signal? }`. All return `Promise<T>` — the response body. Every call runs through the fully-configured client (baseURL, default headers, auth token injection + 401 refresh, interceptors, retry, `ApiError`).
 
 ---
 
@@ -56,69 +76,52 @@ HTTP client built on Axios. Supports interceptors, auth strategies, automatic to
 import { ApiClient } from 'opticore-react-native';
 ```
 
-### `ApiClient.getInstance(): ApiClient`
+### Configuration
 
-Returns the singleton instance. Must be called after `OptiCoreProvider` mounts or `coreSetup.init()` is called.
-
-```typescript
-const api = ApiClient.getInstance();
-```
-
-> **`request()` fails fast.** Calling `request()` before the client has been configured
-> (via `OptiCoreProvider`, `CoreSetup.getInstance().init(config)`, or
-> `ApiClient.getInstance().configure(config)`) **throws** an error rather than silently
-> sending a request with no `baseURL`/auth. Use `api.isInitialized()` to guard imperative
-> call sites:
->
-> ```typescript
-> if (api.isInitialized()) {
->   await api.request({ method: HttpMethod.GET, url: '/users' });
-> }
-> ```
-
----
+The client is configured for you by `OptiCoreProvider` (you pass `config.api`). App code
+never calls `getInstance()` — make requests through the **`api` facade**.
 
 ### Making Requests
 
-The single public method is `request<T>(config: RequestConfig): Promise<ApiResponse<T>>`.
-The HTTP verb is selected with the `HttpMethod` enum — there are no public `get`/`post`/
-`put`/`patch`/`delete` methods.
-
 ```typescript
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 
-const api = ApiClient.getInstance();
-
-// GET
-const { data } = await api.request<User[]>({ method: HttpMethod.GET, url: '/users' });
-const { data } = await api.request<User>({ method: HttpMethod.GET, url: '/users/1', params: { include: 'profile' } });
-
-// POST
-const created = await api.request<User>({ method: HttpMethod.POST, url: '/users', data: { name: 'Alice' } });
-
-// DELETE
-await api.request({ method: HttpMethod.DELETE, url: '/users/1' });
+// Verbs return the response body (T) directly. T is per-call, defaults to unknown.
+const users   = await api.get<User[]>('/users', { params: { page: 1 } });
+const user    = await api.get<User>('/users/1');
+const created = await api.post<User>('/users', { name: 'Alice' });
+await api.put<User>('/users/1', changes);
+await api.patch<User>('/users/1', partial);
+await api.delete('/users/1');
 ```
 
-**`RequestConfig` fields:**
-| Field | Type | Description |
+**Per-request options** — 2nd arg for `get`/`delete`, 3rd for `post`/`put`/`patch`:
+
+| Option | Type | Description |
 |---|---|---|
-| `method` | `HttpMethod` | `HttpMethod.GET` / `POST` / `PUT` / `PATCH` / `DELETE` |
-| `url` | `string` | Endpoint path (appended to `baseURL`) |
-| `data` | `unknown` | Request body (POST/PUT/PATCH; also forwarded on DELETE) |
-| `params` | `Record<string, unknown>` | Query parameters |
+| `params` | `Record<string, QueryParamValue>` | Query parameters (serialized by Axios) |
 | `headers` | `Record<string, string>` | Per-request headers |
-| `signal` | `AbortSignal` | Cancellation signal (e.g. `controller.abort()` on unmount) |
+| `signal` | `AbortSignal` | Cancellation (e.g. `controller.abort()` on unmount) |
+
+> Requests made before `OptiCoreProvider` mounts throw a clear "not initialized" error
+> instead of sending with no `baseURL`/auth. The provider configures the client
+> synchronously before your screens render, so app code is unaffected.
 
 ---
 
-### Interceptors
+### Interceptors (advanced)
 
-Add custom request or response interceptors.
+Most apps don't need these — auth and logging are already built in. When you do,
+interceptors are registered on the client instance:
+
+```typescript
+import { ApiClient } from 'opticore-react-native';
+const client = ApiClient.getInstance();
+```
 
 ```typescript
 // addRequestInterceptor / addResponseInterceptor
-const id = api.addRequestInterceptor({
+const id = client.addRequestInterceptor({
   onRequest(config) {
     config.headers['X-Request-ID'] = uuid();
     return config;
@@ -130,11 +133,11 @@ const id = api.addRequestInterceptor({
 });
 
 // Remove by ID
-api.removeInterceptor(id);
+client.removeInterceptor(id);
 ```
 
 ```typescript
-const id = api.addResponseInterceptor({
+const id = client.addResponseInterceptor({
   onResponse(response) {
     Logger.getInstance().debug(`${response.config.url} → ${response.status}`);
     return response;
@@ -191,7 +194,7 @@ Thrown when an HTTP request fails. Extends `RenderError`.
 
 ```typescript
 try {
-  await api.request({ method: HttpMethod.GET, url: '/protected' });
+  await api.get('/protected');
 } catch (e) {
   if (e instanceof ApiError) {
     console.warn(e.status);          // 401

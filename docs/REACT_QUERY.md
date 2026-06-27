@@ -4,7 +4,7 @@ OptiCore integrates with [TanStack React Query](https://tanstack.com/query) as t
 server-state layer. As of **v2.0.0**, `@tanstack/react-query` is a **required peer dependency**
 (install it once: `npx expo install @tanstack/react-query`).
 
-OptiCore stays the **transport + error** layer (`ApiClient`, `RenderError`/`ApiError`), and React
+OptiCore stays the **transport + error** layer (the `api` facade, `RenderError`/`ApiError`), and React
 Query owns **caching, deduping, background refetch, and retries**. The glue is one helper:
 `createQueryClient`.
 
@@ -108,13 +108,12 @@ const queryClient = createQueryClient({
 Keep the data source behind a repository, wrap it in a query hook, and let UI consume the hook:
 
 ```typescript
-// repository — the only place that knows the API shape. ApiClient throws ApiError
+// repository — the only place that knows the API shape. The api facade throws ApiError
 // on any non-2xx status, so this only maps the successful (2xx) body.
+import { api } from 'opticore-react-native';
+
 export const repository = {
-  getById: (id: string) =>
-    ApiClient.getInstance()
-      .request<ResourceResponse>({ method: HttpMethod.GET, url: `/resource/${id}` })
-      .then((res) => res.data),
+  getById: (id: string) => api.get<ResourceResponse>(`/resource/${id}`),
 };
 
 // query hook — caching/retry handled by the client defaults

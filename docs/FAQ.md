@@ -161,7 +161,9 @@ No — `expo-secure-store` is iOS/Android only. On web, use `storage.local`.
 ### How do I clear all storage on logout?
 
 ```typescript
-await StorageManager.getInstance().clearAll();
+import { storage } from 'opticore-react-native';
+
+await storage.clearAll();
 // clears both local and secure storage
 ```
 
@@ -233,7 +235,7 @@ function Card() {
 }
 ```
 
-Avoid calling `ThemeManager.getInstance().getTheme()` inside components — it won't trigger re-renders.
+Avoid reading `themeControl.current` inside components — it won't trigger re-renders. Use the `useTheme` hook (reactive) in components; the `themeControl` facade is for imperative/non-component code.
 
 ### Does dark mode follow the OS setting automatically?
 

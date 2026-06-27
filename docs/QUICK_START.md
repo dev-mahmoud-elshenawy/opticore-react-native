@@ -73,13 +73,10 @@ export default function RootLayout() {
 
 ## Step 3 — Make API Calls
 
-> **Recommended: the `api` facade.** Import `api` from the package root and use verb
-> sugar — no `.getInstance()`, no `HttpMethod` enum. The type parameter is per-call
-> (`User[]`, `User`, a paginated wrapper, anything) and defaults to `unknown`. The
-> singletons + enum-based `request()` remain available for advanced use.
->
-> Just want the payload (no `.data`)? Use `api.data.get<User[]>('/users')` → `User[]`.
-> Use `api.get` when you need `status`/`headers`.
+> **The `api` facade is the one way to make calls.** Import `api` from the package
+> root — no `.getInstance()`, no `HttpMethod` enum. The verbs return the **response
+> body** directly; the type parameter is per-call (`User[]`, `User`, a paginated
+> wrapper, anything) and defaults to `unknown`.
 
 ```typescript
 import { api } from 'opticore-react-native';
@@ -91,10 +88,9 @@ interface User {
   email: string;
 }
 
-// Define your API function
+// Define your API function — api.get returns the body (User[]) directly
 async function fetchUsers(): Promise<User[]> {
-  const response = await api.get<User[]>('/users');
-  return response.data;
+  return api.get<User[]>('/users');
 }
 
 // Use in a component
@@ -122,8 +118,6 @@ function UserListScreen() {
 > ```typescript
 > // GET /articles?category=tech&pageSize=20
 > api.get<Article[]>('/articles', { params: { category: 'tech', pageSize: 20 } });
->
-> // Full control (equivalent): ApiClient.getInstance().request({ method: HttpMethod.GET, url, params })
 > ```
 >
 > Reach for the `buildUrl` helper (`opticore-react-native/utils`) only when you need a pre-built URL
@@ -136,18 +130,18 @@ function UserListScreen() {
 Configure `getAuthToken` to automatically attach a Bearer token to every request.
 
 ```typescript
-import { StorageManager } from 'opticore-react-native';
+import { storage } from 'opticore-react-native';
 
 <OptiCoreProvider
   config={{
     api: {
       baseURL: 'https://api.yourapp.com',
       getAuthToken: async () => {
-        return StorageManager.getInstance().secure.get<string>('auth_token');
+        return storage.secure.get<string>('auth_token');
       },
       onTokenRefresh: async () => {
         const newToken = await refreshToken();
-        await StorageManager.getInstance().secure.set('auth_token', newToken);
+        await storage.secure.set('auth_token', newToken);
         return newToken;
       },
     },
@@ -158,13 +152,13 @@ import { StorageManager } from 'opticore-react-native';
 **Login flow:**
 
 ```typescript
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api, storage } from 'opticore-react-native';
 
 async function login(email: string, password: string) {
-  const { data } = await ApiClient.getInstance().request({ method: HttpMethod.POST, url: '/auth/login', data: { email, password } });
+  const data = await api.post('/auth/login', { email, password });
 
-  await StorageManager.getInstance().secure.set('auth_token', data.token);
-  await StorageManager.getInstance().local.set('user', data.user);
+  await storage.secure.set('auth_token', data.token);
+  await storage.local.set('user', data.user);
 
   return data.user;
 }
@@ -177,13 +171,13 @@ async function login(email: string, password: string) {
 Wrap screens with `OptiCoreErrorBoundary` to catch and display errors gracefully.
 
 ```typescript
-import { ApiClient, HttpMethod, OptiCoreErrorBoundary, RenderError } from 'opticore-react-native';
+import { api, logger, OptiCoreErrorBoundary, RenderError } from 'opticore-react-native';
 
 function App() {
   return (
     <OptiCoreErrorBoundary
       fallback={(error) => <ErrorScreen message={error.message} />}
-      onError={(error) => Logger.getInstance().error('Boundary caught', error)}
+      onError={(error) => logger.error('Boundary caught', error)}
     >
       <MainNavigator />
     </OptiCoreErrorBoundary>
@@ -193,7 +187,7 @@ function App() {
 // Throw typed errors in your code
 async function fetchProfile(userId: string) {
   try {
-    return await ApiClient.getInstance().request({ method: HttpMethod.GET, url: `/users/${userId}` });
+    return await api.get(`/users/${userId}`);
   } catch (e) {
     throw new RenderError('Failed to load profile', {
       cause: e,
@@ -220,9 +214,8 @@ await storage.secure.set('auth_token', 'eyJhbGc...');
 const token = await storage.secure.get<string>('auth_token');
 ```
 
-> The `storage` facade exposes `local` and `secure`. Manager-level operations like
-> `clearAll()` stay on the singleton:
-> `import { StorageManager } from 'opticore-react-native'; await StorageManager.getInstance().clearAll();`
+> Clear everything (e.g. on logout) with `await storage.clearAll();` — still on the facade,
+> no `getInstance()`.
 
 ---
 
@@ -237,12 +230,14 @@ logger.warn('Token expiring soon');
 logger.error('Network request failed', new Error('timeout'));
 ```
 
-**Add a custom transport (e.g., Sentry)** — transport setup stays on the singleton:
+**Change the level or add a custom transport (e.g., Sentry)** — all on the `logger` facade:
 
 ```typescript
-import { Logger, LogLevel } from 'opticore-react-native';
+import { logger, LogLevel } from 'opticore-react-native';
 
-Logger.getInstance().addTransport({
+logger.setLevel(LogLevel.WARN);
+
+logger.addTransport({
   name: 'sentry',
   minLevel: LogLevel.ERROR,
   write(entry) {
@@ -256,10 +251,10 @@ Logger.getInstance().addTransport({
 ## Step 8 — Monitor Network
 
 ```typescript
-import { ConnectivityManager } from 'opticore-react-native';
+import { connectivity } from 'opticore-react-native';
 import { useConnectivity } from 'opticore-react-native/hooks';
 
-// In a component
+// In a component — reactive
 function NetworkBanner() {
   const { isConnected } = useConnectivity();
 
@@ -267,11 +262,11 @@ function NetworkBanner() {
   return <Banner message="No internet connection" />;
 }
 
-// Outside React
-const connectivity = ConnectivityManager.getInstance();
+// Outside React — the connectivity facade (no getInstance)
 if (!connectivity.isConnected) {
   enqueueForLater(request);
 }
+const unsubscribe = connectivity.subscribe((s) => log(s.isConnected));
 ```
 
 ---
@@ -281,7 +276,7 @@ if (!connectivity.isConnected) {
 ```typescript
 import React, { useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
-import { ApiClient, HttpMethod, RenderError } from 'opticore-react-native';
+import { api, RenderError } from 'opticore-react-native';
 import { useAsyncState } from 'opticore-react-native/hooks';
 
 interface Product {
@@ -291,8 +286,7 @@ interface Product {
 }
 
 async function fetchProducts(): Promise<Product[]> {
-  const { data } = await ApiClient.getInstance().request<Product[]>({ method: HttpMethod.GET, url: '/products' });
-  return data;
+  return api.get<Product[]>('/products');
 }
 
 export function ProductsScreen() {
@@ -332,7 +326,7 @@ export function ProductsScreen() {
 Verify installation: `npm ls opticore-react-native`
 
 ### "ApiClient: not configured"
-Ensure `OptiCoreProvider` wraps your component tree before calling `ApiClient.getInstance()`.
+Ensure `OptiCoreProvider` wraps your component tree before making any `api.get`/`api.post`/etc. calls.
 
 ### TypeScript errors about strict mode
 Add to `tsconfig.json`:

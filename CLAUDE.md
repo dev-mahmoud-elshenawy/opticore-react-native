@@ -1599,8 +1599,9 @@ Browse `.specify/specs/` for examples of completed specs:
 - `031-error-system-rn-alignment/` - boundary converges to fallback (no infinite loop), `NonRenderError` repositioned as descriptor/log payload (throwing deprecated → 3.0), three-outcome RN error docs (2.7.0)
 - `032-ergonomic-facades/` - `api`/`storage`/`logger` facades (no `.getInstance()`) + `api` verb sugar over `request()`; root barrel + `/facades` subpath; additive/non-breaking (2.8.0)
 - `033-dx-docs/` - DX docs: error-handling decision tree (`docs/ERROR_HANDLING.md`), consumer testing/mocking guide, init clarity (provider vs CoreSetup). Docs-only, no version bump
-- `034-response-data-convenience/` - additive `api.data.{get,post,put,patch,delete}` returning `T` (payload) instead of `ApiResponse<T>` (Option A). Implemented; **unreleased** — version bump + tag deferred until the improvement batch is complete (will be 2.9.0)
-- `035-testing-utilities/` - `opticore-react-native/testing` subpath: `createMemoryAdapters()` + `resetOptiCore()` (the helpers spec 033 documented). Additive, subpath-only (out of main barrel). Implemented; **unreleased** (batched into 2.9.0)
+- `034-response-data-convenience/` - SUPERSEDED by the facade-complete redesign below. (Interim `api.data.*` was removed; verbs now return `T` directly.)
+- `035-testing-utilities/` - `opticore-react-native/testing` subpath: `createMemoryAdapters()` + `resetOptiCore()` (the helpers spec 033 documented). Additive, subpath-only (out of main barrel). Implemented; **unreleased**
+- **Facade-complete consumer API (unreleased → 3.0.0)** - the whole package is consumed via facades; **app code never calls `.getInstance()`**. `api` verbs now return the body (`T`) directly (BREAKING — `api.request`/`api.data` removed; full `ApiResponse` only via the internal `ApiClient.getInstance().request()` engine). Facades: `api` (verbs + `setHeader(s)`/`removeHeader` + `onRequest`/`onResponse`/`removeInterceptor` + `isReady`), `storage` (+`clearAll`), `logger` (+`setLevel`/transports), and new `connectivity`/`offline`/`themeControl`/`lifecycle`/`stateObserver`. All in the root barrel + `/facades`, lazy/side-effect-free. Hooks remain the reactive equivalent in components.
 
 ### Technology Stack
 

@@ -14,34 +14,39 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
-## 🚧 [Unreleased]
+## 🚧 [Unreleased] — Facade-complete consumer API (next: 3.0.0)
 
-### `api.data.*` — unwrapped response data
+The whole package is now consumed through **facades** — app code never calls
+`.getInstance()`. (Supersedes the interim `api.data.*` design from spec 034.)
 
-Removes the `.data` papercut. Purely additive — no breaking changes. (Spec 034, Option A.) Version bump + tag deferred until the improvement batch is complete.
+### ⚠️ Breaking
 
-### `opticore-react-native/testing` — official test utilities
-
-New subpath shipping the helpers consumers previously hand-rolled (Spec 035):
-
-- **`createMemoryAdapters(overrides?)`** — a full in-memory `OptiCoreAdapters` bundle (secure/local storage, connectivity, device, clipboard) to pass to `OptiCoreProvider`'s `config.adapters`. Isolated per call; override any single adapter.
-- **`resetOptiCore()`** — async, best-effort cross-test reset (adapter fallback warnings, logger transports, secure + local storage); safe to call even when OptiCore was never configured.
-
-Exposed only via `opticore-react-native/testing` (kept out of the main barrel, so production bundles exclude it). No test-framework imports. Additive, non-breaking.
-
-### ✨ Added
-
-- **`api.data.{get,post,put,patch,delete}`** — the same verbs as `api.*` but resolving to the response **body (`T`)** directly instead of `ApiResponse<T>`:
+- **`api` verbs now return the response body (`T`) directly**, not `ApiResponse<T>`:
   ```ts
-  const users = await api.data.get<User[]>('/users');     // User[]
-  const created = await api.data.post<Created>('/users', body);
+  const users = await api.get<User[]>('/users');   // User[]  (was ApiResponse<User[]>)
   ```
-  Signatures match `api.*` (`get/delete(url, cfg?)`, `post/put/patch(url, data?, cfg?)`); `T` defaults to `unknown`.
+  Migration: drop `.data` (`const { data } = await api.get(...)` → `const data = await api.get(...)`).
+- **`api.request` and `api.data` removed.** The verbs are the one HTTP API. If you truly
+  need the full `ApiResponse` (`status`/`headers`) you can still reach the internal engine
+  at `ApiClient.getInstance().request(...)`, but app code shouldn't need it.
 
-### 🧩 Notes
+### ✨ Added — full facade surface (no `getInstance` anywhere)
 
-- `api.get/post/...` and `api.request` are **unchanged** — they still return `ApiResponse<T>` (use them when you need `status`/`headers`). Pick `api.data.*` when you just want the payload.
-- `api.data.*` forwards identical `request()` args to its `api.*` counterpart (parity) and stays lazy/side-effect-free on import. Errors propagate identically; unwrapping only touches the success path.
+- **`api`** — `get/post/put/patch/delete` (→ `T`) · `setHeader/setHeaders/removeHeader` (dynamic global headers) · `onRequest/onResponse/removeInterceptor` · `isReady`.
+- **`storage`** — `secure`/`local` · `clearAll`.
+- **`logger`** — `debug/info/warn/error` · `setLevel` · `addTransport/removeTransport/clearTransports`.
+- **`connectivity`** *(new)* — `isConnected` · `subscribe(cb) → unsubscribe`.
+- **`offline`** *(new)* — `enqueue/sync/remove/clearQueue/pause/resume/getPendingCount/isSyncing/subscribe`.
+- **`themeControl`** *(new)* — `current/mode/activeMode` · `setMode/setTheme/registerTheme/unregisterTheme/subscribe`.
+- **`lifecycle`** *(new)* — `onChange(onActive?, onInactive?) → unsubscribe`.
+- **`stateObserver`** *(new)* — `subscribe(store, cb, opts?) → unsubscribe` · `cleanup`.
+- All exported from the root barrel and `opticore-react-native/facades`; lazy and side-effect-free on import. In components, the hooks (`useTheme`, `useOfflineSync`, `useConnectivity`, `useLifecycle`, …) remain the reactive equivalents.
+
+### `opticore-react-native/testing` — official test utilities (spec 035)
+
+- **`createMemoryAdapters(overrides?)`** — full in-memory `OptiCoreAdapters` bundle for `config.adapters`; isolated per call.
+- **`resetOptiCore()`** — async, best-effort cross-test reset; safe when unconfigured.
+- Subpath-only (excluded from prod bundles); no test-framework imports.
 
 ---
 

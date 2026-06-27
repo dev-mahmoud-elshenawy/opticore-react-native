@@ -1,5 +1,6 @@
 import { logger } from '../../src/facades/logger';
 import { Logger } from '../../src/infrastructure/logger/Logger';
+import { LogLevel } from '../../src/infrastructure/logger/LogLevel';
 
 describe('logger facade', () => {
   afterEach(() => jest.restoreAllMocks());
@@ -21,5 +22,24 @@ describe('logger facade', () => {
     expect(info).toHaveBeenCalledWith('i', 2);
     expect(warn).toHaveBeenCalledWith('w', 3);
     expect(error).toHaveBeenCalledWith('e', e, 4);
+  });
+
+  it('setLevel / addTransport / removeTransport / clearTransports delegate', () => {
+    const inst = Logger.getInstance();
+    const configure = jest.spyOn(inst, 'configure').mockImplementation(() => {});
+    const add = jest.spyOn(inst, 'addTransport').mockImplementation(() => {});
+    const remove = jest.spyOn(inst, 'removeTransport').mockReturnValue(true);
+    const clear = jest.spyOn(inst, 'clearTransports').mockImplementation(() => {});
+
+    logger.setLevel(LogLevel.WARN);
+    const transport = { name: 't', write: jest.fn() };
+    logger.addTransport(transport);
+    logger.removeTransport('t');
+    logger.clearTransports();
+
+    expect(configure).toHaveBeenCalledWith({ level: LogLevel.WARN });
+    expect(add).toHaveBeenCalledWith(transport);
+    expect(remove).toHaveBeenCalledWith('t');
+    expect(clear).toHaveBeenCalled();
   });
 });

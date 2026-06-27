@@ -7,4 +7,11 @@ describe('storage facade', () => {
     expect(storage.secure).toBe(mgr.secure);
     expect(storage.local).toBe(mgr.local);
   });
+
+  it('clearAll delegates to StorageManager', async () => {
+    const spy = jest.spyOn(StorageManager.getInstance(), 'clearAll').mockResolvedValue();
+    await storage.clearAll();
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
+  });
 });

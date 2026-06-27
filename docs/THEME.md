@@ -278,22 +278,27 @@ theme: {
 }
 
 // Register programmatically
-ThemeManager.getInstance().registerTheme('brand', brandTheme);
+themeControl.registerTheme('brand', brandTheme);
 
 // Activate a registered theme by name
-ThemeManager.getInstance().setTheme('brand');
+themeControl.setTheme('brand');
 ```
 
 ---
 
-## ThemeManager
+## themeControl (imperative)
 
-Direct access to the theme engine, outside React.
+Control the theme engine outside React — no `getInstance()`. In components use the
+`useTheme` hook (reactive); the `themeControl` facade is for imperative/non-component code.
 
 ```typescript
-import { ThemeManager } from 'opticore-react-native/theme';
+import { themeControl } from 'opticore-react-native';
 
-const manager = ThemeManager.getInstance();
+themeControl.setMode('dark');                 // 'light' | 'dark' | 'system'
+themeControl.setTheme('brand');
+themeControl.registerTheme('brand', brandTheme);
+const mode = themeControl.activeMode;         // resolved 'light' | 'dark'
+const unsubscribe = themeControl.subscribe((theme, m) => { /* ... */ });
 ```
 
 ### API

@@ -159,19 +159,17 @@ export default function RootLayout() {
 
 **Step 2 — Start using the library**
 
-Use the **facades** (`api`, `storage`, `logger`) — no `.getInstance()`, and no `HttpMethod` enum for the common case:
+Use the **facades** (`api`, `storage`, `logger`) — no `.getInstance()`, no `HttpMethod` enum. The HTTP verbs return the **response body** directly:
 
 ```typescript
 import { api, storage, logger } from 'opticore-react-native';
 import { useAsyncState } from 'opticore-react-native/hooks';
 
-// HTTP — verb sugar; auth token injected automatically. `T` is per-call:
-const { data } = await api.get<User[]>('/users');        // ApiResponse<User[]>
-const me = await api.get<User>('/users/me');             // object
-await api.post<Created>('/users', { name: 'Ali' });      // body + different result type
-
-// Just want the payload? Use api.data.* (returns T, no .data unwrap):
-const users = await api.data.get<User[]>('/users');      // User[]
+// HTTP — verbs return the body (T) directly; auth token injected automatically.
+const users = await api.get<User[]>('/users');           // User[]
+const me = await api.get<User>('/users/me');             // User
+const created = await api.post<Created>('/users', { name: 'Ali' });
+await api.delete('/users/1');
 
 // Storage — automatic JSON serialization
 await storage.local.set('user', { id: 1, name: 'Ali' });
@@ -180,19 +178,20 @@ await storage.local.set('user', { id: 1, name: 'Ali' });
 logger.info('App ready', { userId: '123' });
 
 // Async state in components
-const { data: users, isLoading, error, run } = useAsyncState<User[]>();
-run(() => api.get<User[]>('/users').then(r => r.data));
+const { data, isLoading, error, run } = useAsyncState<User[]>();
+run(() => api.get<User[]>('/users'));
 ```
 
-> **Advanced / full control** stays available — the singletons and the enum-based
-> `request()` are unchanged. `api`/`storage`/`logger` simply delegate to them:
-> `ApiClient.getInstance().request({ method: HttpMethod.GET, url })`.
+> **One approach: `api.*`.** The verbs are the whole HTTP API. If you ever need the
+> full response (`status`/`headers`), the internal engine is still there —
+> `ApiClient.getInstance().request({ method: HttpMethod.GET, url })` returns
+> `ApiResponse<T>` — but apps shouldn't need it.
 
 **Where to import from**
 
 | Symbol | Import from |
 |--------|------------|
-| `api`, `storage`, `logger` (facades) | `opticore-react-native` (root) or `…/facades` |
+| **Facades** — `api`, `storage`, `logger`, `connectivity`, `offline`, `themeControl`, `lifecycle`, `stateObserver` | `opticore-react-native` (root) or `…/facades` |
 | `ApiClient`, `StorageManager`, `Logger`, `HttpMethod` | `opticore-react-native` (root) or `…/infrastructure` |
 | `OptiCoreProvider`, `useConfig` | `opticore-react-native` (root) or `…/providers` |
 | Hooks (`useAsyncState`, …) | `opticore-react-native` (root) or `…/hooks` |

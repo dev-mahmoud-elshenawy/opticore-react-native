@@ -35,7 +35,7 @@ function useAsyncState<T>(initialData?: T | null): UseAsyncStateReturn<T>
 > `run` takes a `Promise<T>` directly (not a thunk). Create the promise inline and pass it.
 >
 > **The work starts when you create the promise, not when `run` is called.** Calling `fetchUser(id)`
-> (or `request(...)`) fires the request immediately and returns a hot promise; `run` does **not**
+> (or `api.get(...)`) fires the request immediately and returns a hot promise; `run` does **not**
 > trigger execution — it binds that promise's lifecycle to `isLoading`/`data`/`error` (with an
 > unmount guard and a generation guard so a stale earlier call can't overwrite a newer one).
 > Without `run`, the request still runs, but the hook's state never updates. Because `run` receives
@@ -43,13 +43,13 @@ function useAsyncState<T>(initialData?: T | null): UseAsyncStateReturn<T>
 > moment you want it to fire (e.g. inside the effect, as above).
 
 ```typescript
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 
 function UserScreen({ id }: { id: string }) {
   const { data: user, isLoading, error, run } = useAsyncState<User>();
 
   useEffect(() => {
-    run(ApiClient.getInstance().request<User>({ method: HttpMethod.GET, url: `/users/${id}` }).then(r => r.data));
+    run(api.get<User>(`/users/${id}`));
   }, [id]);
 
   if (isLoading) return <ActivityIndicator />;

@@ -100,59 +100,29 @@ afterEach(async () => {
 
 ## Testing API Calls
 
-Mock `axios` at the module level for deterministic tests:
+Spy on the `api` facade — no axios mocking, no `getInstance`. The verbs resolve to the
+response body, so mock the body directly:
 
 ```typescript
-jest.mock('axios', () => ({
-  create: jest.fn(() => ({
-    get: jest.fn(),
-    post: jest.fn(),
-    put: jest.fn(),
-    delete: jest.fn(),
-    interceptors: {
-      request: { use: jest.fn() },
-      response: { use: jest.fn() },
-    },
-  })),
-}));
-
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
+import { getUsers } from '@/features/users/usersRepository'; // your code calls api.get<User[]>('/users')
 
 describe('UserService', () => {
-  let api: ApiClient;
-
-  beforeEach(() => {
-    api = ApiClient.getInstance();
-    // request() throws if not initialized — configure once for the suite.
-    api.configure({ baseURL: 'https://test.api.com' });
-    jest.clearAllMocks();
-  });
+  afterEach(() => jest.restoreAllMocks());
 
   it('fetches users successfully', async () => {
-    // The underlying axios instance is exposed as the public `client` field.
-    // request({ method: GET }) delegates to client.get(url, axiosConfig).
-    const mockGet = jest.fn().mockResolvedValue({
-      data: [{ id: '1', name: 'Alice' }],
-      status: 200,
-      headers: {},
-      config: {},
-    });
-    api.client.get = mockGet;
+    jest.spyOn(api, 'get').mockResolvedValue([{ id: '1', name: 'Alice' }]);
 
-    const { data } = await api.request<User[]>({ method: HttpMethod.GET, url: '/users' });
+    const users = await getUsers();
 
-    expect(mockGet).toHaveBeenCalledWith('/users', expect.any(Object));
-    expect(data).toHaveLength(1);
-    expect(data[0].name).toBe('Alice');
+    expect(api.get).toHaveBeenCalledWith('/users');
+    expect(users).toHaveLength(1);
+    expect(users[0].name).toBe('Alice');
   });
 
   it('handles HTTP errors', async () => {
-    const mockGet = jest.fn().mockRejectedValue({ response: { status: 404 } });
-    api.client.get = mockGet;
-
-    await expect(
-      api.request({ method: HttpMethod.GET, url: '/users/999' })
-    ).rejects.toThrow();
+    jest.spyOn(api, 'get').mockRejectedValue(new Error('Not found'));
+    await expect(getUsers()).rejects.toThrow();
   });
 });
 ```

@@ -192,6 +192,28 @@ export class ApiClient {
   }
 
   /**
+   * Set/replace a single default header applied to every subsequent request.
+   * Preserves interceptors and other defaults. Use for dynamic global headers
+   * (e.g. `Accept-Language` after a locale change).
+   */
+  public setHeader(name: string, value: string): void {
+    this.client.defaults.headers.common[name] = value;
+  }
+
+  /** Merge several default headers at once (see {@link setHeader}). */
+  public setHeaders(headers: Record<string, string>): void {
+    this.client.defaults.headers.common = {
+      ...this.client.defaults.headers.common,
+      ...headers,
+    } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  }
+
+  /** Remove a previously-set default header. */
+  public removeHeader(name: string): void {
+    delete this.client.defaults.headers.common[name];
+  }
+
+  /**
    * Perform an HTTP request
    *
    * @param config - Request configuration with method, url, data, and headers

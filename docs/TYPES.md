@@ -7,35 +7,33 @@ This package provides a comprehensive set of TypeScript definitions to ensure ty
 Standardized types for API interactions ensure consistent response handling.
 
 ```typescript
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 import type { ApiResponse, ApiError, PaginatedResponse } from 'opticore-react-native';
 
-// Standard Response — request() resolves with ApiResponse<T> ({ data, status, headers, config }).
-// Non-2xx responses reject with an ApiError, so reaching here means success.
-const response: ApiResponse<User> = await ApiClient.getInstance().request<User>({
-  method: HttpMethod.GET,
-  url: '/user',
-});
-console.log(response.data.name);
+// The api facade verbs return the response **body** (T) directly — non-2xx responses
+// reject with an ApiError, so reaching here means success.
+const user: User = await api.get<User>('/user');
+console.log(user.name);
 
-// Paginated Response
-const list: ApiResponse<PaginatedResponse<Product>> = await ApiClient.getInstance().request<
-  PaginatedResponse<Product>
->({
-  method: HttpMethod.GET,
-  url: '/products',
-});
-console.log(`Page ${list.data.pagination.page} of ${list.data.pagination.totalPages}`);
+// Paginated Response — the type parameter is the body shape you expect back
+const list: PaginatedResponse<Product> = await api.get<PaginatedResponse<Product>>('/products');
+console.log(`Page ${list.pagination.page} of ${list.pagination.totalPages}`);
 ```
+
+> **`ApiResponse<T>`** (`{ data, status, headers, config }`) is the **transport-level**
+> envelope OptiCore handles internally — it's exported for type annotations and interceptor
+> authoring, but consumers calling `api.get`/`api.post`/etc. receive the unwrapped body (`T`),
+> not the `ApiResponse<T>` wrapper.
 
 ### ApiResult\<T\>
 
 The common **body** envelope backends wrap payloads in (`status` / `message` / `code` / `data`) —
-distinct from the transport-level `ApiResponse<T>` (which is what `ApiClient.request` returns). All
+distinct from the transport-level `ApiResponse<T>` (the internal envelope OptiCore handles). All
 fields are optional, so non-wrapped responses stay assignable. Extend it with your data source's
 payload:
 
 ```typescript
+import { api } from 'opticore-react-native';
 import type { ApiResult } from 'opticore-react-native';
 
 // Extend with your endpoint's payload shape:
@@ -44,12 +42,9 @@ interface ListResponse<T> extends ApiResult {
   items?: T[];
 }
 
-// HTTP errors are already thrown by ApiClient (ApiError on non-2xx), so the body
-// you receive is from a successful response — just map it.
-const { data } = await ApiClient.getInstance().request<ListResponse<MyItem>>({
-  method: HttpMethod.GET,
-  url,
-});
+// HTTP errors are already thrown for non-2xx (ApiError), so the body you receive is
+// from a successful response — api.get returns it directly, just map it.
+const data = await api.get<ListResponse<MyItem>>(url);
 return data.items ?? [];
 ```
 

@@ -30,7 +30,7 @@ async function fetchUsers() {
 
 **After:**
 ```typescript
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 
 // Configured once in OptiCoreProvider
 <OptiCoreProvider config={{
@@ -43,7 +43,7 @@ import { ApiClient, HttpMethod } from 'opticore-react-native';
 
 // Used anywhere — auth, logging, error handling automatic
 async function fetchUsers() {
-  const { data } = await ApiClient.getInstance().request<User[]>({ method: HttpMethod.GET, url: '/users' });
+  const data = await api.get<User[]>('/users');
   return data;
 }
 ```
@@ -84,17 +84,17 @@ export const fetchUsers = () => async (dispatch) => {
 **After:**
 ```typescript
 // One file — store + actions + async state
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 import { createCrudStore } from 'opticore-react-native/state';
 
 export const useUserStore = createCrudStore<User>({
   name: 'UserStore',
   api: {
-    fetchAll: () => ApiClient.getInstance().request<User[]>({ method: HttpMethod.GET, url: '/users' }).then(r => r.data),
-    fetchById: (id) => ApiClient.getInstance().request<User>({ method: HttpMethod.GET, url: `/users/${id}` }).then(r => r.data),
-    create: (data) => ApiClient.getInstance().request<User>({ method: HttpMethod.POST, url: '/users', data: data }).then(r => r.data),
-    update: (id, data) => ApiClient.getInstance().request<User>({ method: HttpMethod.PUT, url: `/users/${id}`, data: data }).then(r => r.data),
-    delete: (id) => ApiClient.getInstance().request({ method: HttpMethod.DELETE, url: `/users/${id}` }),
+    fetchAll: () => api.get<User[]>('/users'),
+    fetchById: (id) => api.get<User>(`/users/${id}`),
+    create: (data) => api.post<User>('/users', data),
+    update: (id, data) => api.put<User>(`/users/${id}`, data),
+    delete: (id) => api.delete(`/users/${id}`),
   },
 });
 
@@ -140,7 +140,7 @@ class UserStore {
 ```typescript
 // Same mental model — observable state replaced with Zustand + AsyncState
 import { createBaseStore } from 'opticore-react-native/state';
-import { ApiClient, HttpMethod, toLoading, toSuccess, toError } from 'opticore-react-native';
+import { api, toLoading, toSuccess, toError } from 'opticore-react-native';
 
 export const useUserStore = createBaseStore(
   { name: 'UserStore', initialState: { users: createAsyncState<User[]>() } },
@@ -149,7 +149,7 @@ export const useUserStore = createBaseStore(
     fetchUsers: async () => {
       set({ users: toLoading() });
       try {
-        const { data } = await ApiClient.getInstance().request<User[]>({ method: HttpMethod.GET, url: '/users' });
+        const data = await api.get<User[]>('/users');
         set({ users: toSuccess(data) });
       } catch (e) {
         set({ users: toError(e as Error) });
@@ -174,8 +174,7 @@ const user = raw ? JSON.parse(raw) : null;
 
 **After:**
 ```typescript
-import { StorageManager } from 'opticore-react-native';
-const storage = StorageManager.getInstance();
+import { storage } from 'opticore-react-native';
 
 // Serialization is automatic
 await storage.local.set('user', user);
@@ -196,14 +195,14 @@ if (__DEV__) {
 
 **After:**
 ```typescript
-import { Logger } from 'opticore-react-native';
-const logger = Logger.getInstance();
+import { logger } from 'opticore-react-native';
 
 // Level-based filtering, structured metadata, pluggable transports
 logger.info('Login successful', { userId: user.id });
 logger.error('Login failed', error);
 
-// In production: add Sentry transport once — all logger.error() calls go there
+// In production: add a Sentry transport once — all logger.error() calls go there
+import { logger, LogLevel } from 'opticore-react-native';
 logger.addTransport({
   name: 'sentry',
   minLevel: LogLevel.ERROR,
@@ -244,10 +243,10 @@ const { errors, handleSubmit, setValue, watch } = useFormState({
 
 - [ ] Install `opticore-react-native` and peer deps
 - [ ] Add `OptiCoreProvider` to app root with `api.baseURL`
-- [ ] Remove `axios.create()` calls — use `ApiClient.getInstance()`
+- [ ] Remove `axios.create()` calls — use the `api` facade
 - [ ] Migrate auth token injection to `getAuthToken` config
-- [ ] Replace `AsyncStorage` direct calls with `StorageManager`
-- [ ] Replace `console.log` with `Logger.getInstance()`
+- [ ] Replace `AsyncStorage` direct calls with the `storage` facade
+- [ ] Replace `console.log` with the `logger` facade
 - [ ] Migrate Redux/MobX stores to `createBaseStore` or `createCrudStore`
 - [ ] Replace error `try/catch` with `RenderError`/`NonRenderError`
 - [ ] Add `OptiCoreErrorBoundary` around root navigator
@@ -299,9 +298,9 @@ useEffect(() => {
 ```typescript
 // ✅ New approach
 import { useAsyncState } from 'opticore-react-native/hooks';
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 
-const fetchUsers = () => ApiClient.getInstance().request({ method: HttpMethod.GET, url: '/users' });
+const fetchUsers = () => api.get('/users');
 
 function MyComponent() {
   const { data, loading, error, execute } = useAsyncState(fetchUsers);
@@ -362,7 +361,7 @@ export default function usersReducer(state = initialState, action) {
 ```typescript
 // ✅ New Zustand approach
 import { create } from 'zustand';
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 
 interface UserState {
   users: User[];
@@ -379,8 +378,8 @@ export const useUserStore = create<UserState>((set) => ({
   fetchUsers: async () => {
     set({ loading: true });
     try {
-      const response = await ApiClient.getInstance().request({ method: HttpMethod.GET, url: '/users' });
-      set({ users: response.data, loading: false, error: null });
+      const users = await api.get<User[]>('/users');
+      set({ users, loading: false, error: null });
     } catch (error) {
       set({ loading: false, error: error as Error });
     }
@@ -453,7 +452,7 @@ class UserStore {
 ```typescript
 // ✅ New Zustand approach
 import { create } from 'zustand';
-import { ApiClient, HttpMethod } from 'opticore-react-native';
+import { api } from 'opticore-react-native';
 
 export const useUserStore = create((set) => ({
   users: [],
@@ -463,8 +462,8 @@ export const useUserStore = create((set) => ({
   fetchUsers: async () => {
     set({ loading: true });
     try {
-      const response = await ApiClient.getInstance().request({ method: HttpMethod.GET, url: '/users' });
-      set({ users: response.data, loading: false });
+      const users = await api.get('/users');
+      set({ users, loading: false });
     } catch (error) {
       set({ error, loading: false });
     }
@@ -511,21 +510,19 @@ api.interceptors.response.use(
 );
 ```
 
-### After: ApiClient
+### After: api facade
 
 ```typescript
 // ✅ New approach
-import { CoreSetup, ApiClient, HttpMethod } from 'opticore-react-native';
+import { CoreSetup, api } from 'opticore-react-native';
 
 CoreSetup.initialize({
   apiBaseURL: 'https://api.example.com',
   apiTimeout: 10000,
 });
 
-const apiClient = ApiClient.getInstance();
-
 // Auth, logging, error handling already configured!
-const response = await apiClient.request({ method: HttpMethod.GET, url: '/users' });
+const users = await api.get('/users');
 ```
 
 **Benefits**:
@@ -536,10 +533,10 @@ const response = await apiClient.request({ method: HttpMethod.GET, url: '/users'
 - TypeScript support
 
 **Migration Steps**:
-1. Replace axios instance with ApiClient
+1. Replace axios instance with the `api` facade
 2. Move configuration to CoreSetup
 3. Remove manual interceptors
-4. Update API calls to use ApiClient methods
+4. Update API calls to use `api.get`/`api.post`/etc.
 
 ---
 
