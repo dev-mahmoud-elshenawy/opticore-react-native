@@ -6,7 +6,7 @@ import { assertBoolean, assertOneOf } from '../assertions';
 export function validateLoggerConfig(
   logger: CoreLoggerConfig,
   errors: ValidationIssue[],
-  warnings: ValidationIssue[],
+  warnings: ValidationIssue[]
 ): void {
   if (logger.level !== undefined) {
     assertOneOf(logger.level, Object.values(LogLevel), 'logger.level', errors);

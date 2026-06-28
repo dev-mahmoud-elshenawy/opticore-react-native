@@ -15,10 +15,7 @@ export type QueryParamValue = string | number | boolean | null | undefined;
  * buildUrl('/users'); // '/users'
  * ```
  */
-export function buildUrl(
-  path: string,
-  params?: Record<string, QueryParamValue>,
-): string {
+export function buildUrl(path: string, params?: Record<string, QueryParamValue>): string {
   if (!params) return path;
 
   const query = Object.entries(params)

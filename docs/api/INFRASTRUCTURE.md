@@ -30,7 +30,9 @@ api.removeHeader('Accept-Language');
 const id = api.onRequest({ onRequest: (c) => c });
 api.onResponse({ onResponse: (r) => r });
 api.removeInterceptor(id);
-if (api.isReady()) { /* client configured */ }
+if (api.isReady()) {
+  /* client configured */
+}
 
 // storage — secure (Keychain/Keystore) + local (AsyncStorage) + clearAll
 await storage.secure.set('token', t);
@@ -47,16 +49,16 @@ if (connectivity.isConnected) await sync();
 const unsubscribe = connectivity.subscribe((s) => logger.debug(`online: ${s.isConnected}`));
 ```
 
-| Facade | Full surface | In components, also |
-|--------|--------------|---------------------|
-| `api` | `get` `post` `put` `patch` `delete` (→ `T`) · `setHeader` `setHeaders` `removeHeader` · `onRequest` `onResponse` `removeInterceptor` · `isReady` | `useAsyncState` |
-| `storage` | `secure` `local` (each: `get`/`set`/`remove`/`clear`) · `clearAll` | — |
-| `logger` | `debug` `info` `warn` `error` · `setLevel` · `addTransport` `removeTransport` `clearTransports` | — |
-| `connectivity` | `isConnected` · `subscribe(cb) → unsubscribe` | `useConnectivity` |
-| `offline` | `enqueue` `sync` `remove` `clearQueue` `pause` `resume` `getPendingCount` `isSyncing` · `subscribe` | `useOfflineSync` |
-| `themeControl` | `current` `mode` `activeMode` · `setMode` `setTheme` `registerTheme` `unregisterTheme` · `subscribe` | `useTheme` |
-| `lifecycle` | `onChange(onActive?, onInactive?) → unsubscribe` | `useLifecycle` |
-| `stateObserver` | `subscribe(store, cb, opts?) → unsubscribe` · `cleanup` | store hooks |
+| Facade          | Full surface                                                                                                                                     | In components, also |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------- |
+| `api`           | `get` `post` `put` `patch` `delete` (→ `T`) · `setHeader` `setHeaders` `removeHeader` · `onRequest` `onResponse` `removeInterceptor` · `isReady` | `useAsyncState`     |
+| `storage`       | `secure` `local` (each: `get`/`set`/`remove`/`clear`) · `clearAll`                                                                               | —                   |
+| `logger`        | `debug` `info` `warn` `error` · `setLevel` · `addTransport` `removeTransport` `clearTransports`                                                  | —                   |
+| `connectivity`  | `isConnected` · `subscribe(cb) → unsubscribe`                                                                                                    | `useConnectivity`   |
+| `offline`       | `enqueue` `sync` `remove` `clearQueue` `pause` `resume` `getPendingCount` `isSyncing` · `subscribe`                                              | `useOfflineSync`    |
+| `themeControl`  | `current` `mode` `activeMode` · `setMode` `setTheme` `registerTheme` `unregisterTheme` · `subscribe`                                             | `useTheme`          |
+| `lifecycle`     | `onChange(onActive?, onInactive?) → unsubscribe`                                                                                                 | `useLifecycle`      |
+| `stateObserver` | `subscribe(store, cb, opts?) → unsubscribe` · `cleanup`                                                                                          | store hooks         |
 
 **App code never calls `.getInstance()`** — these eight facades cover every feature. In
 components, the hooks (right column) are the reactive equivalent; the facades are for
@@ -87,8 +89,8 @@ never calls `getInstance()` — make requests through the **`api` facade**.
 import { api } from 'opticore-react-native';
 
 // Verbs return the response body (T) directly. T is per-call, defaults to unknown.
-const users   = await api.get<User[]>('/users', { params: { page: 1 } });
-const user    = await api.get<User>('/users/1');
+const users = await api.get<User[]>('/users', { params: { page: 1 } });
+const user = await api.get<User>('/users/1');
 const created = await api.post<User>('/users', { name: 'Alice' });
 await api.put<User>('/users/1', changes);
 await api.patch<User>('/users/1', partial);
@@ -97,11 +99,11 @@ await api.delete('/users/1');
 
 **Per-request options** — 2nd arg for `get`/`delete`, 3rd for `post`/`put`/`patch`:
 
-| Option | Type | Description |
-|---|---|---|
-| `params` | `Record<string, QueryParamValue>` | Query parameters (serialized by Axios) |
-| `headers` | `Record<string, string>` | Per-request headers |
-| `signal` | `AbortSignal` | Cancellation (e.g. `controller.abort()` on unmount) |
+| Option    | Type                              | Description                                         |
+| --------- | --------------------------------- | --------------------------------------------------- |
+| `params`  | `Record<string, QueryParamValue>` | Query parameters (serialized by Axios)              |
+| `headers` | `Record<string, string>`          | Per-request headers                                 |
+| `signal`  | `AbortSignal`                     | Cancellation (e.g. `controller.abort()` on unmount) |
 
 > Requests made before `OptiCoreProvider` mounts throw a clear "not initialized" error
 > instead of sending with no `baseURL`/auth. The provider configures the client
@@ -157,10 +159,10 @@ Configure via `coreSetup.init()` or `OptiCoreProvider`:
 
 ```typescript
 // No authentication (default)
-new NoAuthStrategy()
+new NoAuthStrategy();
 
 // API Key in header
-new ApiKeyStrategy('X-API-Key', 'your-key')
+new ApiKeyStrategy('X-API-Key', 'your-key');
 
 // Bearer token with auto-refresh on 401
 new BearerTokenStrategy(
@@ -170,10 +172,11 @@ new BearerTokenStrategy(
     await storage.secure.set('token', newToken);
     return newToken;
   }
-)
+);
 ```
 
 **Custom strategy:**
+
 ```typescript
 class CustomStrategy implements AuthStrategy {
   async applyAuth(config: InternalAxiosRequestConfig) {
@@ -197,11 +200,11 @@ try {
   await api.get('/protected');
 } catch (e) {
   if (e instanceof ApiError) {
-    console.warn(e.status);          // 401
-    console.warn(e.url);             // '/protected'
-    console.warn(e.message);         // 'Unauthorized'
-    console.warn(e.isRetryable);     // true for network/408/429/5xx, false otherwise
-    console.warn(e.retryAfterMs);    // parsed `Retry-After` header, if the server sent one
+    console.warn(e.status); // 401
+    console.warn(e.url); // '/protected'
+    console.warn(e.message); // 'Unauthorized'
+    console.warn(e.isRetryable); // true for network/408/429/5xx, false otherwise
+    console.warn(e.retryAfterMs); // parsed `Retry-After` header, if the server sent one
   }
 }
 ```
@@ -304,6 +307,7 @@ logger.error('Failed to save profile', new Error('Network timeout'));
 ```
 
 All methods accept:
+
 - `message: string` — the log message
 - `...args: unknown[]` — optional additional context (objects, errors, etc.)
 
@@ -311,7 +315,9 @@ All methods accept:
 
 ```typescript
 // Via OptiCoreProvider config
-logger: { level: LogLevel.WARN }
+logger: {
+  level: LogLevel.WARN;
+}
 
 // Directly
 logger.configure({ level: LogLevel.DEBUG });
@@ -319,12 +325,12 @@ logger.configure({ level: LogLevel.DEBUG });
 
 Log levels (numeric, filter by minimum):
 
-| Level | Value | When to Use |
-|---|---|---|
-| `DEBUG` | 0 | Development only — verbose detail |
-| `INFO` | 1 | General operational events |
-| `WARN` | 2 | Unexpected but recoverable situations |
-| `ERROR` | 3 | Failures that need attention |
+| Level   | Value | When to Use                           |
+| ------- | ----- | ------------------------------------- |
+| `DEBUG` | 0     | Development only — verbose detail     |
+| `INFO`  | 1     | General operational events            |
+| `WARN`  | 2     | Unexpected but recoverable situations |
+| `ERROR` | 3     | Failures that need attention          |
 
 ### Custom Transports
 
@@ -339,6 +345,7 @@ interface LogTransport {
 ```
 
 **Sentry example:**
+
 ```typescript
 logger.addTransport({
   name: 'sentry',
@@ -353,6 +360,7 @@ logger.addTransport({
 ```
 
 **Remote HTTP example:**
+
 ```typescript
 logger.addTransport({
   name: 'remote',
@@ -367,6 +375,7 @@ logger.addTransport({
 ```
 
 **Remove a transport:**
+
 ```typescript
 logger.removeTransport('sentry');
 logger.clearTransports(); // remove all
@@ -379,9 +388,7 @@ Use structured JSON output (useful for remote services):
 ```typescript
 import { JsonFormatter, ConsoleTransport } from 'opticore-react-native';
 
-logger.addTransport(
-  new ConsoleTransport({ formatter: new JsonFormatter() })
-);
+logger.addTransport(new ConsoleTransport({ formatter: new JsonFormatter() }));
 // Output: {"level":"info","message":"User logged in","timestamp":"...","metadata":{}}
 ```
 
@@ -402,7 +409,7 @@ const connectivity = ConnectivityManager.getInstance();
 
 ```typescript
 // Synchronous (updated by listener)
-const isOnline = connectivity.isConnected;  // boolean
+const isOnline = connectivity.isConnected; // boolean
 ```
 
 ### Subscribe to Changes

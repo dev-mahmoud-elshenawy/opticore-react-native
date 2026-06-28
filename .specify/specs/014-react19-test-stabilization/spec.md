@@ -12,6 +12,7 @@
 After upgrading to React 19 and React Native 0.83, 50 tests are failing due to breaking changes in the React testing APIs. The core code is correct, but tests need updating to be compatible with React 19.
 
 ### Root Causes
+
 1. `renderHook` API changed - return type and behavior modified
 2. Fragment children handling modified in React reconciler
 3. `act()` behavior updated for async operations
@@ -27,42 +28,50 @@ After upgrading to React 19 and React Native 0.83, 50 tests are failing due to b
 ## User Stories
 
 ### US-014.1: Fix Failing Hook Tests (P1)
+
 **As a** developer
 **I want** all hook tests to pass with React 19
 **So that** I can trust the hook implementations work correctly
 
 **Acceptance Criteria**:
+
 - [ ] All 11 hook tests pass
 - [ ] renderHook patterns updated for React 19
 - [ ] Proper cleanup in all tests
 
 ### US-014.2: Fix Failing Provider Tests (P1)
+
 **As a** developer
 **I want** CoreProvider and QueryProvider tests to pass
 **So that** I can trust the provider setup
 
 **Acceptance Criteria**:
+
 - [ ] CoreProvider tests pass
 - [ ] QueryProvider tests pass
 - [ ] Fragment/children issues resolved
 
 ### US-014.3: Core Harmony Verification (P2)
+
 **As a** developer
 **I want** integration tests verifying module interactions
 **So that** all modules work together like an orchestra
 
 **Acceptance Criteria**:
+
 - [ ] CoreProvider → infrastructure managers integration tested
 - [ ] ApiClient → Error system integration tested
 - [ ] Hooks → Infrastructure integration tested
 - [ ] All singletons reset properly between tests
 
 ### US-014.4: Code Quality Sweep (P2)
+
 **As a** developer
 **I want** zero TypeScript errors and lint issues
 **So that** the codebase is production-ready
 
 **Acceptance Criteria**:
+
 - [ ] `npm run type-check` → 0 errors
 - [ ] `npm run lint` → 0 errors/warnings
 - [ ] All TODO comments resolved or documented
@@ -73,6 +82,7 @@ After upgrading to React 19 and React Native 0.83, 50 tests are failing due to b
 ### Testing Library Compatibility
 
 **Required Versions**:
+
 - `@testing-library/react-native`: ^12.9.0 (React 19 compatible)
 - `react-test-renderer`: ^19.0.0 (matches React version)
 - `jest-expo`: ^52.0.0 (Expo SDK 52 compatible)
@@ -80,6 +90,7 @@ After upgrading to React 19 and React Native 0.83, 50 tests are failing due to b
 ### Part A: Test Utility Creation
 
 Create `test/utils/react19Helpers.ts`:
+
 ```typescript
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { ReactNode } from 'react';
@@ -119,12 +130,12 @@ export async function waitForHook<T>(
 
 ### Part B: Failing Test Categories
 
-| Category | Files | Count | Fix Strategy |
-|----------|-------|-------|--------------|
-| Hook Tests | `test/hooks/*.test.ts` | 11 | Update renderHook calls |
-| Provider Tests | `test/providers/*.test.tsx` | 2 | Fix Fragment issues |
-| Navigation Tests | `test/navigation/*.test.ts` | 1 | Update hook testing |
-| Config Tests | `test/config/*.test.ts` | 1 | Update singleton patterns |
+| Category         | Files                       | Count | Fix Strategy              |
+| ---------------- | --------------------------- | ----- | ------------------------- |
+| Hook Tests       | `test/hooks/*.test.ts`      | 11    | Update renderHook calls   |
+| Provider Tests   | `test/providers/*.test.tsx` | 2     | Fix Fragment issues       |
+| Navigation Tests | `test/navigation/*.test.ts` | 1     | Update hook testing       |
+| Config Tests     | `test/config/*.test.ts`     | 1     | Update singleton patterns |
 
 ### Part C: Integration Test Matrix
 
@@ -179,11 +190,11 @@ test/
 
 ## Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| React 19 API incompatibility | High | Create abstraction layer |
-| Test flakiness | Medium | Add proper waitFor/act handling |
-| Coverage drop | Medium | Add new integration tests |
+| Risk                         | Impact | Mitigation                      |
+| ---------------------------- | ------ | ------------------------------- |
+| React 19 API incompatibility | High   | Create abstraction layer        |
+| Test flakiness               | Medium | Add proper waitFor/act handling |
+| Coverage drop                | Medium | Add new integration tests       |
 
 ## Out of Scope
 

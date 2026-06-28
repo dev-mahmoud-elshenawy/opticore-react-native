@@ -18,12 +18,12 @@ import { createTailwindPreset } from 'opticore-react-native/tailwind';
 
 Maps OptiCore theme tokens into a Tailwind preset:
 
-| Theme token | Tailwind utility |
-|---|---|
-| `colors` | `bg-*`, `text-*`, `border-*` (e.g. `bg-card`, `text-primary`) |
-| `spacing` | `p-*`, `m-*`, `gap-*` (e.g. `p-md`, `gap-lg`) |
-| `borderRadius` | `rounded-*` (e.g. `rounded-lg`) |
-| `typography.sizes` | `text-xs … text-xxl` (font size only) |
+| Theme token           | Tailwind utility                                                                         |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| `colors`              | `bg-*`, `text-*`, `border-*` (e.g. `bg-card`, `text-primary`)                            |
+| `spacing`             | `p-*`, `m-*`, `gap-*` (e.g. `p-md`, `gap-lg`)                                            |
+| `borderRadius`        | `rounded-*` (e.g. `rounded-lg`)                                                          |
+| `typography.sizes`    | `text-xs … text-xxl` (font size only)                                                    |
 | **semantic variants** | `text-body`, `text-caption`, `text-h1`, `text-title`, … (size **+ lineHeight + weight**) |
 
 Semantic variants are emitted as Tailwind's `[size, { lineHeight, fontWeight }]` tuple, so
@@ -74,4 +74,5 @@ import type { TailwindFontSize } from 'opticore-react-native/tailwind';
 ---
 
 **See also**:
+
 - [Theme Engine](./THEME.md) — the source design tokens, semantic typography variants

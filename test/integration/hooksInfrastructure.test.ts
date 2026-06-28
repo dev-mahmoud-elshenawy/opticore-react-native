@@ -14,21 +14,25 @@ import { useAsyncState } from '../../src/hooks/useAsyncState';
 // We can access properties on mocked modules directly
 
 describe('Integration: Hooks → Infrastructure', () => {
-
   describe('useConnectivity → NetInfo', () => {
     it('should fetch initial connectivity state', async () => {
       const { result } = await renderHookCompat(() => useConnectivity());
 
-      await waitFor(() => {
-        expect(result.current.isConnected).toBe(true);
-        expect(result.current.isInternetReachable).toBe(true);
-        expect(result.current.type).toBe('wifi');
-      }, { timeout: 1000 });
+      await waitFor(
+        () => {
+          expect(result.current.isConnected).toBe(true);
+          expect(result.current.isInternetReachable).toBe(true);
+          expect(result.current.type).toBe('wifi');
+        },
+        { timeout: 1000 }
+      );
     });
 
     it('should register listener with NetInfo', async () => {
       // Use named export (default export is at .default in CJS interop)
-      const { mockAddEventListener: netInfoAddEventListener } = require('@react-native-community/netinfo');
+      const {
+        mockAddEventListener: netInfoAddEventListener,
+      } = require('@react-native-community/netinfo');
 
       await renderHookCompat(() => useConnectivity());
 
@@ -38,7 +42,9 @@ describe('Integration: Hooks → Infrastructure', () => {
 
     it('should cleanup listener on unmount', async () => {
       // Use named export for the mock function
-      const { mockAddEventListener: netInfoAddEventListener } = require('@react-native-community/netinfo');
+      const {
+        mockAddEventListener: netInfoAddEventListener,
+      } = require('@react-native-community/netinfo');
       const mockUnsubscribe = jest.fn();
 
       const originalImpl = netInfoAddEventListener.getMockImplementation();
@@ -47,7 +53,9 @@ describe('Integration: Hooks → Infrastructure', () => {
       const { unmount } = await renderHookCompat(() => useConnectivity());
 
       // Wrap in act to flush cleanup effects
-      await act(async () => { unmount(); });
+      await act(async () => {
+        unmount();
+      });
 
       // Verify unsubscribe was called
       expect(mockUnsubscribe).toHaveBeenCalled();
@@ -61,9 +69,12 @@ describe('Integration: Hooks → Infrastructure', () => {
       const { result } = await renderHookCompat(() => useConnectivity());
 
       // Wait for initial state
-      await waitFor(() => {
-        expect(result.current.isConnected).toBe(true);
-      }, { timeout: 1000 });
+      await waitFor(
+        () => {
+          expect(result.current.isConnected).toBe(true);
+        },
+        { timeout: 1000 }
+      );
 
       // Simulate going offline
       await act(async () => {
@@ -79,11 +90,14 @@ describe('Integration: Hooks → Infrastructure', () => {
       });
 
       // Verify state updated
-      await waitFor(() => {
-        expect(result.current.isConnected).toBe(false);
-        expect(result.current.isInternetReachable).toBe(false);
-        expect(result.current.type).toBe('none');
-      }, { timeout: 1000 });
+      await waitFor(
+        () => {
+          expect(result.current.isConnected).toBe(false);
+          expect(result.current.isInternetReachable).toBe(false);
+          expect(result.current.type).toBe('none');
+        },
+        { timeout: 1000 }
+      );
     });
   });
 
@@ -112,7 +126,9 @@ describe('Integration: Hooks → Infrastructure', () => {
       const { unmount } = await renderHookCompat(() => useLifecycle());
 
       // Wrap in act to flush cleanup effects synchronously
-      await act(async () => { unmount(); });
+      await act(async () => {
+        unmount();
+      });
 
       // Verify remove was called
       expect(mockRemove).toHaveBeenCalled();
@@ -140,9 +156,12 @@ describe('Integration: Hooks → Infrastructure', () => {
       });
 
       // Verify state updated
-      await waitFor(() => {
-        expect(result.current).toBe('background');
-      }, { timeout: 1000 });
+      await waitFor(
+        () => {
+          expect(result.current).toBe('background');
+        },
+        { timeout: 1000 }
+      );
     });
   });
 });
@@ -179,11 +198,14 @@ describe('useAsyncState → AsyncState Pattern', () => {
     });
 
     // After success
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.data).toBe('Test Data');
-      expect(result.current.error).toBeNull();
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        expect(result.current.isLoading).toBe(false);
+        expect(result.current.data).toBe('Test Data');
+        expect(result.current.error).toBeNull();
+      },
+      { timeout: 1000 }
+    );
   });
 
   it('should handle errors in AsyncState pattern', async () => {
@@ -207,11 +229,14 @@ describe('useAsyncState → AsyncState Pattern', () => {
     });
 
     // Verify error state
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.error).toBe(testError);
-      expect(result.current.data).toBeNull();
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        expect(result.current.isLoading).toBe(false);
+        expect(result.current.error).toBe(testError);
+        expect(result.current.data).toBeNull();
+      },
+      { timeout: 1000 }
+    );
   });
 
   it('should prevent memory leaks on unmount', async () => {
@@ -249,15 +274,18 @@ describe('Cross-Hook Integration', () => {
     }));
 
     // All hooks should work together
-    await waitFor(() => {
-      expect(result.current.connectivity).toBeDefined();
-      expect(result.current.lifecycle).toBeDefined();
-      expect(result.current.async).toBeDefined();
+    await waitFor(
+      () => {
+        expect(result.current.connectivity).toBeDefined();
+        expect(result.current.lifecycle).toBeDefined();
+        expect(result.current.async).toBeDefined();
 
-      // Verify each hook has expected properties
-      expect(result.current.connectivity.isConnected).toBeDefined();
-      expect(result.current.lifecycle).toBe('active');
-      expect(result.current.async.isLoading).toBe(false);
-    }, { timeout: 1000 });
+        // Verify each hook has expected properties
+        expect(result.current.connectivity.isConnected).toBeDefined();
+        expect(result.current.lifecycle).toBe('active');
+        expect(result.current.async.isLoading).toBe(false);
+      },
+      { timeout: 1000 }
+    );
   });
 });

@@ -7,7 +7,7 @@
 
 ## Context / Problem
 
-OptiCore's *adoption* story is excellent (one CLI for peers, one `OptiCoreProvider`, graceful native fallbacks). The weak spot is *day-to-day ergonomics*:
+OptiCore's _adoption_ story is excellent (one CLI for peers, one `OptiCoreProvider`, graceful native fallbacks). The weak spot is _day-to-day ergonomics_:
 
 1. **`.getInstance()` boilerplate on every call** — `ApiClient.getInstance().request(...)`, `StorageManager.getInstance().secure.get(...)`, `Logger.getInstance().info(...)`. Repeated ceremony with no added meaning; it's the friction hit on every line.
 2. **Enum-verbose requests** — the common case is `request({ method: HttpMethod.GET, url: '/users' })` instead of the `api.get('/users')` muscle-memory from axios/ky. The verb methods on `ApiClient` are intentionally **private** (spec 028), so consumers are pushed to the verbose form.
@@ -17,6 +17,7 @@ This spec adds a thin **ergonomic layer** that removes both, while leaving every
 **Reconciliation with spec 028:** `ApiClient`'s own verb methods stay private. The new verb sugar lives on a separate `api` facade object and delegates to the **public** `request()`. We are adding public convenience, not re-exposing private internals.
 
 **Constraints carried from prior specs:**
+
 - **Side-effect-free import** (spec 030): facades must resolve the singleton **lazily per call** (or via getters), never at module load.
 - **`request()` fails fast** before `configure()`/`CoreSetup.init()` (spec 028): the facade inherits that — calling `api.get(...)` before init throws the same init guard, which is correct.
 

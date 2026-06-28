@@ -15,11 +15,11 @@ Three additions to the error system: (1) Extensible ErrorClassifier with custom 
 
 ## Constitution Check
 
-| Principle | Status | Notes |
-|---|---|---|
-| Pure Infrastructure | PASS | Error handling is infrastructure |
-| TypeScript Strict | PASS | Result<T,E> uses discriminated unions |
-| SOLID - OCP | FIX | ErrorClassifier open for extension via custom rules |
+| Principle           | Status | Notes                                               |
+| ------------------- | ------ | --------------------------------------------------- |
+| Pure Infrastructure | PASS   | Error handling is infrastructure                    |
+| TypeScript Strict   | PASS   | Result<T,E> uses discriminated unions               |
+| SOLID - OCP         | FIX    | ErrorClassifier open for extension via custom rules |
 
 ## Source Code Structure
 

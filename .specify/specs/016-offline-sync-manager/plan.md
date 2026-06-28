@@ -54,7 +54,13 @@ export class OfflineSyncManager {
 
 // Hook
 export function useOfflineSync(): {
-  isOnline, isSyncing, pendingCount, enqueue, dequeue, sync, clearQueue
+  isOnline;
+  isSyncing;
+  pendingCount;
+  enqueue;
+  dequeue;
+  sync;
+  clearQueue;
 };
 ```
 
@@ -87,25 +93,30 @@ Queue updated & persisted
 ## Implementation Phases
 
 **Phase 1: Types & Queue** (2-3 hours)
+
 - Type definitions
 - RequestQueue implementation
 - Queue persistence
 
 **Phase 2: Sync Engine** (3-4 hours)
+
 - SyncEngine with retry logic
 - Exponential backoff
 - Error handling
 
 **Phase 3: Manager & Hook** (2-3 hours)
+
 - OfflineSyncManager singleton
 - ConnectivityManager integration
 - useOfflineSync hook
 
 **Phase 4: Conflict Resolution** (1-2 hours)
+
 - ConflictResolver strategies
 - Manual conflict callbacks
 
 **Phase 5: Tests** (2-3 hours)
+
 - Manager tests
 - Queue tests
 - Integration tests

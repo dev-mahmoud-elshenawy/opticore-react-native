@@ -28,16 +28,17 @@ Resolve all 84 pre-existing ESLint errors (and 32 warnings) across 30 files. The
 
 ### By Rule
 
-| Rule | Count | Scope |
-|------|-------|-------|
-| `@typescript-eslint/no-explicit-any` | ~60 errors | src/, test/, examples/ |
-| `@typescript-eslint/no-unused-vars` | ~12 errors | src/, test/, examples/ |
-| `no-console` | ~32 warnings | test/, examples/, scripts/ |
-| `react-hooks/exhaustive-deps` (plugin missing) | 1 error | src/hooks/useMount.ts |
+| Rule                                           | Count        | Scope                      |
+| ---------------------------------------------- | ------------ | -------------------------- |
+| `@typescript-eslint/no-explicit-any`           | ~60 errors   | src/, test/, examples/     |
+| `@typescript-eslint/no-unused-vars`            | ~12 errors   | src/, test/, examples/     |
+| `no-console`                                   | ~32 warnings | test/, examples/, scripts/ |
+| `react-hooks/exhaustive-deps` (plugin missing) | 1 error      | src/hooks/useMount.ts      |
 
 ### Affected Files
 
 **Production `src/`** — highest priority (published library):
+
 - `src/config/ConfigValidator.ts`
 - `src/error/Result.ts`
 - `src/forms/masks/creditCardMask.ts`
@@ -58,6 +59,7 @@ Resolve all 84 pre-existing ESLint errors (and 32 warnings) across 30 files. The
 - `src/utils/object.ts`
 
 **Test `test/`** — medium priority:
+
 - `test/__mocks__/infrastructure/logger/MockLogger.ts`
 - `test/hooks/useAsyncState.test.ts`
 - `test/infrastructure/logger/ConsoleTransport.test.ts`
@@ -65,6 +67,7 @@ Resolve all 84 pre-existing ESLint errors (and 32 warnings) across 30 files. The
 - `test/performance/infrastructure.performance.test.ts`
 
 **Examples `examples/`** — low priority (not published):
+
 - `examples/configuration/UsageExample.tsx`
 - `examples/forms/FormExample.tsx`
 - `examples/offline/OfflineSyncExample.tsx`
@@ -73,6 +76,7 @@ Resolve all 84 pre-existing ESLint errors (and 32 warnings) across 30 files. The
 - `examples/types/UsageExample.tsx`
 
 **Scripts `scripts/`** — low priority:
+
 - `scripts/perf-test.ts`
 
 ---
@@ -84,6 +88,7 @@ Resolve all 84 pre-existing ESLint errors (and 32 warnings) across 30 files. The
 A developer runs `npm run lint` before committing and sees 0 problems.
 
 **Acceptance Scenarios**:
+
 1. **Given** the codebase on `develop`, **When** `npm run lint` is run, **Then** it exits with 0 errors and 0 warnings.
 2. **Given** a consumer imports `ApiClient`, **When** they use its methods, **Then** IDE shows correct types (no `any` bleed-through).
 
@@ -94,6 +99,7 @@ A developer runs `npm run lint` before committing and sees 0 problems.
 A contributor adds a new hook with a missing dependency. ESLint catches it immediately.
 
 **Acceptance Scenarios**:
+
 1. **Given** `eslint-plugin-react-hooks` is installed, **When** a hook has a missing `useEffect` dependency, **Then** lint reports `react-hooks/exhaustive-deps` error.
 
 ---
@@ -136,11 +142,11 @@ A contributor adds a new hook with a missing dependency. ESLint catches it immed
 
 ## Risks
 
-| Risk | Mitigation |
-|------|-----------|
-| Replacing `any` in ApiClient/Interceptor introduces type errors | Run `npm run type-check` after each file |
-| `react-hooks/exhaustive-deps` install flags new errors in other hooks | Fix all newly surfaced errors in same spec |
-| Examples use intentional `console.log` for demo output | Use `// eslint-disable-next-line no-console` with comment explaining intent |
+| Risk                                                                  | Mitigation                                                                  |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Replacing `any` in ApiClient/Interceptor introduces type errors       | Run `npm run type-check` after each file                                    |
+| `react-hooks/exhaustive-deps` install flags new errors in other hooks | Fix all newly surfaced errors in same spec                                  |
+| Examples use intentional `console.log` for demo output                | Use `// eslint-disable-next-line no-console` with comment explaining intent |
 
 ---
 

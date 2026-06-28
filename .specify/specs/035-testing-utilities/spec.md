@@ -3,14 +3,14 @@
 **Feature Branch**: `035-testing-utilities`
 **Created**: 2026-06-25
 **Status**: Draft (ready to execute)
-**Input**: Ship the testing helpers that spec 033 only *documented*. Today consumers hand-roll in-memory adapters and reset logic to test code that uses OptiCore. Provide a first-class `opticore-react-native/testing` entry with `createMemoryAdapters()` and `resetOptiCore()` so app tests are trivial. Additive, non-breaking; no test-framework coupling.
+**Input**: Ship the testing helpers that spec 033 only _documented_. Today consumers hand-roll in-memory adapters and reset logic to test code that uses OptiCore. Provide a first-class `opticore-react-native/testing` entry with `createMemoryAdapters()` and `resetOptiCore()` so app tests are trivial. Additive, non-breaking; no test-framework coupling.
 
 ## Context / Problem
 
 Spec 033 added a "Testing OptiCore in your app" guide — but the patterns it describes
 (implementing `OptiCoreAdapters` with Maps, resetting singletons/warnings between tests)
 are **hand-rolled by every consumer**. The library has the adapter interfaces and the
-memory-fallback concept internally; it just doesn't *expose* ready-made test doubles.
+memory-fallback concept internally; it just doesn't _expose_ ready-made test doubles.
 
 This spec ships them at a dedicated subpath:
 

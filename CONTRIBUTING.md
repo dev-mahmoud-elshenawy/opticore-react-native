@@ -79,13 +79,13 @@ Use `Logger.getInstance()` instead. `console.*` in source code is a lint error.
 
 ### Naming
 
-| Type | Convention | Example |
-|---|---|---|
-| Files (classes) | PascalCase | `ApiClient.ts` |
-| Files (utils) | camelCase | `formatPhone.ts` |
-| Functions | camelCase | `getUserProfile()` |
-| Types/Interfaces | PascalCase | `AsyncState<T>` |
-| Constants | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
+| Type             | Convention       | Example            |
+| ---------------- | ---------------- | ------------------ |
+| Files (classes)  | PascalCase       | `ApiClient.ts`     |
+| Files (utils)    | camelCase        | `formatPhone.ts`   |
+| Functions        | camelCase        | `getUserProfile()` |
+| Types/Interfaces | PascalCase       | `AsyncState<T>`    |
+| Constants        | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT`  |
 
 ---
 

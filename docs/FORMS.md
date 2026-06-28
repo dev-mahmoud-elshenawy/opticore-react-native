@@ -20,17 +20,17 @@ import { z } from 'zod';
 The primary form hook. Wraps React Hook Form with schema-based validation.
 
 ```typescript
-function useFormState<T extends object>(config: FormConfig<T>): FormStateReturn<T>
+function useFormState<T extends object>(config: FormConfig<T>): FormStateReturn<T>;
 ```
 
 ### FormConfig
 
 ```typescript
 interface FormConfig<T> {
-  schema?: ZodSchema<T>;              // Zod schema for validation
-  defaultValues?: Partial<T>;         // Initial field values
-  mode?: 'onSubmit' | 'onBlur' | 'onChange' | 'onTouched' | 'all';  // default: 'onSubmit'
-  reValidateMode?: 'onSubmit' | 'onBlur' | 'onChange';               // default: 'onChange'
+  schema?: ZodSchema<T>; // Zod schema for validation
+  defaultValues?: Partial<T>; // Initial field values
+  mode?: 'onSubmit' | 'onBlur' | 'onChange' | 'onTouched' | 'all'; // default: 'onSubmit'
+  reValidateMode?: 'onSubmit' | 'onBlur' | 'onChange'; // default: 'onChange'
 }
 ```
 
@@ -42,18 +42,23 @@ A simple facade over React Hook Form — use `field()` + `submit()`; never touch
 ```typescript
 interface FormStateReturn<T> {
   // Spread onto a TextInput: <TextInput {...field('email')} /> — value/onChangeText/onBlur/error
-  field: (name: Path<T>) => { value: string; onChangeText: (t: string) => void; onBlur: () => void; error?: string };
+  field: (name: Path<T>) => {
+    value: string;
+    onChangeText: (t: string) => void;
+    onBlur: () => void;
+    error?: string;
+  };
   // Validate, then run onValid if valid. Just call it (returns a Promise).
   submit: (onValid: SubmitHandler<T>, onInvalid?: SubmitErrorHandler<T>) => Promise<void>;
-  errors: FieldErrors<T>;     // Typed validation errors
-  isValid: boolean;           // All fields pass validation
-  isSubmitting: boolean;      // True during async onValid
-  isDirty: boolean;           // At least one field changed
-  reset: UseFormReset<T>;     // RHF reset — accepts values AND a ResetOptions second arg
+  errors: FieldErrors<T>; // Typed validation errors
+  isValid: boolean; // All fields pass validation
+  isSubmitting: boolean; // True during async onValid
+  isDirty: boolean; // At least one field changed
+  reset: UseFormReset<T>; // RHF reset — accepts values AND a ResetOptions second arg
   setValue: UseFormSetValue<T>;
   getValue: UseFormGetValues<T>;
   watch: UseFormWatch<T>;
-  form: UseFormReturn<T>;     // escape hatch: full RHF (control/register/trigger/clearErrors/…)
+  form: UseFormReturn<T>; // escape hatch: full RHF (control/register/trigger/clearErrors/…)
 }
 ```
 
@@ -138,17 +143,22 @@ function that strips formatting back to raw input.
 
 ```typescript
 import {
-  applyPhoneMask, unmaskPhone,
-  applyCreditCardMask, unmaskCreditCard, validateCardNumber, detectCardType,
-  applyCurrencyMask, unmaskCurrency,
+  applyPhoneMask,
+  unmaskPhone,
+  applyCreditCardMask,
+  unmaskCreditCard,
+  validateCardNumber,
+  detectCardType,
+  applyCurrencyMask,
+  unmaskCurrency,
 } from 'opticore-react-native/forms';
 ```
 
 ### applyPhoneMask
 
 ```typescript
-applyPhoneMask('5551234567')   // '(555) 123-4567'
-applyPhoneMask('555123')       // '(555) 123'
+applyPhoneMask('5551234567'); // '(555) 123-4567'
+applyPhoneMask('555123'); // '(555) 123'
 ```
 
 ```typescript
@@ -165,9 +175,9 @@ applyPhoneMask('555123')       // '(555) 123'
 `detectCardType` returns the card brand and `validateCardNumber` runs a Luhn check.
 
 ```typescript
-applyCreditCardMask('4111111111111111')  // '4111 1111 1111 1111'
-detectCardType('4111111111111111')       // CardType.VISA
-validateCardNumber('4111111111111111')   // true
+applyCreditCardMask('4111111111111111'); // '4111 1111 1111 1111'
+detectCardType('4111111111111111'); // CardType.VISA
+validateCardNumber('4111111111111111'); // true
 ```
 
 ```typescript
@@ -186,8 +196,8 @@ validateCardNumber('4111111111111111')   // true
 (`currency`, `locale`, `symbol`, `precision`).
 
 ```typescript
-applyCurrencyMask(1234.56)   // '$1,234.56'
-applyCurrencyMask(1000)      // '$1,000.00'
+applyCurrencyMask(1234.56); // '$1,234.56'
+applyCurrencyMask(1000); // '$1,000.00'
 ```
 
 ```typescript
@@ -213,7 +223,7 @@ function useFieldValidation<T>(
   value: T,
   validator: Validator<T>,
   options?: ValidationOptions
-): FieldValidationReturn
+): FieldValidationReturn;
 ```
 
 ```typescript
@@ -221,7 +231,7 @@ function useFieldValidation<T>(
 type Validator<T> = (value: T) => string | undefined | Promise<string | undefined>;
 
 interface ValidationOptions {
-  debounceMs?: number;        // default: 300
+  debounceMs?: number; // default: 300
   message?: string;
 }
 
@@ -229,7 +239,7 @@ interface FieldValidationReturn {
   error: string | undefined;
   isValid: boolean;
   isValidating: boolean;
-  validate: () => Promise<boolean>;   // validates the hook's (debounced) value — no args
+  validate: () => Promise<boolean>; // validates the hook's (debounced) value — no args
 }
 ```
 
@@ -285,7 +295,8 @@ const schema = z.object({
   phone: validators.phone({ format: PhoneFormat.US }),
   password: validators.password({ minLength: 8, requireUppercase: true }),
   website: validators.url('Enter a valid URL'),
-  name: validators.required('Name is required')
+  name: validators
+    .required('Name is required')
     .pipe(validators.minLength(2, 'Name too short'))
     .pipe(validators.maxLength(50, 'Name too long')),
 });
@@ -293,16 +304,16 @@ const schema = z.object({
 
 ### Validators Reference
 
-| Validator | Options | Description |
-|---|---|---|
-| `validators.email(msg?)` | — | Valid email format |
-| `validators.phone(opts?)` | `format: PhoneFormat.US \| PhoneFormat.INTERNATIONAL` | Phone number |
-| `validators.password(opts?)` | `minLength, requireUppercase, requireLowercase, requireNumbers, requireSpecial` | Password strength |
-| `validators.required(msg?)` | — | Non-empty string |
-| `validators.minLength(n, msg?)` | — | Minimum length |
-| `validators.maxLength(n, msg?)` | — | Maximum length |
-| `validators.matches(regex, msg?)` | — | Regex pattern |
-| `validators.url(msg?)` | — | Valid URL |
+| Validator                         | Options                                                                         | Description        |
+| --------------------------------- | ------------------------------------------------------------------------------- | ------------------ |
+| `validators.email(msg?)`          | —                                                                               | Valid email format |
+| `validators.phone(opts?)`         | `format: PhoneFormat.US \| PhoneFormat.INTERNATIONAL`                           | Phone number       |
+| `validators.password(opts?)`      | `minLength, requireUppercase, requireLowercase, requireNumbers, requireSpecial` | Password strength  |
+| `validators.required(msg?)`       | —                                                                               | Non-empty string   |
+| `validators.minLength(n, msg?)`   | —                                                                               | Minimum length     |
+| `validators.maxLength(n, msg?)`   | —                                                                               | Maximum length     |
+| `validators.matches(regex, msg?)` | —                                                                               | Regex pattern      |
+| `validators.url(msg?)`            | —                                                                               | Valid URL          |
 
 ---
 
@@ -312,7 +323,8 @@ const schema = z.object({
 import { api } from 'opticore-react-native';
 
 const schema = z.object({
-  username: z.string()
+  username: z
+    .string()
     .min(3, 'Too short')
     .refine(
       async (val) => {
@@ -347,7 +359,7 @@ function SignUpFlow() {
 
   const onAccountSubmit = () =>
     accountForm.submit(async (data) => {
-      setFormData(prev => ({ ...prev, ...data }));
+      setFormData((prev) => ({ ...prev, ...data }));
       setStep('profile');
     });
 

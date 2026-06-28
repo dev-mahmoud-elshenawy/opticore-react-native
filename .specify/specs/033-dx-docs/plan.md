@@ -46,7 +46,7 @@ docs/api/ERRORS.md        # EDIT (light): cross-link to ERROR_HANDLING.md
 
 ### 1. ERROR_HANDLING.md (decision tree)
 
-- A short flow: *Is it on the render path and must the user see it?* → throw `RenderError` (boundary shows fallback). *Is it an expected/recoverable operation?* → return `Result<T, E>`. *Need HTTP status/details?* → inspect `ApiError`. *Background/silent?* → log via `logger`, never throw `NonRenderError`.
+- A short flow: _Is it on the render path and must the user see it?_ → throw `RenderError` (boundary shows fallback). _Is it an expected/recoverable operation?_ → return `Result<T, E>`. _Need HTTP status/details?_ → inspect `ApiError`. _Background/silent?_ → log via `logger`, never throw `NonRenderError`.
 - One worked example per branch, using `api`/`logger` facades.
 - Map each branch to the 031 three-outcome model (replace screen / notify via state / silent).
 

@@ -33,7 +33,7 @@ export function useSafeCall<T>(): SafeCallResult<T> {
     try {
       const result = await fn();
       return result;
-    } catch (e: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    } catch (e: unknown) {
       const err = e instanceof Error ? e : new Error(String(e));
       if (isMounted.current) setError(err);
       return undefined;

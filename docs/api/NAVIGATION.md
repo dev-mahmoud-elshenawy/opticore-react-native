@@ -5,7 +5,7 @@ OptiCore provides a thin, type-safe wrapper over Expo Router's navigation primit
 > **Import path & peer**: Navigation helpers are exposed from the dedicated
 > **`opticore-react-native/navigation`** subpath — **not** the main entry. `expo-router` is a
 > **required** peer dependency (navigation is a first-class OptiCore feature); install it as part
-> of your Expo setup with `npx expo install expo-router`. It is only *bundled* when you import
+> of your Expo setup with `npx expo install expo-router`. It is only _bundled_ when you import
 > this subpath, so the rest of OptiCore never pulls expo-router into your bundle.
 
 ---
@@ -37,13 +37,13 @@ interface RouteHelper {
 type NavigationParams = Record<string, string | number>;
 ```
 
-| Method | Description |
-|---|---|
-| `push(route, params?)` | Navigate to a route, adding it to the stack |
-| `replace(route, params?)` | Navigate to a route, replacing the current one |
-| `back()` | Go back to the previous screen (safe — no-ops if no history) |
-| `backWithData(data)` | Go back and pass data to the previous screen via params |
-| `reset(route, params?)` | Clear the navigation stack and navigate to a route |
+| Method                    | Description                                                  |
+| ------------------------- | ------------------------------------------------------------ |
+| `push(route, params?)`    | Navigate to a route, adding it to the stack                  |
+| `replace(route, params?)` | Navigate to a route, replacing the current one               |
+| `back()`                  | Go back to the previous screen (safe — no-ops if no history) |
+| `backWithData(data)`      | Go back and pass data to the previous screen via params      |
+| `reset(route, params?)`   | Clear the navigation stack and navigate to a route           |
 
 ### Examples
 
@@ -135,11 +135,13 @@ router.push('/product/[id]', { id: '42' });
 ```
 
 **Use `useRouteHelper` when:**
+
 - You need a consistent navigation API across multiple components
 - You want the safety of no-op `back()` when there's no history
 - You need navigation in a non-screen context (like a shared component)
 
 **Use Expo Router directly when:**
+
 - You need type-safe route params with your specific route tree
 - You're using `<Link>` for declarative navigation
 - You need advanced router features (modal, replace on native)

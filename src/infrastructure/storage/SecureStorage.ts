@@ -47,7 +47,10 @@ export class SecureStorage implements IStorage {
         this.keys = new Set(keys);
       }
     } catch (error) {
-      Logger.getInstance().warn('[SecureStorage] Failed to load keys list, starting fresh', error as Error);
+      Logger.getInstance().warn(
+        '[SecureStorage] Failed to load keys list, starting fresh',
+        error as Error
+      );
       this.keys = new Set();
     }
   }
@@ -57,7 +60,7 @@ export class SecureStorage implements IStorage {
     const run = this.writeChain.then(op, op);
     this.writeChain = run.then(
       () => undefined,
-      () => undefined,
+      () => undefined
     );
     return run;
   }
@@ -78,7 +81,7 @@ export class SecureStorage implements IStorage {
       } catch (parseError) {
         Logger.getInstance().warn(
           `[SecureStorage] Failed to parse value for key "${key}", returning null`,
-          parseError as Error,
+          parseError as Error
         );
         return null;
       }
@@ -137,13 +140,19 @@ export class SecureStorage implements IStorage {
 
         const deletePromises = snapshot.map((key) =>
           this.adapter.deleteItemAsync(key).catch((error) => {
-            logger.warn(`[SecureStorage] Failed to delete key "${key}" during clear`, error as Error);
+            logger.warn(
+              `[SecureStorage] Failed to delete key "${key}" during clear`,
+              error as Error
+            );
           })
         );
         await Promise.all(deletePromises);
 
         await this.adapter.deleteItemAsync(SecureStorage.KEYS_STORAGE_KEY).catch((error) => {
-          logger.warn('[SecureStorage] Failed to delete keys-tracking entry during clear', error as Error);
+          logger.warn(
+            '[SecureStorage] Failed to delete keys-tracking entry during clear',
+            error as Error
+          );
         });
         this.keys = new Set();
       } catch (error) {

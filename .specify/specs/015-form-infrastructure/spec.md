@@ -22,11 +22,13 @@ Every React Native application needs forms (login, registration, profile, search
 ## User Stories
 
 ### US-015.1: Form State Hook (P1)
+
 **As a** developer
 **I want** a `useFormState` hook that manages form state
 **So that** I don't have to configure react-hook-form manually
 
 **Acceptance Criteria**:
+
 - [ ] Hook wraps react-hook-form with defaults
 - [ ] Supports generic types for form values
 - [ ] Returns form state, errors, submit handler
@@ -34,6 +36,7 @@ Every React Native application needs forms (login, registration, profile, search
 - [ ] Handles async validation with debounce
 
 **Example Usage**:
+
 ```typescript
 interface LoginForm {
   email: string;
@@ -51,17 +54,20 @@ await handleSubmit(async (data) => {
 ```
 
 ### US-015.2: Validation Schema Builder (P1)
+
 **As a** developer
 **I want** helpers to build Zod validation schemas
 **So that** I can define validations declaratively
 
 **Acceptance Criteria**:
+
 - [ ] Builder pattern for schema creation
 - [ ] Common validators included (email, phone, password)
 - [ ] Custom error messages support
 - [ ] Conditional validation support
 
 **Example Usage**:
+
 ```typescript
 const loginSchema = createValidationSchema<LoginForm>((z) => ({
   email: validators.email('Please enter a valid email'),
@@ -70,6 +76,7 @@ const loginSchema = createValidationSchema<LoginForm>((z) => ({
 ```
 
 ### US-015.3: Input Masks (P2) - Phase B
+
 **As a** developer
 **I want** input masking utilities
 **So that** I can format user input automatically
@@ -79,6 +86,7 @@ const loginSchema = createValidationSchema<LoginForm>((z) => ({
 > Masks add complexity and are not required for basic form functionality.
 
 **Acceptance Criteria**:
+
 - [ ] Phone mask with US format (international formats in future)
 - [ ] Currency mask with USD (locale support in future)
 - [ ] Credit card mask with basic card type detection (Visa, MC, Amex)
@@ -86,25 +94,28 @@ const loginSchema = createValidationSchema<LoginForm>((z) => ({
 - [ ] Unmask function to get raw value
 
 **Example Usage**:
+
 ```typescript
 // Phone
-applyPhoneMask('4155551234', 'US') // → '(415) 555-1234'
-unmaskPhone('(415) 555-1234') // → '4155551234'
+applyPhoneMask('4155551234', 'US'); // → '(415) 555-1234'
+unmaskPhone('(415) 555-1234'); // → '4155551234'
 
 // Currency
-applyCurrencyMask(1234.56, { currency: 'USD' }) // → '$1,234.56'
+applyCurrencyMask(1234.56, { currency: 'USD' }); // → '$1,234.56'
 
 // Credit Card
-applyCreditCardMask('4111111111111111') // → '4111 1111 1111 1111'
-detectCardType('4111111111111111') // → 'visa'
+applyCreditCardMask('4111111111111111'); // → '4111 1111 1111 1111'
+detectCardType('4111111111111111'); // → 'visa'
 ```
 
 ### US-015.4: Common Validators (P2)
+
 **As a** developer
 **I want** pre-built validators for common patterns
 **So that** I don't have to write regex patterns
 
 **Acceptance Criteria**:
+
 - [ ] Email validator
 - [ ] Phone validator (with country support)
 - [ ] Password validator (configurable strength)
@@ -142,9 +153,7 @@ src/forms/
 ```typescript
 // ============== HOOKS ==============
 
-export function useFormState<T extends FieldValues>(
-  config: FormConfig<T>
-): FormStateReturn<T>;
+export function useFormState<T extends FieldValues>(config: FormConfig<T>): FormStateReturn<T>;
 
 export function useFieldValidation<T>(
   value: T,
@@ -154,9 +163,7 @@ export function useFieldValidation<T>(
 
 // ============== VALIDATION ==============
 
-export function createValidationSchema<T>(
-  builder: (z: typeof zod) => ZodRawShape
-): ZodSchema<T>;
+export function createValidationSchema<T>(builder: (z: typeof zod) => ZodRawShape): ZodSchema<T>;
 
 export const validators: {
   email: (message?: string) => ZodString;
@@ -207,6 +214,7 @@ export interface FormStateReturn<T extends FieldValues> {
 ### Dependencies
 
 **New**:
+
 ```json
 {
   "react-hook-form": "^7.54.2"
@@ -214,9 +222,11 @@ export interface FormStateReturn<T extends FieldValues> {
 ```
 
 **Existing** (already installed):
+
 - `zod` - Validation schemas
 
 **Internal**:
+
 - Error system (ValidationError)
 - useDebounce (for async validation)
 
@@ -271,11 +281,11 @@ examples/forms/
 
 ## Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| react-hook-form version conflicts | Medium | Pin to stable version |
-| Complex validation scenarios | Low | Provide escape hatches |
-| Performance with many fields | Low | Use memo and debounce |
+| Risk                              | Impact | Mitigation             |
+| --------------------------------- | ------ | ---------------------- |
+| react-hook-form version conflicts | Medium | Pin to stable version  |
+| Complex validation scenarios      | Low    | Provide escape hatches |
+| Performance with many fields      | Low    | Use memo and debounce  |
 
 ## Out of Scope
 

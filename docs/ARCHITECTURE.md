@@ -51,13 +51,13 @@ OptiCore React Native is a **layered infrastructure library** built on clean arc
 
 The foundation of the library. Handles I/O: network, storage, logging, and device state.
 
-| Module | Role | Pattern |
-|---|---|---|
-| `ApiClient` | HTTP client (Axios) with interceptors, auth strategies, retry | Singleton |
-| `StorageManager` | Unified interface over AsyncStorage + SecureStore | Singleton |
-| `Logger` | Structured logging with pluggable transports | Singleton |
-| `ConnectivityManager` | Real-time network state monitoring | Singleton + Observer |
-| `LifecycleManager` | App foreground/background tracking | Singleton + Observer |
+| Module                | Role                                                          | Pattern              |
+| --------------------- | ------------------------------------------------------------- | -------------------- |
+| `ApiClient`           | HTTP client (Axios) with interceptors, auth strategies, retry | Singleton            |
+| `StorageManager`      | Unified interface over AsyncStorage + SecureStore             | Singleton            |
+| `Logger`              | Structured logging with pluggable transports                  | Singleton            |
+| `ConnectivityManager` | Real-time network state monitoring                            | Singleton + Observer |
+| `LifecycleManager`    | App foreground/background tracking                            | Singleton + Observer |
 
 **All services are singletons** — call `getInstance()` to get the same instance anywhere in your app.
 
@@ -74,13 +74,13 @@ const logger = Logger.getInstance();
 
 Manages application state using Zustand with Immer for immutable updates.
 
-| Module | Role |
-|---|---|
+| Module          | Role                                                                |
+| --------------- | ------------------------------------------------------------------- |
 | `AsyncState<T>` | Type-safe pattern for async operations (idle/loading/success/error) |
-| `BaseStore` | Zustand store with DevTools, Immer, and reset/hydrate built in |
-| `StoreFactory` | Factory for creating CRUD stores with async actions |
-| `CrudStore<T>` | Pre-built store with fetchAll/fetchById/create/update/delete |
-| `StateObserver` | Subscribe to store changes outside React |
+| `BaseStore`     | Zustand store with DevTools, Immer, and reset/hydrate built in      |
+| `StoreFactory`  | Factory for creating CRUD stores with async actions                 |
+| `CrudStore<T>`  | Pre-built store with fetchAll/fetchById/create/update/delete        |
+| `StateObserver` | Subscribe to store changes outside React                            |
 
 ---
 
@@ -111,6 +111,7 @@ React context providers that wire up the entire library with a single component.
 ```
 
 **What OptiCoreProvider does internally:**
+
 1. Calls `coreSetup.init(config)` to initialize all singletons
 2. Wraps children with `ConfigProvider` → `QueryProvider` → `ThemeProvider`
 3. Sets up `ConnectivityManager` and `LifecycleManager` listeners
@@ -231,13 +232,13 @@ Used by `AuthStrategy` — swap authentication methods without changing `ApiClie
 
 ```typescript
 // No auth
-new NoAuthStrategy()
+new NoAuthStrategy();
 
 // API key
-new ApiKeyStrategy('X-API-Key', process.env.API_KEY)
+new ApiKeyStrategy('X-API-Key', process.env.API_KEY);
 
 // Bearer token with refresh
-new BearerTokenStrategy(getToken, refreshToken)
+new BearerTokenStrategy(getToken, refreshToken);
 ```
 
 ### Result Type
@@ -340,18 +341,18 @@ ThemeManager.getInstance().registerTheme('brand', brandTheme);
 
 ## Dependencies
 
-| Package | Purpose | Version |
-|---|---|---|
-| `axios` | HTTP client | ^1.13 |
-| `zustand` | State management | ^5.0 |
-| `@tanstack/react-query` | Server state + caching | ^5.90 |
-| `immer` | Immutable state updates | ^10.2 |
-| `zod` | Schema validation | ^3.24 |
-| `react-hook-form` | Form management | ^7.54 |
-| `date-fns` | Date utilities | ^4.1 |
-| `@react-native-async-storage/async-storage` | Local storage | ^2.2 |
-| `expo-secure-store` | Encrypted storage | ^15.0 |
-| `@react-native-community/netinfo` | Network monitoring | ^11.5 |
+| Package                                     | Purpose                 | Version |
+| ------------------------------------------- | ----------------------- | ------- |
+| `axios`                                     | HTTP client             | ^1.13   |
+| `zustand`                                   | State management        | ^5.0    |
+| `@tanstack/react-query`                     | Server state + caching  | ^5.90   |
+| `immer`                                     | Immutable state updates | ^10.2   |
+| `zod`                                       | Schema validation       | ^3.24   |
+| `react-hook-form`                           | Form management         | ^7.54   |
+| `date-fns`                                  | Date utilities          | ^4.1    |
+| `@react-native-async-storage/async-storage` | Local storage           | ^2.2    |
+| `expo-secure-store`                         | Encrypted storage       | ^15.0   |
+| `@react-native-community/netinfo`           | Network monitoring      | ^11.5   |
 
 ---
 

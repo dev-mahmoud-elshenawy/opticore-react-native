@@ -122,11 +122,7 @@
       {
         "id": "dual_config_pattern",
         "label": "Dual Configuration Pattern (CoreSetup + CoreProvider)",
-        "nodes": [
-          "config_coresetup",
-          "config_coreprovider",
-          "config_coreconfig"
-        ],
+        "nodes": ["config_coresetup", "config_coreprovider", "config_coreconfig"],
         "relation": "participate_in",
         "confidence": "EXTRACTED",
         "confidence_score": 0.85,
@@ -49217,11 +49213,7 @@
     {
       "id": "dual_config_pattern",
       "label": "Dual Configuration Pattern (CoreSetup + CoreProvider)",
-      "nodes": [
-        "config_coresetup",
-        "config_coreprovider",
-        "config_coreconfig"
-      ],
+      "nodes": ["config_coresetup", "config_coreprovider", "config_coreconfig"],
       "relation": "participate_in",
       "confidence": "EXTRACTED",
       "confidence_score": 0.85,

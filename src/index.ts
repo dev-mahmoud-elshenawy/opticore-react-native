@@ -53,4 +53,3 @@ export * from './query';
 
 // Ergonomic facades — ready-to-use api / storage / logger (no .getInstance())
 export * from './facades';
-

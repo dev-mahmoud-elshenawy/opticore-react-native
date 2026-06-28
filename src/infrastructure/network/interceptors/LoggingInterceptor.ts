@@ -54,9 +54,7 @@ export class LoggingInterceptor {
 
   public onError(error: unknown): Promise<unknown> {
     const message = isAxiosError(error) ? error.message : 'Unknown Error';
-    const url = isAxiosError(error)
-      ? this.fullUrl(error.config?.baseURL, error.config?.url)
-      : '';
+    const url = isAxiosError(error) ? this.fullUrl(error.config?.baseURL, error.config?.url) : '';
 
     this.logger.error(`Error: ${message} (${url})`);
     return Promise.reject(error);

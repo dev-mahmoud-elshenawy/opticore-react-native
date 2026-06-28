@@ -15,13 +15,13 @@ Expand `CoreConfig` to include optional sections for theme, offline, responsive,
 
 ## Constitution Check
 
-| Principle | Status | Notes |
-|---|---|---|
-| Pure Infrastructure | PASS | Config/provider are infrastructure |
-| TypeScript Strict | PASS | All new types explicit, no `any` |
-| TDD Required | PASS | Tests first each phase |
-| 80%+ Coverage | PASS | Required on all new files |
-| Zero Breaking Changes | PASS | Additive only |
+| Principle             | Status | Notes                              |
+| --------------------- | ------ | ---------------------------------- |
+| Pure Infrastructure   | PASS   | Config/provider are infrastructure |
+| TypeScript Strict     | PASS   | All new types explicit, no `any`   |
+| TDD Required          | PASS   | Tests first each phase             |
+| 80%+ Coverage         | PASS   | Required on all new files          |
+| Zero Breaking Changes | PASS   | Additive only                      |
 
 ## Source Code Structure
 

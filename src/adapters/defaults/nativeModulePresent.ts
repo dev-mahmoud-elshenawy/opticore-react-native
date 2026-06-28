@@ -19,10 +19,7 @@ import { NativeModules, TurboModuleRegistry } from 'react-native';
  */
 export function nativeModulePresent(name: string): boolean {
   try {
-    if (
-      typeof TurboModuleRegistry?.get === 'function' &&
-      TurboModuleRegistry.get(name) != null
-    ) {
+    if (typeof TurboModuleRegistry?.get === 'function' && TurboModuleRegistry.get(name) != null) {
       return true;
     }
   } catch {
@@ -61,7 +58,7 @@ export function nativeModulePresent(name: string): boolean {
  */
 export function loadOptionalNativeModule<T>(
   nativeModuleName: string,
-  load: () => T | null | undefined,
+  load: () => T | null | undefined
 ): T | null {
   if (!nativeModulePresent(nativeModuleName)) return null;
 

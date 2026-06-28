@@ -7,11 +7,12 @@ Step-by-step guide for migrating your existing React Native project to OptiCore.
 ## From Plain Axios
 
 **Before:**
+
 ```typescript
 // Scattered setup across files
 const api = axios.create({ baseURL: 'https://api.example.com' });
 
-api.interceptors.request.use(config => {
+api.interceptors.request.use((config) => {
   const token = getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
@@ -29,6 +30,7 @@ async function fetchUsers() {
 ```
 
 **After:**
+
 ```typescript
 import { api } from 'opticore-react-native';
 
@@ -53,6 +55,7 @@ async function fetchUsers() {
 ## From Redux
 
 **Before:**
+
 ```typescript
 // actions.ts
 export const FETCH_USERS_REQUEST = 'FETCH_USERS_REQUEST';
@@ -62,10 +65,14 @@ export const FETCH_USERS_FAILURE = 'FETCH_USERS_FAILURE';
 // reducer.ts
 function usersReducer(state = initialState, action) {
   switch (action.type) {
-    case FETCH_USERS_REQUEST: return { ...state, loading: true };
-    case FETCH_USERS_SUCCESS: return { ...state, loading: false, data: action.payload };
-    case FETCH_USERS_FAILURE: return { ...state, loading: false, error: action.error };
-    default: return state;
+    case FETCH_USERS_REQUEST:
+      return { ...state, loading: true };
+    case FETCH_USERS_SUCCESS:
+      return { ...state, loading: false, data: action.payload };
+    case FETCH_USERS_FAILURE:
+      return { ...state, loading: false, error: action.error };
+    default:
+      return state;
   }
 }
 
@@ -82,6 +89,7 @@ export const fetchUsers = () => async (dispatch) => {
 ```
 
 **After:**
+
 ```typescript
 // One file — store + actions + async state
 import { api } from 'opticore-react-native';
@@ -103,6 +111,7 @@ const { items, status, fetchAll } = useUserStore();
 ```
 
 **Store Provider migration:**
+
 ```typescript
 // Remove Redux Provider + configureStore
 // Replace with OptiCoreProvider
@@ -116,6 +125,7 @@ const { items, status, fetchAll } = useUserStore();
 ## From MobX
 
 **Before:**
+
 ```typescript
 class UserStore {
   @observable users: User[] = [];
@@ -137,6 +147,7 @@ class UserStore {
 ```
 
 **After:**
+
 ```typescript
 // Same mental model — observable state replaced with Zustand + AsyncState
 import { createBaseStore } from 'opticore-react-native/state';
@@ -164,6 +175,7 @@ export const useUserStore = createBaseStore(
 ## From AsyncStorage (direct)
 
 **Before:**
+
 ```typescript
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -173,6 +185,7 @@ const user = raw ? JSON.parse(raw) : null;
 ```
 
 **After:**
+
 ```typescript
 import { storage } from 'opticore-react-native';
 
@@ -186,6 +199,7 @@ const user = await storage.local.get<User>('user');
 ## From custom Logger (console.log)
 
 **Before:**
+
 ```typescript
 if (__DEV__) {
   console.log('[Auth]', 'Login successful', user);
@@ -194,6 +208,7 @@ if (__DEV__) {
 ```
 
 **After:**
+
 ```typescript
 import { logger } from 'opticore-react-native';
 
@@ -215,16 +230,22 @@ logger.addTransport({
 ## From react-hook-form (standalone)
 
 **Before:**
+
 ```typescript
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-const { register, handleSubmit, formState: { errors } } = useForm({
+const {
+  register,
+  handleSubmit,
+  formState: { errors },
+} = useForm({
   resolver: zodResolver(schema),
 });
 ```
 
 **After:**
+
 ```typescript
 import { useFormState } from 'opticore-react-native/forms';
 
@@ -286,9 +307,9 @@ const [error, setError] = useState(null);
 useEffect(() => {
   setLoading(true);
   fetch('https://api.example.com/users')
-    .then(res => res.json())
-    .then(data => setData(data))
-    .catch(err => setError(err))
+    .then((res) => res.json())
+    .then((data) => setData(data))
+    .catch((err) => setError(err))
     .finally(() => setLoading(false));
 }, []);
 ```
@@ -304,16 +325,17 @@ const fetchUsers = () => api.get('/users');
 
 function MyComponent() {
   const { data, loading, error, execute } = useAsyncState(fetchUsers);
-  
+
   useEffect(() => {
     execute();
   }, []);
-  
+
   // Automatic error handling, loading states, etc.
 }
 ```
 
 **Benefits**:
+
 - Automatic error handling
 - Loading state management
 - Error classification
@@ -374,7 +396,7 @@ export const useUserStore = create<UserState>((set) => ({
   users: [],
   loading: false,
   error: null,
-  
+
   fetchUsers: async () => {
     set({ loading: true });
     try {
@@ -389,7 +411,7 @@ export const useUserStore = create<UserState>((set) => ({
 // Usage
 function MyComponent() {
   const { users, loading, fetchUsers } = useUserStore();
-  
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -397,12 +419,14 @@ function MyComponent() {
 ```
 
 **Benefits**:
+
 - Less boilerplate (no actions, reducers, types)
 - Better TypeScript support
 - Simpler API
 - Smaller bundle size
 
 **Migration Steps**:
+
 1. Replace Redux store with Zustand stores
 2. Convert actions to store methods
 3. Remove action types, reducers
@@ -458,7 +482,7 @@ export const useUserStore = create((set) => ({
   users: [],
   loading: false,
   error: null,
-  
+
   fetchUsers: async () => {
     set({ loading: true });
     try {
@@ -472,6 +496,7 @@ export const useUserStore = create((set) => ({
 ```
 
 **Migration Steps**:
+
 1. Convert MobX stores to Zustand
 2. Remove `makeObservable`, decorators
 3. Use functional state updates
@@ -526,6 +551,7 @@ const users = await api.get('/users');
 ```
 
 **Benefits**:
+
 - Built-in auth interceptor with token refresh
 - Automatic error classification
 - Request/response logging
@@ -533,6 +559,7 @@ const users = await api.get('/users');
 - TypeScript support
 
 **Migration Steps**:
+
 1. Replace axios instance with the `api` facade
 2. Move configuration to CoreSetup
 3. Remove manual interceptors
@@ -572,12 +599,13 @@ import { useDebounce } from 'opticore-react-native/hooks';
 function SearchComponent() {
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 500);
-  
+
   // Use debouncedQuery for API calls
 }
 ```
 
 **Available Built-in Hooks**:
+
 - `useDebounce` - Debounced values
 - `useThrottle` - Throttled callbacks
 - `useAsyncState` - Async operation state

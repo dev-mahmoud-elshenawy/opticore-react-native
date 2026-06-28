@@ -8,9 +8,12 @@ describe('usePrevious', () => {
   });
 
   it('should return previous value after update', async () => {
-    const { result, rerender } = await renderHookCompat(({ val }: { val: any }) => usePrevious(val), {
-      initialProps: { val: 'initial' },
-    });
+    const { result, rerender } = await renderHookCompat(
+      ({ val }: { val: any }) => usePrevious(val),
+      {
+        initialProps: { val: 'initial' },
+      }
+    );
 
     await rerender({ val: 'updated' });
     expect(result.current).toBe('initial');

@@ -23,11 +23,13 @@ Modern mobile apps are expected to support dark mode and theming. Users expect a
 ## User Stories
 
 ### US-017.1: Theme Manager (P1)
+
 **As a** developer
 **I want** a centralized theme manager
 **So that** I can control app theming from one place
 
 **Acceptance Criteria**:
+
 - [ ] Singleton pattern (ThemeManager.getInstance())
 - [ ] Register custom themes
 - [ ] Set active theme
@@ -35,6 +37,7 @@ Modern mobile apps are expected to support dark mode and theming. Users expect a
 - [ ] Theme change listeners
 
 **Example Usage**:
+
 ```typescript
 const manager = ThemeManager.getInstance();
 
@@ -54,11 +57,13 @@ manager.setTheme('brand');
 ```
 
 ### US-017.2: Light/Dark/System Modes (P1)
+
 **As a** developer
 **I want** to support light, dark, and system modes
 **So that** users can choose their preference
 
 **Acceptance Criteria**:
+
 - [ ] Set mode: 'light' | 'dark' | 'system'
 - [ ] Get current mode
 - [ ] Get resolved mode (actual light/dark when system)
@@ -66,6 +71,7 @@ manager.setTheme('brand');
 - [ ] Updates when OS preference changes
 
 **Example Usage**:
+
 ```typescript
 // Set to follow system
 manager.setMode('system');
@@ -78,17 +84,20 @@ manager.setMode('dark');
 ```
 
 ### US-017.3: Theme Persistence (P1)
+
 **As a** developer
 **I want** theme preference to persist
 **So that** users don't have to set it every session
 
 **Acceptance Criteria**:
+
 - [ ] Mode saved to LocalStorage
 - [ ] Loads saved preference on init
 - [ ] Configurable storage key
 - [ ] Works offline
 
 **Example Usage**:
+
 ```typescript
 manager.configure({
   persistMode: true,
@@ -102,17 +111,20 @@ manager.setMode('dark');
 ```
 
 ### US-017.4: Theme Provider & Hook (P1)
+
 **As a** developer
 **I want** a React provider and hook for theming
 **So that** I can use themes in components
 
 **Acceptance Criteria**:
+
 - [ ] ThemeProvider context wrapper
 - [ ] useTheme hook returns theme and controls
 - [ ] Re-renders on theme changes
 - [ ] Provides all theme values
 
 **Example Usage**:
+
 ```typescript
 // App.tsx
 <ThemeProvider defaultMode="system">
@@ -133,6 +145,7 @@ function MyComponent() {
 ```
 
 ### US-017.5: Color Utilities (P2)
+
 **As a** developer
 **I want** color manipulation utilities
 **So that** I can derive colors from theme
@@ -141,6 +154,7 @@ function MyComponent() {
 > This user story focuses on re-exporting and extending existing utilities for theme context.
 
 **Acceptance Criteria**:
+
 - [ ] Re-export existing: hexToRgb, rgbToHex from src/utils/color.ts
 - [ ] Add: lighten(color, amount)
 - [ ] Add: darken(color, amount)
@@ -149,6 +163,7 @@ function MyComponent() {
 - [ ] Works with hex, rgb, rgba
 
 **Example Usage**:
+
 ```typescript
 const { colors } = useTheme();
 
@@ -157,17 +172,17 @@ import { lighten, alpha, contrast } from 'opticore-react-native/theme';
 
 const hoverColor = lighten(colors.primary, 0.1);
 const disabledColor = alpha(colors.primary, 0.5);
-const textColor = contrast(colors.background) === 'dark'
-  ? '#FFFFFF'
-  : '#000000';
+const textColor = contrast(colors.background) === 'dark' ? '#FFFFFF' : '#000000';
 ```
 
 ### US-017.6: Default Themes (P2)
+
 **As a** developer
 **I want** sensible default light and dark themes
 **So that** I can start quickly without configuration
 
 **Acceptance Criteria**:
+
 - [ ] Default light theme included
 - [ ] Default dark theme included
 - [ ] Follows Material Design guidelines
@@ -352,26 +367,26 @@ export interface ThemeColors {
 }
 
 export interface ThemeSpacing {
-  xs: number;   // 4
-  sm: number;   // 8
-  md: number;   // 16
-  lg: number;   // 24
-  xl: number;   // 32
-  xxl: number;  // 48
+  xs: number; // 4
+  sm: number; // 8
+  md: number; // 16
+  lg: number; // 24
+  xl: number; // 32
+  xxl: number; // 48
 }
 
 export interface ThemeTypography {
   fontFamily: string;
   sizes: {
-    xs: number;   // 10
-    sm: number;   // 12
-    md: number;   // 14
-    lg: number;   // 16
-    xl: number;   // 20
-    xxl: number;  // 24
-    h1: number;   // 32
-    h2: number;   // 28
-    h3: number;   // 24
+    xs: number; // 10
+    sm: number; // 12
+    md: number; // 14
+    lg: number; // 16
+    xl: number; // 20
+    xxl: number; // 24
+    h1: number; // 32
+    h2: number; // 28
+    h3: number; // 24
   };
   weights: {
     regular: string;
@@ -382,12 +397,12 @@ export interface ThemeTypography {
 }
 
 export interface ThemeBorderRadius {
-  none: number;   // 0
-  sm: number;     // 4
-  md: number;     // 8
-  lg: number;     // 12
-  xl: number;     // 16
-  full: number;   // 9999
+  none: number; // 0
+  sm: number; // 4
+  md: number; // 8
+  lg: number; // 12
+  xl: number; // 16
+  full: number; // 9999
 }
 
 export interface ThemeConfig {
@@ -438,11 +453,11 @@ examples/theme/
 
 ## Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| System listener memory leak | Medium | Proper cleanup in dispose() |
-| Storage async issues | Low | Handle with defaults |
-| Color contrast accessibility | Medium | Test with WCAG guidelines |
+| Risk                         | Impact | Mitigation                  |
+| ---------------------------- | ------ | --------------------------- |
+| System listener memory leak  | Medium | Proper cleanup in dispose() |
+| Storage async issues         | Low    | Handle with defaults        |
+| Color contrast accessibility | Medium | Test with WCAG guidelines   |
 
 ## Out of Scope
 

@@ -29,7 +29,6 @@ export function createNetInfoAdapter(): ConnectivityAdapter | null {
 
   let netInfo: NetInfoModule;
   try {
-     
     const mod = require('@react-native-community/netinfo');
     netInfo = (mod?.default ?? mod) as NetInfoModule;
   } catch {

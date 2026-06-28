@@ -33,9 +33,9 @@ export class ErrorInterceptor {
       const message =
         ((data as Record<string, unknown>)?.message as string) || error.message || 'API Error';
 
-      const retryAfterHeader = (headers as Record<string, unknown> | undefined)?.[
-        'retry-after'
-      ] as string | undefined;
+      const retryAfterHeader = (headers as Record<string, unknown> | undefined)?.['retry-after'] as
+        | string
+        | undefined;
 
       return Promise.reject(new ApiError(status, message, url, data, error, retryAfterHeader));
     } else if (error.request) {

@@ -51,7 +51,14 @@ export function useFieldValidation<T>(value: T, validator: Validator<T>): FieldV
 // Validation
 export function createValidationSchema<T>(builder: SchemaBuilder): ZodSchema<T>;
 export const validators = {
-  email, phone, password, required, minLength, maxLength, matches, url
+  email,
+  phone,
+  password,
+  required,
+  minLength,
+  maxLength,
+  matches,
+  url,
 };
 
 // Masks
@@ -73,23 +80,28 @@ export function detectCardType(value: string): CardType | null;
 ## Implementation Phases
 
 **Phase 1: Dependencies** (15 min)
+
 - Install react-hook-form
 
 **Phase 2: Form State** (3-4 hours)
+
 - useFormState hook
 - useFieldValidation hook
 - Type definitions
 
 **Phase 3: Validation** (2-3 hours)
+
 - ValidationBuilder
 - Common validators (email, phone, password, required, etc.)
 
 **Phase 4: Input Masks** (2-3 hours)
+
 - Phone mask/unmask
 - Currency mask/unmask
 - Credit card mask + card type detection
 
 **Phase 5: Tests** (2-3 hours)
+
 - Hook tests
 - Validation tests
 - Mask tests

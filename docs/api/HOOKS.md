@@ -17,20 +17,20 @@ import { useAsyncState } from 'opticore-react-native';
 Manage the complete lifecycle of any async operation — loading, data, and error — in one hook.
 
 ```typescript
-function useAsyncState<T>(initialData?: T | null): UseAsyncStateReturn<T>
+function useAsyncState<T>(initialData?: T | null): UseAsyncStateReturn<T>;
 ```
 
 ### Return Value
 
-| Property | Type | Description |
-|---|---|---|
-| `data` | `T \| null` | Result from last successful run |
-| `isLoading` | `boolean` | `true` while the promise is running |
-| `error` | `Error \| null` | Error from last failed run |
-| `run` | `(promise: Promise<T>) => Promise<void>` | Track an already-created promise |
-| `setData` | `(data: T \| null) => void` | Manually update data |
-| `setError` | `(error: Error \| null) => void` | Manually set error |
-| `reset` | `() => void` | Clear data, error, loading |
+| Property    | Type                                     | Description                         |
+| ----------- | ---------------------------------------- | ----------------------------------- |
+| `data`      | `T \| null`                              | Result from last successful run     |
+| `isLoading` | `boolean`                                | `true` while the promise is running |
+| `error`     | `Error \| null`                          | Error from last failed run          |
+| `run`       | `(promise: Promise<T>) => Promise<void>` | Track an already-created promise    |
+| `setData`   | `(data: T \| null) => void`              | Manually update data                |
+| `setError`  | `(error: Error \| null) => void`         | Manually set error                  |
+| `reset`     | `() => void`                             | Clear data, error, loading          |
 
 > `run` takes a `Promise<T>` directly (not a thunk). Create the promise inline and pass it.
 >
@@ -39,7 +39,7 @@ function useAsyncState<T>(initialData?: T | null): UseAsyncStateReturn<T>
 > trigger execution — it binds that promise's lifecycle to `isLoading`/`data`/`error` (with an
 > unmount guard and a generation guard so a stale earlier call can't overwrite a newer one).
 > Without `run`, the request still runs, but the hook's state never updates. Because `run` receives
-> an already-running promise, it can't defer *when* the work starts — create the promise at the
+> an already-running promise, it can't defer _when_ the work starts — create the promise at the
 > moment you want it to fire (e.g. inside the effect, as above).
 
 ```typescript
@@ -59,6 +59,7 @@ function UserScreen({ id }: { id: string }) {
 ```
 
 With initial data:
+
 ```typescript
 const { data } = useAsyncState<User[]>([]); // starts as [], not undefined
 ```
@@ -103,12 +104,12 @@ Screen size category based on breakpoints from `CoreConfig.responsive`.
 const { isSmall, isMedium, isLarge, isXLarge, width } = useResponsive();
 ```
 
-| Property | Default Breakpoint |
-|---|---|
-| `isSmall` | width < 360 |
-| `isMedium` | 360 – 767 |
-| `isLarge` | 768 – 1023 |
-| `isXLarge` | >= 1024 |
+| Property   | Default Breakpoint |
+| ---------- | ------------------ |
+| `isSmall`  | width < 360        |
+| `isMedium` | 360 – 767          |
+| `isLarge`  | 768 – 1023         |
+| `isXLarge` | >= 1024            |
 
 ```typescript
 function AdaptiveLayout() {
@@ -127,7 +128,7 @@ const { isMedium } = useResponsive({ medium: 600 });
 Delay value updates — essential for search inputs.
 
 ```typescript
-function useDebounce<T>(value: T, delay: number): T
+function useDebounce<T>(value: T, delay: number): T;
 ```
 
 ```typescript
@@ -150,7 +151,7 @@ function SearchBar() {
 Limit update frequency — useful for scroll and sensor events.
 
 ```typescript
-function useThrottle<T>(value: T, limit: number): T
+function useThrottle<T>(value: T, limit: number): T;
 ```
 
 ```typescript
@@ -165,7 +166,7 @@ const throttledY = useThrottle(scrollY, 100); // max 10 updates/second
 Track the previous value of state or props.
 
 ```typescript
-function usePrevious<T>(value: T): T | undefined
+function usePrevious<T>(value: T): T | undefined;
 ```
 
 ```typescript
@@ -239,7 +240,7 @@ function SessionRefresher() {
 Run an effect exactly once on mount.
 
 ```typescript
-function useMount(effect: () => void | (() => void)): void
+function useMount(effect: () => void | (() => void)): void;
 ```
 
 ```typescript
@@ -284,4 +285,3 @@ function useProductSearch() {
 - [useTheme](../THEME.md) — Theme switching
 - [useOfflineSync](../OFFLINE.md) — Offline queue
 - [useRouteHelper](./NAVIGATION.md) — Navigation helper
-

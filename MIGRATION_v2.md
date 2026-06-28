@@ -6,12 +6,12 @@
 
 ## What changed at a glance
 
-| Concern | 1.x | 2.0.0 |
-|---|---|---|
-| `@tanstack/react-query` | Bundled `dependency` (installed transitively) | **Required `peerDependency`** (`>=5`) — you install it |
-| `theme.typography` | `sizes` + `weights` scales only | Adds semantic variants (`body`, `h1`, …); scales unchanged |
-| `nativewind` / `tailwindcss` | n/a | **Optional** peers (only for the Tailwind preset) |
-| Tailwind preset | raw sizes only (`text-md`) | also semantic classes (`text-body`, `text-h1`, …) |
+| Concern                      | 1.x                                           | 2.0.0                                                      |
+| ---------------------------- | --------------------------------------------- | ---------------------------------------------------------- |
+| `@tanstack/react-query`      | Bundled `dependency` (installed transitively) | **Required `peerDependency`** (`>=5`) — you install it     |
+| `theme.typography`           | `sizes` + `weights` scales only               | Adds semantic variants (`body`, `h1`, …); scales unchanged |
+| `nativewind` / `tailwindcss` | n/a                                           | **Optional** peers (only for the Tailwind preset)          |
+| Tailwind preset              | raw sizes only (`text-md`)                    | also semantic classes (`text-body`, `text-h1`, …)          |
 
 ---
 
@@ -38,7 +38,7 @@ npm install @tanstack/react-query
 Any `>=5` version works. This is the only **mandatory** step — skipping it causes a
 `Cannot find module '@tanstack/react-query'` at runtime.
 
-### 3. If you author a *complete* custom `Theme` literal
+### 3. If you author a _complete_ custom `Theme` literal
 
 `ThemeTypography` now has nine required semantic-variant fields. If you build a full
 `Theme` object from scratch, add them. The common pattern of spreading a default theme

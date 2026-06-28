@@ -21,7 +21,7 @@ This split mirrors Flutter's unified error funnel (`ErrorWidget.builder` + `Flut
 `NonRenderError` is defined for **async/background** failures — exactly the category the boundary cannot see. Therefore:
 
 1. **Dead path**: `throw new NonRenderError(...)` from async/background code is never caught by `OptiCoreErrorBoundary`; it becomes an unhandled rejection. The boundary's `NON_RENDER` branches only ever trigger if a `NonRenderError` is (incorrectly) thrown during render.
-2. **Infinite-render loop**: when an error reaching the boundary is classified `NON_RENDER`, the boundary sets `showFallback: false` and re-renders `children`. Any error that *actually* reached the boundary came from the render path, so re-rendering the same children re-throws → caught again → re-render → loop.
+2. **Infinite-render loop**: when an error reaching the boundary is classified `NON_RENDER`, the boundary sets `showFallback: false` and re-renders `children`. Any error that _actually_ reached the boundary came from the render path, so re-rendering the same children re-throws → caught again → re-render → loop.
 3. **Wrong mental model in docs**: `CLAUDE.md` and the error module docs present a Flutter-style "render vs non-render, no re-render needed" model that does not transfer to RN. In React, any user feedback (e.g. a toast) is a state change → a re-render of the subscriber; there is no "show a message without re-rendering."
 
 The fix keeps the correct half (`RenderError` + boundary) and repositions `NonRenderError` as a **typed descriptor/log payload** that the catch site reads (log it, surface a message, retry) — never a thrown control-flow signal.
@@ -117,4 +117,7 @@ Existing consumers who currently `throw new NonRenderError(...)` must not get a 
 - **SC-003**: The full test suite passes with ≥80% coverage maintained for the `error` module, including new US1/US2 tests.
 - **SC-004**: `CLAUDE.md` and error docs contain zero remaining statements describing `NonRenderError` as a thrown, boundary-caught background error; the three-outcome RN model is documented.
 - **SC-005**: No consumer-facing compile break (verified by simulated import of `NonRenderError` + boundary usage on 2.7.0).
+
+```
+
 ```

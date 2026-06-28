@@ -88,15 +88,15 @@ Any optional native peer you skip falls back to an **in-memory adapter** at runt
 
 These are the peers `opticore-install-peers` manages. Every one is **optional** — skip any and OptiCore falls back to an in-memory implementation and logs a one-time `__DEV__` warning naming what to install. Nothing throws.
 
-| Peer | Enables | If you don't install it |
-|------|---------|--------------------------|
-| `expo-secure-store` | `StorageManager.secure` (Keychain / Keystore) | In-memory fallback — **not persistent, not secure** |
-| `@react-native-async-storage/async-storage` | `StorageManager.local` | In-memory fallback — not persistent |
-| `@react-native-community/netinfo` | `ConnectivityManager`, `useConnectivity` | In-memory fallback (assumes online) |
-| `expo-clipboard` *(or `@react-native-clipboard/clipboard`)* | Clipboard utilities | In-memory fallback |
-| `expo-device` + `expo-application` *(or `react-native-device-info`)* | Device / app info | In-memory fallback (default values) |
+| Peer                                                                 | Enables                                       | If you don't install it                             |
+| -------------------------------------------------------------------- | --------------------------------------------- | --------------------------------------------------- |
+| `expo-secure-store`                                                  | `StorageManager.secure` (Keychain / Keystore) | In-memory fallback — **not persistent, not secure** |
+| `@react-native-async-storage/async-storage`                          | `StorageManager.local`                        | In-memory fallback — not persistent                 |
+| `@react-native-community/netinfo`                                    | `ConnectivityManager`, `useConnectivity`      | In-memory fallback (assumes online)                 |
+| `expo-clipboard` _(or `@react-native-clipboard/clipboard`)_          | Clipboard utilities                           | In-memory fallback                                  |
+| `expo-device` + `expo-application` _(or `react-native-device-info`)_ | Device / app info                             | In-memory fallback (default values)                 |
 
-> **Why optional?** Native modules are feature-gated — your app installs only what it uses, and OptiCore resolves the backend at runtime (consumer override → installed peer → in-memory fallback). The dev warning means a missing peer is never a *silent* surprise.
+> **Why optional?** Native modules are feature-gated — your app installs only what it uses, and OptiCore resolves the backend at runtime (consumer override → installed peer → in-memory fallback). The dev warning means a missing peer is never a _silent_ surprise.
 >
 > Two peers sit **outside** this CLI: `typescript` (optional — OptiCore ships its own `.d.ts`, so skipping it has no effect) and `expo-router` (required, install it with your navigation setup — only needed for the `opticore-react-native/navigation` subpath).
 
@@ -104,7 +104,7 @@ These are the peers `opticore-install-peers` manages. Every one is **optional** 
 
 **Normal npm install? Skip this.** A standard `npm install opticore-react-native` needs no Metro changes — `react`/`react-native` are peer deps, so there's only one copy.
 
-In a **monorepo** or when consuming OptiCore via a **`file:` link** (e.g. local testing), the package's own `react` can get duplicated, causing the classic *"Invalid hook call"*. Wrap your Metro config to force React (and peer deps) to resolve from your app:
+In a **monorepo** or when consuming OptiCore via a **`file:` link** (e.g. local testing), the package's own `react` can get duplicated, causing the classic _"Invalid hook call"_. Wrap your Metro config to force React (and peer deps) to resolve from your app:
 
 ```js
 // metro.config.js
@@ -166,8 +166,8 @@ import { api, storage, logger } from 'opticore-react-native';
 import { useAsyncState } from 'opticore-react-native/hooks';
 
 // HTTP — verbs return the body (T) directly; auth token injected automatically.
-const users = await api.get<User[]>('/users');           // User[]
-const me = await api.get<User>('/users/me');             // User
+const users = await api.get<User[]>('/users'); // User[]
+const me = await api.get<User>('/users/me'); // User
 const created = await api.post<Created>('/users', { name: 'Ali' });
 await api.delete('/users/1');
 
@@ -189,16 +189,16 @@ run(() => api.get<User[]>('/users'));
 
 **Where to import from**
 
-| Symbol | Import from |
-|--------|------------|
-| **Facades** — `api`, `storage`, `logger`, `connectivity`, `offline`, `themeControl`, `lifecycle`, `stateObserver` | `opticore-react-native` (root) or `…/facades` |
-| `ApiClient`, `StorageManager`, `Logger`, `HttpMethod` | `opticore-react-native` (root) or `…/infrastructure` |
-| `OptiCoreProvider`, `useConfig` | `opticore-react-native` (root) or `…/providers` |
-| Hooks (`useAsyncState`, …) | `opticore-react-native` (root) or `…/hooks` |
-| Errors (`RenderError`, `Result`, `OptiCoreErrorBoundary`) | `opticore-react-native` (root) or `…/error` |
-| `useRouteHelper`, `NavigationParams` | **`opticore-react-native/navigation` only** (not the root barrel) |
-| `createMemoryAdapters`, `resetOptiCore` (test helpers) | **`opticore-react-native/testing` only** (not the root barrel) |
-| Utilities · forms · theme · offline · state · query | root or the matching subpath |
+| Symbol                                                                                                            | Import from                                                       |
+| ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Facades** — `api`, `storage`, `logger`, `connectivity`, `offline`, `themeControl`, `lifecycle`, `stateObserver` | `opticore-react-native` (root) or `…/facades`                     |
+| `ApiClient`, `StorageManager`, `Logger`, `HttpMethod`                                                             | `opticore-react-native` (root) or `…/infrastructure`              |
+| `OptiCoreProvider`, `useConfig`                                                                                   | `opticore-react-native` (root) or `…/providers`                   |
+| Hooks (`useAsyncState`, …)                                                                                        | `opticore-react-native` (root) or `…/hooks`                       |
+| Errors (`RenderError`, `Result`, `OptiCoreErrorBoundary`)                                                         | `opticore-react-native` (root) or `…/error`                       |
+| `useRouteHelper`, `NavigationParams`                                                                              | **`opticore-react-native/navigation` only** (not the root barrel) |
+| `createMemoryAdapters`, `resetOptiCore` (test helpers)                                                            | **`opticore-react-native/testing` only** (not the root barrel)    |
+| Utilities · forms · theme · offline · state · query                                                               | root or the matching subpath                                      |
 
 → **[Full setup guide](docs/QUICK_START.md)** — auth, error handling, offline sync, theming and more.
 
@@ -208,13 +208,13 @@ run(() => api.get<User[]>('/users'));
 
 OptiCore's native dependencies are accessed through **adapter interfaces**. The defaults auto-resolve the popular peers when installed; you can override any of them. Each capability prefers an **Expo module** (which ships inside Expo Go), then falls back to the bare React Native peer, then to an in-memory stub:
 
-| Capability | Preferred (Expo Go-safe) | Fallback peer | Last resort |
-|---|---|---|---|
-| Secure storage | `expo-secure-store` | — | in-memory |
-| Local storage | — | `@react-native-async-storage/async-storage` | in-memory |
-| Connectivity | — | `@react-native-community/netinfo` | in-memory |
-| Device info | `expo-device` (+ `expo-application`) | `react-native-device-info` | in-memory |
-| Clipboard | `expo-clipboard` | `@react-native-clipboard/clipboard` | in-memory |
+| Capability     | Preferred (Expo Go-safe)             | Fallback peer                               | Last resort |
+| -------------- | ------------------------------------ | ------------------------------------------- | ----------- |
+| Secure storage | `expo-secure-store`                  | —                                           | in-memory   |
+| Local storage  | —                                    | `@react-native-async-storage/async-storage` | in-memory   |
+| Connectivity   | —                                    | `@react-native-community/netinfo`           | in-memory   |
+| Device info    | `expo-device` (+ `expo-application`) | `react-native-device-info`                  | in-memory   |
+| Clipboard      | `expo-clipboard`                     | `@react-native-clipboard/clipboard`         | in-memory   |
 
 ### Why this matters
 
@@ -283,8 +283,9 @@ if (nativeModulePresent('RNHaptic')) {
 }
 
 // Probe + load in one step; returns null in Expo Go instead of throwing.
-const haptics = loadOptionalNativeModule('RNHaptic', () =>
-  require('react-native-haptic-feedback').default,
+const haptics = loadOptionalNativeModule(
+  'RNHaptic',
+  () => require('react-native-haptic-feedback').default
 );
 haptics?.trigger('impactLight'); // no-op in Expo Go, real haptics in a dev build
 ```
@@ -295,43 +296,43 @@ haptics?.trigger('impactLight'); // no-op in Expo Go, real haptics in a dev buil
 
 ### Getting Started
 
-| Guide | Description |
-|---|---|
-| 🚀 **[Quick Start](docs/QUICK_START.md)** | Install, configure, and make your first API call in 10 minutes |
-| 🏛 **[Architecture](docs/ARCHITECTURE.md)** | Library layers, data flow, design patterns, and extension points |
-| ⚙️ **[Configuration](docs/CONFIGURATION.md)** | Every `CoreConfig` option explained with examples |
-| 📑 **[Full Docs Index](docs/INDEX.md)** | Central navigation hub for all documentation |
+| Guide                                         | Description                                                      |
+| --------------------------------------------- | ---------------------------------------------------------------- |
+| 🚀 **[Quick Start](docs/QUICK_START.md)**     | Install, configure, and make your first API call in 10 minutes   |
+| 🏛 **[Architecture](docs/ARCHITECTURE.md)**   | Library layers, data flow, design patterns, and extension points |
+| ⚙️ **[Configuration](docs/CONFIGURATION.md)** | Every `CoreConfig` option explained with examples                |
+| 📑 **[Full Docs Index](docs/INDEX.md)**       | Central navigation hub for all documentation                     |
 
 ### API Reference
 
-| Guide | Description |
-|---|---|
-| 🏗 **[Infrastructure](docs/api/INFRASTRUCTURE.md)** | ApiClient, Logger, StorageManager, ConnectivityManager, LifecycleManager |
-| 🗄 **[State Management](docs/api/STATE.md)** | AsyncState, BaseStore, CrudStore, StoreFactory, StateObserver |
-| 🪝 **[Hooks](docs/api/HOOKS.md)** | 11 custom hooks — useAsyncState, useDebounce, useKeyboard, useConnectivity & more |
-| ⚠️ **[Error Handling — Which Tool, When](docs/ERROR_HANDLING.md)** | Decision tree: `Result` vs throw `RenderError` vs `ApiError` vs `NonRenderError` |
-| ⚠️ **[Error Handling API](docs/api/ERRORS.md)** | RenderError, NonRenderError, ApiError, Result\<T,E\>, ErrorBoundary |
-| 🛠 **[Utilities](docs/api/UTILITIES.md)** | 40+ pure functions — string, number, array, date, object, format, color, platform |
-| 🧭 **[Navigation](docs/api/NAVIGATION.md)** | useRouteHelper, Expo Router integration |
-| 🔁 **[React Query](docs/REACT_QUERY.md)** | createQueryClient, createQueryHook, useApiMutation, createQueryPersister, error-aware retry |
-| 🔷 **[Types](docs/TYPES.md)** | All shared TypeScript types — ApiResponse, ApiResult, AsyncState, PaginatedResponse & more |
+| Guide                                                              | Description                                                                                 |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| 🏗 **[Infrastructure](docs/api/INFRASTRUCTURE.md)**                | ApiClient, Logger, StorageManager, ConnectivityManager, LifecycleManager                    |
+| 🗄 **[State Management](docs/api/STATE.md)**                       | AsyncState, BaseStore, CrudStore, StoreFactory, StateObserver                               |
+| 🪝 **[Hooks](docs/api/HOOKS.md)**                                  | 11 custom hooks — useAsyncState, useDebounce, useKeyboard, useConnectivity & more           |
+| ⚠️ **[Error Handling — Which Tool, When](docs/ERROR_HANDLING.md)** | Decision tree: `Result` vs throw `RenderError` vs `ApiError` vs `NonRenderError`            |
+| ⚠️ **[Error Handling API](docs/api/ERRORS.md)**                    | RenderError, NonRenderError, ApiError, Result\<T,E\>, ErrorBoundary                         |
+| 🛠 **[Utilities](docs/api/UTILITIES.md)**                          | 40+ pure functions — string, number, array, date, object, format, color, platform           |
+| 🧭 **[Navigation](docs/api/NAVIGATION.md)**                        | useRouteHelper, Expo Router integration                                                     |
+| 🔁 **[React Query](docs/REACT_QUERY.md)**                          | createQueryClient, createQueryHook, useApiMutation, createQueryPersister, error-aware retry |
+| 🔷 **[Types](docs/TYPES.md)**                                      | All shared TypeScript types — ApiResponse, ApiResult, AsyncState, PaginatedResponse & more  |
 
 ### Feature Guides
 
-| Guide | Description |
-|---|---|
-| 🎨 **[Theme Engine](docs/THEME.md)** | Dynamic theming, dark mode, semantic typography, useThemedStyles, useTextStyle, ThemeManager |
-| 🌬 **[Tailwind / NativeWind](docs/TAILWIND.md)** | createTailwindPreset — theme-driven `className` tokens (`text-body`, `bg-card`) |
-| 📋 **[Forms](docs/FORMS.md)** | useFormState, Zod validation, input masks, field-level validation |
-| 📡 **[Offline Sync](docs/OFFLINE.md)** | Request queue, auto-sync on reconnect, conflict resolution |
+| Guide                                            | Description                                                                                  |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| 🎨 **[Theme Engine](docs/THEME.md)**             | Dynamic theming, dark mode, semantic typography, useThemedStyles, useTextStyle, ThemeManager |
+| 🌬 **[Tailwind / NativeWind](docs/TAILWIND.md)** | createTailwindPreset — theme-driven `className` tokens (`text-body`, `bg-card`)              |
+| 📋 **[Forms](docs/FORMS.md)**                    | useFormState, Zod validation, input masks, field-level validation                            |
+| 📡 **[Offline Sync](docs/OFFLINE.md)**           | Request queue, auto-sync on reconnect, conflict resolution                                   |
 
 ### Project Guides
 
-| Guide | Description |
-|---|---|
+| Guide                                 | Description                                                      |
+| ------------------------------------- | ---------------------------------------------------------------- |
 | 🔄 **[Migration](docs/MIGRATION.md)** | Migrate from Redux, MobX, plain Axios, AsyncStorage, console.log |
-| 🧪 **[Testing](docs/TESTING.md)** | Mock helpers, test patterns, coverage requirements |
-| ❓ **[FAQ](docs/FAQ.md)** | Common questions, troubleshooting, platform notes |
+| 🧪 **[Testing](docs/TESTING.md)**     | Mock helpers, test patterns, coverage requirements               |
+| ❓ **[FAQ](docs/FAQ.md)**             | Common questions, troubleshooting, platform notes                |
 
 ---
 
@@ -340,6 +341,7 @@ haptics?.trigger('impactLight'); // no-op in Expo Go, real haptics in a dev buil
 Found a bug or want a feature? Open an issue on **[GitHub Issues](https://github.com/dev-mahmoud-elshenawy/opticore-react-native/issues)**.
 
 Please include:
+
 - Clear description of the issue
 - Steps to reproduce
 - OptiCore version

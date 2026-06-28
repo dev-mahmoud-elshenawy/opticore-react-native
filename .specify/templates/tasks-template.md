@@ -12,6 +12,7 @@ description: 'Task list template for feature implementation'
 **Organization**: Tasks are grouped by phase to enable incremental PRs and review.
 
 > **⚠️ GIT RULE**: After completing each phase, you MUST:
+>
 > 1. Commit changes: `git commit -m "feat(spec): complete phase N"`
 > 2. Push to remote: `git push origin <feature-branch>`
 > 3. Verify CI passes (if applicable)

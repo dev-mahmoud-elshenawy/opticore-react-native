@@ -61,8 +61,7 @@ export const TurboModuleRegistry = {
   getEnforcing: jest.fn(() => ({})),
 };
 export const NativeModules = new Proxy({} as Record<string, unknown>, {
-  get: (_target, prop: string) =>
-    PRESENT_NATIVE_MODULES.has(prop) ? {} : undefined,
+  get: (_target, prop: string) => (PRESENT_NATIVE_MODULES.has(prop) ? {} : undefined),
 });
 
 export const StyleSheet = {

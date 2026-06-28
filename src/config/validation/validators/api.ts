@@ -5,7 +5,7 @@ import { assertNonEmpty, assertPositiveNumber, assertString, isValidUrl } from '
 export function validateApiConfig(
   api: ApiConfig,
   errors: ValidationIssue[],
-  warnings: ValidationIssue[],
+  warnings: ValidationIssue[]
 ): void {
   if (!assertNonEmpty(api, 'api', errors)) return;
 

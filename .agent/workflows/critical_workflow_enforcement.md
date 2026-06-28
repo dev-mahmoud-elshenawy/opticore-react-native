@@ -7,6 +7,7 @@ description: Critical workflow enforcement and validation steps
 This workflow MUST be followed before requesting user feedback. It ensures that all artifacts, documentation, and code states are synchronized and valid.
 
 ## 1. Documentation Synchronization
+
 - [ ] **Task Status Check**: Verify `task.md` accurately reflects the current state of implementation.
   - No tasks should be marked completed `[x]` if code is missing or failing verification.
   - If a task is blocked, mark it `[-]` with a clear reason.
@@ -14,6 +15,7 @@ This workflow MUST be followed before requesting user feedback. It ensures that 
   - Do NOT mark a spec "COMPLETED" in docs unless ALL items in `task.md` are `[x]` or `[-]`.
 
 ## 2. Quality Gate Verification
+
 - [ ] **Type Safety**: Run `npm run type-check`.
   - Must pass with 0 errors before considering a phase complete.
 - [ ] **Linting**: Run `npm run lint`.
@@ -22,6 +24,7 @@ This workflow MUST be followed before requesting user feedback. It ensures that 
   - If integration tests are blocked by environment, ensure unit tests pass.
 
 ## 3. Workflow Adherence Check
+
 - [ ] **Spec Flow**: Confirm adherence to `.agent/workflows/spec_implementation_flow.md`.
   - Were tasks created?
   - Was TDD followed (red-green-refactor)?
@@ -31,6 +34,7 @@ This workflow MUST be followed before requesting user feedback. It ensures that 
   - Are commits scoped to the phase?
 
 ## 4. Final Sanity Check
+
 - [ ] **Export Verification**: Check `index.ts` files to ensure new modules are exported.
 - [ ] **Cleanliness**: Remove temporary debug files (e.g., `trivial.test.ts`).
 

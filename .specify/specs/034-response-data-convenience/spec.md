@@ -7,9 +7,9 @@
 
 ## Context / Problem
 
-Spec 032's `api` facade returns `ApiResponse<T>` (same shape as `request()`) for one consistent mental model. The cost: the common case is `const { data } = await api.get(...)` or `(await api.get(...)).data` on every call. The DX evaluation flagged this as the main remaining *code* papercut (after docs in 033).
+Spec 032's `api` facade returns `ApiResponse<T>` (same shape as `request()`) for one consistent mental model. The cost: the common case is `const { data } = await api.get(...)` or `(await api.get(...)).data` on every call. The DX evaluation flagged this as the main remaining _code_ papercut (after docs in 033).
 
-We want an **additive** way to get `T` directly. The earlier evaluation deliberately parked this because it introduces a *second return shape* — that tradeoff is the decision to make here.
+We want an **additive** way to get `T` directly. The earlier evaluation deliberately parked this because it introduces a _second return shape_ — that tradeoff is the decision to make here.
 
 **Hard constraint:** spec 032 already shipped `api.get/post/...` returning `ApiResponse<T>` in 2.8.0. Changing those to return `T` would be **breaking** — NOT allowed. The unwrapped access must be a **new, parallel** surface.
 
@@ -19,7 +19,7 @@ Pick the unwrapped surface (all additive; none change existing verbs):
 
 - **Option A — `data` namespace (recommended):** `api.data.get<T>(url)` → `Promise<T>`; mirrors all five verbs + config. Discoverable, grouped, leaves `api.get` untouched.
   ```ts
-  const users = await api.data.get<User[]>('/users');   // T
+  const users = await api.data.get<User[]>('/users'); // T
   const created = await api.data.post<Created>('/users', body);
   ```
 - **Option B — `*Data` siblings:** `api.getData<T>(url)` / `api.postData<T>(url, body)` → `Promise<T>`. Flat, but doubles the method count on `api`.

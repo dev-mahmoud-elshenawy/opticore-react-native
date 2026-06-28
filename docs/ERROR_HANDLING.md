@@ -93,8 +93,9 @@ try {
   return data;
 } catch (e) {
   if (e instanceof ApiError) {
-    if (e.isRetryable) scheduleRetry(e.retryAfterMs); // 429/503/timeout/network
-    else if (e.status === 404) return [];             // actionable 4xx
+    if (e.isRetryable)
+      scheduleRetry(e.retryAfterMs); // 429/503/timeout/network
+    else if (e.status === 404) return []; // actionable 4xx
   }
   throw e; // unknown → let it bubble to the boundary
 }
@@ -132,12 +133,12 @@ try {
 
 ## Quick reference
 
-| Situation | Tool | Mechanism |
-|-----------|------|-----------|
-| Expected/recoverable branch | `Result<T, E>` | return value, no throw |
-| Render-path failure, user must see | `RenderError` (throw) | `OptiCoreErrorBoundary` → fallback |
-| HTTP non-2xx | `ApiError` (thrown for you) | catch for `status`/`isRetryable`, else bubbles to boundary |
-| Background/async, log only | `NonRenderError` (payload) | `logger.error(...)`, never thrown |
-| Notify user without replacing screen | (none) | state update → re-render (e.g. a toast store) |
+| Situation                            | Tool                        | Mechanism                                                  |
+| ------------------------------------ | --------------------------- | ---------------------------------------------------------- |
+| Expected/recoverable branch          | `Result<T, E>`              | return value, no throw                                     |
+| Render-path failure, user must see   | `RenderError` (throw)       | `OptiCoreErrorBoundary` → fallback                         |
+| HTTP non-2xx                         | `ApiError` (thrown for you) | catch for `status`/`isRetryable`, else bubbles to boundary |
+| Background/async, log only           | `NonRenderError` (payload)  | `logger.error(...)`, never thrown                          |
+| Notify user without replacing screen | (none)                      | state update → re-render (e.g. a toast store)              |
 
 See also: [`docs/api/ERRORS.md`](api/ERRORS.md) · [`docs/FAQ.md`](FAQ.md).

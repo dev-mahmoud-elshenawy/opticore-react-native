@@ -11,7 +11,11 @@ jest.mock('expo-secure-store');
 jest.mock('../../../src/adapters/defaults/nativeModulePresent', () => ({
   nativeModulePresent: () => true,
   loadOptionalNativeModule: (_name: string, load: () => unknown) => {
-    try { return load() ?? null; } catch { return null; }
+    try {
+      return load() ?? null;
+    } catch {
+      return null;
+    }
   },
 }));
 
@@ -45,12 +49,17 @@ describe('SecureStorage', () => {
     it('should wait for init before executing set()', async () => {
       let resolveLoadKeys!: () => void;
       (SecureStore.getItemAsync as jest.Mock).mockImplementationOnce(
-        () => new Promise<string | null>(resolve => { resolveLoadKeys = () => resolve(null); })
+        () =>
+          new Promise<string | null>((resolve) => {
+            resolveLoadKeys = () => resolve(null);
+          })
       );
 
       const storage = new SecureStorage();
       let setCompleted = false;
-      const setPromise = storage.set('key', 'value').then(() => { setCompleted = true; });
+      const setPromise = storage.set('key', 'value').then(() => {
+        setCompleted = true;
+      });
 
       // set() should be blocked waiting for loadKeys
       await Promise.resolve();
@@ -66,7 +75,8 @@ describe('SecureStorage', () => {
 
     it('should handle loadKeys() failure gracefully — get() returns null without crashing', async () => {
       (SecureStore.getItemAsync as jest.Mock).mockImplementation((key: string) => {
-        if (key === '__secure_storage_keys__') return Promise.reject(new Error('Storage corrupted'));
+        if (key === '__secure_storage_keys__')
+          return Promise.reject(new Error('Storage corrupted'));
         return Promise.resolve(null);
       });
 
@@ -77,7 +87,7 @@ describe('SecureStorage', () => {
     it('should execute operations immediately once init has already completed', async () => {
       const storage = new SecureStorage();
       // Allow readyPromise to resolve
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       (SecureStore.getItemAsync as jest.Mock).mockResolvedValue(JSON.stringify('cached'));
       const value = await storage.get<string>('existing');
@@ -172,11 +182,7 @@ describe('SecureStorage', () => {
       const storage = new SecureStorage();
       // Fire many writes in the same tick — the serialized write chain must
       // persist EVERY key into the index (no last-write-wins clobber).
-      await Promise.all([
-        storage.set('a', 1),
-        storage.set('b', 2),
-        storage.set('c', 3),
-      ]);
+      await Promise.all([storage.set('a', 1), storage.set('b', 2), storage.set('c', 3)]);
 
       const indexJson = store['__secure_storage_keys__'];
       const keys = JSON.parse(indexJson) as string[];

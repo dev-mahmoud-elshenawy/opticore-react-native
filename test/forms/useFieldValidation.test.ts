@@ -1,86 +1,85 @@
-
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { useFieldValidation } from '../../src/forms/useFieldValidation';
 
 describe('useFieldValidation', () => {
-    const validator = jest.fn();
+  const validator = jest.fn();
 
-    beforeEach(() => {
-        validator.mockClear();
+  beforeEach(() => {
+    validator.mockClear();
+  });
+
+  test('should initialize with valid state', async () => {
+    const { result } = await renderHook(() => useFieldValidation('initial', validator));
+
+    expect(result.current.isValid).toBe(true);
+    expect(result.current.error).toBeUndefined();
+    expect(result.current.isValidating).toBe(false);
+  });
+
+  test('should validate successfully', async () => {
+    validator.mockResolvedValue(undefined); // No error means valid
+
+    const { result } = await renderHook(() => useFieldValidation('valid', validator));
+
+    await waitFor(() => {
+      expect(result.current.isValid).toBe(true);
+      expect(result.current.error).toBeUndefined();
     });
 
-    test('should initialize with valid state', async () => {
-        const { result } = await renderHook(() => useFieldValidation('initial', validator));
+    expect(validator).toHaveBeenCalledWith('valid');
+  });
 
-        expect(result.current.isValid).toBe(true);
-        expect(result.current.error).toBeUndefined();
-        expect(result.current.isValidating).toBe(false);
+  test('should set error state on validation failure', async () => {
+    validator.mockResolvedValue('Invalid value');
+
+    const { result } = await renderHook(() => useFieldValidation('invalid', validator));
+
+    await waitFor(() => {
+      expect(result.current.isValid).toBe(false);
+      expect(result.current.error).toBe('Invalid value');
+    });
+  });
+
+  test('should handle validation exceptions', async () => {
+    validator.mockRejectedValue(new Error('Validation crashed'));
+
+    const { result } = await renderHook(() => useFieldValidation('crash', validator));
+
+    await waitFor(() => {
+      expect(result.current.isValid).toBe(false);
+      expect(result.current.error).toBe('Validation crashed');
+    });
+  });
+
+  test('should debounce validation calls', async () => {
+    jest.useFakeTimers();
+    const { rerender } = await renderHook(
+      (props: { value: string }) => useFieldValidation(props.value, validator, { debounceMs: 500 }),
+      { initialProps: { value: 'initial' } }
+    );
+
+    // Clear the initial mount validation call (hook validates on mount)
+    validator.mockClear();
+
+    // Fast updates
+    rerender({ value: 'up' });
+    rerender({ value: 'update' });
+    rerender({ value: 'updated' });
+
+    // Should not have called validator yet
+    expect(validator).not.toHaveBeenCalled();
+
+    // Fast forward time to trigger the debounce
+    act(() => {
+      jest.advanceTimersByTime(600);
     });
 
-    test('should validate successfully', async () => {
-        validator.mockResolvedValue(undefined); // No error means valid
+    // Restore real timers so waitFor internal polling can work
+    jest.useRealTimers();
 
-        const { result } = await renderHook(() => useFieldValidation('valid', validator));
-
-        await waitFor(() => {
-            expect(result.current.isValid).toBe(true);
-            expect(result.current.error).toBeUndefined();
-        });
-
-        expect(validator).toHaveBeenCalledWith('valid');
+    await waitFor(() => {
+      expect(validator).toHaveBeenCalledTimes(1); // Only once for 'updated'
+      expect(validator).toHaveBeenCalledWith('updated');
     });
-
-    test('should set error state on validation failure', async () => {
-        validator.mockResolvedValue('Invalid value');
-
-        const { result } = await renderHook(() => useFieldValidation('invalid', validator));
-
-        await waitFor(() => {
-            expect(result.current.isValid).toBe(false);
-            expect(result.current.error).toBe('Invalid value');
-        });
-    });
-
-    test('should handle validation exceptions', async () => {
-        validator.mockRejectedValue(new Error('Validation crashed'));
-
-        const { result } = await renderHook(() => useFieldValidation('crash', validator));
-
-        await waitFor(() => {
-            expect(result.current.isValid).toBe(false);
-            expect(result.current.error).toBe('Validation crashed');
-        });
-    });
-
-    test('should debounce validation calls', async () => {
-        jest.useFakeTimers();
-        const { rerender } = await renderHook(
-            (props: { value: string }) => useFieldValidation(props.value, validator, { debounceMs: 500 }),
-            { initialProps: { value: 'initial' } }
-        );
-
-        // Clear the initial mount validation call (hook validates on mount)
-        validator.mockClear();
-
-        // Fast updates
-        rerender({ value: 'up' });
-        rerender({ value: 'update' });
-        rerender({ value: 'updated' });
-
-        // Should not have called validator yet
-        expect(validator).not.toHaveBeenCalled();
-
-        // Fast forward time to trigger the debounce
-        act(() => {
-            jest.advanceTimersByTime(600);
-        });
-
-        // Restore real timers so waitFor internal polling can work
-        jest.useRealTimers();
-
-        await waitFor(() => {
-            expect(validator).toHaveBeenCalledTimes(1); // Only once for 'updated'
-            expect(validator).toHaveBeenCalledWith('updated');
-        });
-    });
+  });
 });

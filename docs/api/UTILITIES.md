@@ -15,32 +15,41 @@ import { capitalize } from 'opticore-react-native';
 ## String Utilities
 
 ```typescript
-import { capitalize, truncate, maskSensitive, toCamelCase,
-         toSnakeCase, toKebabCase, isEmpty, isEmail, isURL } from 'opticore-react-native/utils';
+import {
+  capitalize,
+  truncate,
+  maskSensitive,
+  toCamelCase,
+  toSnakeCase,
+  toKebabCase,
+  isEmpty,
+  isEmail,
+  isURL,
+} from 'opticore-react-native/utils';
 ```
 
-| Function | Signature | Example |
-|---|---|---|
-| `capitalize` | `(str: string) => string` | `capitalize('hello')` → `'Hello'` |
-| `truncate` | `(str, length, suffix?)` | `truncate('Hello World', 8)` → `'Hello...'` |
+| Function        | Signature                         | Example                                                       |
+| --------------- | --------------------------------- | ------------------------------------------------------------- |
+| `capitalize`    | `(str: string) => string`         | `capitalize('hello')` → `'Hello'`                             |
+| `truncate`      | `(str, length, suffix?)`          | `truncate('Hello World', 8)` → `'Hello...'`                   |
 | `maskSensitive` | `(str, visibleChars?, maskChar?)` | `maskSensitive('4111111111111111', 4)` → `'************1111'` |
-| `toCamelCase` | `(str: string) => string` | `toCamelCase('hello_world')` → `'helloWorld'` |
-| `toSnakeCase` | `(str: string) => string` | `toSnakeCase('helloWorld')` → `'hello_world'` |
-| `toKebabCase` | `(str: string) => string` | `toKebabCase('helloWorld')` → `'hello-world'` |
-| `isEmpty` | `(str: string) => boolean` | `isEmpty('  ')` → `true` |
-| `isEmail` | `(str: string) => boolean` | `isEmail('a@b.com')` → `true` |
-| `isURL` | `(str: string) => boolean` | `isURL('https://example.com')` → `true` |
-| `notNull` | `(str, fallback?) => string` | `notNull(null, 'N/A')` → `'N/A'` |
+| `toCamelCase`   | `(str: string) => string`         | `toCamelCase('hello_world')` → `'helloWorld'`                 |
+| `toSnakeCase`   | `(str: string) => string`         | `toSnakeCase('helloWorld')` → `'hello_world'`                 |
+| `toKebabCase`   | `(str: string) => string`         | `toKebabCase('helloWorld')` → `'hello-world'`                 |
+| `isEmpty`       | `(str: string) => boolean`        | `isEmpty('  ')` → `true`                                      |
+| `isEmail`       | `(str: string) => boolean`        | `isEmail('a@b.com')` → `true`                                 |
+| `isURL`         | `(str: string) => boolean`        | `isURL('https://example.com')` → `true`                       |
+| `notNull`       | `(str, fallback?) => string`      | `notNull(null, 'N/A')` → `'N/A'`                              |
 
 ```typescript
 // Real usage examples
-capitalize('john doe');              // 'John doe'
-truncate('A very long sentence', 12);// 'A very lon...'
-maskSensitive('secret@email.com', 5);// '*************l.com'
-toCamelCase('user_profile_data');    // 'userProfileData'
-isEmpty('');                         // true
-isEmpty('   ');                      // true
-isEmail('invalid-email');            // false
+capitalize('john doe'); // 'John doe'
+truncate('A very long sentence', 12); // 'A very lon...'
+maskSensitive('secret@email.com', 5); // '*************l.com'
+toCamelCase('user_profile_data'); // 'userProfileData'
+isEmpty(''); // true
+isEmpty('   '); // true
+isEmail('invalid-email'); // false
 ```
 
 ---
@@ -51,21 +60,21 @@ isEmail('invalid-email');            // false
 import { toInt, toDouble, clamp, random } from 'opticore-react-native/utils';
 ```
 
-| Function | Signature | Description |
-|---|---|---|
-| `toInt` | `(value: unknown, fallback?: number) => number` | Safe `parseInt` with fallback |
+| Function   | Signature                                       | Description                     |
+| ---------- | ----------------------------------------------- | ------------------------------- |
+| `toInt`    | `(value: unknown, fallback?: number) => number` | Safe `parseInt` with fallback   |
 | `toDouble` | `(value: unknown, fallback?: number) => number` | Safe `parseFloat` with fallback |
-| `clamp` | `(value, min, max) => number` | Constrain value to range |
-| `random` | `(min, max) => number` | Random integer (inclusive) |
+| `clamp`    | `(value, min, max) => number`                   | Constrain value to range        |
+| `random`   | `(min, max) => number`                          | Random integer (inclusive)      |
 
 ```typescript
-toInt('42');          // 42
-toInt('abc');         // 0 (fallback)
-toInt(null, -1);      // -1
-toDouble('3.14');     // 3.14
-clamp(150, 0, 100);   // 100
-clamp(-10, 0, 100);   // 0
-random(1, 6);         // 1..6 (dice roll)
+toInt('42'); // 42
+toInt('abc'); // 0 (fallback)
+toInt(null, -1); // -1
+toDouble('3.14'); // 3.14
+clamp(150, 0, 100); // 100
+clamp(-10, 0, 100); // 0
+random(1, 6); // 1..6 (dice roll)
 ```
 
 ---
@@ -76,12 +85,12 @@ random(1, 6);         // 1..6 (dice roll)
 import { filterNonNull, groupBy, unique, sortBy } from 'opticore-react-native/utils';
 ```
 
-| Function | Signature | Description |
-|---|---|---|
-| `filterNonNull` | `(arr: (T \| null \| undefined)[]) => T[]` | Remove null/undefined |
-| `groupBy` | `(arr: T[], key: keyof T) => Record<string, T[]>` | Group by field |
-| `unique` | `(arr: T[]) => T[]` | Remove duplicates |
-| `sortBy` | `(arr, key, order?) => T[]` | Sort by field (asc/desc) |
+| Function        | Signature                                         | Description              |
+| --------------- | ------------------------------------------------- | ------------------------ |
+| `filterNonNull` | `(arr: (T \| null \| undefined)[]) => T[]`        | Remove null/undefined    |
+| `groupBy`       | `(arr: T[], key: keyof T) => Record<string, T[]>` | Group by field           |
+| `unique`        | `(arr: T[]) => T[]`                               | Remove duplicates        |
+| `sortBy`        | `(arr, key, order?) => T[]`                       | Sort by field (asc/desc) |
 
 ```typescript
 filterNonNull([1, null, 2, undefined, 3]);
@@ -104,28 +113,36 @@ sortBy(products, 'price', 'asc');
 Powered by `date-fns`.
 
 ```typescript
-import { formatDate, parseDate, timeAgo, isToday, isYesterday, isSameDay } from 'opticore-react-native/utils';
+import {
+  formatDate,
+  parseDate,
+  timeAgo,
+  isToday,
+  isYesterday,
+  isSameDay,
+} from 'opticore-react-native/utils';
 ```
 
-| Function | Signature | Description |
-|---|---|---|
-| `formatDate` | `(date: Date \| string, format: string) => string` | Format with pattern |
-| `parseDate` | `(str: string, format: string) => Date` | Parse from pattern |
-| `timeAgo` | `(date: Date \| string) => string` | Relative time |
-| `isToday` | `(date: Date \| string) => boolean` | Check if today |
-| `isYesterday` | `(date: Date \| string) => boolean` | Check if yesterday |
-| `isSameDay` | `(a, b) => boolean` | Compare two dates |
+| Function      | Signature                                          | Description         |
+| ------------- | -------------------------------------------------- | ------------------- |
+| `formatDate`  | `(date: Date \| string, format: string) => string` | Format with pattern |
+| `parseDate`   | `(str: string, format: string) => Date`            | Parse from pattern  |
+| `timeAgo`     | `(date: Date \| string) => string`                 | Relative time       |
+| `isToday`     | `(date: Date \| string) => boolean`                | Check if today      |
+| `isYesterday` | `(date: Date \| string) => boolean`                | Check if yesterday  |
+| `isSameDay`   | `(a, b) => boolean`                                | Compare two dates   |
 
 ```typescript
-formatDate(new Date(), 'MMM dd, yyyy');   // 'Mar 10, 2026'
-formatDate(new Date(), 'HH:mm');          // '14:30'
-parseDate('2026-03-10', 'yyyy-MM-dd');    // Date object
+formatDate(new Date(), 'MMM dd, yyyy'); // 'Mar 10, 2026'
+formatDate(new Date(), 'HH:mm'); // '14:30'
+parseDate('2026-03-10', 'yyyy-MM-dd'); // Date object
 timeAgo(new Date(Date.now() - 3 * 60000)); // '3 minutes ago'
-isToday(new Date());                       // true
-isSameDay(date1, date2);                   // boolean
+isToday(new Date()); // true
+isSameDay(date1, date2); // boolean
 ```
 
 **Common format patterns** (date-fns):
+
 - `yyyy-MM-dd` → `2026-03-10`
 - `dd/MM/yyyy` → `10/03/2026`
 - `MMM dd, yyyy` → `Mar 10, 2026`
@@ -140,26 +157,23 @@ isSameDay(date1, date2);                   // boolean
 import { get, deepMerge, pick, omit } from 'opticore-react-native/utils';
 ```
 
-| Function | Signature | Description |
-|---|---|---|
-| `get` | `(obj, path, fallback?) => unknown` | Safely read nested path |
-| `deepMerge` | `(target, source) => object` | Deep merge two objects |
-| `pick` | `(obj, keys) => Partial<T>` | Select properties |
-| `omit` | `(obj, keys) => Partial<T>` | Exclude properties |
+| Function    | Signature                           | Description             |
+| ----------- | ----------------------------------- | ----------------------- |
+| `get`       | `(obj, path, fallback?) => unknown` | Safely read nested path |
+| `deepMerge` | `(target, source) => object`        | Deep merge two objects  |
+| `pick`      | `(obj, keys) => Partial<T>`         | Select properties       |
+| `omit`      | `(obj, keys) => Partial<T>`         | Exclude properties      |
 
 ```typescript
 const user = { profile: { address: { city: 'Cairo' } } };
-get(user, 'profile.address.city');      // 'Cairo'
-get(user, 'profile.phone', 'N/A');      // 'N/A' (fallback)
+get(user, 'profile.address.city'); // 'Cairo'
+get(user, 'profile.phone', 'N/A'); // 'N/A' (fallback)
 
-deepMerge(
-  { a: 1, b: { x: 1 } },
-  { b: { y: 2 }, c: 3 }
-);
+deepMerge({ a: 1, b: { x: 1 } }, { b: { y: 2 }, c: 3 });
 // { a: 1, b: { x: 1, y: 2 }, c: 3 }
 
-pick(user, ['id', 'name']);             // { id, name }
-omit(user, ['password', 'secret']);     // user without those keys
+pick(user, ['id', 'name']); // { id, name }
+omit(user, ['password', 'secret']); // user without those keys
 ```
 
 ---
@@ -170,18 +184,18 @@ omit(user, ['password', 'secret']);     // user without those keys
 import { formatPhone, formatCurrency, formatPercentage } from 'opticore-react-native/utils';
 ```
 
-| Function | Signature | Example |
-|---|---|---|
-| `formatPhone` | `(phone: string) => string` | `formatPhone('5551234567')` → `'(555) 123-4567'` |
-| `formatCurrency` | `(amount, currency?) => string` | `formatCurrency(1234.5)` → `'$1,234.50'` |
-| `formatPercentage` | `(value, decimals?) => string` | `formatPercentage(0.845)` → `'84.5%'` |
+| Function           | Signature                       | Example                                          |
+| ------------------ | ------------------------------- | ------------------------------------------------ |
+| `formatPhone`      | `(phone: string) => string`     | `formatPhone('5551234567')` → `'(555) 123-4567'` |
+| `formatCurrency`   | `(amount, currency?) => string` | `formatCurrency(1234.5)` → `'$1,234.50'`         |
+| `formatPercentage` | `(value, decimals?) => string`  | `formatPercentage(0.845)` → `'84.5%'`            |
 
 ```typescript
-formatPhone('5551234567');           // '(555) 123-4567'
-formatCurrency(1234.5);             // '$1,234.50'
-formatCurrency(99.99, 'EUR');       // '€99.99'
-formatPercentage(0.845);            // '84.5%'
-formatPercentage(0.845, 0);         // '85%'
+formatPhone('5551234567'); // '(555) 123-4567'
+formatCurrency(1234.5); // '$1,234.50'
+formatCurrency(99.99, 'EUR'); // '€99.99'
+formatPercentage(0.845); // '84.5%'
+formatPercentage(0.845, 0); // '85%'
 ```
 
 ---
@@ -192,18 +206,18 @@ formatPercentage(0.845, 0);         // '85%'
 import { hexToRgb, rgbToHex, lighten, darken } from 'opticore-react-native/utils';
 ```
 
-| Function | Signature | Description |
-|---|---|---|
-| `hexToRgb` | `(hex: string) => { r, g, b }` | Convert hex to RGB |
-| `rgbToHex` | `(r, g, b) => string` | Convert RGB to hex |
-| `lighten` | `(color: string, amount: number) => string` | Lighten by % (0–1) |
-| `darken` | `(color: string, amount: number) => string` | Darken by % (0–1) |
+| Function   | Signature                                   | Description        |
+| ---------- | ------------------------------------------- | ------------------ |
+| `hexToRgb` | `(hex: string) => { r, g, b }`              | Convert hex to RGB |
+| `rgbToHex` | `(r, g, b) => string`                       | Convert RGB to hex |
+| `lighten`  | `(color: string, amount: number) => string` | Lighten by % (0–1) |
+| `darken`   | `(color: string, amount: number) => string` | Darken by % (0–1)  |
 
 ```typescript
-hexToRgb('#6C63FF');              // { r: 108, g: 99, b: 255 }
-rgbToHex(108, 99, 255);          // '#6C63FF'
-lighten('#6C63FF', 0.2);         // lighter variant
-darken('#6C63FF', 0.2);          // darker variant
+hexToRgb('#6C63FF'); // { r: 108, g: 99, b: 255 }
+rgbToHex(108, 99, 255); // '#6C63FF'
+lighten('#6C63FF', 0.2); // lighter variant
+darken('#6C63FF', 0.2); // darker variant
 ```
 
 ---
@@ -211,19 +225,25 @@ darken('#6C63FF', 0.2);          // darker variant
 ## Platform Utilities
 
 ```typescript
-import { isIOS, isAndroid, getDeviceWidth, copyToClipboard, getClipboard } from 'opticore-react-native/utils';
+import {
+  isIOS,
+  isAndroid,
+  getDeviceWidth,
+  copyToClipboard,
+  getClipboard,
+} from 'opticore-react-native/utils';
 ```
 
-| Function | Signature | Description |
-|---|---|---|
-| `isIOS` | `() => boolean` | Check if running on iOS |
-| `isAndroid` | `() => boolean` | Check if running on Android |
-| `isWeb` | `() => boolean` | Check if running on web |
-| `getDeviceWidth` | `() => number` | Screen width in dp |
-| `getDeviceHeight` | `() => number` | Screen height in dp |
-| `getOSVersion` | `() => string` | OS version string |
-| `copyToClipboard` | `(text: string) => Promise<void>` | Copy to system clipboard |
-| `getClipboard` | `() => Promise<string>` | Read from clipboard |
+| Function          | Signature                         | Description                 |
+| ----------------- | --------------------------------- | --------------------------- |
+| `isIOS`           | `() => boolean`                   | Check if running on iOS     |
+| `isAndroid`       | `() => boolean`                   | Check if running on Android |
+| `isWeb`           | `() => boolean`                   | Check if running on web     |
+| `getDeviceWidth`  | `() => number`                    | Screen width in dp          |
+| `getDeviceHeight` | `() => number`                    | Screen height in dp         |
+| `getOSVersion`    | `() => string`                    | OS version string           |
+| `copyToClipboard` | `(text: string) => Promise<void>` | Copy to system clipboard    |
+| `getClipboard`    | `() => Promise<string>`           | Read from clipboard         |
 
 ```typescript
 if (isIOS()) {
@@ -394,7 +414,7 @@ Group by property.
 const users = [
   { name: 'John', role: 'admin' },
   { name: 'Jane', role: 'user' },
-  { name: 'Bob', role: 'admin' }
+  { name: 'Bob', role: 'admin' },
 ];
 
 groupBy(users, 'role');
@@ -561,11 +581,12 @@ Param values are typed as `QueryParamValue` (`string | number | boolean | null |
 
 > For requests, prefer passing a `params` object straight to `ApiClient.request({ url, params })` —
 > the client serializes the query string for you. Reach for `buildUrl` only to build a URL string
-> *outside* a request.
+> _outside_ a request.
 
 ---
 
 **See also**:
+
 - [Hooks API](./HOOKS.md)
 - [Infrastructure API](./INFRASTRUCTURE.md) — `ApiClient`
 - [QuickStart Guide](../QUICK_START.md)

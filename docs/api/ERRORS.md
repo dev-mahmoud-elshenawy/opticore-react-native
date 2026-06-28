@@ -7,7 +7,13 @@ A complete error system: typed error classes, automatic classification, `Result<
 ### Import
 
 ```typescript
-import { RenderError, NonRenderError, ApiError, ErrorClassifier, Result } from 'opticore-react-native';
+import {
+  RenderError,
+  NonRenderError,
+  ApiError,
+  ErrorClassifier,
+  Result,
+} from 'opticore-react-native';
 ```
 
 ---
@@ -20,14 +26,14 @@ Errors that **must be shown to the user** — validation failures, permission de
 
 ```typescript
 class RenderError extends BaseError {
-  constructor(message: string, userMessage?: string, options?: RenderErrorOptions)
+  constructor(message: string, userMessage?: string, options?: RenderErrorOptions);
 }
 
 interface RenderErrorOptions {
   code?: string;
-  severity?: 'warning' | 'error' | 'critical';  // default: 'error'
-  isDismissible?: boolean;                        // default: true
-  isActionable?: boolean;                         // default: false
+  severity?: 'warning' | 'error' | 'critical'; // default: 'error'
+  isDismissible?: boolean; // default: true
+  isActionable?: boolean; // default: false
   cause?: Error;
   metadata?: Record<string, unknown>;
 }
@@ -76,14 +82,14 @@ fields at the catch site — do NOT `throw` it.**
 
 ```typescript
 class NonRenderError extends BaseError {
-  constructor(message: string, options?: NonRenderErrorOptions)
+  constructor(message: string, options?: NonRenderErrorOptions);
 }
 
 interface NonRenderErrorOptions {
   code?: string;
-  isSilent?: boolean;         // default: false — no user notification
-  shouldMonitor?: boolean;    // default: true — send to monitoring tools
-  retryConfig?: RetryConfig;  // { maxRetries: number; delayMs: number }
+  isSilent?: boolean; // default: false — no user notification
+  shouldMonitor?: boolean; // default: true — send to monitoring tools
+  retryConfig?: RetryConfig; // { maxRetries: number; delayMs: number }
   cause?: Error;
   metadata?: Record<string, unknown>;
 }
@@ -118,18 +124,18 @@ Thrown automatically by `ApiClient` for HTTP failures. Extends `RenderError`.
 
 ```typescript
 class ApiError extends RenderError {
-  status: number;            // HTTP status code (401, 404, 500; -1 = network failure)
-  url?: string;              // Request URL
-  data?: unknown;            // Response body
-  originalError?: unknown;   // Original Axios error
-  isRetryable: boolean;      // true for transient failures (network, 408, 429, 5xx)
-  retryAfterMs?: number;     // parsed `Retry-After` header, when present (capped at 30s)
+  status: number; // HTTP status code (401, 404, 500; -1 = network failure)
+  url?: string; // Request URL
+  data?: unknown; // Response body
+  originalError?: unknown; // Original Axios error
+  isRetryable: boolean; // true for transient failures (network, 408, 429, 5xx)
+  retryAfterMs?: number; // parsed `Retry-After` header, when present (capped at 30s)
 }
 ```
 
 `isActionable` (inherited from `RenderError`) and `isRetryable` are deliberately
-distinct: `isActionable` means *the caller must change something* (`400/401/403/
-404/409/422`); `isRetryable` means *this is transient and safe to retry*
+distinct: `isActionable` means _the caller must change something_ (`400/401/403/
+404/409/422`); `isRetryable` means _this is transient and safe to retry_
 (network failures, `408`, `429`, all `5xx`). A `429`/`408` is **not** actionable —
 rate limiting isn't the caller's fault — but it **is** retryable. The query/mutation
 retry policy in [`createQueryClient`](./STATE.md#react-query-integration) reads
@@ -144,9 +150,15 @@ try {
 } catch (e) {
   if (e instanceof ApiError) {
     switch (e.status) {
-      case 401: redirectToLogin(); break;
-      case 404: showNotFoundScreen(); break;
-      case 500: showServerErrorBanner(); break;
+      case 401:
+        redirectToLogin();
+        break;
+      case 404:
+        showNotFoundScreen();
+        break;
+      case 500:
+        showServerErrorBanner();
+        break;
     }
   }
 }
@@ -165,9 +177,9 @@ try {
   coreSetup.init(badConfig);
 } catch (e) {
   if (e instanceof ConfigValidationError) {
-    e.result.errors;    // ValidationIssue[] — hard failures
-    e.result.warnings;  // ValidationIssue[] — non-blocking hints
-    e.message;          // Formatted summary of all errors
+    e.result.errors; // ValidationIssue[] — hard failures
+    e.result.warnings; // ValidationIssue[] — non-blocking hints
+    e.message; // Formatted summary of all errors
   }
 }
 ```
@@ -187,13 +199,14 @@ abstract class BaseError extends Error {
   metadata: Record<string, unknown>;
   cause?: unknown;
 
-  getCause(): unknown
-  addMetadata(key: string, value: unknown): void
-  toJSON(): SerializedError
+  getCause(): unknown;
+  addMetadata(key: string, value: unknown): void;
+  toJSON(): SerializedError;
 }
 ```
 
 **Custom error:**
+
 ```typescript
 class PaymentError extends RenderError {
   readonly orderId: string;
@@ -264,7 +277,7 @@ ErrorClassifier.clearCustomRules();
 Rust-inspired type for expressing operations that can fail — without try/catch.
 
 ```typescript
-type Result<T, E = Error> = Ok<T, E> | Err<T, E>
+type Result<T, E = Error> = Ok<T, E> | Err<T, E>;
 ```
 
 ### Creating Results
@@ -301,13 +314,13 @@ const id = result.unwrapOr(0); // 0 if Err
 
 ```typescript
 // map — transform the Ok value
-const doubled = result.map(n => n * 2); // Result<number, Error>
+const doubled = result.map((n) => n * 2); // Result<number, Error>
 
 // flatMap — chain another Result-producing operation
-const user = result.flatMap(id => fetchUserById(id)); // Result<User, Error>
+const user = result.flatMap((id) => fetchUserById(id)); // Result<User, Error>
 
 // mapErr — transform the error
-const withContext = result.mapErr(e => new RenderError(e.message));
+const withContext = result.mapErr((e) => new RenderError(e.message));
 ```
 
 ### Real-World Example
@@ -439,8 +452,8 @@ import { toMessage } from 'opticore-react-native';
 try {
   await something();
 } catch (e) {
-  toast(toMessage(e));                         // → RenderError.userMessage when available
-  toast(toMessage(e, 'Could not load news'));  // custom fallback
+  toast(toMessage(e)); // → RenderError.userMessage when available
+  toast(toMessage(e, 'Could not load news')); // custom fallback
 }
 ```
 

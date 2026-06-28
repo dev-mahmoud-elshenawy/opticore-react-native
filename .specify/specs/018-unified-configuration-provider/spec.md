@@ -12,6 +12,7 @@
 Currently, consuming apps must make **5+ separate initialization calls** across different singletons and compose **multiple JSX providers** manually. This fragments the "orchestra conductor" design intent. `CoreSetup.init()` only configures ApiClient and Logger, leaving Theme, Offline Sync, Forms, and Responsive hooks as separate manual setups.
 
 **Current (fragmented) setup:**
+
 ```typescript
 CoreSetup.getInstance().init({ api, logger });
 ThemeManager.getInstance().configure({ defaultMode: 'dark' });
@@ -27,6 +28,7 @@ OfflineSyncManager.getInstance().configure({ maxRetries: 5 });
 ```
 
 **Target (unified) setup:**
+
 ```typescript
 <OptiCoreProvider config={{
     api: { baseURL: 'https://api.example.com' },

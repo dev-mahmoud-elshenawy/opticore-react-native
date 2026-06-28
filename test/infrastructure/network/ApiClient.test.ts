@@ -136,7 +136,7 @@ describe('ApiClient', () => {
     expect(mockedAxios.post).toHaveBeenCalledWith(
       '/users',
       { name: 'x' },
-      { headers: undefined, signal: controller.signal },
+      { headers: undefined, signal: controller.signal }
     );
   });
 
@@ -156,9 +156,9 @@ describe('ApiClient', () => {
       const fresh = ApiClient.getInstance();
 
       expect(fresh.isInitialized()).toBe(false);
-      await expect(
-        fresh.request({ method: HttpMethod.GET, url: '/users' })
-      ).rejects.toThrow(/before initialization/);
+      await expect(fresh.request({ method: HttpMethod.GET, url: '/users' })).rejects.toThrow(
+        /before initialization/
+      );
     });
 
     it('is initialized after configure() and no longer throws the guard error', () => {

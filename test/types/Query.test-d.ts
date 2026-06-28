@@ -4,7 +4,7 @@ import { RenderError } from '../../src/error/RenderError';
 
 const useThing = createQueryHook(
   (id: string) => ['thing', id] as const,
-  (id: string) => Promise.resolve({ id }),
+  (id: string) => Promise.resolve({ id })
 );
 
 const result = useThing('id-1');

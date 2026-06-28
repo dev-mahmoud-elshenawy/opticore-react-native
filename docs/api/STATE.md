@@ -20,7 +20,7 @@ type AsyncState<T> =
   | { type: 'idle' }
   | { type: 'loading'; previousData?: T }
   | { type: 'success'; data: T }
-  | { type: 'error'; error: Error; previousData?: T }
+  | { type: 'error'; error: Error; previousData?: T };
 ```
 
 ### Helper Functions
@@ -28,17 +28,23 @@ type AsyncState<T> =
 ```typescript
 import {
   createAsyncState,
-  toLoading, toSuccess, toError, toIdle,
-  isIdle, isLoading, isSuccess, isError,
+  toLoading,
+  toSuccess,
+  toError,
+  toIdle,
+  isIdle,
+  isLoading,
+  isSuccess,
+  isError,
 } from 'opticore-react-native/state';
 
 // Create initial state
 const state = createAsyncState<User[]>(); // { type: 'idle' }
 
 // Transition helpers (toLoading/toError accept the prior state to preserve previousData)
-const loading = toLoading<User[]>();              // { type: 'loading' }
-const success = toSuccess([user1, user2]);        // { type: 'success', data: [...] }
-const error   = toError(new Error('Failed'));     // { type: 'error', error: Error }
+const loading = toLoading<User[]>(); // { type: 'loading' }
+const success = toSuccess([user1, user2]); // { type: 'success', data: [...] }
+const error = toError(new Error('Failed')); // { type: 'error', error: Error }
 
 // Type guards
 if (isSuccess(state)) {
@@ -50,7 +56,14 @@ if (isSuccess(state)) {
 
 ```typescript
 import { create } from 'zustand';
-import { api, AsyncState, toLoading, toSuccess, toError, createAsyncState } from 'opticore-react-native';
+import {
+  api,
+  AsyncState,
+  toLoading,
+  toSuccess,
+  toError,
+  createAsyncState,
+} from 'opticore-react-native';
 
 interface UserStore {
   users: AsyncState<User[]>;
@@ -81,17 +94,17 @@ Zustand store factory with DevTools, Immer, and built-in `reset()` / `hydrate()`
 function createBaseStore<T>(
   config: StoreConfig<T>,
   stateCreator: StateCreator<T>
-): UseBoundStore<StoreApi<T>>
+): UseBoundStore<StoreApi<T>>;
 ```
 
 ### StoreConfig
 
 ```typescript
 interface StoreConfig<T> {
-  name: string;                          // DevTools display name + persistence key
-  initialState: T;                       // Used by reset()
-  devtools?: boolean;                    // default: true in __DEV__
-  persist?: boolean;                     // persist via OptiCore storage (default: false)
+  name: string; // DevTools display name + persistence key
+  initialState: T; // Used by reset()
+  devtools?: boolean; // default: true in __DEV__
+  persist?: boolean; // persist via OptiCore storage (default: false)
   partialize?: (state: T) => Partial<T>; // only meaningful when persist is true
 }
 ```
@@ -111,7 +124,9 @@ export const useStore = createBaseStore<State>(
     persist: true,
     partialize: (state) => ({ items: state.items }), // don't persist transient/derived fields
   },
-  (set) => ({ /* ...actions... */ }),
+  (set) => ({
+    /* ...actions... */
+  })
 );
 ```
 
@@ -123,10 +138,15 @@ import { createPersistStorage } from 'opticore-react-native/state';
 import { persist } from 'zustand/middleware';
 
 export const useStore = create<State>()(
-  persist((set, get) => ({ /* ... */ }), {
-    name: 'my-store',
-    storage: createPersistStorage<State>(),
-  }),
+  persist(
+    (set, get) => ({
+      /* ... */
+    }),
+    {
+      name: 'my-store',
+      storage: createPersistStorage<State>(),
+    }
+  )
 );
 ```
 
@@ -186,7 +206,7 @@ Pre-built store for standard CRUD operations with async state management.
 function createCrudStore<T, CustomActions = {}>(
   config: CrudStoreConfig<T>,
   customActionsCreator?: (set, get) => CustomActions
-): UseBoundStore<CrudStore<T> & CustomActions>
+): UseBoundStore<CrudStore<T> & CustomActions>;
 ```
 
 ### CrudStore State
@@ -339,7 +359,7 @@ function useProducts() {
   return useQuery({
     queryKey: ['products'],
     queryFn: () => api.get<Product[]>('/products'),
-    staleTime: 5 * 60 * 1000,  // 5 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 
@@ -348,8 +368,7 @@ function useCreateProduct() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (product: Partial<Product>) =>
-      api.post<Product>('/products', product),
+    mutationFn: (product: Partial<Product>) => api.post<Product>('/products', product),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
@@ -394,6 +413,7 @@ function UserList() {
 **Signature**: `useAsyncState<T>(initialData: T | null = null)`
 
 **Returns**:
+
 ```typescript
 {
   isLoading: boolean;

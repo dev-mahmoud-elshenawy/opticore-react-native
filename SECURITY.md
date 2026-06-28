@@ -2,8 +2,8 @@
 
 ## Supported Versions
 
-| Version | Supported |
-|---------|-----------|
+| Version | Supported         |
+| ------- | ----------------- |
 | 1.x     | ✅ Active support |
 
 ---

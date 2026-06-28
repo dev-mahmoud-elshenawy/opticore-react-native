@@ -22,6 +22,6 @@ export function useTextStyle(variant: TextVariantName, overrides?: TextStyle): T
   const { theme } = useTheme();
   return useMemo(
     () => ({ color: theme.colors.text, ...theme.typography[variant], ...overrides }),
-    [theme, variant, overrides],
+    [theme, variant, overrides]
   );
 }

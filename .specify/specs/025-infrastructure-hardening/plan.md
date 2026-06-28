@@ -15,11 +15,11 @@ Five stability fixes across infrastructure: (1) SecureStorage init-guard pattern
 
 ## Constitution Check
 
-| Principle | Status | Notes |
-|---|---|---|
-| Pure Infrastructure | PASS | All components are infrastructure |
-| TypeScript Strict | PASS | ThemeShadowValue fully typed |
-| Breaking Change | JUSTIFIED | CSS shadow strings never worked on RN — this fixes, not breaks |
+| Principle           | Status    | Notes                                                          |
+| ------------------- | --------- | -------------------------------------------------------------- |
+| Pure Infrastructure | PASS      | All components are infrastructure                              |
+| TypeScript Strict   | PASS      | ThemeShadowValue fully typed                                   |
+| Breaking Change     | JUSTIFIED | CSS shadow strings never worked on RN — this fixes, not breaks |
 
 ## Source Code Structure
 

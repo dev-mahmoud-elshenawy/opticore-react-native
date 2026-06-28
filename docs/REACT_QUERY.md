@@ -18,10 +18,10 @@ import { createQueryClient } from 'opticore-react-native';
 
 Returns a `QueryClient` pre-wired with OptiCore-aware defaults:
 
-| Default | Value | Why |
-|---|---|---|
+| Default     | Value                   | Why                                                                        |
+| ----------- | ----------------------- | -------------------------------------------------------------------------- |
 | `staleTime` | `5 * 60 * 1000` (5 min) | Mobile data changes less often than a tab refresh; cuts redundant requests |
-| `retry` | **error-aware** | Skips retries on actionable errors, retries transient ones |
+| `retry`     | **error-aware**         | Skips retries on actionable errors, retries transient ones                 |
 
 ### Error-aware retry
 
@@ -32,8 +32,8 @@ found). Retrying those just wastes requests, so the default retry policy is:
 ```typescript
 retry: (failureCount, error) => {
   if (error instanceof RenderError && error.isActionable) return false; // 4xx → don't retry
-  return failureCount < 2;                                              // transient → retry twice
-}
+  return failureCount < 2; // transient → retry twice
+};
 ```
 
 ### Everything is overridable
@@ -48,9 +48,9 @@ export const queryClient = createQueryClient();
 export const queryClient = createQueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 0,                 // always refetch
-      gcTime: 10 * 60 * 1000,       // keep unused data 10 min
-      refetchOnWindowFocus: false,  // mobile: don't refetch on refocus
+      staleTime: 0, // always refetch
+      gcTime: 10 * 60 * 1000, // keep unused data 10 min
+      refetchOnWindowFocus: false, // mobile: don't refetch on refocus
     },
   },
 });
@@ -141,7 +141,7 @@ wiring into one definition:
 ```typescript
 const useResource = createQueryHook(
   (id: string) => ['resource', id],
-  (id) => repository.getById(id),
+  (id) => repository.getById(id)
 );
 const { data, isLoading } = useResource('id-1');
 ```
@@ -152,7 +152,9 @@ const { data, isLoading } = useResource('id-1');
 ```tsx
 const save = useApiMutation((input: Input) => repository.create(input));
 <Button onPress={() => save.mutate(input)} />;
-{save.errorMessage && <Text>{save.errorMessage}</Text>}
+{
+  save.errorMessage && <Text>{save.errorMessage}</Text>;
+}
 ```
 
 **`createQueryPersister(key?)`** — persist/restore the query cache across restarts through OptiCore
@@ -166,6 +168,7 @@ persistQueryClient({ queryClient, persister: createQueryPersister() });
 ---
 
 **See also**:
+
 - [Error Handling API](./api/ERRORS.md) — `RenderError`, `ApiError`, `toMessage`
 - [Infrastructure API](./api/INFRASTRUCTURE.md) — `ApiClient`
 - [Types](./TYPES.md) — `ApiResult`

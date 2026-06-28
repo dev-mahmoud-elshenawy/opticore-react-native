@@ -12,6 +12,7 @@ description: 'Task list for spec 031 — Error System RN Alignment'
 **Organization**: Tasks grouped by phase. **After completing each task, mark it `[x]` here FIRST, before starting the next.** After completing each phase, commit + push.
 
 > **⚠️ GIT RULE**: After completing each phase:
+>
 > 1. `git commit -m "feat(error): complete phase N — <name>"`
 > 2. `git push origin 031-error-system-rn-alignment`
 > 3. Verify CI/quality gates pass

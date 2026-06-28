@@ -27,7 +27,7 @@ _GATE: Must pass before implementation. Re-check after design._
 - **Specification-First**: ✅ spec.md approved before this plan; plan + tasks generated in the same pass under the new flow.
 - **TypeScript Strict Mode**: ✅ No new `any`; public signatures unchanged.
 - **TDD / 80%+ coverage**: ✅ New tests for loop-convergence (US1) and descriptor/log usage (US2) written before/with the changes.
-- **Zero Bugs Philosophy**: ✅ This change *removes* a crash class (infinite render loop) and a dead async-throw path.
+- **Zero Bugs Philosophy**: ✅ This change _removes_ a crash class (infinite render loop) and a dead async-throw path.
 - **SOLID**: ✅ `NonRenderError` keeps single responsibility (now: describe a background failure); boundary keeps single responsibility (render-path recovery).
 - **No breaking change** (semver): ✅ 2.7.0 minor; deprecation only. Removal of `NON_RENDER` branch semantics deferred to 3.0.
 
@@ -81,6 +81,7 @@ docs / meta:
 Today `getDerivedStateFromError` produces `showFallback: false` for `NON_RENDER` (typed or classified), and `render()` returns `children` → re-throws → loop.
 
 **Decision**: Any error that reaches a React error boundary came from the render path, so it MUST resolve to a fallback. Remove the `NON_RENDER → showFallback:false → re-render children` branches. Behavior:
+
 - `RenderError` → fallback (unchanged).
 - `NonRenderError` thrown during render (misuse) → wrap/show fallback (converges; logged via `componentDidCatch`).
 - Classified `NON_RENDER` / `NONE` / unknown → fallback.
@@ -97,10 +98,11 @@ Today `getDerivedStateFromError` produces `showFallback: false` for `NON_RENDER`
 ### 3. Documentation (three-outcome model)
 
 `CLAUDE.md` error section + module JSDoc state:
+
 - Replace screen → `RenderError` + boundary.
 - Notify (toast/banner) → state update at catch site (a re-render of the subscriber; RN has no "message without re-render").
 - Silent/background → `Logger` / `Result<T, E>`.
-Remove Flutter-style "non-render = no re-render" framing.
+  Remove Flutter-style "non-render = no re-render" framing.
 
 ### 4. Versioning
 

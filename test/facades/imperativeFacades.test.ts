@@ -74,7 +74,12 @@ describe('stateObserver facade', () => {
     const subscribe = jest.spyOn(m, 'subscribe').mockReturnValue(unsubscribe);
     const cleanup = jest.spyOn(m, 'cleanup').mockImplementation(() => {});
 
-    const store = { getState: () => ({}), setState: () => {}, subscribe: () => () => {}, getInitialState: () => ({}) } as never;
+    const store = {
+      getState: () => ({}),
+      setState: () => {},
+      subscribe: () => () => {},
+      getInitialState: () => ({}),
+    } as never;
     const cb = jest.fn();
     const result = stateObserver.subscribe(store, cb);
     stateObserver.cleanup();

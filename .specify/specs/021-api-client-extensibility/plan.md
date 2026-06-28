@@ -15,12 +15,12 @@ Make ApiClient extensible: (1) Custom interceptor registration via `addRequestIn
 
 ## Constitution Check
 
-| Principle | Status | Notes |
-|---|---|---|
-| Pure Infrastructure | PASS | Network client is infrastructure |
-| TypeScript Strict | PASS | Interceptor/AuthStrategy fully typed |
-| SOLID - OCP | FIX | New interceptors without modifying ApiClient source |
-| SOLID - DIP | IMPROVED | Auth depends on abstraction (AuthStrategy) not concrete Bearer |
+| Principle           | Status   | Notes                                                          |
+| ------------------- | -------- | -------------------------------------------------------------- |
+| Pure Infrastructure | PASS     | Network client is infrastructure                               |
+| TypeScript Strict   | PASS     | Interceptor/AuthStrategy fully typed                           |
+| SOLID - OCP         | FIX      | New interceptors without modifying ApiClient source            |
+| SOLID - DIP         | IMPROVED | Auth depends on abstraction (AuthStrategy) not concrete Bearer |
 
 ## Source Code Structure
 

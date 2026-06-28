@@ -37,10 +37,9 @@ describe('useTextStyle', () => {
   });
 
   it('lets overrides win over the defaults', async () => {
-    const { result } = await renderHook(
-      () => useTextStyle('caption', { color: '#abcabc' }),
-      { wrapper },
-    );
+    const { result } = await renderHook(() => useTextStyle('caption', { color: '#abcabc' }), {
+      wrapper,
+    });
 
     expect(result.current.color).toBe('#abcabc');
     expect(result.current.fontSize).toBe(lightTheme.typography.caption.fontSize);

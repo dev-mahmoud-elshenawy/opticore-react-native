@@ -30,9 +30,7 @@ export class ConfigValidationError extends Error {
   public readonly result: ValidationResult;
 
   constructor(result: ValidationResult) {
-    const summary = result.errors
-      .map((e) => `  • ${e.path}: ${e.message}`)
-      .join('\n');
+    const summary = result.errors.map((e) => `  • ${e.path}: ${e.message}`).join('\n');
     super(`Configuration validation failed:\n${summary}`);
     this.name = 'ConfigValidationError';
     this.result = result;

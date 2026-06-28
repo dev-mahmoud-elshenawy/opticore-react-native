@@ -18,7 +18,6 @@ export function createReactNativeDeviceInfoAdapter(): DeviceAdapter | null {
 
   let deviceInfo: DeviceInfoModule;
   try {
-     
     const mod = require('react-native-device-info');
     deviceInfo = (mod?.default ?? mod) as DeviceInfoModule;
   } catch {

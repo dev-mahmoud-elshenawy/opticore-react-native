@@ -32,7 +32,7 @@ describe('ConfigValidator.validate', () => {
       expect(result.errors).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ path: 'config', message: 'Configuration object is required' }),
-        ]),
+        ])
       );
     });
 
@@ -50,14 +50,14 @@ describe('ConfigValidator.validate', () => {
       const result = ConfigValidator.validate({} as CoreConfig);
       expect(result.valid).toBe(false);
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'api' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'api' })])
       );
     });
 
     it('should error when baseURL is missing', () => {
       const result = ConfigValidator.validate({ api: {} } as CoreConfig);
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'api.baseURL' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'api.baseURL' })])
       );
     });
 
@@ -66,7 +66,7 @@ describe('ConfigValidator.validate', () => {
       expect(result.errors).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ path: 'api.baseURL', message: 'must be a valid URL' }),
-        ]),
+        ])
       );
     });
 
@@ -75,7 +75,7 @@ describe('ConfigValidator.validate', () => {
         api: { baseURL: 'https://api.example.com', timeout: -1 },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'api.timeout' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'api.timeout' })])
       );
     });
 
@@ -85,9 +85,7 @@ describe('ConfigValidator.validate', () => {
       });
       expect(result.valid).toBe(true);
       expect(result.warnings).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ path: 'api.timeout', value: 500 }),
-        ]),
+        expect.arrayContaining([expect.objectContaining({ path: 'api.timeout', value: 500 })])
       );
     });
 
@@ -97,9 +95,7 @@ describe('ConfigValidator.validate', () => {
       });
       expect(result.valid).toBe(true);
       expect(result.warnings).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ path: 'api.timeout', value: 200_000 }),
-        ]),
+        expect.arrayContaining([expect.objectContaining({ path: 'api.timeout', value: 200_000 })])
       );
     });
 
@@ -129,7 +125,7 @@ describe('ConfigValidator.validate', () => {
         logger: { level: 99 as any },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'logger.level' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'logger.level' })])
       );
     });
 
@@ -139,7 +135,7 @@ describe('ConfigValidator.validate', () => {
         logger: { disabled: 'yes' as any },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'logger.disabled' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'logger.disabled' })])
       );
     });
 
@@ -152,7 +148,7 @@ describe('ConfigValidator.validate', () => {
       expect(result.warnings).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ path: 'logger', message: expect.stringContaining('disabled') }),
-        ]),
+        ])
       );
     });
   });
@@ -174,9 +170,7 @@ describe('ConfigValidator.validate', () => {
         responsive: { breakpoints: { small: -1 } },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ path: 'responsive.breakpoints.small' }),
-        ]),
+        expect.arrayContaining([expect.objectContaining({ path: 'responsive.breakpoints.small' })])
       );
     });
 
@@ -191,7 +185,7 @@ describe('ConfigValidator.validate', () => {
             path: 'responsive.breakpoints',
             message: '"small" must be less than "medium"',
           }),
-        ]),
+        ])
       );
     });
 
@@ -206,7 +200,7 @@ describe('ConfigValidator.validate', () => {
             path: 'responsive.breakpoints',
             message: '"medium" must be less than "large"',
           }),
-        ]),
+        ])
       );
     });
 
@@ -221,7 +215,7 @@ describe('ConfigValidator.validate', () => {
             path: 'responsive.breakpoints',
             message: '"small" must be less than "large"',
           }),
-        ]),
+        ])
       );
     });
   });
@@ -243,7 +237,7 @@ describe('ConfigValidator.validate', () => {
         offline: { maxRetries: 2.5 },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'offline.maxRetries' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'offline.maxRetries' })])
       );
     });
 
@@ -253,7 +247,7 @@ describe('ConfigValidator.validate', () => {
         offline: { maxRetries: -1 },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'offline.maxRetries' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'offline.maxRetries' })])
       );
     });
 
@@ -263,7 +257,7 @@ describe('ConfigValidator.validate', () => {
         offline: { retryDelay: -100 },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'offline.retryDelay' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'offline.retryDelay' })])
       );
     });
 
@@ -273,7 +267,7 @@ describe('ConfigValidator.validate', () => {
         offline: { maxQueueSize: 0 },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'offline.maxQueueSize' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'offline.maxQueueSize' })])
       );
     });
 
@@ -283,7 +277,7 @@ describe('ConfigValidator.validate', () => {
         offline: { conflictStrategy: 'last-wins' as any },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'offline.conflictStrategy' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'offline.conflictStrategy' })])
       );
     });
 
@@ -293,7 +287,7 @@ describe('ConfigValidator.validate', () => {
         offline: { conflictStrategy: 'manual' },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'offline.onConflict' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'offline.onConflict' })])
       );
     });
 
@@ -316,7 +310,7 @@ describe('ConfigValidator.validate', () => {
             path: 'offline.retryDelay',
             message: 'must not exceed maxBackoff',
           }),
-        ]),
+        ])
       );
     });
 
@@ -327,9 +321,7 @@ describe('ConfigValidator.validate', () => {
       });
       expect(result.valid).toBe(true);
       expect(result.warnings).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ path: 'offline.maxRetries', value: 15 }),
-        ]),
+        expect.arrayContaining([expect.objectContaining({ path: 'offline.maxRetries', value: 15 })])
       );
     });
   });
@@ -351,7 +343,7 @@ describe('ConfigValidator.validate', () => {
         theme: { defaultMode: 'auto' as any },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'theme.defaultMode' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'theme.defaultMode' })])
       );
     });
 
@@ -361,7 +353,7 @@ describe('ConfigValidator.validate', () => {
         theme: { storageKey: '  ' },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'theme.storageKey' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'theme.storageKey' })])
       );
     });
 
@@ -382,7 +374,7 @@ describe('ConfigValidator.validate', () => {
           expect.objectContaining({ path: 'theme.customThemes.broken.colors' }),
           expect.objectContaining({ path: 'theme.customThemes.broken.spacing' }),
           expect.objectContaining({ path: 'theme.customThemes.broken.typography' }),
-        ]),
+        ])
       );
     });
 
@@ -416,7 +408,7 @@ describe('ConfigValidator.validate', () => {
         forms: { defaultCurrency: '' },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'forms.defaultCurrency' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'forms.defaultCurrency' })])
       );
     });
 
@@ -426,7 +418,7 @@ describe('ConfigValidator.validate', () => {
         forms: { defaultPhoneFormat: '   ' },
       });
       expect(result.errors).toEqual(
-        expect.arrayContaining([expect.objectContaining({ path: 'forms.defaultPhoneFormat' })]),
+        expect.arrayContaining([expect.objectContaining({ path: 'forms.defaultPhoneFormat' })])
       );
     });
   });
@@ -454,7 +446,7 @@ describe('ConfigValidator.validate', () => {
 describe('ConfigValidator.validateOrThrow', () => {
   it('should not throw for valid config', () => {
     expect(() =>
-      ConfigValidator.validateOrThrow({ api: { baseURL: 'https://api.example.com' } }),
+      ConfigValidator.validateOrThrow({ api: { baseURL: 'https://api.example.com' } })
     ).not.toThrow();
   });
 

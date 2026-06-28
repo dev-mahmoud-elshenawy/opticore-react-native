@@ -25,7 +25,7 @@ export type ApiMutationResult<TData, TError, TVars> = UseMutationResult<TData, T
  */
 export function useApiMutation<TData, TVars, TError = Error>(
   mutationFn: (vars: TVars) => Promise<TData>,
-  options?: Omit<UseMutationOptions<TData, TError, TVars>, 'mutationFn'>,
+  options?: Omit<UseMutationOptions<TData, TError, TVars>, 'mutationFn'>
 ): ApiMutationResult<TData, TError, TVars> {
   const mutation = useMutation<TData, TError, TVars>({ mutationFn, ...options });
   return {

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
 import { OptiCoreProvider } from '../../src/providers/OptiCoreProvider';
@@ -17,110 +16,109 @@ jest.mock('../../src/infrastructure/lifecycle/LifecycleManager');
 
 // Helper component to test context
 const TestComponent = () => {
-    const config = useConfig();
-    return (
-        <Text testID="config-value">
-            {JSON.stringify(config)}
-        </Text>
-    );
+  const config = useConfig();
+  return <Text testID="config-value">{JSON.stringify(config)}</Text>;
 };
 
 describe('OptiCoreProvider', () => {
-    const mockInit = jest.fn();
-    const mockThemeManager = {
-        getTheme: jest.fn().mockReturnValue({ colors: {}, spacing: {}, typography: {} }),
-        getMode: jest.fn().mockReturnValue('light'),
-        getActiveMode: jest.fn().mockReturnValue('light'),
-        addThemeListener: jest.fn().mockReturnValue(() => { }),
-        init: jest.fn().mockResolvedValue(undefined),
-        configure: jest.fn(),
-        setMode: jest.fn(),
+  const mockInit = jest.fn();
+  const mockThemeManager = {
+    getTheme: jest.fn().mockReturnValue({ colors: {}, spacing: {}, typography: {} }),
+    getMode: jest.fn().mockReturnValue('light'),
+    getActiveMode: jest.fn().mockReturnValue('light'),
+    addThemeListener: jest.fn().mockReturnValue(() => {}),
+    init: jest.fn().mockResolvedValue(undefined),
+    configure: jest.fn(),
+    setMode: jest.fn(),
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (CoreSetup.getInstance as jest.Mock).mockReturnValue({
+      init: mockInit,
+    });
+    (ThemeManager.getInstance as jest.Mock).mockReturnValue(mockThemeManager);
+    (ConnectivityManager.getInstance as jest.Mock).mockReturnValue({
+      configure: jest.fn(),
+      dispose: jest.fn(),
+    });
+    (LifecycleManager.getInstance as jest.Mock).mockReturnValue({ dispose: jest.fn() });
+  });
+
+  it('should initialize CoreSetup with config', async () => {
+    const config: any = {
+      api: { baseURL: 'https://test.com' },
     };
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        (CoreSetup.getInstance as jest.Mock).mockReturnValue({
-            init: mockInit,
-        });
-        (ThemeManager.getInstance as jest.Mock).mockReturnValue(mockThemeManager);
-        (ConnectivityManager.getInstance as jest.Mock).mockReturnValue({ configure: jest.fn(), dispose: jest.fn() });
-        (LifecycleManager.getInstance as jest.Mock).mockReturnValue({ dispose: jest.fn() });
+    await render(
+      <OptiCoreProvider config={config}>
+        <Text>Child</Text>
+      </OptiCoreProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockInit).toHaveBeenCalledWith(config);
     });
+  });
 
-    it('should initialize CoreSetup with config', async () => {
-        const config: any = {
-            api: { baseURL: 'https://test.com' },
-        };
+  it('should initialize CoreSetup BEFORE children render (init ordering — spec 028 ④)', async () => {
+    const config: any = { api: { baseURL: 'https://test.com' } };
 
-        await render(
-            <OptiCoreProvider config={config}>
-                <Text>Child</Text>
-            </OptiCoreProvider>
-        );
+    // Captures how many times init() had been called at the moment the child
+    // renders. Children render AFTER the provider's synchronous setup block,
+    // so init must already have run exactly once. (With the old useEffect-based
+    // setup this would be 0 — child effects precede parent effects.)
+    let initCallsAtChildRender = -1;
+    const Child = () => {
+      initCallsAtChildRender = mockInit.mock.calls.length;
+      return <Text>child</Text>;
+    };
 
-        await waitFor(() => {
-            expect(mockInit).toHaveBeenCalledWith(config);
-        });
-    });
+    await render(
+      <OptiCoreProvider config={config}>
+        <Child />
+      </OptiCoreProvider>
+    );
 
-    it('should initialize CoreSetup BEFORE children render (init ordering — spec 028 ④)', async () => {
-        const config: any = { api: { baseURL: 'https://test.com' } };
+    // Captured DURING the child's render: init had already run exactly once.
+    expect(initCallsAtChildRender).toBe(1);
+    expect(mockInit).toHaveBeenCalledWith(config);
+  });
 
-        // Captures how many times init() had been called at the moment the child
-        // renders. Children render AFTER the provider's synchronous setup block,
-        // so init must already have run exactly once. (With the old useEffect-based
-        // setup this would be 0 — child effects precede parent effects.)
-        let initCallsAtChildRender = -1;
-        const Child = () => {
-            initCallsAtChildRender = mockInit.mock.calls.length;
-            return <Text>child</Text>;
-        };
+  it('should provide ConfigContext to children', async () => {
+    const config: any = {
+      api: { baseURL: 'https://test.com' },
+      responsive: {
+        breakpoints: { small: 100, medium: 200, large: 300 },
+      },
+    };
 
-        await render(
-            <OptiCoreProvider config={config}>
-                <Child />
-            </OptiCoreProvider>
-        );
+    const { getByTestId } = await render(
+      <OptiCoreProvider config={config}>
+        <TestComponent />
+      </OptiCoreProvider>
+    );
 
-        // Captured DURING the child's render: init had already run exactly once.
-        expect(initCallsAtChildRender).toBe(1);
-        expect(mockInit).toHaveBeenCalledWith(config);
-    });
+    const text = getByTestId('config-value').props.children;
+    const parsed = JSON.parse(text);
 
-    it('should provide ConfigContext to children', async () => {
-        const config: any = {
-            api: { baseURL: 'https://test.com' },
-            responsive: {
-                breakpoints: { small: 100, medium: 200, large: 300 }
-            }
-        };
+    expect(parsed.responsive).toEqual(config.responsive.breakpoints);
+  });
 
-        const { getByTestId } = await render(
-            <OptiCoreProvider config={config}>
-                <TestComponent />
-            </OptiCoreProvider>
-        );
+  it('should use default breakpoints if not provided', async () => {
+    const config: any = {
+      api: { baseURL: 'https://test.com' },
+    };
 
-        const text = getByTestId('config-value').props.children;
-        const parsed = JSON.parse(text);
+    const { getByTestId } = await render(
+      <OptiCoreProvider config={config}>
+        <TestComponent />
+      </OptiCoreProvider>
+    );
 
-        expect(parsed.responsive).toEqual(config.responsive.breakpoints);
-    });
+    const text = getByTestId('config-value').props.children;
+    const parsed = JSON.parse(text);
 
-    it('should use default breakpoints if not provided', async () => {
-        const config: any = {
-            api: { baseURL: 'https://test.com' },
-        };
-
-        const { getByTestId } = await render(
-            <OptiCoreProvider config={config}>
-                <TestComponent />
-            </OptiCoreProvider>
-        );
-
-        const text = getByTestId('config-value').props.children;
-        const parsed = JSON.parse(text);
-
-        expect(parsed.responsive.medium).toBe(768); // Default
-    });
+    expect(parsed.responsive.medium).toBe(768); // Default
+  });
 });

@@ -14,39 +14,59 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
-## 🚧 [Unreleased] — Facade-complete consumer API (next: 3.0.0)
+## 🚀 [3.0.0] — Facade-complete API
 
-The whole package is now consumed through **facades** — app code never calls
-`.getInstance()`. (Supersedes the interim `api.data.*` design from spec 034.)
+> **Breaking release.** See migration steps below before upgrading.
 
-### ⚠️ Breaking
+### ⚠️ Breaking changes
 
-- **`api` verbs now return the response body (`T`) directly**, not `ApiResponse<T>`:
+- **`api` verbs now return the body (`T`) directly** — not `ApiResponse<T>`.
+
   ```ts
-  const users = await api.get<User[]>('/users');   // User[]  (was ApiResponse<User[]>)
+  // Before (2.x)
+  const { data } = await api.get<User[]>('/users');
+
+  // After (3.0)
+  const users = await api.get<User[]>('/users');
   ```
-  Migration: drop `.data` (`const { data } = await api.get(...)` → `const data = await api.get(...)`).
-- **`api.request` and `api.data` removed.** The verbs are the one HTTP API. If you truly
-  need the full `ApiResponse` (`status`/`headers`) you can still reach the internal engine
-  at `ApiClient.getInstance().request(...)`, but app code shouldn't need it.
 
-### ✨ Added — full facade surface (no `getInstance` anywhere)
+  **Migrate:** remove `.data` from every `api.get/post/put/patch/delete` call.
 
-- **`api`** — `get/post/put/patch/delete` (→ `T`) · `setHeader/setHeaders/removeHeader` (dynamic global headers) · `onRequest/onResponse/removeInterceptor` · `isReady`.
-- **`storage`** — `secure`/`local` · `clearAll`.
-- **`logger`** — `debug/info/warn/error` · `setLevel` · `addTransport/removeTransport/clearTransports`.
-- **`connectivity`** *(new)* — `isConnected` · `subscribe(cb) → unsubscribe`.
-- **`offline`** *(new)* — `enqueue/sync/remove/clearQueue/pause/resume/getPendingCount/isSyncing/subscribe`.
-- **`themeControl`** *(new)* — `current/mode/activeMode` · `setMode/setTheme/registerTheme/unregisterTheme/subscribe`.
-- **`lifecycle`** *(new)* — `onChange(onActive?, onInactive?) → unsubscribe`.
-- **`stateObserver`** *(new)* — `subscribe(store, cb, opts?) → unsubscribe` · `cleanup`.
-- All exported from the root barrel and `opticore-react-native/facades`; lazy and side-effect-free on import. In components, the hooks (`useTheme`, `useOfflineSync`, `useConnectivity`, `useLifecycle`, …) remain the reactive equivalents.
+- **`api.request` and `api.data` removed.** Use verbs directly. If you need `status`/`headers`, reach the engine via `ApiClient.getInstance().request(...)`.
 
-### `opticore-react-native/testing` — official test utilities (spec 035)
+### ✨ New facades
 
-- **`createMemoryAdapters(overrides?)`** — full in-memory `OptiCoreAdapters` bundle for `config.adapters`; isolated per call.
-- **`resetOptiCore()`** — async, best-effort cross-test reset; safe when unconfigured.
-- Subpath-only (excluded from prod bundles); no test-framework imports.
+Five new imperative facades join `api`, `storage`, and `logger`:
+
+```ts
+import { connectivity, offline, themeControl, lifecycle, stateObserver } from 'opticore-react-native';
+
+// connectivity
+if (connectivity.isConnected) await sync();
+
+// lifecycle
+const off = lifecycle.onChange(() => prefetch(), () => persist());
+
+// themeControl
+themeControl.setMode('dark');
+
+// offline
+offline.enqueue({ method: 'POST', url: '/notes', data: note });
+
+// stateObserver
+stateObserver.subscribe(myStore, (s) => logger.debug(s));
+```
+
+All facades are also available at `opticore-react-native/facades`, are lazy (side-effect-free on import), and delegate to the same singletons used by the hooks.
+
+### 🧪 Testing utilities (`opticore-react-native/testing`)
+
+```ts
+import { createMemoryAdapters, resetOptiCore } from 'opticore-react-native/testing';
+
+beforeEach(() => { /* configure with isolated in-memory adapters */ });
+afterEach(resetOptiCore);
+```
 
 ---
 
@@ -59,7 +79,7 @@ Removes call-site friction. Purely additive — no breaking changes, no deprecat
 - **Ready-to-use facades — no more `.getInstance()`.** Import `api`, `storage`, and `logger` directly from the package root (or `opticore-react-native/facades`):
   ```ts
   import { api, storage, logger } from 'opticore-react-native';
-  await api.get<User[]>('/users');           // verb sugar over request()
+  await api.get<User[]>('/users'); // verb sugar over request()
   await storage.secure.get<string>('token');
   logger.info('ready');
   ```
@@ -270,7 +290,7 @@ A reliability release. Everything keeps working as before — these fixes mostly
 ### 🔧 Fixed
 
 - **No `--legacy-peer-deps` needed** on SDK-aligned installs. Required peers (`react`, `react-native`, `expo`, `expo-router`) use open `>=` ranges; `typescript` is now an **optional** peer (OptiCore ships its own `.d.ts`, so typed coding is unaffected). Also fixes the Metro build break for non-expo-router apps.
-- **Init ordering** — `OptiCoreProvider` now configures singletons synchronously *before children render* (was in `useEffect`, which let an early API call hit an unconfigured client).
+- **Init ordering** — `OptiCoreProvider` now configures singletons synchronously _before children render_ (was in `useEffect`, which let an early API call hit an unconfigured client).
 - **`ApiClient.request()` fails fast** with a clear error if called before `configure()` / `CoreSetup.init()`, instead of silently using axios defaults.
 - **`opticore-install-peers` on Windows** no longer fails with `exit null`; the CLI also surfaces the real underlying error.
 

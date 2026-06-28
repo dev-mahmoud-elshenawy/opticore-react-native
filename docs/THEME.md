@@ -34,18 +34,18 @@ The primary hook for consuming theme values in components.
 import { useTheme } from 'opticore-react-native/theme';
 
 const {
-  theme,           // full Theme object
-  mode,            // 'light' | 'dark' | 'system'
-  activeMode,      // 'light' | 'dark' (resolved — 'system' maps to actual mode)
-  isDark,          // boolean
-  isLight,         // boolean
-  isSystem,        // boolean — true when mode === 'system'
-  setMode,         // (mode: ThemeMode) => void
-  toggleMode,      // () => void
-  colors,          // shortcut for theme.colors
-  spacing,         // shortcut for theme.spacing
-  typography,      // shortcut for theme.typography
-  borderRadius,    // shortcut for theme.borderRadius
+  theme, // full Theme object
+  mode, // 'light' | 'dark' | 'system'
+  activeMode, // 'light' | 'dark' (resolved — 'system' maps to actual mode)
+  isDark, // boolean
+  isLight, // boolean
+  isSystem, // boolean — true when mode === 'system'
+  setMode, // (mode: ThemeMode) => void
+  toggleMode, // () => void
+  colors, // shortcut for theme.colors
+  spacing, // shortcut for theme.spacing
+  typography, // shortcut for theme.typography
+  borderRadius, // shortcut for theme.borderRadius
 } = useTheme();
 ```
 
@@ -89,7 +89,11 @@ import { useThemedStyles } from 'opticore-react-native';
 
 function ProfileCard() {
   const styles = useThemedStyles((t) => ({
-    card: { backgroundColor: t.colors.card, padding: t.spacing.md, borderRadius: t.borderRadius.lg },
+    card: {
+      backgroundColor: t.colors.card,
+      padding: t.spacing.md,
+      borderRadius: t.borderRadius.lg,
+    },
     title: { color: t.colors.text, ...t.typography.h2 },
     subtitle: { color: t.colors.textSecondary, ...t.typography.caption },
   }));
@@ -167,34 +171,34 @@ interface Theme {
 
     // Semantic variants (recommended) — each is { fontSize, fontWeight, lineHeight }.
     // Read a token (typography.body.fontSize) or spread it (style={typography.body}).
-    h1: ThemeTextVariant;         // 32 / '700' / 40
-    h2: ThemeTextVariant;         // 28 / '700' / 36
-    h3: ThemeTextVariant;         // 24 / '600' / 32
-    title: ThemeTextVariant;      // 20 / '600' / 28
-    body: ThemeTextVariant;       // 14 / '400' / 20
-    bodySmall: ThemeTextVariant;  // 12 / '400' / 16
-    caption: ThemeTextVariant;    // 12 / '400' / 16
-    label: ThemeTextVariant;      // 12 / '500' / 16
-    button: ThemeTextVariant;     // 14 / '600' / 20
+    h1: ThemeTextVariant; // 32 / '700' / 40
+    h2: ThemeTextVariant; // 28 / '700' / 36
+    h3: ThemeTextVariant; // 24 / '600' / 32
+    title: ThemeTextVariant; // 20 / '600' / 28
+    body: ThemeTextVariant; // 14 / '400' / 20
+    bodySmall: ThemeTextVariant; // 12 / '400' / 16
+    caption: ThemeTextVariant; // 12 / '400' / 16
+    label: ThemeTextVariant; // 12 / '500' / 16
+    button: ThemeTextVariant; // 14 / '600' / 20
 
     // Raw scale (backward compatible) — the tokens the variants are built from.
-    sizes: { xs; sm; md; lg; xl; xxl; h1; h2; h3 };  // numbers
-    weights: { regular; medium; semibold; bold };    // RN weight strings
+    sizes: { xs; sm; md; lg; xl; xxl; h1; h2; h3 }; // numbers
+    weights: { regular; medium; semibold; bold }; // RN weight strings
   };
   spacing: {
-    xs: number;   // 4
-    sm: number;   // 8
-    md: number;   // 16
-    lg: number;   // 24
-    xl: number;   // 32
-    xxl: number;  // 48
+    xs: number; // 4
+    sm: number; // 8
+    md: number; // 16
+    lg: number; // 24
+    xl: number; // 32
+    xxl: number; // 48
   };
   borderRadius: {
     none: number; // 0
-    sm: number;   // 4
-    md: number;   // 8
-    lg: number;   // 12
-    xl: number;   // 16
+    sm: number; // 4
+    md: number; // 8
+    lg: number; // 12
+    xl: number; // 16
     full: number; // 9999
   };
   shadows: {
@@ -218,22 +222,22 @@ import { lightTheme, darkTheme } from 'opticore-react-native/theme';
 
 ### lightTheme
 
-| Token | Value |
-|---|---|
-| `primary` | `#1976D2` |
-| `background` | `#FFFFFF` |
-| `surface` | `#F5F5F5` |
-| `text` | `#212121` |
+| Token           | Value     |
+| --------------- | --------- |
+| `primary`       | `#1976D2` |
+| `background`    | `#FFFFFF` |
+| `surface`       | `#F5F5F5` |
+| `text`          | `#212121` |
 | `textSecondary` | `#757575` |
 
 ### darkTheme
 
-| Token | Value |
-|---|---|
-| `primary` | `#90CAF9` |
-| `background` | `#121212` |
-| `surface` | `#1E1E1E` |
-| `text` | `#FFFFFF` |
+| Token           | Value     |
+| --------------- | --------- |
+| `primary`       | `#90CAF9` |
+| `background`    | `#121212` |
+| `surface`       | `#1E1E1E` |
+| `text`          | `#FFFFFF` |
 | `textSecondary` | `#B0BEC5` |
 
 ---
@@ -294,11 +298,13 @@ Control the theme engine outside React — no `getInstance()`. In components use
 ```typescript
 import { themeControl } from 'opticore-react-native';
 
-themeControl.setMode('dark');                 // 'light' | 'dark' | 'system'
+themeControl.setMode('dark'); // 'light' | 'dark' | 'system'
 themeControl.setTheme('brand');
 themeControl.registerTheme('brand', brandTheme);
-const mode = themeControl.activeMode;         // resolved 'light' | 'dark'
-const unsubscribe = themeControl.subscribe((theme, m) => { /* ... */ });
+const mode = themeControl.activeMode; // resolved 'light' | 'dark'
+const unsubscribe = themeControl.subscribe((theme, m) => {
+  /* ... */
+});
 ```
 
 ### API
@@ -306,8 +312,8 @@ const unsubscribe = themeControl.subscribe((theme, m) => { /* ... */ });
 ```typescript
 // Get current theme and mode
 const theme = manager.getTheme();
-const mode = manager.getMode();          // 'light' | 'dark' | 'system'
-const active = manager.getActiveMode();  // 'light' | 'dark'
+const mode = manager.getMode(); // 'light' | 'dark' | 'system'
+const active = manager.getActiveMode(); // 'light' | 'dark'
 
 // Change mode
 manager.setMode('dark');
@@ -321,7 +327,7 @@ unsubscribe(); // cleanup
 
 // Register / activate custom themes
 manager.registerTheme('brand', brandTheme);
-manager.setTheme('brand');        // activate a registered theme by name
+manager.setTheme('brand'); // activate a registered theme by name
 manager.unregisterTheme('brand');
 ```
 
@@ -372,16 +378,14 @@ const styles = {
 These are individual named exports (there is no `colorUtils` object):
 
 ```typescript
-import {
-  hexToRgb, rgbToHex, lighten, darken, alpha, contrast,
-} from 'opticore-react-native/theme';
+import { hexToRgb, rgbToHex, lighten, darken, alpha, contrast } from 'opticore-react-native/theme';
 
-hexToRgb('#6C63FF');           // { r: 108, g: 99, b: 255 }
-rgbToHex(108, 99, 255);        // '#6c63ff'
-lighten('#6C63FF', 0.2);       // lighter shade
-darken('#6C63FF', 0.2);        // darker shade
-alpha('#6C63FF', 0.5);         // 'rgba(108, 99, 255, 0.5)'
-contrast('#6C63FF');           // 'light' | 'dark' — best text color for this background (WCAG)
+hexToRgb('#6C63FF'); // { r: 108, g: 99, b: 255 }
+rgbToHex(108, 99, 255); // '#6c63ff'
+lighten('#6C63FF', 0.2); // lighter shade
+darken('#6C63FF', 0.2); // darker shade
+alpha('#6C63FF', 0.5); // 'rgba(108, 99, 255, 0.5)'
+contrast('#6C63FF'); // 'light' | 'dark' — best text color for this background (WCAG)
 ```
 
 ---

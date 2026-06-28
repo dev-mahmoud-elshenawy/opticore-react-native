@@ -15,12 +15,12 @@ Make form masks locale-aware: (1) Currency mask handles EU decimal comma and sym
 
 ## Constitution Check
 
-| Principle | Status | Notes |
-|---|---|---|
-| Pure Infrastructure | PASS | Masks are pure utility functions |
-| TypeScript Strict | PASS | Locale types fully typed |
-| Zero Dependencies | PASS | No new dependencies needed |
-| Backward Compat | PASS | Default params preserve current behavior |
+| Principle           | Status | Notes                                    |
+| ------------------- | ------ | ---------------------------------------- |
+| Pure Infrastructure | PASS   | Masks are pure utility functions         |
+| TypeScript Strict   | PASS   | Locale types fully typed                 |
+| Zero Dependencies   | PASS   | No new dependencies needed               |
+| Backward Compat     | PASS   | Default params preserve current behavior |
 
 ## Source Code Structure
 

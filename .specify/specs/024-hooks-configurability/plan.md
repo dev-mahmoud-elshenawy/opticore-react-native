@@ -15,11 +15,11 @@ Three targeted fixes to the hooks module: (1) `useResponsive` accepts optional b
 
 ## Constitution Check
 
-| Principle | Status | Notes |
-|---|---|---|
-| Pure Infrastructure | PASS | Hooks are infrastructure |
-| TypeScript Strict | PASS | Breakpoints type explicit |
-| Backward Compat | PASS | All new params optional |
+| Principle           | Status | Notes                     |
+| ------------------- | ------ | ------------------------- |
+| Pure Infrastructure | PASS   | Hooks are infrastructure  |
+| TypeScript Strict   | PASS   | Breakpoints type explicit |
+| Backward Compat     | PASS   | All new params optional   |
 
 ## Source Code Structure
 

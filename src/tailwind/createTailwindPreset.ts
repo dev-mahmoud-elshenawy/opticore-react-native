@@ -11,9 +11,7 @@ import type {
  * `[size, { lineHeight, fontWeight }]` tuple Tailwind/NativeWind use to carry
  * line-height and weight alongside the size.
  */
-export type TailwindFontSize =
-  | number
-  | [number, { lineHeight: number; fontWeight: string }];
+export type TailwindFontSize = number | [number, { lineHeight: number; fontWeight: string }];
 
 /** Convert a semantic text variant into Tailwind's tuple fontSize form. */
 function variantToFontSize(variant: ThemeTextVariant): TailwindFontSize {

@@ -5,88 +5,97 @@ import { Logger } from '../infrastructure/logger/Logger';
  * Handles data conflicts during synchronization
  */
 export class ConflictResolver {
-    private strategy: ConflictStrategy;
-    private onConflict?: ConflictHandler;
+  private strategy: ConflictStrategy;
+  private onConflict?: ConflictHandler;
 
-    /**
-     * Creates a new ConflictResolver
-     * @param strategy - Resolution strategy ('client-wins', 'server-wins', 'manual')
-     * @param onConflict - Callback for manual resolution (required if strategy is 'manual')
-     */
-    constructor(strategy: ConflictStrategy = ConflictStrategy.SERVER_WINS, onConflict?: ConflictHandler) {
-        this.strategy = strategy;
-        this.onConflict = onConflict;
+  /**
+   * Creates a new ConflictResolver
+   * @param strategy - Resolution strategy ('client-wins', 'server-wins', 'manual')
+   * @param onConflict - Callback for manual resolution (required if strategy is 'manual')
+   */
+  constructor(
+    strategy: ConflictStrategy = ConflictStrategy.SERVER_WINS,
+    onConflict?: ConflictHandler
+  ) {
+    this.strategy = strategy;
+    this.onConflict = onConflict;
 
-        if (this.strategy === ConflictStrategy.MANUAL && !this.onConflict) {
-            Logger.getInstance().warn('ConflictResolver: Strategy is "manual" but no onConflict handler provided. Falling back to "server-wins".');
-        }
+    if (this.strategy === ConflictStrategy.MANUAL && !this.onConflict) {
+      Logger.getInstance().warn(
+        'ConflictResolver: Strategy is "manual" but no onConflict handler provided. Falling back to "server-wins".'
+      );
     }
+  }
 
-    /**
-     * Resolves a conflict between local and server data
-     * @param localData - Data currently on the client/request
-     * @param serverData - Data received from the server
-     * @returns The resolved data to keep
-     */
-    public async resolve<T>(localData: T, serverData: T): Promise<T> {
-        const logger = Logger.getInstance();
+  /**
+   * Resolves a conflict between local and server data
+   * @param localData - Data currently on the client/request
+   * @param serverData - Data received from the server
+   * @returns The resolved data to keep
+   */
+  public async resolve<T>(localData: T, serverData: T): Promise<T> {
+    const logger = Logger.getInstance();
 
-        try {
-            switch (this.strategy) {
-                case ConflictStrategy.CLIENT_WINS:
-                    return localData;
+    try {
+      switch (this.strategy) {
+        case ConflictStrategy.CLIENT_WINS:
+          return localData;
 
-                case ConflictStrategy.SERVER_WINS:
-                    return serverData;
+        case ConflictStrategy.SERVER_WINS:
+          return serverData;
 
-                case ConflictStrategy.MANUAL:
-                    if (this.onConflict) {
-                        try {
-                            const result = await this.onConflict(localData, serverData);
-                            return result as T;
-                        } catch (error) {
-                            logger.error('ConflictResolver: Manual resolution failed', error as Error);
-                            // Fallback to server-wins on failure
-                            return serverData;
-                        }
-                    } else {
-                        // Fallback if no handler
-                        logger.warn('ConflictResolver: No manual handler, defaulting to server-wins');
-                        return serverData;
-                    }
-
-                default:
-                    logger.warn(`ConflictResolver: Unknown strategy "${this.strategy}", defaulting to server-wins`);
-                    return serverData;
+        case ConflictStrategy.MANUAL:
+          if (this.onConflict) {
+            try {
+              const result = await this.onConflict(localData, serverData);
+              return result as T;
+            } catch (error) {
+              logger.error('ConflictResolver: Manual resolution failed', error as Error);
+              // Fallback to server-wins on failure
+              return serverData;
             }
-        } catch (error) {
-            // Don't silently swallow an unexpected failure into a "server-wins"
-            // result — the caller (SyncEngine) already handles a thrown resolve
-            // error by falling through to normal retry/fail logic.
-            logger.error('ConflictResolver: Unexpected error during resolution', error as Error);
-            throw error;
-        }
-    }
-    /**
-     * Update the conflict resolution strategy
-     * @param strategy - New strategy
-     * @param onConflict - New conflict handler (optional)
-     */
-    public updateStrategy(strategy: ConflictStrategy, onConflict?: ConflictHandler): void {
-        this.strategy = strategy;
-        if (onConflict) {
-            this.onConflict = onConflict;
-        }
+          } else {
+            // Fallback if no handler
+            logger.warn('ConflictResolver: No manual handler, defaulting to server-wins');
+            return serverData;
+          }
 
-        if (this.strategy === ConflictStrategy.MANUAL && !this.onConflict) {
-            Logger.getInstance().warn('ConflictResolver: Strategy set to "manual" but no onConflict handler provided. Falling back to "server-wins".');
-        }
+        default:
+          logger.warn(
+            `ConflictResolver: Unknown strategy "${this.strategy}", defaulting to server-wins`
+          );
+          return serverData;
+      }
+    } catch (error) {
+      // Don't silently swallow an unexpected failure into a "server-wins"
+      // result — the caller (SyncEngine) already handles a thrown resolve
+      // error by falling through to normal retry/fail logic.
+      logger.error('ConflictResolver: Unexpected error during resolution', error as Error);
+      throw error;
+    }
+  }
+  /**
+   * Update the conflict resolution strategy
+   * @param strategy - New strategy
+   * @param onConflict - New conflict handler (optional)
+   */
+  public updateStrategy(strategy: ConflictStrategy, onConflict?: ConflictHandler): void {
+    this.strategy = strategy;
+    if (onConflict) {
+      this.onConflict = onConflict;
     }
 
-    /**
-     * Get the current conflict strategy
-     */
-    public getStrategy(): ConflictStrategy {
-        return this.strategy;
+    if (this.strategy === ConflictStrategy.MANUAL && !this.onConflict) {
+      Logger.getInstance().warn(
+        'ConflictResolver: Strategy set to "manual" but no onConflict handler provided. Falling back to "server-wins".'
+      );
     }
+  }
+
+  /**
+   * Get the current conflict strategy
+   */
+  public getStrategy(): ConflictStrategy {
+    return this.strategy;
+  }
 }

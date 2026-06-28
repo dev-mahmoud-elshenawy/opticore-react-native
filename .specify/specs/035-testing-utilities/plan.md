@@ -65,7 +65,7 @@ subpath. This is the established pattern for non-prod/optional surfaces (navigat
 ### `createMemoryAdapters(overrides?)`
 
 ```ts
-import type { OptiCoreAdapters, /* the 5 adapter types */ } from '../adapters/interfaces';
+import type { OptiCoreAdapters /* the 5 adapter types */ } from '../adapters/interfaces';
 
 export function createMemoryAdapters(overrides: Partial<OptiCoreAdapters> = {}): OptiCoreAdapters {
   const secureMap = new Map<string, string>();
@@ -83,7 +83,7 @@ export function createMemoryAdapters(overrides: Partial<OptiCoreAdapters> = {}):
       clear: async () => void localMap.clear(),
     },
     connectivity: {
-      fetch: async () => ({ isConnected: true, /* ...ConnectivitySnapshot defaults */ }),
+      fetch: async () => ({ isConnected: true /* ...ConnectivitySnapshot defaults */ }),
       addEventListener: () => () => {}, // no-op unsubscribe
     },
     device: {
@@ -93,7 +93,12 @@ export function createMemoryAdapters(overrides: Partial<OptiCoreAdapters> = {}):
     },
     clipboard: (() => {
       let buf = '';
-      return { setString: (v) => { buf = v; }, getString: async () => buf };
+      return {
+        setString: (v) => {
+          buf = v;
+        },
+        getString: async () => buf,
+      };
     })(),
     ...overrides, // named override replaces the whole adapter; others stay in-memory
   };
@@ -109,9 +114,21 @@ export function createMemoryAdapters(overrides: Partial<OptiCoreAdapters> = {}):
 import { _resetAdapterWarnings } from '../adapters/registry';
 
 export async function resetOptiCore(): Promise<void> {
-  try { _resetAdapterWarnings(); } catch { /* unconfigured — ignore */ }
-  try { Logger.getInstance().clearTransports(); } catch { /* ignore */ }
-  try { await StorageManager.getInstance().clearAll(); } catch { /* ignore */ }
+  try {
+    _resetAdapterWarnings();
+  } catch {
+    /* unconfigured — ignore */
+  }
+  try {
+    Logger.getInstance().clearTransports();
+  } catch {
+    /* ignore */
+  }
+  try {
+    await StorageManager.getInstance().clearAll();
+  } catch {
+    /* ignore */
+  }
   // async because clearAll() is async; each step guarded so it never throws
   // when OptiCore was not configured. (Logger.clearTransports already exists —
   // no __resetForTest() needed.)

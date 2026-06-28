@@ -27,10 +27,11 @@ Use this template when creating release notes for new versions.
 - **Change Description**: What changed
   - Migration: How to update existing code
   - Example:
+
     ```typescript
     // Before
     oldAPI();
-    
+
     // After
     newAPI();
     ```
@@ -50,6 +51,7 @@ Use this template when creating release notes for new versions.
 ### 🙏 Contributors
 
 Thank you to all contributors:
+
 - @username1 - Feature X
 - @username2 - Bug fix Y
 
@@ -62,7 +64,6 @@ Thank you to all contributors:
 - **Offline Mode**: Added offline support with queue syncing
   - API calls are queued when offline and synced when online
   - `ConnectivityManager` detects network changes automatically
-  
 - **Biometric Auth**: New `useBiometric` hook
   - Face ID / Touch ID / fingerprint support
   - Fallback to PIN/password
@@ -82,7 +83,6 @@ Thank you to all contributors:
 - **Logger**: Fixed memory leak in error aggregation (#45)
   - Error logs are now properly cleaned up
   - Affected: v1.0.0 - v1.0.3
-  
 - **useAsyncState**: Fixed race condition with rapid executes (#52)
   - Only most recent execute completes
   - Previous executes are cancelled
@@ -90,10 +90,11 @@ Thank you to all contributors:
 ### ⚠️ Breaking Changes
 
 - **CoreSetup**: `apiTimeout` now in seconds instead of milliseconds
+
   ```typescript
   // Before (v1.0)
   CoreSetup.initialize({ apiTimeout: 10000 }); // ms
-  
+
   // After (v1.1)
   CoreSetup.initialize({ apiTimeout: 10 }); // seconds
   ```

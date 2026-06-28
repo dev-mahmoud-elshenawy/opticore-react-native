@@ -115,12 +115,7 @@ export class OptiCoreErrorBoundary extends React.Component<
       if (this.props.fallback) {
         return this.props.fallback(this.state.renderError, this.resetError);
       }
-      return (
-        <DefaultErrorFallback
-          error={this.state.renderError}
-          onReset={this.resetError}
-        />
-      );
+      return <DefaultErrorFallback error={this.state.renderError} onReset={this.resetError} />;
     }
 
     return this.props.children;

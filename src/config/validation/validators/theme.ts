@@ -5,14 +5,14 @@ import { assertNonEmptyString, assertOneOf } from '../assertions';
 export function validateThemeConfig(
   theme: CoreThemeConfig,
   errors: ValidationIssue[],
-  _warnings: ValidationIssue[],
+  _warnings: ValidationIssue[]
 ): void {
   if (theme.defaultMode !== undefined) {
     assertOneOf(
       theme.defaultMode,
       ['light', 'dark', 'system'] as const,
       'theme.defaultMode',
-      errors,
+      errors
     );
   }
 

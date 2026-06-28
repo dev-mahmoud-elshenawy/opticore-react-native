@@ -61,8 +61,7 @@ private static getIsRetryable(status: number): boolean {
 `isActionable` is **redefined** to exclude transient 4xx:
 
 ```ts
-isActionable: status >= 400 && status < 500
-  && status !== 408 && status !== 429
+isActionable: status >= 400 && status < 500 && status !== 408 && status !== 429;
 ```
 
 (Update the `super(...)` call in the constructor accordingly.)
@@ -174,12 +173,12 @@ Verify each test fails before the corresponding implementation lands (TDD order 
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-|---|---|
-| Redefining `isActionable` changes UI behavior for `408`/`429` consumers relied on | Documented in CHANGELOG as a behavior fix; `408`/`429` were mis-flagged as user-fixable. Severity for these stays non-critical. |
-| `Date.parse` locale/format edge cases for HTTP-date | Only accept finite parse results; clamp negative→0; otherwise fall back to backoff. |
-| Over-large `Retry-After` (e.g. `3600`) stalls UX | Clamp to 30s `RETRY_AFTER_MAX_MS`. |
-| Hidden coupling: retry predicate importing `ApiError` into `src/query` | `src/query` already imports from `src/error`; importing `ApiError` from `src/infrastructure/network` is a permitted downward dependency (no cycle). Verify with build. |
+| Risk                                                                              | Mitigation                                                                                                                                                             |
+| --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Redefining `isActionable` changes UI behavior for `408`/`429` consumers relied on | Documented in CHANGELOG as a behavior fix; `408`/`429` were mis-flagged as user-fixable. Severity for these stays non-critical.                                        |
+| `Date.parse` locale/format edge cases for HTTP-date                               | Only accept finite parse results; clamp negative→0; otherwise fall back to backoff.                                                                                    |
+| Over-large `Retry-After` (e.g. `3600`) stalls UX                                  | Clamp to 30s `RETRY_AFTER_MAX_MS`.                                                                                                                                     |
+| Hidden coupling: retry predicate importing `ApiError` into `src/query`            | `src/query` already imports from `src/error`; importing `ApiError` from `src/infrastructure/network` is a permitted downward dependency (no cycle). Verify with build. |
 
 ## Migration / Backward Compatibility
 

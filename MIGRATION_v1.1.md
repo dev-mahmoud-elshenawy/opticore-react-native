@@ -8,13 +8,13 @@ This eliminates the class of cross-SDK runtime crashes (most famously `ClassNotF
 
 ## What changed at a glance
 
-| Concern | 1.0.0 | 1.1.0 |
-|---|---|---|
-| Native modules (`expo-secure-store`, NetInfo, AsyncStorage, …) | Pinned `dependencies` of OptiCore | Optional `peerDependencies` |
-| `expo-modules-core` | Pinned to `^3.0.29` | Not declared — consumer's Expo controls it |
-| `expo` peer range | `^54.0.33` (one SDK) | `>=54.0.0` (54 / 55 / 56 / future) |
-| Storage / connectivity backends | Hardcoded | Pluggable via adapter interfaces |
-| Memory fallback when peer missing | Crashes at import | Falls back silently — no native crash |
+| Concern                                                        | 1.0.0                             | 1.1.0                                      |
+| -------------------------------------------------------------- | --------------------------------- | ------------------------------------------ |
+| Native modules (`expo-secure-store`, NetInfo, AsyncStorage, …) | Pinned `dependencies` of OptiCore | Optional `peerDependencies`                |
+| `expo-modules-core`                                            | Pinned to `^3.0.29`               | Not declared — consumer's Expo controls it |
+| `expo` peer range                                              | `^54.0.33` (one SDK)              | `>=54.0.0` (54 / 55 / 56 / future)         |
+| Storage / connectivity backends                                | Hardcoded                         | Pluggable via adapter interfaces           |
+| Memory fallback when peer missing                              | Crashes at import                 | Falls back silently — no native crash      |
 
 ---
 
@@ -62,25 +62,29 @@ If you'd rather use MMKV for local storage, react-native-keychain for secure sto
 
 ```tsx
 import { MMKV } from 'react-native-mmkv';
-import {
-  OptiCoreProvider,
-  type LocalStorageAdapter,
-} from 'opticore-react-native';
+import { OptiCoreProvider, type LocalStorageAdapter } from 'opticore-react-native';
 
 const mmkv = new MMKV();
 
 const mmkvAdapter: LocalStorageAdapter = {
-  setItem: async (k, v) => { mmkv.set(k, v); },
+  setItem: async (k, v) => {
+    mmkv.set(k, v);
+  },
   getItem: async (k) => mmkv.getString(k) ?? null,
-  removeItem: async (k) => { mmkv.delete(k); },
-  clear: async () => { mmkv.clearAll(); },
+  removeItem: async (k) => {
+    mmkv.delete(k);
+  },
+  clear: async () => {
+    mmkv.clearAll();
+  },
 };
 
 <OptiCoreProvider
   config={{
     api: { baseURL: 'https://api.example.com' },
     adapters: { localStorage: mmkvAdapter },
-  }}>
+  }}
+>
   <App />
 </OptiCoreProvider>;
 ```
@@ -111,12 +115,12 @@ Each is a small, stable contract — see the [interfaces file](./src/adapters/in
 
 ## Common upgrade issues
 
-| Symptom | Cause | Fix |
-|---|---|---|
-| `Cannot find module 'expo-secure-store'` at runtime | Peer not installed | `npx expo install expo-secure-store` |
-| Storage seems to lose values between launches | Falling back to memory adapter (no peer installed) | Install AsyncStorage as peer |
-| `useConnectivity` always reports "online" | NetInfo peer not installed | `npx expo install @react-native-community/netinfo` |
-| Old `getClipboard` behavior unchanged | Backwards compatible — no fix needed | — |
+| Symptom                                             | Cause                                              | Fix                                                |
+| --------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------- |
+| `Cannot find module 'expo-secure-store'` at runtime | Peer not installed                                 | `npx expo install expo-secure-store`               |
+| Storage seems to lose values between launches       | Falling back to memory adapter (no peer installed) | Install AsyncStorage as peer                       |
+| `useConnectivity` always reports "online"           | NetInfo peer not installed                         | `npx expo install @react-native-community/netinfo` |
+| Old `getClipboard` behavior unchanged               | Backwards compatible — no fix needed               | —                                                  |
 
 ---
 

@@ -42,7 +42,10 @@ export class ApiClient {
   private _initialized = false;
 
   // Track interceptors for removal
-  private interceptors = new Map<InterceptorId, { type: 'request' | 'response'; axiosId: number }>();
+  private interceptors = new Map<
+    InterceptorId,
+    { type: 'request' | 'response'; axiosId: number }
+  >();
   private nextInterceptorId = 1;
 
   private constructor() {
@@ -72,13 +75,16 @@ export class ApiClient {
 
   /**
    * Add a custom request interceptor
-   * 
+   *
    * @param interceptor - Interceptor with onRequest/onError methods
    * @returns InterceptorId for removal
    */
   public addRequestInterceptor(interceptor: Interceptor): InterceptorId {
     const onFulfilled = interceptor.onRequest
-      ? (config: InternalAxiosRequestConfig) => interceptor.onRequest!(config) as InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>
+      ? (config: InternalAxiosRequestConfig) =>
+          interceptor.onRequest!(config) as
+            | InternalAxiosRequestConfig
+            | Promise<InternalAxiosRequestConfig>
       : undefined;
 
     const onRejected = interceptor.onError
@@ -94,7 +100,7 @@ export class ApiClient {
 
   /**
    * Add a custom response interceptor
-   * 
+   *
    * @param interceptor - Interceptor with onResponse/onError methods
    * @returns InterceptorId for removal
    */
@@ -116,7 +122,7 @@ export class ApiClient {
 
   /**
    * Remove a registered interceptor
-   * 
+   *
    * @param id - InterceptorId returned from addRequestInterceptor/addResponseInterceptor
    * @returns true if removed, false if not found
    */
@@ -239,7 +245,7 @@ export class ApiClient {
       throw new Error(
         'ApiClient.request() was called before initialization. Wrap your app in ' +
           '<OptiCoreProvider> (recommended), or call CoreSetup.getInstance().init(config) ' +
-          'or ApiClient.getInstance().configure(config) before making requests.',
+          'or ApiClient.getInstance().configure(config) before making requests.'
       );
     }
 

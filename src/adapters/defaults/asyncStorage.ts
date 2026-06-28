@@ -10,8 +10,7 @@ interface AsyncStorageModule {
 }
 
 function isNativeModuleUnavailableError(error: unknown): boolean {
-  const message =
-    error instanceof Error ? error.message : typeof error === 'string' ? error : '';
+  const message = error instanceof Error ? error.message : typeof error === 'string' ? error : '';
 
   return /native module is null/i.test(message);
 }
@@ -44,7 +43,7 @@ export function createAsyncStorageAdapter(): LocalStorageAdapter | null {
 
   const run = async <T>(
     nativeOperation: () => Promise<T>,
-    fallbackOperation: (adapter: LocalStorageAdapter) => Promise<T>,
+    fallbackOperation: (adapter: LocalStorageAdapter) => Promise<T>
   ): Promise<T> => {
     if (useMemoryFallback) return fallbackOperation(fallback());
 
@@ -62,22 +61,22 @@ export function createAsyncStorageAdapter(): LocalStorageAdapter | null {
     setItem: (key, value) =>
       run(
         () => asyncStorage.setItem(key, value),
-        (adapter) => adapter.setItem(key, value),
+        (adapter) => adapter.setItem(key, value)
       ),
     getItem: (key) =>
       run(
         () => asyncStorage.getItem(key),
-        (adapter) => adapter.getItem(key),
+        (adapter) => adapter.getItem(key)
       ),
     removeItem: (key) =>
       run(
         () => asyncStorage.removeItem(key),
-        (adapter) => adapter.removeItem(key),
+        (adapter) => adapter.removeItem(key)
       ),
     clear: () =>
       run(
         () => asyncStorage.clear(),
-        (adapter) => adapter.clear(),
+        (adapter) => adapter.clear()
       ),
   };
 }

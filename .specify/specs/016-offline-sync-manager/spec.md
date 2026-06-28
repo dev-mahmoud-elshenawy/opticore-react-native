@@ -23,11 +23,13 @@ Mobile apps frequently operate in unreliable network conditions. Users expect th
 ## User Stories
 
 ### US-016.1: Request Queue (P1)
+
 **As a** developer
 **I want** to enqueue API requests when offline
 **So that** user actions aren't lost
 
 **Acceptance Criteria**:
+
 - [ ] Can enqueue any HTTP request (GET, POST, PUT, DELETE, PATCH)
 - [ ] Queue returns unique ID for tracking
 - [ ] Can dequeue/cancel pending requests
@@ -35,6 +37,7 @@ Mobile apps frequently operate in unreliable network conditions. Users expect th
 - [ ] Priority levels (high, normal, low)
 
 **Example Usage**:
+
 ```typescript
 const manager = OfflineSyncManager.getInstance();
 
@@ -55,11 +58,13 @@ manager.dequeue(queueId);
 ```
 
 ### US-016.2: Auto-Sync on Reconnect (P1)
+
 **As a** developer
 **I want** queued requests to automatically sync when online
 **So that** I don't have to manually trigger sync
 
 **Acceptance Criteria**:
+
 - [ ] Listens to ConnectivityManager for online status
 - [ ] Automatically processes queue when online
 - [ ] Respects priority order (high → normal → low)
@@ -67,6 +72,7 @@ manager.dequeue(queueId);
 - [ ] Can pause/resume sync
 
 **Example Usage**:
+
 ```typescript
 manager.configure({
   syncOnReconnect: true,
@@ -82,11 +88,13 @@ manager.addSyncListener((event) => {
 ```
 
 ### US-016.3: Retry with Exponential Backoff (P2)
+
 **As a** developer
 **I want** failed requests to retry with backoff
 **So that** temporary failures don't cause data loss
 
 **Acceptance Criteria**:
+
 - [ ] Configurable max retries (default: 3)
 - [ ] Exponential backoff (1s, 2s, 4s, ...)
 - [ ] Different retry strategies per request
@@ -94,6 +102,7 @@ manager.addSyncListener((event) => {
 - [ ] Retry count tracking
 
 **Example Usage**:
+
 ```typescript
 await manager.enqueue({
   method: 'POST',
@@ -105,11 +114,13 @@ await manager.enqueue({
 ```
 
 ### US-016.4: Queue Persistence (P2)
+
 **As a** developer
 **I want** the queue to persist across app restarts
 **So that** requests aren't lost if app closes
 
 **Acceptance Criteria**:
+
 - [ ] Queue stored in LocalStorage
 - [ ] Automatic load on manager init
 - [ ] Automatic save on queue changes
@@ -117,17 +128,20 @@ await manager.enqueue({
 - [ ] Configurable persistence key
 
 ### US-016.5: Conflict Resolution (P3)
+
 **As a** developer
 **I want** to handle sync conflicts
 **So that** data integrity is maintained
 
 **Acceptance Criteria**:
+
 - [ ] Client-wins strategy (default)
 - [ ] Server-wins strategy
 - [ ] Manual resolution callback
 - [ ] Conflict detection via timestamps/versions
 
 **Example Usage**:
+
 ```typescript
 manager.configure({
   conflictStrategy: 'manual',
@@ -139,11 +153,13 @@ manager.configure({
 ```
 
 ### US-016.6: React Hook (P1)
+
 **As a** developer
 **I want** a `useOfflineSync` hook
 **So that** I can use offline sync in React components
 
 **Acceptance Criteria**:
+
 - [ ] Returns current online/syncing status
 - [ ] Returns pending count
 - [ ] Provides enqueue function
@@ -151,6 +167,7 @@ manager.configure({
 - [ ] Auto-updates on state changes
 
 **Example Usage**:
+
 ```typescript
 function OrderButton() {
   const { isOnline, isSyncing, pendingCount, enqueue } = useOfflineSync();
@@ -293,7 +310,7 @@ export function useOfflineSync(): {
 // ============== TYPES ==============
 
 export interface QueuedRequest<T = unknown> {
-  id?: string;                    // Auto-generated if not provided
+  id?: string; // Auto-generated if not provided
   method: HttpMethod;
   url: string;
   data?: T;
@@ -306,14 +323,14 @@ export interface QueuedRequest<T = unknown> {
 }
 
 export interface OfflineSyncConfig {
-  maxRetries?: number;            // Default: 3
-  retryDelay?: number;            // Default: 1000ms
-  maxBackoff?: number;            // Default: 30000ms
-  maxQueueSize?: number;          // Default: 100
-  persistQueue?: boolean;         // Default: true
-  storageKey?: string;            // Default: 'offline_sync_queue'
-  syncOnReconnect?: boolean;      // Default: true
-  syncDelay?: number;             // Default: 1000ms (after reconnect)
+  maxRetries?: number; // Default: 3
+  retryDelay?: number; // Default: 1000ms
+  maxBackoff?: number; // Default: 30000ms
+  maxQueueSize?: number; // Default: 100
+  persistQueue?: boolean; // Default: true
+  storageKey?: string; // Default: 'offline_sync_queue'
+  syncOnReconnect?: boolean; // Default: true
+  syncDelay?: number; // Default: 1000ms (after reconnect)
   conflictStrategy?: ConflictStrategy;
   onConflict?: ConflictHandler;
 }
@@ -382,12 +399,12 @@ examples/offline/
 
 ## Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Race conditions in sync | High | Use mutex/locks |
-| Storage quota exceeded | Medium | Max queue size limit |
-| Stale requests | Medium | TTL on queued items |
-| Memory leaks | Medium | Proper cleanup |
+| Risk                    | Impact | Mitigation           |
+| ----------------------- | ------ | -------------------- |
+| Race conditions in sync | High   | Use mutex/locks      |
+| Storage quota exceeded  | Medium | Max queue size limit |
+| Stale requests          | Medium | TTL on queued items  |
+| Memory leaks            | Medium | Proper cleanup       |
 
 ## Out of Scope
 

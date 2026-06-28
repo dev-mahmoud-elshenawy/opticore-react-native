@@ -76,7 +76,10 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
 
       fetchAll: async () => {
         if (!config.api.fetchAll) {
-          if (__DEV__) console.warn(`[CrudStore:${config.name}] fetchAll called but api.fetchAll is not defined`);
+          if (__DEV__)
+            console.warn(
+              `[CrudStore:${config.name}] fetchAll called but api.fetchAll is not defined`
+            );
           return;
         }
 
@@ -102,7 +105,10 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
 
       fetchById: async (id: string) => {
         if (!config.api.fetchById) {
-          if (__DEV__) console.warn(`[CrudStore:${config.name}] fetchById called but api.fetchById is not defined`);
+          if (__DEV__)
+            console.warn(
+              `[CrudStore:${config.name}] fetchById called but api.fetchById is not defined`
+            );
           return;
         }
 
@@ -128,7 +134,8 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
 
       create: async (data: Partial<T>) => {
         if (!config.api.create) {
-          if (__DEV__) console.warn(`[CrudStore:${config.name}] create called but api.create is not defined`);
+          if (__DEV__)
+            console.warn(`[CrudStore:${config.name}] create called but api.create is not defined`);
           return;
         }
 
@@ -154,7 +161,8 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
 
       update: async (id: string, data: Partial<T>) => {
         if (!config.api.update) {
-          if (__DEV__) console.warn(`[CrudStore:${config.name}] update called but api.update is not defined`);
+          if (__DEV__)
+            console.warn(`[CrudStore:${config.name}] update called but api.update is not defined`);
           return;
         }
 
@@ -186,7 +194,8 @@ export function createCrudStore<T extends Identifiable, CustomActions extends ob
 
       delete: async (id: string) => {
         if (!config.api.delete) {
-          if (__DEV__) console.warn(`[CrudStore:${config.name}] delete called but api.delete is not defined`);
+          if (__DEV__)
+            console.warn(`[CrudStore:${config.name}] delete called but api.delete is not defined`);
           return;
         }
 

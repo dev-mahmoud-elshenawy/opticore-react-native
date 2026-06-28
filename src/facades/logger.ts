@@ -17,7 +17,8 @@ import type { LogLevel } from '../infrastructure/logger/LogLevel';
  */
 export const logger = {
   // --- logging ---
-  debug: (message: string, ...args: unknown[]): void => Logger.getInstance().debug(message, ...args),
+  debug: (message: string, ...args: unknown[]): void =>
+    Logger.getInstance().debug(message, ...args),
   info: (message: string, ...args: unknown[]): void => Logger.getInstance().info(message, ...args),
   warn: (message: string, ...args: unknown[]): void => Logger.getInstance().warn(message, ...args),
   error: (message: string, error?: Error, ...args: unknown[]): void =>

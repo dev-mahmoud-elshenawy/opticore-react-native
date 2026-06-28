@@ -44,7 +44,7 @@ export class LocalStorage implements IStorage {
       } catch (parseError) {
         Logger.getInstance().warn(
           `[LocalStorage] Failed to parse value for key "${key}", returning null`,
-          parseError as Error,
+          parseError as Error
         );
         return null;
       }

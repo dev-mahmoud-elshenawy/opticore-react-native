@@ -10,6 +10,7 @@
 ## Problem Statement
 
 The Logger currently:
+
 1. **Hardcodes ANSI escape codes** (`\x1b[31m`) that render as raw text in React Native device logs (Logcat/Xcode Console don't interpret ANSI).
 2. **Only outputs to `console.*`** - no way to add Sentry, Datadog, Crashlytics, or file-based logging.
 3. **Violates Dependency Inversion** - directly depends on `console` instead of an abstraction.

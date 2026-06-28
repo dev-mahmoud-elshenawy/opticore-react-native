@@ -5,7 +5,7 @@ import { assertNonEmptyString } from '../assertions';
 export function validateFormsConfig(
   forms: FormsConfig,
   errors: ValidationIssue[],
-  _warnings: ValidationIssue[],
+  _warnings: ValidationIssue[]
 ): void {
   if (forms.defaultCurrency !== undefined) {
     assertNonEmptyString(forms.defaultCurrency, 'forms.defaultCurrency', errors);

@@ -21,15 +21,18 @@ Fix all 50 failing tests caused by React 19 API changes, ensure perfect integrat
 ## Critical Files
 
 **Test Utilities**:
+
 - `test/utils/react19Helpers.ts` - NEW: React 19 compatible helpers
 
 **Failing Tests** (50 total):
+
 - `test/hooks/*.test.ts` (11 files)
 - `test/providers/*.test.tsx` (2 files)
 - `test/navigation/RouteHelper.test.ts`
 - `test/config/CoreSetup.test.ts`
 
 **Integration Points to Test**:
+
 - [src/providers/CoreProvider.tsx](../../src/providers/CoreProvider.tsx)
 - [src/config/CoreSetup.ts](../../src/config/CoreSetup.ts)
 - [src/infrastructure/network/interceptors/ErrorInterceptor.ts](../../src/infrastructure/network/interceptors/ErrorInterceptor.ts)
@@ -75,23 +78,27 @@ Fix all 50 failing tests caused by React 19 API changes, ensure perfect integrat
 ## Implementation Phases
 
 **Phase A: Test Utilities** (1-2 hours)
+
 - Create React 19 compatible renderHook wrapper
 - Create React 19 compatible act wrapper
 - Create test setup helpers
 
 **Phase B: Fix Failing Tests** (4-6 hours)
+
 - Update all 11 hook tests
 - Fix 2 provider tests (Fragment issues)
 - Fix navigation test
 - Fix config test
 
 **Phase C: Integration Tests** (2-3 hours)
+
 - CoreProvider initialization
 - ApiClient → Error flow
 - State → Error integration
 - Hooks → Infrastructure
 
 **Phase D: Quality Sweep** (2-3 hours)
+
 - TypeScript strict mode check
 - ESLint fixes
 - JSDoc coverage

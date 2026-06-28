@@ -17,7 +17,6 @@ export function createRNClipboardAdapter(): ClipboardAdapter | null {
 
   let clipboard: ClipboardModule;
   try {
-     
     const mod = require('@react-native-clipboard/clipboard');
     clipboard = (mod?.default ?? mod) as ClipboardModule;
   } catch {

@@ -1,21 +1,32 @@
-import { copyToClipboard, getClipboard, isIOS, isAndroid, isWeb } from '../../src/utils/platform';
-import Clipboard from '@react-native-clipboard/clipboard';
+import {
+  copyToClipboard,
+  getClipboard,
+  isIOS,
+  isAndroid,
+  isWeb,
+  configurePlatformAdapters,
+} from '../../src/utils/platform';
 import { Platform } from 'react-native';
-
-jest.mock('@react-native-clipboard/clipboard', () => ({
-  setString: jest.fn(),
-  getString: jest.fn(),
-}));
 
 describe('Platform Utilities', () => {
   describe('Clipboard', () => {
+    const mockSetString = jest.fn();
+    const mockGetString = jest.fn();
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      configurePlatformAdapters({
+        clipboard: { setString: mockSetString, getString: mockGetString },
+      });
+    });
+
     it('copies text to clipboard', () => {
       copyToClipboard('test');
-      expect(Clipboard.setString).toHaveBeenCalledWith('test');
+      expect(mockSetString).toHaveBeenCalledWith('test');
     });
 
     it('gets text from clipboard', async () => {
-      (Clipboard.getString as jest.Mock).mockResolvedValue('test');
+      mockGetString.mockResolvedValue('test');
       const text = await getClipboard();
       expect(text).toBe('test');
     });

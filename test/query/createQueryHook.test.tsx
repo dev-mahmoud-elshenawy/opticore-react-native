@@ -5,7 +5,7 @@ import { createQueryHook } from '../../src/query/createQueryHook';
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const [client] = React.useState(
-    () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
+    () => new QueryClient({ defaultOptions: { queries: { retry: false } } })
   );
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }

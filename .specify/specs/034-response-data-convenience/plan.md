@@ -45,7 +45,7 @@ CLAUDE.md                 # EDIT: header note/version/spec list/footer
 Extend the existing `api` object with a `data` sub-object that reuses the same forwarding but returns `.data`:
 
 ```ts
-const unwrap = <T>(p: Promise<ApiResponse<T>>): Promise<T> => p.then(r => r.data);
+const unwrap = <T>(p: Promise<ApiResponse<T>>): Promise<T> => p.then((r) => r.data);
 
 export const api = {
   // ...existing request/get/post/put/patch/delete (unchanged, return ApiResponse<T>)...

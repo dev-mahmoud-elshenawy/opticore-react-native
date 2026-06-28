@@ -36,8 +36,8 @@ coreSetup.init({
 
 ```typescript
 interface CoreConfig {
-  api: ApiConfig;                                    // Required
-  query?: QueryClientConfig;                         // React Query options, merged onto defaults
+  api: ApiConfig; // Required
+  query?: QueryClientConfig; // React Query options, merged onto defaults
   logger?: CoreLoggerConfig;
   theme?: CoreThemeConfig;
   offline?: OfflineSyncConfig;
@@ -45,8 +45,8 @@ interface CoreConfig {
   forms?: FormsConfig;
   errorClassification?: ErrorClassificationConfig;
   features?: FeaturesConfig;
-  onError?: ErrorHandler;                            // (error: unknown) => void
-  adapters?: OptiCoreAdapters;                       // Override native module adapters
+  onError?: ErrorHandler; // (error: unknown) => void
+  adapters?: OptiCoreAdapters; // Override native module adapters
 }
 ```
 
@@ -57,7 +57,7 @@ interface CoreConfig {
 ```typescript
 interface ApiConfig {
   baseURL: string;
-  timeout?: number;                                  // default: 30000 ms
+  timeout?: number; // default: 30000 ms
   headers?: Record<string, string>;
   getAuthToken?: () => string | null | Promise<string | null>;
   onTokenRefresh?: () => Promise<string | null>;
@@ -65,14 +65,14 @@ interface ApiConfig {
 }
 ```
 
-| Property | Type | Default | Description |
-|---|---|---|---|
-| `baseURL` | `string` | — | Base URL for all requests |
-| `timeout` | `number` | `30000` | Request timeout in milliseconds |
-| `headers` | `object` | `{}` | Default headers on every request |
-| `getAuthToken` | `() => string \| null \| Promise<string \| null>` | — | Called before each request to get the current auth token |
-| `onTokenRefresh` | `() => Promise<string \| null>` | — | Called on 401 to refresh the token, then retries the original request |
-| `authStrategy` | `AuthStrategy` | `NoAuthStrategy` | Auth strategy instance — overrides `getAuthToken`/`onTokenRefresh` |
+| Property         | Type                                              | Default          | Description                                                           |
+| ---------------- | ------------------------------------------------- | ---------------- | --------------------------------------------------------------------- |
+| `baseURL`        | `string`                                          | —                | Base URL for all requests                                             |
+| `timeout`        | `number`                                          | `30000`          | Request timeout in milliseconds                                       |
+| `headers`        | `object`                                          | `{}`             | Default headers on every request                                      |
+| `getAuthToken`   | `() => string \| null \| Promise<string \| null>` | —                | Called before each request to get the current auth token              |
+| `onTokenRefresh` | `() => Promise<string \| null>`                   | —                | Called on 401 to refresh the token, then retries the original request |
+| `authStrategy`   | `AuthStrategy`                                    | `NoAuthStrategy` | Auth strategy instance — overrides `getAuthToken`/`onTokenRefresh`    |
 
 **Examples:**
 
@@ -110,14 +110,14 @@ api: {
 
 ```typescript
 interface CoreLoggerConfig {
-  level?: LogLevel;           // default: LogLevel.INFO
-  disabled?: boolean;         // default: false
+  level?: LogLevel; // default: LogLevel.INFO
+  disabled?: boolean; // default: false
 }
 
 enum LogLevel {
   DEBUG = 0,
-  INFO  = 1,
-  WARN  = 2,
+  INFO = 1,
+  WARN = 2,
   ERROR = 3,
 }
 ```
@@ -137,10 +137,10 @@ logger: {
 
 ```typescript
 interface CoreThemeConfig {
-  defaultMode?: ThemeMode;        // 'light' | 'dark' | 'system' — default: 'system'
-  persistMode?: boolean;          // default: true — saves mode to storage
-  storageKey?: string;            // default: '@opticore/theme_mode'
-  followSystem?: boolean;         // default: true — respects OS dark mode
+  defaultMode?: ThemeMode; // 'light' | 'dark' | 'system' — default: 'system'
+  persistMode?: boolean; // default: true — saves mode to storage
+  storageKey?: string; // default: '@opticore/theme_mode'
+  followSystem?: boolean; // default: true — respects OS dark mode
   customThemes?: Record<string, Theme>;
 }
 ```
@@ -161,14 +161,14 @@ theme: {
 
 ```typescript
 interface OfflineSyncConfig {
-  maxRetries?: number;            // default: 3
-  retryDelay?: number;            // default: 1000 ms
-  maxBackoff?: number;            // default: 30000 ms
-  maxQueueSize?: number;          // default: 100
-  persistQueue?: boolean;         // default: true
-  syncOnReconnect?: boolean;      // default: true
-  syncDelay?: number;             // default: 1000 ms after reconnect
-  conflictStrategy?: 'client-wins' | 'server-wins' | 'manual';  // default: 'server-wins'
+  maxRetries?: number; // default: 3
+  retryDelay?: number; // default: 1000 ms
+  maxBackoff?: number; // default: 30000 ms
+  maxQueueSize?: number; // default: 100
+  persistQueue?: boolean; // default: true
+  syncOnReconnect?: boolean; // default: true
+  syncDelay?: number; // default: 1000 ms after reconnect
+  conflictStrategy?: 'client-wins' | 'server-wins' | 'manual'; // default: 'server-wins'
 }
 ```
 
@@ -190,9 +190,9 @@ Customize breakpoints used by `useResponsive()`.
 ```typescript
 interface ResponsiveConfig {
   breakpoints?: {
-    small?: number;     // default: 360
-    medium?: number;    // default: 768
-    large?: number;     // default: 1024
+    small?: number; // default: 360
+    medium?: number; // default: 768
+    large?: number; // default: 1024
   };
 }
 ```
@@ -213,9 +213,9 @@ responsive: {
 
 ```typescript
 interface FormsConfig {
-  defaultPhoneFormat?: string;                  // default format pattern for phone numbers
-  defaultCurrency?: string;                     // default currency code
-  customCardPatterns?: Record<string, RegExp>;  // custom credit-card validation patterns
+  defaultPhoneFormat?: string; // default format pattern for phone numbers
+  defaultCurrency?: string; // default currency code
+  customCardPatterns?: Record<string, RegExp>; // custom credit-card validation patterns
 }
 ```
 
@@ -258,9 +258,9 @@ ErrorClassifier.addRule({
 
 ```typescript
 interface FeaturesConfig {
-  debugMode?: boolean;            // Forces LogLevel.DEBUG, enables extra logging
-  maintenanceMode?: boolean;      // You can check this to show a maintenance screen
-  offlineMode?: boolean;          // Force offline mode (useful for testing)
+  debugMode?: boolean; // Forces LogLevel.DEBUG, enables extra logging
+  maintenanceMode?: boolean; // You can check this to show a maintenance screen
+  offlineMode?: boolean; // Force offline mode (useful for testing)
 }
 ```
 
@@ -283,7 +283,7 @@ onError: (error: unknown) => {
   Sentry.captureException(error);
   // or log
   Logger.getInstance().error('Global error', error as Error);
-}
+};
 ```
 
 ---
@@ -364,9 +364,9 @@ try {
   coreSetup.init(config);
 } catch (error) {
   if (error instanceof ConfigValidationError) {
-    console.error(error.message);          // Formatted summary of all errors
-    console.log(error.result.errors);      // Array of ValidationIssue[]
-    console.log(error.result.warnings);    // Non-blocking warnings
+    console.error(error.message); // Formatted summary of all errors
+    console.log(error.result.errors); // Array of ValidationIssue[]
+    console.log(error.result.warnings); // Non-blocking warnings
   }
 }
 ```
@@ -396,30 +396,30 @@ ConfigValidator.validateOrThrow(config); // throws ConfigValidationError
 
 ### What Is Validated
 
-| Section | Rules |
-|---|---|
-| `api.baseURL` | Required, must be a valid URL |
-| `api.timeout` | Must be a positive number. Warns if < 1s or > 120s |
-| `logger.level` | Must be a valid `LogLevel` enum value |
-| `logger.disabled` | Must be a boolean. Warns if level is set while disabled |
-| `responsive.breakpoints` | Must be positive numbers in ascending order (small < medium < large) |
-| `offline.maxRetries` | Must be a non-negative integer. Warns if > 10 |
-| `offline.retryDelay` | Must be non-negative. Must not exceed `maxBackoff` |
-| `offline.maxQueueSize` | Must be a positive integer |
+| Section                    | Rules                                                                                                |
+| -------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `api.baseURL`              | Required, must be a valid URL                                                                        |
+| `api.timeout`              | Must be a positive number. Warns if < 1s or > 120s                                                   |
+| `logger.level`             | Must be a valid `LogLevel` enum value                                                                |
+| `logger.disabled`          | Must be a boolean. Warns if level is set while disabled                                              |
+| `responsive.breakpoints`   | Must be positive numbers in ascending order (small < medium < large)                                 |
+| `offline.maxRetries`       | Must be a non-negative integer. Warns if > 10                                                        |
+| `offline.retryDelay`       | Must be non-negative. Must not exceed `maxBackoff`                                                   |
+| `offline.maxQueueSize`     | Must be a positive integer                                                                           |
 | `offline.conflictStrategy` | Must be `'client-wins'`, `'server-wins'`, or `'manual'`. `'manual'` requires an `onConflict` handler |
-| `theme.defaultMode` | Must be `'light'`, `'dark'`, or `'system'` |
-| `theme.storageKey` | Must be a non-empty string |
-| `theme.customThemes` | Each theme must have `name`, `mode`, `colors`, `spacing`, `typography`, `borderRadius`, `shadows` |
-| `forms.defaultCurrency` | Must be a non-empty string |
-| `forms.defaultPhoneFormat` | Must be a non-empty string |
+| `theme.defaultMode`        | Must be `'light'`, `'dark'`, or `'system'`                                                           |
+| `theme.storageKey`         | Must be a non-empty string                                                                           |
+| `theme.customThemes`       | Each theme must have `name`, `mode`, `colors`, `spacing`, `typography`, `borderRadius`, `shadows`    |
+| `forms.defaultCurrency`    | Must be a non-empty string                                                                           |
+| `forms.defaultPhoneFormat` | Must be a non-empty string                                                                           |
 
 ### ValidationIssue Shape
 
 ```typescript
 interface ValidationIssue {
-  path: string;       // e.g., "api.timeout", "offline.maxRetries"
-  message: string;    // e.g., "must be a positive number"
-  value?: unknown;    // The actual invalid value (omitted for missing fields)
+  path: string; // e.g., "api.timeout", "offline.maxRetries"
+  message: string; // e.g., "must be a positive number"
+  value?: unknown; // The actual invalid value (omitted for missing fields)
 }
 ```
 

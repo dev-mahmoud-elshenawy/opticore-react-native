@@ -10,6 +10,7 @@
 ## Problem Statement
 
 The ApiClient currently:
+
 1. **Hardcodes 3 interceptors** (Auth, Logging, Error) in the constructor. Consuming apps cannot add custom interceptors (rate limiting, analytics, caching, retry) without modifying source.
 2. **Auth strategy is fixed** - Bearer token injection only. No support for API keys, OAuth PKCE, certificate pinning, or custom auth schemes.
 3. **GET/POST/PUT/DELETE/PATCH are private** - Consuming apps must use them through the singleton but can't extend request behavior.

@@ -7,13 +7,13 @@ import { hexToRgb, rgbToHex, lighten, darken } from '../utils/color';
  * @returns Rgba string
  */
 export function alpha(color: string, opacity: number): string {
-    const rgb = hexToRgb(color);
-    if (!rgb) return color;
+  const rgb = hexToRgb(color);
+  if (!rgb) return color;
 
-    // Clamp opacity between 0 and 1
-    const a = Math.max(0, Math.min(1, opacity));
+  // Clamp opacity between 0 and 1
+  const a = Math.max(0, Math.min(1, opacity));
 
-    return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${a})`;
+  return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${a})`;
 }
 
 /**
@@ -23,11 +23,11 @@ export function alpha(color: string, opacity: number): string {
  * @param b - Blue (0-255)
  */
 function getLuminance(r: number, g: number, b: number): number {
-    const [rs, gs, bs] = [r, g, b].map(c => {
-        c = c / 255;
-        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-    });
-    return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+  const [rs, gs, bs] = [r, g, b].map((c) => {
+    c = c / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
 }
 
 /**
@@ -37,16 +37,16 @@ function getLuminance(r: number, g: number, b: number): number {
  * @returns 'light' | 'dark'
  */
 export function contrast(color: string): 'light' | 'dark' {
-    const rgb = hexToRgb(color);
-    if (!rgb) return 'dark'; // Default to dark text if invalid
+  const rgb = hexToRgb(color);
+  if (!rgb) return 'dark'; // Default to dark text if invalid
 
-    const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
+  const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
 
-    // 0.179 is the WCAG-correct crossover: it's the background luminance at which
-    // black text and white text yield equal 4.5:1 contrast. Above it, dark text
-    // wins; below it, light text. (The common 0.5 threshold picks low-contrast
-    // text on mid-tone backgrounds.)
-    return luminance > 0.179 ? 'dark' : 'light';
+  // 0.179 is the WCAG-correct crossover: it's the background luminance at which
+  // black text and white text yield equal 4.5:1 contrast. Above it, dark text
+  // wins; below it, light text. (The common 0.5 threshold picks low-contrast
+  // text on mid-tone backgrounds.)
+  return luminance > 0.179 ? 'dark' : 'light';
 }
 
 // Re-export existing utilities

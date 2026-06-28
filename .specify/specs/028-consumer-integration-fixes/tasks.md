@@ -10,8 +10,8 @@ Each task ≤ 30 min. Order: ① → ④ → ③ → docs → validate.
 - [x] T02 Add `./navigation` subpath to `package.json` `exports` (types/import/require).
 - [x] T03 Add `"expo-router": { "optional": true }` to `peerDependenciesMeta`.
 - [~] T04 (Optional) SKIPPED — Metro resolves `require()` targets at bundle time regardless of
-      try/catch, so a guard can't improve the build-time experience; static import is correct
-      now that navigation is subpath-only.
+  try/catch, so a guard can't improve the build-time experience; static import is correct
+  now that navigation is subpath-only.
 - [x] T05 Test: `test/index.test.ts` asserts main-barrel excludes `useRouteHelper`; removed the
       now-unneeded `jest.mock('expo-router')` (proof the barrel no longer pulls it in).
 

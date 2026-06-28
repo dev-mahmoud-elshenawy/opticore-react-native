@@ -1,8 +1,8 @@
 # Claude Development Guide for OptiCore React Native
 
 **Package**: `opticore-react-native`
-**Version**: 2.8.0
-**Last Updated**: 2026-06-25 (v2.8.0: ergonomic facades — new `api`/`storage`/`logger` exports (root barrel + `opticore-react-native/facades` subpath) remove `.getInstance()` boilerplate; `api` adds verb sugar `get/post/put/patch/delete` over the enum `request()` (generic `T` per-call, defaults to `unknown`, returns `ApiResponse<T>`). Facades delegate lazily (side-effect-free import) and inherit `request()`'s init guard; `ApiClient` verbs stay private (spec 028). Advanced ops (interceptors, `addTransport`, `clearAll`) stay on the singletons. Purely additive, non-breaking. Spec 032. v2.7.0: error system RN alignment — `OptiCoreErrorBoundary` now always converges a caught error to a fallback (removed the `NON_RENDER` re-render branch that could infinite-loop); boundary logging wrapped so a failing `Logger` can't crash it; **throwing `NonRenderError` is deprecated** — it's a descriptor/log payload (RN Error Boundaries can't catch the async/event errors it describes), use `Logger`/`Result<T,E>` instead; boundary `NON_RENDER` handling + throw semantics slated for removal in 3.0; error docs realigned to the three-outcome RN model. Non-breaking. Spec 031. v2.6.0: transient retry handling — `ApiError` gains `isRetryable`/`retryAfterMs`; `408`/`429` reclassified as retryable not actionable; `createQueryClient` retry/retryDelay honor `Retry-After`; `RequestConfig` contract fix (`body`→`data`); side-effect-free imports. Spec 030. v2.5.0: core-hardening round 2 — log token redaction, offline data-loss fixes (conflict-retry budget, fresh-token replay, per-item maxRetries), **default conflict strategy now server-wins** + `ConflictStrategy` constant, SecureStorage concurrency safety, useFieldValidation/useAsyncState race guards, credit-card 16-digit cap, `request()` params/DELETE-body, `useFormState` control/register, `sideEffects:false` + `react-native` export condition, CoreSetup StrictMode idempotency, theme listener cleanup. Spec 029. v2.4.0: core-hardening pass — logger prod-output, durable offline persistence, dispose/cleanup fixes, real `useThrottle`, single canonical `HttpMethod` enum, new `config`/`error`/`infrastructure`/`providers`/`query` subpath exports, WCAG contrast, plus assorted hook/theme/forms/storage correctness fixes. v2.3.0: offline conflict shape fix, single-flight token refresh, request cancellation. v2.2.0: `createQueryHook`, `useApiMutation`, `createQueryPersister`, `useTextStyle` + type guards.)
+**Version**: 3.0.0
+**Last Updated**: 2026-06-29 (v3.0.0: facade-complete API — `api` verbs now return `T` directly (BREAKING: drop `.data`); `api.request`/`api.data` removed; five new facades: `connectivity`, `offline`, `themeControl`, `lifecycle`, `stateObserver` (root barrel + `opticore-react-native/facades`); `opticore-react-native/testing` subpath ships `createMemoryAdapters` + `resetOptiCore`. v2.8.0: ergonomic facades — `api`/`storage`/`logger` exported directly, `api` verb sugar. v2.7.0: error boundary RN alignment. v2.6.0: transient retry handling. v2.5.0: core-hardening round 2. v2.4.0: core-hardening pass.)
 **Target Platforms**: iOS & Android ONLY
 
 > **📖 Spec Kit Reference**: See [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete specification-driven development guide
@@ -35,14 +35,14 @@
 4. [CRITICAL: Workflow Adherence](#critical-workflow-adherence)
 5. [Development Workflow](#development-workflow)
 6. [Specification-First Process](#specification-first-process)
-6. [Implementation Guidelines](#implementation-guidelines)
-7. [Quality Standards](#quality-standards)
-8. [Testing Requirements](#testing-requirements)
-9. [Code Standards](#code-standards)
-10. [Common Tasks & Commands](#common-tasks--commands)
-11. [File Organization](#file-organization)
-12. [What to Build vs. What NOT to Build](#what-to-build-vs-what-not-to-build)
-13. [Troubleshooting](#troubleshooting)
+7. [Implementation Guidelines](#implementation-guidelines)
+8. [Quality Standards](#quality-standards)
+9. [Testing Requirements](#testing-requirements)
+10. [Code Standards](#code-standards)
+11. [Common Tasks & Commands](#common-tasks--commands)
+12. [File Organization](#file-organization)
+13. [What to Build vs. What NOT to Build](#what-to-build-vs-what-not-to-build)
+14. [Troubleshooting](#troubleshooting)
 
 ## CRITICAL: Workflow Adherence
 
@@ -50,6 +50,7 @@
 > **YOU MUST FOLLOW THE WORKFLOWS DEFINED IN [`.agent/workflows/`](.agent/workflows/)**
 >
 > Before starting any task, open the relevant workflow and follow it step-by-step:
+>
 > - **Spec Implementation**: [`.agent/workflows/spec_implementation_flow.md`](.agent/workflows/spec_implementation_flow.md)
 > - **Git Flow**: [`.agent/workflows/spec_git_alignment.md`](.agent/workflows/spec_git_alignment.md)
 > - **Critical Enforcement**: [`.agent/workflows/critical_workflow_enforcement.md`](.agent/workflows/critical_workflow_enforcement.md)
@@ -167,7 +168,7 @@ runtime via a **resolver chain**.
 3. **`nativeModulePresent` / `loadOptionalNativeModule`**
    (`src/adapters/defaults/nativeModulePresent.ts`) — the guard that probes
    `TurboModuleRegistry.get` / `NativeModules` **without throwing**. Any default
-   adapter wrapping a *bare* RN native lib (clipboard, device-info, NetInfo) must
+   adapter wrapping a _bare_ RN native lib (clipboard, device-info, NetInfo) must
    gate its `require` through this, or it red-boxes in Expo Go. Exported for
    consumers to wrap their own native deps the same way.
 
@@ -486,11 +487,11 @@ function parseJsonSafely(json: string): any {
 errors thrown during render; they do NOT catch event handlers, async/promises, or
 timers. So the model below maps to how RN actually intercepts errors:
 
-| Outcome | Mechanism | Type |
-|---------|-----------|------|
-| **Replace the screen** (render-path crash) | thrown → `OptiCoreErrorBoundary` → fallback | `RenderError` (thrown) |
-| **Notify** (toast/banner, screen stays) | catch site updates state → re-render of the host | `NonRenderError` as a **payload**, not thrown |
-| **Silent** (log / retry only) | `Logger` / `Result<T, E>` | `NonRenderError` as payload, or none |
+| Outcome                                    | Mechanism                                        | Type                                          |
+| ------------------------------------------ | ------------------------------------------------ | --------------------------------------------- |
+| **Replace the screen** (render-path crash) | thrown → `OptiCoreErrorBoundary` → fallback      | `RenderError` (thrown)                        |
+| **Notify** (toast/banner, screen stays)    | catch site updates state → re-render of the host | `NonRenderError` as a **payload**, not thrown |
+| **Silent** (log / retry only)              | `Logger` / `Result<T, E>`                        | `NonRenderError` as payload, or none          |
 
 ```typescript
 import { RenderError, NonRenderError } from 'opticore-react-native/error';
@@ -1608,7 +1609,7 @@ Browse `.specify/specs/` for examples of completed specs:
 Peer baseline is **Expo SDK 54**. The dev/test toolchain is pinned to SDK 54
 (react `19.1.0`, react-native `~0.81.0`, expo `54.0.32`, expo-router `~6.0.0`)
 so the library is built and tested against the SDK consumers actually run.
-Note: Expo Go runs only the *latest* SDK — an SDK-54 app opens in a dev build,
+Note: Expo Go runs only the _latest_ SDK — an SDK-54 app opens in a dev build,
 not necessarily in the store Expo Go if it has moved to a newer SDK.
 
 - **Required peers** (consumer-provided): `react >=19.0.0`, `react-native >=0.78.0`,
@@ -1641,8 +1642,8 @@ not necessarily in the store Expo Go if it has moved to a newer SDK.
 
 ---
 
-**Last Updated**: 2026-06-25
-**Version**: 2.8.0
+**Last Updated**: 2026-06-29
+**Version**: 3.0.0
 **Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**

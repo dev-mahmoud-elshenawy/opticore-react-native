@@ -13,6 +13,7 @@
 resolves expo-router; the peer is also non-optional → install conflict.
 
 **Changes**:
+
 1. `src/index.ts`: remove `export * from './navigation';`.
 2. `package.json` `exports`: add
    ```json
@@ -42,6 +43,7 @@ enum-based `request({ method: HttpMethod.X, url, data?, headers? })`. Fix the **
 code.
 
 **Changes**:
+
 1. Update docs that use `apiClient.get()/post()/put()/delete()` to the enum form, e.g.
    `await apiClient.request({ method: HttpMethod.GET, url: '/users' })`.
    Files: `docs/MIGRATION.md`, `docs/TESTING.md`, `docs/TYPES.md`, `docs/api/STATE.md`,
@@ -56,6 +58,7 @@ code.
 before parent effects, so early API calls see an unconfigured client.
 
 **Changes**:
+
 1. `OptiCoreProvider.tsx`: move the synchronous configuration (StorageManager.configure,
    configurePlatformAdapters, CoreSetup.init, ConnectivityManager.configure) out of `useEffect`
    into a render-phase, ref-guarded block that runs once before children render:
@@ -89,16 +92,16 @@ idempotent and guarded; this is the established pattern for "configure before ch
 
 ## File Change Summary
 
-| File | Change |
-|---|---|
-| `src/index.ts` | remove `export * from './navigation'` |
-| `package.json` | add `./navigation` export; `expo-router` optional peer; bump 1.2.0 |
-| `src/navigation/RouteHelper.ts` | (optional) guarded require + helpful error |
-| `src/config/CoreSetup.ts` | add `isInitialized()` |
-| `src/providers/OptiCoreProvider.tsx` | render-phase, ref-guarded setup; dispose in effect |
-| `docs/*`, `README.md` | enum-based `request()` examples; navigation subpath import |
-| `test/**` | navigation barrel test, request() type-test, provider-init test |
-| `CHANGELOG.md` | 1.2.0 entry with migration note |
+| File                                 | Change                                                             |
+| ------------------------------------ | ------------------------------------------------------------------ |
+| `src/index.ts`                       | remove `export * from './navigation'`                              |
+| `package.json`                       | add `./navigation` export; `expo-router` optional peer; bump 1.2.0 |
+| `src/navigation/RouteHelper.ts`      | (optional) guarded require + helpful error                         |
+| `src/config/CoreSetup.ts`            | add `isInitialized()`                                              |
+| `src/providers/OptiCoreProvider.tsx` | render-phase, ref-guarded setup; dispose in effect                 |
+| `docs/*`, `README.md`                | enum-based `request()` examples; navigation subpath import         |
+| `test/**`                            | navigation barrel test, request() type-test, provider-init test    |
+| `CHANGELOG.md`                       | 1.2.0 entry with migration note                                    |
 
 ## Migration Notes (for consumers)
 

@@ -26,7 +26,6 @@ const mockLoggerError = jest.fn();
   debug: jest.fn(),
 });
 
-
 describe('Integration: ApiClient → Error Flow', () => {
   let client: ApiClient;
 

@@ -15,14 +15,14 @@ Rework the OfflineSyncManager module (scored 4/10 in review) to production quali
 
 ## Constitution Check
 
-| Principle | Status | Notes |
-|---|---|---|
-| Pure Infrastructure | PASS | Offline sync is infrastructure |
-| TypeScript Strict | PASS | Remove `any` casts where possible |
-| TDD Required | PASS | Tests first each phase |
-| 80%+ Coverage | PASS | Target: all offline files |
-| SOLID - DIP | FIX | SyncEngine currently violates DIP |
-| SOLID - SRP | FIX | OfflineSyncManager has too many responsibilities |
+| Principle           | Status | Notes                                            |
+| ------------------- | ------ | ------------------------------------------------ |
+| Pure Infrastructure | PASS   | Offline sync is infrastructure                   |
+| TypeScript Strict   | PASS   | Remove `any` casts where possible                |
+| TDD Required        | PASS   | Tests first each phase                           |
+| 80%+ Coverage       | PASS   | Target: all offline files                        |
+| SOLID - DIP         | FIX    | SyncEngine currently violates DIP                |
+| SOLID - SRP         | FIX    | OfflineSyncManager has too many responsibilities |
 
 ## Source Code Structure
 

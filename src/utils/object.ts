@@ -6,12 +6,10 @@
  */
 export function get(obj: Record<string, unknown>, path: string, fallback?: unknown): unknown {
   if (!obj || !path) return fallback;
-  const result = path
-    .split('.')
-    .reduce<unknown>((acc, part) => {
-      const record = acc as Record<string, unknown> | null | undefined;
-      return record && record[part] !== undefined ? record[part] : undefined;
-    }, obj);
+  const result = path.split('.').reduce<unknown>((acc, part) => {
+    const record = acc as Record<string, unknown> | null | undefined;
+    return record && record[part] !== undefined ? record[part] : undefined;
+  }, obj);
   return result !== undefined ? result : fallback;
 }
 
@@ -20,7 +18,10 @@ export function get(obj: Record<string, unknown>, path: string, fallback?: unkno
  * @param target - Target object
  * @param source - Source object
  */
-export function deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
+export function deepMerge(
+  target: Record<string, unknown>,
+  source: Record<string, unknown>
+): Record<string, unknown> {
   if (!isObject(target) || !isObject(source)) {
     return source;
   }
@@ -32,7 +33,10 @@ export function deepMerge(target: Record<string, unknown>, source: Record<string
       if (!(key in target)) {
         Object.assign(output, { [key]: source[key] });
       } else {
-        output[key] = deepMerge(target[key] as Record<string, unknown>, source[key] as Record<string, unknown>);
+        output[key] = deepMerge(
+          target[key] as Record<string, unknown>,
+          source[key] as Record<string, unknown>
+        );
       }
     } else {
       Object.assign(output, { [key]: source[key] });

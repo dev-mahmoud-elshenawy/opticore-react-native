@@ -4,92 +4,88 @@ import { Logger } from '../infrastructure/logger/Logger';
 import type { Theme, ThemeMode } from './types';
 
 export interface ThemeContextValue {
-    theme: Theme;
-    mode: ThemeMode;
-    activeMode: 'light' | 'dark';
-    setMode: (mode: ThemeMode) => void;
-    toggleMode: () => void;
-    isDark: boolean;
-    isLight: boolean;
-    isSystem: boolean;
+  theme: Theme;
+  mode: ThemeMode;
+  activeMode: 'light' | 'dark';
+  setMode: (mode: ThemeMode) => void;
+  toggleMode: () => void;
+  isDark: boolean;
+  isLight: boolean;
+  isSystem: boolean;
 }
 
 export const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export interface ThemeProviderProps {
-    children: ReactNode;
-    defaultMode?: ThemeMode;
-    // Optional: Allow overriding the manager for testing or advanced use
-    manager?: ThemeManager;
+  children: ReactNode;
+  defaultMode?: ThemeMode;
+  // Optional: Allow overriding the manager for testing or advanced use
+  manager?: ThemeManager;
 }
 
 /**
  * Provider component that bridges ThemeManager state to React Context.
  */
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
-    children,
-    defaultMode,
-    manager = ThemeManager.getInstance()
+  children,
+  defaultMode,
+  manager = ThemeManager.getInstance(),
 }) => {
-    // Initialize state from manager
-    const [theme, setTheme] = useState<Theme>(manager.getTheme());
-    const [mode, setModeState] = useState<ThemeMode>(manager.getMode());
+  // Initialize state from manager
+  const [theme, setTheme] = useState<Theme>(manager.getTheme());
+  const [mode, setModeState] = useState<ThemeMode>(manager.getMode());
 
-    useEffect(() => {
-        // Configure if defaultMode provided
-        if (defaultMode) {
-            manager.configure({ defaultMode });
-        }
+  useEffect(() => {
+    // Configure if defaultMode provided
+    if (defaultMode) {
+      manager.configure({ defaultMode });
+    }
 
-        // Initialize manager (restores persistence)
-        manager.init().catch(err => {
-            Logger.getInstance().warn('[ThemeProvider] Failed to initialize ThemeManager', err as Error);
-        });
+    // Initialize manager (restores persistence)
+    manager.init().catch((err) => {
+      Logger.getInstance().warn('[ThemeProvider] Failed to initialize ThemeManager', err as Error);
+    });
 
-        // Subscribe to changes
-        const unsubscribe = manager.addThemeListener((newTheme, newMode) => {
-            setTheme(newTheme);
-            setModeState(newMode);
-        });
+    // Subscribe to changes
+    const unsubscribe = manager.addThemeListener((newTheme, newMode) => {
+      setTheme(newTheme);
+      setModeState(newMode);
+    });
 
-        // Dispose the manager on unmount ONLY when this provider owns the default
-        // singleton (no custom `manager` prop). Otherwise the Appearance change
-        // listener added by ThemeManager leaks past the provider's lifetime.
-        const ownsManager = manager === ThemeManager.getInstance();
+    // Dispose the manager on unmount ONLY when this provider owns the default
+    // singleton (no custom `manager` prop). Otherwise the Appearance change
+    // listener added by ThemeManager leaks past the provider's lifetime.
+    const ownsManager = manager === ThemeManager.getInstance();
 
-        return () => {
-            unsubscribe();
-            if (ownsManager && typeof manager.dispose === 'function') {
-                manager.dispose();
-            }
-        };
-    }, [manager, defaultMode]);
-
-    const setMode = (newMode: ThemeMode) => {
-        manager.setMode(newMode);
+    return () => {
+      unsubscribe();
+      if (ownsManager && typeof manager.dispose === 'function') {
+        manager.dispose();
+      }
     };
+  }, [manager, defaultMode]);
 
-    const toggleMode = () => {
-        const nextMode = activeMode === 'dark' ? 'light' : 'dark';
-        manager.setMode(nextMode);
-    };
+  const setMode = (newMode: ThemeMode) => {
+    manager.setMode(newMode);
+  };
 
-    const activeMode = manager.getActiveMode();
+  const toggleMode = () => {
+    const nextMode = activeMode === 'dark' ? 'light' : 'dark';
+    manager.setMode(nextMode);
+  };
 
-    const value: ThemeContextValue = {
-        theme,
-        mode,
-        activeMode,
-        setMode,
-        toggleMode,
-        isDark: activeMode === 'dark',
-        isLight: activeMode === 'light',
-        isSystem: mode === 'system',
-    };
+  const activeMode = manager.getActiveMode();
 
-    return (
-        <ThemeContext.Provider value={value}>
-            {children}
-        </ThemeContext.Provider>
-    );
+  const value: ThemeContextValue = {
+    theme,
+    mode,
+    activeMode,
+    setMode,
+    toggleMode,
+    isDark: activeMode === 'dark',
+    isLight: activeMode === 'light',
+    isSystem: mode === 'system',
+  };
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };

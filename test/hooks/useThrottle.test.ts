@@ -12,9 +12,12 @@ describe('useThrottle', () => {
   // Testing throttling requires changing props and advancing timers.
   // Basic test:
   it('should throttle updates', async () => {
-    const { result, rerender } = await renderHookCompat(({ val }: { val: any }) => useThrottle(val, 1000), {
-      initialProps: { val: 'start' },
-    });
+    const { result, rerender } = await renderHookCompat(
+      ({ val }: { val: any }) => useThrottle(val, 1000),
+      {
+        initialProps: { val: 'start' },
+      }
+    );
 
     expect(result.current).toBe('start');
 

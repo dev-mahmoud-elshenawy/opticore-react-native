@@ -6,7 +6,7 @@ import { CardType, CardPattern } from '../types';
 let customPatterns: CardPattern[] = [];
 
 export function registerCustomCardPatterns(patterns: CardPattern[]) {
-    customPatterns = patterns;
+  customPatterns = patterns;
 }
 
 /**
@@ -17,28 +17,31 @@ export function registerCustomCardPatterns(patterns: CardPattern[]) {
  *   explicit array to stay free of the shared module state.
  * @returns The detected card type (enum or custom name) or UNKNOWN
  */
-export function detectCardType(value: string, patterns: CardPattern[] = customPatterns): CardType | string {
-    const cleanValue = value.replace(/\D/g, '');
+export function detectCardType(
+  value: string,
+  patterns: CardPattern[] = customPatterns
+): CardType | string {
+  const cleanValue = value.replace(/\D/g, '');
 
-    // Custom patterns take precedence; return the registered name on a match.
-    for (const patternConfig of patterns) {
-        if (patternConfig.pattern.test(cleanValue)) {
-            return patternConfig.name;
-        }
+  // Custom patterns take precedence; return the registered name on a match.
+  for (const patternConfig of patterns) {
+    if (patternConfig.pattern.test(cleanValue)) {
+      return patternConfig.name;
     }
+  }
 
-    // Standard Types
-    if (/^4/.test(cleanValue)) return CardType.VISA;
-    if (/^5[1-5]/.test(cleanValue)) return CardType.MASTERCARD;
-    if (/^3[47]/.test(cleanValue)) return CardType.AMEX;
-    if (/^6(?:011|5)/.test(cleanValue)) return CardType.DISCOVER;
+  // Standard Types
+  if (/^4/.test(cleanValue)) return CardType.VISA;
+  if (/^5[1-5]/.test(cleanValue)) return CardType.MASTERCARD;
+  if (/^3[47]/.test(cleanValue)) return CardType.AMEX;
+  if (/^6(?:011|5)/.test(cleanValue)) return CardType.DISCOVER;
 
-    // New Types
-    if (/^62/.test(cleanValue)) return CardType.UNIONPAY;
-    if (/^35/.test(cleanValue)) return CardType.JCB;
-    if (/^(30|36|38)/.test(cleanValue)) return CardType.DINERS;
+  // New Types
+  if (/^62/.test(cleanValue)) return CardType.UNIONPAY;
+  if (/^35/.test(cleanValue)) return CardType.JCB;
+  if (/^(30|36|38)/.test(cleanValue)) return CardType.DINERS;
 
-    return CardType.UNKNOWN;
+  return CardType.UNKNOWN;
 }
 
 /**
@@ -47,24 +50,24 @@ export function detectCardType(value: string, patterns: CardPattern[] = customPa
  * @returns True if valid, false otherwise
  */
 export function validateCardNumber(value: string): boolean {
-    const cleanValue = value.replace(/\D/g, '');
-    if (!cleanValue) return false;
+  const cleanValue = value.replace(/\D/g, '');
+  if (!cleanValue) return false;
 
-    let nCheck = 0;
-    let bEven = false;
+  let nCheck = 0;
+  let bEven = false;
 
-    for (let n = cleanValue.length - 1; n >= 0; n--) {
-        let cDigit = parseInt(cleanValue.charAt(n), 10);
+  for (let n = cleanValue.length - 1; n >= 0; n--) {
+    let cDigit = parseInt(cleanValue.charAt(n), 10);
 
-        if (bEven) {
-            if ((cDigit *= 2) > 9) cDigit -= 9;
-        }
-
-        nCheck += cDigit;
-        bEven = !bEven;
+    if (bEven) {
+      if ((cDigit *= 2) > 9) cDigit -= 9;
     }
 
-    return (nCheck % 10) === 0;
+    nCheck += cDigit;
+    bEven = !bEven;
+  }
+
+  return nCheck % 10 === 0;
 }
 
 /**
@@ -73,28 +76,31 @@ export function validateCardNumber(value: string): boolean {
  * @param patterns Custom patterns forwarded to {@link detectCardType}.
  * @returns The masked credit card number
  */
-export function applyCreditCardMask(value: string, patterns: CardPattern[] = customPatterns): string {
-    if (!value) return '';
-    const cleanValue = value.replace(/\D/g, '');
-    const cardType = detectCardType(cleanValue, patterns);
+export function applyCreditCardMask(
+  value: string,
+  patterns: CardPattern[] = customPatterns
+): string {
+  if (!value) return '';
+  const cleanValue = value.replace(/\D/g, '');
+  const cardType = detectCardType(cleanValue, patterns);
 
-    if (cardType === CardType.AMEX) {
-        // Amex: 4-6-5 format (15 digits)
-        if (cleanValue.length <= 4) return cleanValue;
-        if (cleanValue.length <= 10) return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4)}`;
-        return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4, 10)} ${cleanValue.slice(10, 15)}`;
-    } else if (cardType === CardType.DINERS) {
-        // Diners Club: 14 digits, 4-6-4 grouping.
-        if (cleanValue.length <= 4) return cleanValue;
-        if (cleanValue.length <= 10) return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4)}`;
-        return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4, 10)} ${cleanValue.slice(10, 14)}`;
-    }
+  if (cardType === CardType.AMEX) {
+    // Amex: 4-6-5 format (15 digits)
+    if (cleanValue.length <= 4) return cleanValue;
+    if (cleanValue.length <= 10) return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4)}`;
+    return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4, 10)} ${cleanValue.slice(10, 15)}`;
+  } else if (cardType === CardType.DINERS) {
+    // Diners Club: 14 digits, 4-6-4 grouping.
+    if (cleanValue.length <= 4) return cleanValue;
+    if (cleanValue.length <= 10) return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4)}`;
+    return `${cleanValue.slice(0, 4)} ${cleanValue.slice(4, 10)} ${cleanValue.slice(10, 14)}`;
+  }
 
-    // Default (Visa, MC, Discover, UnionPay, JCB, etc.): 4-4-4-4 format. Cap at
-    // 16 digits so a pasted/autofilled overlong string doesn't render a 5th group.
-    const capped = cleanValue.slice(0, 16);
-    const groups = capped.match(/.{1,4}/g);
-    return groups ? groups.join(' ') : capped;
+  // Default (Visa, MC, Discover, UnionPay, JCB, etc.): 4-4-4-4 format. Cap at
+  // 16 digits so a pasted/autofilled overlong string doesn't render a 5th group.
+  const capped = cleanValue.slice(0, 16);
+  const groups = capped.match(/.{1,4}/g);
+  return groups ? groups.join(' ') : capped;
 }
 
 /**
@@ -103,5 +109,5 @@ export function applyCreditCardMask(value: string, patterns: CardPattern[] = cus
  * @returns The raw credit card number
  */
 export function unmaskCreditCard(value: string): string {
-    return value.replace(/\D/g, '');
+  return value.replace(/\D/g, '');
 }

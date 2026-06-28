@@ -9,7 +9,7 @@ Get OptiCore fully integrated into your React Native or Expo app in under 10 min
 - Node.js 18+
 - Expo SDK 54+ (or React Native 0.78+) with React 19+
 - `expo-router` 4+ (from your normal Expo setup) and `@tanstack/react-query` 5+ — required peers (the install CLI in Step 1 adds React Query for you)
-- TypeScript 5+ — *optional*; OptiCore ships its own type definitions, so JS-only apps work without it
+- TypeScript 5+ — _optional_; OptiCore ships its own type definitions, so JS-only apps work without it
 
 ---
 
@@ -121,7 +121,7 @@ function UserListScreen() {
 > ```
 >
 > Reach for the `buildUrl` helper (`opticore-react-native/utils`) only when you need a pre-built URL
-> string *outside* a request.
+> string _outside_ a request.
 
 ---
 
@@ -323,13 +323,17 @@ export function ProductsScreen() {
 ## Troubleshooting
 
 ### "Cannot find module 'opticore-react-native'"
+
 Verify installation: `npm ls opticore-react-native`
 
 ### "ApiClient: not configured"
+
 Ensure `OptiCoreProvider` wraps your component tree before making any `api.get`/`api.post`/etc. calls.
 
 ### TypeScript errors about strict mode
+
 Add to `tsconfig.json`:
+
 ```json
 {
   "compilerOptions": {
@@ -341,6 +345,7 @@ Add to `tsconfig.json`:
 ```
 
 ### Expo SecureStore not working on web
+
 `SecureStore` is iOS/Android only. Use `storage.local` for web targets. See [FAQ](./FAQ.md).
 
 ---

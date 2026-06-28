@@ -15,14 +15,14 @@ Replace the Logger's hardcoded `console.*` output with a pluggable transport sys
 
 ## Constitution Check
 
-| Principle | Status | Notes |
-|---|---|---|
-| Pure Infrastructure | PASS | Logging is infrastructure |
-| TypeScript Strict | PASS | Interfaces fully typed |
-| TDD Required | PASS | Tests first |
-| 80%+ Coverage | PASS | All new files |
-| SOLID - DIP | FIX | Logger depends on console → now depends on LogTransport abstraction |
-| SOLID - OCP | FIX | New transports without modifying Logger |
+| Principle           | Status | Notes                                                               |
+| ------------------- | ------ | ------------------------------------------------------------------- |
+| Pure Infrastructure | PASS   | Logging is infrastructure                                           |
+| TypeScript Strict   | PASS   | Interfaces fully typed                                              |
+| TDD Required        | PASS   | Tests first                                                         |
+| 80%+ Coverage       | PASS   | All new files                                                       |
+| SOLID - DIP         | FIX    | Logger depends on console → now depends on LogTransport abstraction |
+| SOLID - OCP         | FIX    | New transports without modifying Logger                             |
 
 ## Source Code Structure
 

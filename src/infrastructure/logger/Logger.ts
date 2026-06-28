@@ -47,7 +47,7 @@ export class Logger implements ILogger {
 
     // Update existing console transport if level changed?
     // Or we expect users to manage transports separately.
-    // For backward compatibility, if 'level' is updated in config, 
+    // For backward compatibility, if 'level' is updated in config,
     // we might want to update the default console transport if it exists?
     // But referencing specific transport is hard.
     // We'll rely on global filtering in `shouldLog` or `print`.
@@ -65,7 +65,7 @@ export class Logger implements ILogger {
    */
   public removeTransport(name: string): boolean {
     const initialLength = this.transports.length;
-    this.transports = this.transports.filter(t => t.name !== name);
+    this.transports = this.transports.filter((t) => t.name !== name);
     return this.transports.length !== initialLength;
   }
 
@@ -110,7 +110,7 @@ export class Logger implements ILogger {
       showTimestamp: this.config.showTimestamp,
     };
 
-    this.transports.forEach(transport => {
+    this.transports.forEach((transport) => {
       try {
         // In production, suppress the noisy device console but keep custom
         // transports (e.g. remote error reporters) receiving entries — they
@@ -127,7 +127,7 @@ export class Logger implements ILogger {
         // surfaces instead of becoming an unhandled rejection.
         const result = transport.write(entry) as void | Promise<void>;
         if (result && typeof (result as Promise<void>).catch === 'function') {
-          (result as Promise<void>).catch(asyncErr => {
+          (result as Promise<void>).catch((asyncErr) => {
             console.error('Logger transport (async) failed:', asyncErr);
           });
         }

@@ -24,4 +24,4 @@
 //   // Silently fail if NativeModules setup has issues
 // }
 
-export { };
+export {};

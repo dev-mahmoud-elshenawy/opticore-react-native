@@ -86,22 +86,26 @@ Components update styles
 ## Implementation Phases
 
 **Phase 1: Types & Defaults** (1-2 hours)
+
 - Type definitions
 - Default light theme
 - Default dark theme
 
 **Phase 2: Color Utils** (1-2 hours)
+
 - lighten, darken, alpha
 - contrast calculation
 - hex/rgb conversion
 
 **Phase 3: Manager & Provider** (2-3 hours)
+
 - ThemeManager singleton
 - Appearance API integration
 - ThemeProvider context
 - useTheme hook
 
 **Phase 4: Tests** (1-2 hours)
+
 - Manager tests
 - Hook tests
 - Color util tests

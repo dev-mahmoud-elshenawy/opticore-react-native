@@ -56,8 +56,7 @@ export const api = {
     ApiClient.getInstance().addRequestInterceptor(interceptor),
   onResponse: (interceptor: Interceptor): InterceptorId =>
     ApiClient.getInstance().addResponseInterceptor(interceptor),
-  removeInterceptor: (id: InterceptorId): boolean =>
-    ApiClient.getInstance().removeInterceptor(id),
+  removeInterceptor: (id: InterceptorId): boolean => ApiClient.getInstance().removeInterceptor(id),
 
   // --- readiness ---
   isReady: (): boolean => ApiClient.getInstance().isInitialized(),

@@ -85,7 +85,9 @@ export const useRouteHelper = () => {
    */
   const backWithData = (data: NavigationParams): void => {
     if (router.canGoBack()) {
-      (router as unknown as { setParams: (params: Record<string, string>) => void }).setParams(data as Record<string, string>);
+      (router as unknown as { setParams: (params: Record<string, string>) => void }).setParams(
+        data as Record<string, string>
+      );
       router.back();
     }
   };

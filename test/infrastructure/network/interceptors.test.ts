@@ -72,7 +72,7 @@ describe('Interceptors', () => {
       apiClient.configure({ authStrategy: strategy }); // Clear previous config side effects if any
 
       const interceptor = new AuthInterceptor(apiClient);
-      const config = { headers: { 'Existing': 'Header' } };
+      const config = { headers: { Existing: 'Header' } };
 
       const result = await interceptor.onRequest(config as any);
 

@@ -1,4 +1,9 @@
-import { useQuery, type QueryKey, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
+import {
+  useQuery,
+  type QueryKey,
+  type UseQueryOptions,
+  type UseQueryResult,
+} from '@tanstack/react-query';
 import { RenderError } from '../error/RenderError';
 
 type QueryHookOptions<TData> = Omit<UseQueryOptions<TData, RenderError>, 'queryKey' | 'queryFn'>;
@@ -26,7 +31,7 @@ type QueryHookOptions<TData> = Omit<UseQueryOptions<TData, RenderError>, 'queryK
 export function createQueryHook<TArg, TData>(
   keyFn: (arg: TArg) => QueryKey,
   fetcher: (arg: TArg) => Promise<TData>,
-  defaultOptions?: QueryHookOptions<TData>,
+  defaultOptions?: QueryHookOptions<TData>
 ): (arg: TArg, options?: QueryHookOptions<TData>) => UseQueryResult<TData, RenderError> {
   return (arg, options) =>
     useQuery<TData, RenderError>({

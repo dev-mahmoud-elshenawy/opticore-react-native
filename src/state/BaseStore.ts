@@ -73,9 +73,7 @@ export function createBaseStore<T extends object>(
                   // but at runtime it shallow-merges the returned slice over the live
                   // state — so returning a Partial is safe and base actions
                   // (reset/hydrate) survive. The cast bridges that type gap.
-                  partialize: config.partialize as (
-                    state: T & BaseActions,
-                  ) => T & BaseActions,
+                  partialize: config.partialize as (state: T & BaseActions) => T & BaseActions,
                 }
               : {}),
           }),

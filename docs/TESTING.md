@@ -18,7 +18,7 @@ npm test -- --testPathPattern=ApiClient  # run matching tests only
 
 ---
 
-## Testing OptiCore in *your* app
+## Testing OptiCore in _your_ app
 
 You don't need real native modules to test code that uses OptiCore. There are two
 levels: mock the **calls** (fast, most common), or inject **adapters** (when you want
@@ -190,10 +190,14 @@ describe('useAsyncState', () => {
     const { result } = renderHook(() => useAsyncState<string>());
 
     let pending: Promise<void>;
-    act(() => { pending = result.current.run(Promise.resolve('hello')); });
+    act(() => {
+      pending = result.current.run(Promise.resolve('hello'));
+    });
     expect(result.current.isLoading).toBe(true);
 
-    await act(async () => { await pending; });
+    await act(async () => {
+      await pending;
+    });
     expect(result.current.data).toBe('hello');
     expect(result.current.isLoading).toBe(false);
   });
@@ -375,11 +379,11 @@ describe('useFormState', () => {
 
 ## Mock Reference
 
-| Module | Mock Path |
-|---|---|
-| AsyncStorage | `@react-native-async-storage/async-storage/jest/async-storage-mock` |
-| NetInfo | `@react-native-community/netinfo` (auto-mocked) |
-| expo-secure-store | Manual mock in `test/__mocks__/` |
+| Module            | Mock Path                                                           |
+| ----------------- | ------------------------------------------------------------------- |
+| AsyncStorage      | `@react-native-async-storage/async-storage/jest/async-storage-mock` |
+| NetInfo           | `@react-native-community/netinfo` (auto-mocked)                     |
+| expo-secure-store | Manual mock in `test/__mocks__/`                                    |
 
 ---
 
@@ -391,12 +395,12 @@ npm test -- --coverage
 
 Current coverage: **83.73%**
 
-| Threshold | Requirement |
-|---|---|
-| Lines | 80%+ |
-| Functions | 80%+ |
-| Branches | 80%+ |
-| Statements | 80%+ |
+| Threshold  | Requirement |
+| ---------- | ----------- |
+| Lines      | 80%+        |
+| Functions  | 80%+        |
+| Branches   | 80%+        |
+| Statements | 80%+        |
 
 View detailed report: `open coverage/lcov-report/index.html`
 
@@ -424,6 +428,7 @@ Located in `test/__mocks__/infrastructure/`
 - **MockLifecycle**: App lifecycle state simulation
 
 **Usage:**
+
 ```typescript
 import { MockApiClient, MockStorage } from '@test/__mocks__';
 
@@ -439,6 +444,7 @@ expect(response.data).toHaveLength(1);
 Located in `test/helpers/`
 
 **Render Helpers**:
+
 ```typescript
 import { renderWithProviders } from '@test/helpers';
 
@@ -446,6 +452,7 @@ const { getByText } = renderWithProviders(<MyComponent />);
 ```
 
 **Store Helpers**:
+
 ```typescript
 import { createMockStore, waitForStoreUpdate } from '@test/helpers';
 
@@ -454,6 +461,7 @@ await waitForStoreUpdate(store, (state) => state.count > 0);
 ```
 
 **Async Helpers**:
+
 ```typescript
 import { waitForAsync, flushPromises } from '@test/helpers';
 
@@ -462,6 +470,7 @@ await flushPromises(); // Flush microtasks
 ```
 
 **Data Generators**:
+
 ```typescript
 import { generateMockUser, generateMockApiResponse } from '@test/helpers';
 
@@ -497,12 +506,12 @@ describe('DataService Integration', () => {
   it('should fetch and cache data', async () => {
     const api = new MockApiClient();
     const storage = new MockStorage();
-    
+
     api.mockGet('/data', { data: { value: 42 } });
-    
+
     const service = new DataService(api, storage);
     const result = await service.getData();
-    
+
     expect(result.value).toBe(42);
     expect(await storage.get('cache:data')).toEqual({ value: 42 });
   });
@@ -532,6 +541,7 @@ describe('MyComponent', () => {
 - **Exclusions**: Type definition files (`.d.ts`), index files
 
 Run coverage:
+
 ```bash
 npm test -- --coverage
 ```
@@ -539,7 +549,9 @@ npm test -- --coverage
 ## Best Practices
 
 ### 1. Use Mocks for External Dependencies
+
 ✅ **Do**: Mock external services
+
 ```typescript
 const mockApi = new MockApiClient();
 mockApi.mockGet('/users', { data: users });
@@ -548,7 +560,9 @@ mockApi.mockGet('/users', { data: users });
 ❌ **Don't**: Make real network calls in tests
 
 ### 2. Clean Up After Tests
+
 ✅ **Do**: Reset state between tests
+
 ```typescript
 afterEach(() => {
   mockApi.reset();
@@ -557,18 +571,23 @@ afterEach(() => {
 ```
 
 ### 3. Test Behavior, Not Implementation
+
 ✅ **Do**: Test user-facing behavior
+
 ```typescript
 expect(getByText('Success')).toBeTruthy();
 ```
 
 ❌ **Don't**: Test internal state directly
+
 ```typescript
 expect(component.state.isLoading).toBe(false); // Avoid
 ```
 
 ### 4. Use Descriptive Test Names
+
 ✅ **Do**: Describe the scenario
+
 ```typescript
 it('should show error when API fails', () => {
   // ...
@@ -576,6 +595,7 @@ it('should show error when API fails', () => {
 ```
 
 ❌ **Don't**: Use vague names
+
 ```typescript
 it('works', () => {
   // ...
@@ -585,16 +605,19 @@ it('works', () => {
 ## Debugging Tests
 
 ### Run Single Test
+
 ```bash
 npm test -- path/to/test.test.ts
 ```
 
 ### Watch Mode
+
 ```bash
 npm run test:watch
 ```
 
 ### Update Snapshots
+
 ```bash
 npm test -- -u
 ```
@@ -602,6 +625,7 @@ npm test -- -u
 ## Common Patterns
 
 ### Testing Async State
+
 ```typescript
 import { waitForCondition } from '@test/helpers';
 
@@ -609,6 +633,7 @@ await waitForCondition(() => getByText('Loaded'));
 ```
 
 ### Testing Errors
+
 ```typescript
 mockApi.mockGet('/users', { error: new Error('Network error') });
 
@@ -616,6 +641,7 @@ await expect(service.getUsers()).rejects.toThrow('Network error');
 ```
 
 ### Testing State Updates
+
 ```typescript
 import { waitForStoreUpdate } from '@test/helpers';
 
@@ -626,6 +652,7 @@ expect(store.getState().data).toBeDefined();
 ## Troubleshooting
 
 ### React 19 API Changes
+
 Some tests may fail due to React 19's async rendering. Use `await` with render functions:
 
 ```typescript
@@ -633,6 +660,7 @@ const result = await render(<Component />);
 ```
 
 ### Timer Mocks
+
 When using fake timers:
 
 ```typescript

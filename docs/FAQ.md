@@ -11,6 +11,7 @@ A pure infrastructure library for React Native/Expo. It provides networking, sta
 ### Why not just use Axios + Zustand + AsyncStorage directly?
 
 You can. OptiCore wires them all together with:
+
 - Auth token injection and refresh built into the HTTP client
 - Unified storage API with automatic JSON serialization
 - Error classification (user-visible vs silent)
@@ -136,10 +137,10 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const useStore = create(
-  persist(
-    (set) => ({ count: 0, increment: () => set(s => ({ count: s.count + 1 })) }),
-    { name: 'my-store', storage: createJSONStorage(() => AsyncStorage) }
-  )
+  persist((set) => ({ count: 0, increment: () => set((s) => ({ count: s.count + 1 })) }), {
+    name: 'my-store',
+    storage: createJSONStorage(() => AsyncStorage),
+  })
 );
 ```
 
@@ -149,10 +150,10 @@ const useStore = create(
 
 ### When to use `local` vs `secure`?
 
-| Data | Use |
-|---|---|
-| User preferences, cache, settings | `storage.local` |
-| Auth tokens, passwords, PII | `storage.secure` |
+| Data                              | Use              |
+| --------------------------------- | ---------------- |
+| User preferences, cache, settings | `storage.local`  |
+| Auth tokens, passwords, PII       | `storage.secure` |
 
 ### Does SecureStore work on web?
 
@@ -262,10 +263,9 @@ Yes. You can always enqueue — the sync engine processes the queue immediately 
 Yes — use Zod's `.refine()` with an async callback:
 
 ```typescript
-username: z.string().refine(
-  async (val) => !(await checkUsernameExists(val)),
-  { message: 'Username taken' }
-)
+username: z.string().refine(async (val) => !(await checkUsernameExists(val)), {
+  message: 'Username taken',
+});
 ```
 
 ### Can I use the masks independently of `useFormState`?
@@ -286,8 +286,8 @@ const formatted = applyPhoneMask('5551234567'); // '(555) 123-4567'
 Yes. Import only what you need:
 
 ```typescript
-import { capitalize } from 'opticore-react-native/utils';  // only capitalize
-import { useDebounce } from 'opticore-react-native/hooks';  // only debounce
+import { capitalize } from 'opticore-react-native/utils'; // only capitalize
+import { useDebounce } from 'opticore-react-native/hooks'; // only debounce
 ```
 
 ### What's the bundle size?

@@ -37,7 +37,6 @@ export function createExpoDeviceAdapter(): DeviceAdapter | null {
 
   let application: ExpoApplicationModule | null = null;
   try {
-     
     application = require('expo-application') as ExpoApplicationModule;
   } catch {
     application = null;

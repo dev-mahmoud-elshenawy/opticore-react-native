@@ -85,9 +85,13 @@ describe('Integration: State → Error System', () => {
         isLoading: false,
       }));
 
-      const renderError = new RenderError('User not found', 'The user you are looking for does not exist', {
-        code: 'USER_NOT_FOUND',
-      });
+      const renderError = new RenderError(
+        'User not found',
+        'The user you are looking for does not exist',
+        {
+          code: 'USER_NOT_FOUND',
+        }
+      );
 
       // Update store with error
       useStore.setState({ error: renderError, isLoading: false });

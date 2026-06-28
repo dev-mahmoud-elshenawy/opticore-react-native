@@ -8,47 +8,47 @@ Welcome to the complete documentation for **opticore-react-native** — the Type
 
 ## 🚀 Getting Started
 
-| Guide | What You'll Learn |
-|---|---|
-| [**Quick Start**](./QUICK_START.md) | Install, configure, and make your first API call in 10 minutes |
-| [**Architecture**](./ARCHITECTURE.md) | How the library is structured and why |
-| [**Configuration**](./CONFIGURATION.md) | Every config option explained |
+| Guide                                   | What You'll Learn                                              |
+| --------------------------------------- | -------------------------------------------------------------- |
+| [**Quick Start**](./QUICK_START.md)     | Install, configure, and make your first API call in 10 minutes |
+| [**Architecture**](./ARCHITECTURE.md)   | How the library is structured and why                          |
+| [**Configuration**](./CONFIGURATION.md) | Every config option explained                                  |
 
 ---
 
 ## 📚 API Reference
 
-| Module | Description |
-|---|---|
-| [**Infrastructure**](./api/INFRASTRUCTURE.md) | ApiClient · Logger · StorageManager · ConnectivityManager · LifecycleManager |
-| [**State Management**](./api/STATE.md) | AsyncState · BaseStore · StoreFactory · StateObserver · CrudStore |
-| [**Hooks**](./api/HOOKS.md) | useAsyncState · useDebounce · useConnectivity · useKeyboard · +7 more |
-| [**Error Handling**](./api/ERRORS.md) | RenderError · NonRenderError · Result<T,E> · OptiCoreErrorBoundary |
-| [**Error Handling — Which Tool, When**](./ERROR_HANDLING.md) | Decision tree: `Result` vs throw `RenderError` vs `ApiError` vs `NonRenderError` |
-| [**Utilities**](./api/UTILITIES.md) | String · Number · Array · Date · Object · Format · Color · Platform · buildUrl |
-| [**Navigation**](./api/NAVIGATION.md) | useRouteHelper · Expo Router integration |
-| [**React Query**](./REACT_QUERY.md) | createQueryClient · createQueryHook · useApiMutation · createQueryPersister · error-aware retry |
+| Module                                                       | Description                                                                                     |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| [**Infrastructure**](./api/INFRASTRUCTURE.md)                | ApiClient · Logger · StorageManager · ConnectivityManager · LifecycleManager                    |
+| [**State Management**](./api/STATE.md)                       | AsyncState · BaseStore · StoreFactory · StateObserver · CrudStore                               |
+| [**Hooks**](./api/HOOKS.md)                                  | useAsyncState · useDebounce · useConnectivity · useKeyboard · +7 more                           |
+| [**Error Handling**](./api/ERRORS.md)                        | RenderError · NonRenderError · Result<T,E> · OptiCoreErrorBoundary                              |
+| [**Error Handling — Which Tool, When**](./ERROR_HANDLING.md) | Decision tree: `Result` vs throw `RenderError` vs `ApiError` vs `NonRenderError`                |
+| [**Utilities**](./api/UTILITIES.md)                          | String · Number · Array · Date · Object · Format · Color · Platform · buildUrl                  |
+| [**Navigation**](./api/NAVIGATION.md)                        | useRouteHelper · Expo Router integration                                                        |
+| [**React Query**](./REACT_QUERY.md)                          | createQueryClient · createQueryHook · useApiMutation · createQueryPersister · error-aware retry |
 
 ---
 
 ## 🎨 Feature Guides
 
-| Guide | Description |
-|---|---|
-| [**Forms**](./FORMS.md) | Zod validation · React Hook Form · Input masks · Field-level validation |
-| [**Theme Engine**](./THEME.md) | Dynamic theming · Dark mode · Semantic typography · useThemedStyles · useTextStyle · ThemeManager |
-| [**Tailwind / NativeWind**](./TAILWIND.md) | createTailwindPreset · theme-driven `className` tokens · `text-body`/`bg-card` |
-| [**Offline Sync**](./OFFLINE.md) | Request queue · Auto-sync · Conflict resolution · useOfflineSync |
+| Guide                                      | Description                                                                                       |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| [**Forms**](./FORMS.md)                    | Zod validation · React Hook Form · Input masks · Field-level validation                           |
+| [**Theme Engine**](./THEME.md)             | Dynamic theming · Dark mode · Semantic typography · useThemedStyles · useTextStyle · ThemeManager |
+| [**Tailwind / NativeWind**](./TAILWIND.md) | createTailwindPreset · theme-driven `className` tokens · `text-body`/`bg-card`                    |
+| [**Offline Sync**](./OFFLINE.md)           | Request queue · Auto-sync · Conflict resolution · useOfflineSync                                  |
 
 ---
 
 ## 🧭 Project Guides
 
-| Guide | Description |
-|---|---|
-| [**Testing**](./TESTING.md) | Test patterns · `createMemoryAdapters` / `resetOptiCore` (via `opticore-react-native/testing`) · Mocks · Jest setup |
-| [**Migration**](./MIGRATION.md) | Migrate from Redux · MobX · plain Axios |
-| [**FAQ**](./FAQ.md) | Common questions and troubleshooting |
+| Guide                           | Description                                                                                                         |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| [**Testing**](./TESTING.md)     | Test patterns · `createMemoryAdapters` / `resetOptiCore` (via `opticore-react-native/testing`) · Mocks · Jest setup |
+| [**Migration**](./MIGRATION.md) | Migrate from Redux · MobX · plain Axios                                                                             |
+| [**FAQ**](./FAQ.md)             | Common questions and troubleshooting                                                                                |
 
 ---
 
@@ -101,15 +101,15 @@ opticore-react-native
 ## 📦 Package Subpath Exports
 
 ```typescript
-import { ApiClient, Logger }     from 'opticore-react-native';
-import { useAsyncState }         from 'opticore-react-native/hooks';
-import { useFormState }          from 'opticore-react-native/forms';
-import { useOfflineSync }        from 'opticore-react-native/offline';
-import { useTheme }              from 'opticore-react-native/theme';
-import { capitalize, clamp }     from 'opticore-react-native/utils';
-import { createBaseStore }       from 'opticore-react-native/state';
-import { useRouteHelper }        from 'opticore-react-native/navigation';
-import { createTailwindPreset }  from 'opticore-react-native/tailwind';
+import { ApiClient, Logger } from 'opticore-react-native';
+import { useAsyncState } from 'opticore-react-native/hooks';
+import { useFormState } from 'opticore-react-native/forms';
+import { useOfflineSync } from 'opticore-react-native/offline';
+import { useTheme } from 'opticore-react-native/theme';
+import { capitalize, clamp } from 'opticore-react-native/utils';
+import { createBaseStore } from 'opticore-react-native/state';
+import { useRouteHelper } from 'opticore-react-native/navigation';
+import { createTailwindPreset } from 'opticore-react-native/tailwind';
 ```
 
 > `createQueryClient`, `createQueryHook`, `useApiMutation`, `createQueryPersister`, `useThemedStyles`,

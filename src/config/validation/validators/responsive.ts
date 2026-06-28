@@ -5,7 +5,7 @@ import { assertPositiveNumber } from '../assertions';
 export function validateResponsiveConfig(
   responsive: ResponsiveConfig,
   errors: ValidationIssue[],
-  _warnings: ValidationIssue[],
+  _warnings: ValidationIssue[]
 ): void {
   const { breakpoints } = responsive;
   if (!breakpoints) return;

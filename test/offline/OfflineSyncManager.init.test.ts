@@ -13,109 +13,109 @@ jest.mock('../../src/offline/SyncEngine');
 jest.mock('../../src/offline/RequestQueue');
 
 describe('OfflineSyncManager Initialization Guard', () => {
-    let manager: OfflineSyncManager;
-    let mockQueue: jest.Mocked<RequestQueue>;
-    let mockConnectivity: jest.Mocked<ConnectivityManager>;
-    let restoreResolver: () => void;
-    let mockLogger: jest.Mocked<Logger>;
+  let manager: OfflineSyncManager;
+  let mockQueue: jest.Mocked<RequestQueue>;
+  let mockConnectivity: jest.Mocked<ConnectivityManager>;
+  let restoreResolver: () => void;
+  let mockLogger: jest.Mocked<Logger>;
 
-    beforeEach(() => {
-        jest.clearAllMocks();
+  beforeEach(() => {
+    jest.clearAllMocks();
 
-        // Setup mock logger
-        mockLogger = {
-            info: jest.fn(),
-            error: jest.fn(),
-            warn: jest.fn(),
-            debug: jest.fn(),
-        } as unknown as jest.Mocked<Logger>;
-        (Logger.getInstance as jest.Mock).mockReturnValue(mockLogger);
+    // Setup mock logger
+    mockLogger = {
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn(),
+    } as unknown as jest.Mocked<Logger>;
+    (Logger.getInstance as jest.Mock).mockReturnValue(mockLogger);
 
-        // Setup delayed restore to simulate async init
-        const restorePromise = new Promise<void>((resolve) => {
-            restoreResolver = resolve;
-        });
-
-        mockQueue = {
-            add: jest.fn().mockReturnValue('req_1'),
-            restore: jest.fn().mockReturnValue(restorePromise),
-            setMaxSize: jest.fn(),
-            // ... other methods mocked via auto-mock or default
-        } as unknown as jest.Mocked<RequestQueue>;
-
-        mockConnectivity = {
-            isConnected: true,
-            addListener: jest.fn(),
-            removeListener: jest.fn(),
-        } as unknown as jest.Mocked<ConnectivityManager>;
-
-        // Reset singleton
-        (OfflineSyncManager as any).instance = null;
-
-        // Mock constructors
-        (RequestQueue as jest.Mock).mockImplementation(() => mockQueue);
-        (ConnectivityManager.getInstance as jest.Mock).mockReturnValue(mockConnectivity);
-        (ApiClient.getInstance as jest.Mock).mockReturnValue({});
+    // Setup delayed restore to simulate async init
+    const restorePromise = new Promise<void>((resolve) => {
+      restoreResolver = resolve;
     });
 
-    it('should wait for initialization before enqueueing', async () => {
-        // Initialize manager
-        manager = OfflineSyncManager.getInstance();
+    mockQueue = {
+      add: jest.fn().mockReturnValue('req_1'),
+      restore: jest.fn().mockReturnValue(restorePromise),
+      setMaxSize: jest.fn(),
+      // ... other methods mocked via auto-mock or default
+    } as unknown as jest.Mocked<RequestQueue>;
 
-        // Call enqueue immediately (before restore completes)
-        const enqueuePromise = manager.enqueue({
-            method: HttpMethod.POST,
-            url: '/test',
-            data: {}
-        });
+    mockConnectivity = {
+      isConnected: true,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+    } as unknown as jest.Mocked<ConnectivityManager>;
 
-        // Verify queue.add NOT called yet
-        expect(mockQueue.add).not.toHaveBeenCalled();
+    // Reset singleton
+    (OfflineSyncManager as any).instance = null;
 
-        // Finish initialization
-        restoreResolver();
+    // Mock constructors
+    (RequestQueue as jest.Mock).mockImplementation(() => mockQueue);
+    (ConnectivityManager.getInstance as jest.Mock).mockReturnValue(mockConnectivity);
+    (ApiClient.getInstance as jest.Mock).mockReturnValue({});
+  });
 
-        // Await enqueue
-        await enqueuePromise;
+  it('should wait for initialization before enqueueing', async () => {
+    // Initialize manager
+    manager = OfflineSyncManager.getInstance();
 
-        // Verify queue.add called AFTER init
-        expect(mockQueue.add).toHaveBeenCalled();
+    // Call enqueue immediately (before restore completes)
+    const enqueuePromise = manager.enqueue({
+      method: HttpMethod.POST,
+      url: '/test',
+      data: {},
     });
 
-    it('should handle initialization errors gracefully', async () => {
-        // Mock restore to fail
-        mockQueue.restore.mockRejectedValue(new Error('Storage corrupted'));
+    // Verify queue.add NOT called yet
+    expect(mockQueue.add).not.toHaveBeenCalled();
 
-        // Initialize
-        manager = OfflineSyncManager.getInstance();
+    // Finish initialization
+    restoreResolver();
 
-        // Should still resolve readyPromise (in finally block)
-        // We can test this by checking if enqueue proceeds
-        const enqueuePromise = manager.enqueue({
-            method: HttpMethod.POST,
-            url: '/test',
-            data: {}
-        });
+    // Await enqueue
+    await enqueuePromise;
 
-        // Resolve the restore promise (which rejects inside)
-        try {
-            await restoreResolver(); // This simulates the async completion of restore
-        } catch {
-            // Restore mock might need to be set up differently to simulate rejection properly
-            // but here we mocked it to reject.
-        }
+    // Verify queue.add called AFTER init
+    expect(mockQueue.add).toHaveBeenCalled();
+  });
 
-        // Enqueue should proceed without error
-        await expect(enqueuePromise).resolves.toBe('req_1');
+  it('should handle initialization errors gracefully', async () => {
+    // Mock restore to fail
+    mockQueue.restore.mockRejectedValue(new Error('Storage corrupted'));
 
-        // Logger should have logged error
-        // Note: RequestQueue swallows error usually, but here we mocked restore to reject directly.
-        // If RequestQueue swallows it, OfflineSyncManager sees success.
-        // If RequestQueue throws, OfflineSyncManager catches it.
-        // Let's verify OfflineSyncManager catches it.
-        expect(mockLogger.error).toHaveBeenCalledWith(
-            expect.stringContaining('Initialization failed'),
-            expect.any(Error)
-        );
+    // Initialize
+    manager = OfflineSyncManager.getInstance();
+
+    // Should still resolve readyPromise (in finally block)
+    // We can test this by checking if enqueue proceeds
+    const enqueuePromise = manager.enqueue({
+      method: HttpMethod.POST,
+      url: '/test',
+      data: {},
     });
+
+    // Resolve the restore promise (which rejects inside)
+    try {
+      await restoreResolver(); // This simulates the async completion of restore
+    } catch {
+      // Restore mock might need to be set up differently to simulate rejection properly
+      // but here we mocked it to reject.
+    }
+
+    // Enqueue should proceed without error
+    await expect(enqueuePromise).resolves.toBe('req_1');
+
+    // Logger should have logged error
+    // Note: RequestQueue swallows error usually, but here we mocked restore to reject directly.
+    // If RequestQueue swallows it, OfflineSyncManager sees success.
+    // If RequestQueue throws, OfflineSyncManager catches it.
+    // Let's verify OfflineSyncManager catches it.
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      expect.stringContaining('Initialization failed'),
+      expect.any(Error)
+    );
+  });
 });

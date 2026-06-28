@@ -10,7 +10,7 @@ import {
 export function validateOfflineConfig(
   offline: OfflineSyncConfig,
   errors: ValidationIssue[],
-  warnings: ValidationIssue[],
+  warnings: ValidationIssue[]
 ): void {
   if (offline.maxRetries !== undefined) {
     assertNonNegativeInteger(offline.maxRetries, 'offline.maxRetries', errors);
@@ -37,7 +37,7 @@ export function validateOfflineConfig(
       offline.conflictStrategy,
       ['client-wins', 'server-wins', 'manual'] as const,
       'offline.conflictStrategy',
-      errors,
+      errors
     );
   }
 

@@ -10,7 +10,7 @@ import { Logger } from '../../src/infrastructure/logger/Logger';
 
 // Suppress React's error boundary console.error noise in tests
 beforeEach(() => {
-  jest.spyOn(console, 'error').mockImplementation(() => { });
+  jest.spyOn(console, 'error').mockImplementation(() => {});
 });
 afterEach(() => {
   jest.restoreAllMocks();
@@ -78,7 +78,9 @@ describe('NonRenderError reaching the boundary (converges to fallback)', () => {
     });
     const nonRenderError = new NonRenderError('background sync failed');
 
-    const instance = new OptiCoreErrorBoundary({ children: React.createElement(Text, null, 'test') });
+    const instance = new OptiCoreErrorBoundary({
+      children: React.createElement(Text, null, 'test'),
+    });
     (instance as any).state = {
       hasError: true,
       showFallback: true,

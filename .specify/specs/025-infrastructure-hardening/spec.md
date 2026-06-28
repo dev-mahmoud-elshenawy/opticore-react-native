@@ -153,6 +153,7 @@ This spec includes ONE breaking change:
 - **`ThemeShadows` type changes from `string` to `ThemeShadowValue` object.** Consuming apps that use `theme.shadows.sm` as a CSS string will need to update. This is intentional because the current CSS string values **do not work on React Native** (the target platform).
 
 Migration:
+
 ```typescript
 // Before (broken on RN):
 style={{ boxShadow: theme.shadows.md }}  // This never worked

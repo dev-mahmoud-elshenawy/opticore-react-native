@@ -10,9 +10,12 @@ describe('useDebounce', () => {
   });
 
   it('should debounce value updates', async () => {
-    const { result, rerender } = await renderHookCompat(({ val }: { val: any }) => useDebounce(val, 500), {
-      initialProps: { val: 'initial' },
-    });
+    const { result, rerender } = await renderHookCompat(
+      ({ val }: { val: any }) => useDebounce(val, 500),
+      {
+        initialProps: { val: 'initial' },
+      }
+    );
 
     await rerender({ val: 'updated' });
     // Should still be initial

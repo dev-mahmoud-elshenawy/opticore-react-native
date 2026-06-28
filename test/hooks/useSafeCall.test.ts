@@ -56,7 +56,7 @@ describe('useSafeCall', () => {
       await executionPromise;
     });
 
-    // No assertion needed on state as unmount happened, 
+    // No assertion needed on state as unmount happened,
     // but the test passing confirms no "act" warning or error occurred
   });
 });

@@ -1,10 +1,6 @@
 import { expectType } from 'tsd';
 import { HttpMethod } from '../../src/types/Api.types';
-import type {
-  PaginatedResponse,
-  PaginationMeta,
-  RequestConfig,
-} from '../../src/types/Api.types';
+import type { PaginatedResponse, PaginationMeta, RequestConfig } from '../../src/types/Api.types';
 
 // Test PaginatedResponse (simplified structure without status/success)
 const paginated: PaginatedResponse<string> = {

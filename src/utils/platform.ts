@@ -1,12 +1,6 @@
 import { Platform, Dimensions } from 'react-native';
-import {
-  resolveClipboardAdapter,
-  resolveDeviceAdapter,
-} from '../adapters/registry';
-import type {
-  ClipboardAdapter,
-  DeviceAdapter,
-} from '../adapters/interfaces';
+import { resolveClipboardAdapter, resolveDeviceAdapter } from '../adapters/registry';
+import type { ClipboardAdapter, DeviceAdapter } from '../adapters/interfaces';
 
 /**
  * Cached adapters resolved on first use. OptiCoreProvider may replace these

@@ -1,4 +1,3 @@
-
 /**
  * @fileoverview Type definitions for Offline Sync Manager
  * @module offline/types
@@ -32,133 +31,133 @@ export type ConflictStrategy = (typeof ConflictStrategy)[keyof typeof ConflictSt
  * @template T - Type of request data
  */
 export interface QueuedRequest<T = unknown> {
-    /** Unique identifier for this request (auto-generated if not provided) */
-    id?: string;
+  /** Unique identifier for this request (auto-generated if not provided) */
+  id?: string;
 
-    /** HTTP method */
-    method: HttpMethod;
+  /** HTTP method */
+  method: HttpMethod;
 
-    /** API endpoint URL */
-    url: string;
+  /** API endpoint URL */
+  url: string;
 
-    /** Request payload data */
-    data?: T;
+  /** Request payload data */
+  data?: T;
 
-    /** Custom headers */
-    headers?: Record<string, string>;
+  /** Custom headers */
+  headers?: Record<string, string>;
 
-    /** Request priority (affects processing order) */
-    priority?: RequestPriority;
+  /** Request priority (affects processing order) */
+  priority?: RequestPriority;
 
-    /** Maximum number of retry attempts */
-    maxRetries?: number;
+  /** Maximum number of retry attempts */
+  maxRetries?: number;
 
-    /** Current retry count */
-    retryCount?: number;
+  /** Current retry count */
+  retryCount?: number;
 
-    /** Timestamp when request was created */
-    createdAt?: number;
+  /** Timestamp when request was created */
+  createdAt?: number;
 
-    /** Timestamp of last sync attempt */
-    lastAttempt?: number;
+  /** Timestamp of last sync attempt */
+  lastAttempt?: number;
 }
 
 /**
  * Configuration options for OfflineSyncManager
  */
 export interface OfflineSyncConfig {
-    /** Maximum number of retry attempts per request (default: 3) */
-    maxRetries?: number;
+  /** Maximum number of retry attempts per request (default: 3) */
+  maxRetries?: number;
 
-    /** Initial retry delay in milliseconds (default: 1000) */
-    retryDelay?: number;
+  /** Initial retry delay in milliseconds (default: 1000) */
+  retryDelay?: number;
 
-    /** Maximum backoff delay in milliseconds (default: 30000) */
-    maxBackoff?: number;
+  /** Maximum backoff delay in milliseconds (default: 30000) */
+  maxBackoff?: number;
 
-    /** Maximum queue size limit (default: 100) */
-    maxQueueSize?: number;
+  /** Maximum queue size limit (default: 100) */
+  maxQueueSize?: number;
 
-    /** Whether to persist queue to storage (default: true) */
-    persistQueue?: boolean;
+  /** Whether to persist queue to storage (default: true) */
+  persistQueue?: boolean;
 
-    /** LocalStorage key for queue persistence (default: 'offline_sync_queue') */
-    storageKey?: string;
+  /** LocalStorage key for queue persistence (default: 'offline_sync_queue') */
+  storageKey?: string;
 
-    /** Auto-trigger sync when reconnecting to network (default: true) */
-    syncOnReconnect?: boolean;
+  /** Auto-trigger sync when reconnecting to network (default: true) */
+  syncOnReconnect?: boolean;
 
-    /** Delay before starting sync after reconnect in ms (default: 1000) */
-    syncDelay?: number;
+  /** Delay before starting sync after reconnect in ms (default: 1000) */
+  syncDelay?: number;
 
-    /** Conflict resolution strategy (default: ConflictStrategy.SERVER_WINS) */
-    conflictStrategy?: ConflictStrategy;
+  /** Conflict resolution strategy (default: ConflictStrategy.SERVER_WINS) */
+  conflictStrategy?: ConflictStrategy;
 
-    /** Manual conflict resolution callback (required if strategy is 'manual') */
-    onConflict?: ConflictHandler;
+  /** Manual conflict resolution callback (required if strategy is 'manual') */
+  onConflict?: ConflictHandler;
 }
 
 /**
  * Error information for a failed sync request
  */
 export interface SyncError {
-    /** ID of the request that failed */
-    requestId: string;
+  /** ID of the request that failed */
+  requestId: string;
 
-    /** Error that occurred */
-    error: Error;
+  /** Error that occurred */
+  error: Error;
 
-    /** Whether this error is retryable */
-    retryable: boolean;
+  /** Whether this error is retryable */
+  retryable: boolean;
 }
 
 /**
  * Result for a single item within a sync operation
  */
 export interface SyncItemResult {
-    /** ID of the request */
-    requestId: string;
-    /** Whether the request was successfully processed */
-    success: boolean;
-    /** Error if the request failed */
-    error?: Error;
-    /** Whether the failed request is retryable */
-    retryable?: boolean;
-    /** Response data if available and needed */
-    data?: unknown;
+  /** ID of the request */
+  requestId: string;
+  /** Whether the request was successfully processed */
+  success: boolean;
+  /** Error if the request failed */
+  error?: Error;
+  /** Whether the failed request is retryable */
+  retryable?: boolean;
+  /** Response data if available and needed */
+  data?: unknown;
 }
 
 /**
  * Result of a sync operation
  */
 export interface SyncResult {
-    /** Number of successfully synced requests */
-    success: number;
+  /** Number of successfully synced requests */
+  success: number;
 
-    /** Number of failed requests */
-    failed: number;
+  /** Number of failed requests */
+  failed: number;
 
-    /** Number of requests still pending */
-    pending: number;
+  /** Number of requests still pending */
+  pending: number;
 
-    /** Array of sync errors */
-    errors: SyncError[];
+  /** Array of sync errors */
+  errors: SyncError[];
 
-    /** Array of individual item results for deterministic cleanup */
-    results: SyncItemResult[];
+  /** Array of individual item results for deterministic cleanup */
+  results: SyncItemResult[];
 }
 
 /**
  * Sync events emitted by the manager
  */
 export type SyncEvent =
-    | { type: 'sync_start' }
-    | { type: 'sync_complete'; result: SyncResult }
-    | { type: 'sync_error'; error: Error }
-    | { type: 'request_success'; requestId: string }
-    | { type: 'request_failed'; requestId: string; error: Error }
-    | { type: 'request_retry'; requestId: string; attempt: number }
-    | { type: 'disposed' };
+  | { type: 'sync_start' }
+  | { type: 'sync_complete'; result: SyncResult }
+  | { type: 'sync_error'; error: Error }
+  | { type: 'request_success'; requestId: string }
+  | { type: 'request_failed'; requestId: string; error: Error }
+  | { type: 'request_retry'; requestId: string; attempt: number }
+  | { type: 'disposed' };
 
 /**
  * Callback function for sync event listeners
@@ -171,13 +170,16 @@ export type SyncListener = (event: SyncEvent) => void;
  * @param serverData - Data from server response
  * @returns Resolved data to use
  */
-export type ConflictHandler = (localData: unknown, serverData: unknown) => Promise<unknown> | unknown;
+export type ConflictHandler = (
+  localData: unknown,
+  serverData: unknown
+) => Promise<unknown> | unknown;
 
 /**
  * Internal queue item with metadata
  */
 export interface QueueItem<T = unknown> extends QueuedRequest<T> {
-    id: string; // Required for queue items
-    createdAt: number; // Required
-    retryCount: number; // Required
+  id: string; // Required for queue items
+  createdAt: number; // Required
+  retryCount: number; // Required
 }

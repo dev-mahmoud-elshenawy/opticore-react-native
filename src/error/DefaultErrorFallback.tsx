@@ -14,7 +14,10 @@ export interface DefaultErrorFallbackProps {
  * Displays the error's user-facing message and a "Try Again" button.
  * Replace via the `fallback` prop on OptiCoreErrorBoundary if you need custom UI.
  */
-export function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps): React.ReactElement {
+export function DefaultErrorFallback({
+  error,
+  onReset,
+}: DefaultErrorFallbackProps): React.ReactElement {
   // Build styles lazily on first render rather than at module load. Keeping
   // `StyleSheet.create` out of module scope means importing the library (e.g.
   // for `ApiClient` or `buildUrl`) does not eagerly evaluate React Native's

@@ -19,10 +19,7 @@ export class AuthInterceptor {
 
     // Backward compatibility: use legacy callbacks if no strategy provided
     if (!strategy && networkConfig.getAuthToken) {
-      strategy = new BearerTokenStrategy(
-        networkConfig.getAuthToken,
-        networkConfig.onTokenRefresh
-      );
+      strategy = new BearerTokenStrategy(networkConfig.getAuthToken, networkConfig.onTokenRefresh);
     }
 
     if (strategy) {
@@ -33,17 +30,17 @@ export class AuthInterceptor {
   }
 
   public async onError(error: unknown): Promise<unknown> {
-    const axiosError = error as { config?: InternalAxiosRequestConfig & { _retry?: boolean }; response?: { status?: number } };
+    const axiosError = error as {
+      config?: InternalAxiosRequestConfig & { _retry?: boolean };
+      response?: { status?: number };
+    };
     const config = axiosError.config;
     const networkConfig = this.client.config;
 
     // Check if we have a strategy or legacy callbacks
     let strategy = networkConfig.authStrategy;
     if (!strategy && networkConfig.getAuthToken) {
-      strategy = new BearerTokenStrategy(
-        networkConfig.getAuthToken,
-        networkConfig.onTokenRefresh
-      );
+      strategy = new BearerTokenStrategy(networkConfig.getAuthToken, networkConfig.onTokenRefresh);
     }
 
     if (axiosError.response?.status === 401 && config && !config._retry && strategy) {
@@ -55,7 +52,7 @@ export class AuthInterceptor {
         this.refreshPromise = Promise.resolve(activeStrategy.handleUnauthorized(error)).finally(
           () => {
             this.refreshPromise = null;
-          },
+          }
         );
       }
 

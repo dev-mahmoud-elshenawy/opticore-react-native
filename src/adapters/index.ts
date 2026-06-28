@@ -14,7 +14,4 @@ export { createExpoDeviceAdapter } from './defaults/expoDevice';
 export { createReactNativeDeviceInfoAdapter } from './defaults/deviceInfo';
 export { createExpoClipboardAdapter } from './defaults/expoClipboard';
 export { createRNClipboardAdapter } from './defaults/rnClipboard';
-export {
-  nativeModulePresent,
-  loadOptionalNativeModule,
-} from './defaults/nativeModulePresent';
+export { nativeModulePresent, loadOptionalNativeModule } from './defaults/nativeModulePresent';

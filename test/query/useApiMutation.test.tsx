@@ -6,7 +6,7 @@ import { RenderError } from '../../src/error/RenderError';
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const [client] = React.useState(
-    () => new QueryClient({ defaultOptions: { mutations: { retry: false } } }),
+    () => new QueryClient({ defaultOptions: { mutations: { retry: false } } })
   );
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }

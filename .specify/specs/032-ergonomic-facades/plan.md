@@ -97,8 +97,12 @@ import { StorageManager } from '../infrastructure/storage/StorageManager';
 import type { IStorage } from '...';
 
 export const storage = {
-  get secure(): IStorage { return StorageManager.getInstance().secure; },
-  get local(): IStorage { return StorageManager.getInstance().local; },
+  get secure(): IStorage {
+    return StorageManager.getInstance().secure;
+  },
+  get local(): IStorage {
+    return StorageManager.getInstance().local;
+  },
 } as const;
 ```
 

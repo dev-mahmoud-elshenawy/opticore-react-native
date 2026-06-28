@@ -5,11 +5,7 @@ import { ValidationIssue } from './types';
  * Each returns `true` when the value passes, `false` otherwise (and pushes an issue).
  */
 
-export function assertNonEmpty(
-  value: unknown,
-  path: string,
-  errors: ValidationIssue[],
-): boolean {
+export function assertNonEmpty(value: unknown, path: string, errors: ValidationIssue[]): boolean {
   if (value === undefined || value === null || value === '') {
     errors.push({ path, message: 'is required' });
     return false;
@@ -20,7 +16,7 @@ export function assertNonEmpty(
 export function assertString(
   value: unknown,
   path: string,
-  errors: ValidationIssue[],
+  errors: ValidationIssue[]
 ): value is string {
   if (typeof value !== 'string') {
     errors.push({ path, message: 'must be a string', value });
@@ -32,7 +28,7 @@ export function assertString(
 export function assertNonEmptyString(
   value: unknown,
   path: string,
-  errors: ValidationIssue[],
+  errors: ValidationIssue[]
 ): value is string {
   if (!assertString(value, path, errors)) return false;
   if ((value as string).trim() === '') {
@@ -45,7 +41,7 @@ export function assertNonEmptyString(
 export function assertPositiveNumber(
   value: unknown,
   path: string,
-  errors: ValidationIssue[],
+  errors: ValidationIssue[]
 ): value is number {
   if (typeof value !== 'number' || value <= 0) {
     errors.push({ path, message: 'must be a positive number', value });
@@ -57,7 +53,7 @@ export function assertPositiveNumber(
 export function assertNonNegativeNumber(
   value: unknown,
   path: string,
-  errors: ValidationIssue[],
+  errors: ValidationIssue[]
 ): value is number {
   if (typeof value !== 'number' || value < 0) {
     errors.push({ path, message: 'must be a non-negative number', value });
@@ -69,7 +65,7 @@ export function assertNonNegativeNumber(
 export function assertPositiveInteger(
   value: unknown,
   path: string,
-  errors: ValidationIssue[],
+  errors: ValidationIssue[]
 ): value is number {
   if (typeof value !== 'number' || value <= 0 || !Number.isInteger(value)) {
     errors.push({ path, message: 'must be a positive integer', value });
@@ -81,7 +77,7 @@ export function assertPositiveInteger(
 export function assertNonNegativeInteger(
   value: unknown,
   path: string,
-  errors: ValidationIssue[],
+  errors: ValidationIssue[]
 ): value is number {
   if (typeof value !== 'number' || value < 0 || !Number.isInteger(value)) {
     errors.push({ path, message: 'must be a non-negative integer', value });
@@ -93,7 +89,7 @@ export function assertNonNegativeInteger(
 export function assertBoolean(
   value: unknown,
   path: string,
-  errors: ValidationIssue[],
+  errors: ValidationIssue[]
 ): value is boolean {
   if (typeof value !== 'boolean') {
     errors.push({ path, message: 'must be a boolean', value });
@@ -106,7 +102,7 @@ export function assertOneOf<T>(
   value: T,
   allowed: readonly T[],
   path: string,
-  errors: ValidationIssue[],
+  errors: ValidationIssue[]
 ): boolean {
   if (!allowed.includes(value)) {
     errors.push({

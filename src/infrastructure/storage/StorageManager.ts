@@ -1,10 +1,7 @@
 import { IStorage } from './interfaces/IStorage';
 import { SecureStorage } from './SecureStorage';
 import { LocalStorage } from './LocalStorage';
-import type {
-  LocalStorageAdapter,
-  SecureStorageAdapter,
-} from '../../adapters/interfaces';
+import type { LocalStorageAdapter, SecureStorageAdapter } from '../../adapters/interfaces';
 
 /**
  * StorageManager - Unified storage interface singleton
@@ -31,10 +28,7 @@ export class StorageManager {
   public secure: IStorage;
   public local: IStorage;
 
-  private constructor(
-    secureAdapter?: SecureStorageAdapter,
-    localAdapter?: LocalStorageAdapter,
-  ) {
+  private constructor(secureAdapter?: SecureStorageAdapter, localAdapter?: LocalStorageAdapter) {
     this.secure = new SecureStorage(secureAdapter);
     this.local = LocalStorage.getInstance(localAdapter);
   }

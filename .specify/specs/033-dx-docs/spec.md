@@ -10,7 +10,7 @@
 After specs 031 (error model alignment) and 032 (ergonomic facades), the package's API friction is largely gone. The DX re-evaluation found the **remaining** gaps are no longer API — they're **learning-curve docs**:
 
 1. **Error idioms aren't disambiguated.** A newcomer faces `Result<T, E>`, throwing `RenderError`, and `ApiError` and can't tell which to use when. 031 fixed the boundary behavior but didn't ship a single "how do I handle errors" guide.
-2. **No consumer testing guide.** The adapter memory-fallbacks make OptiCore testable in a consuming app, but there's no short doc on *how* to mock/reset it in app tests — a real adoption blocker for "use in any project."
+2. **No consumer testing guide.** The adapter memory-fallbacks make OptiCore testable in a consuming app, but there's no short doc on _how_ to mock/reset it in app tests — a real adoption blocker for "use in any project."
 3. **Two initialization concepts are visible.** `OptiCoreProvider` (the blessed path) and `CoreSetup.init()` (under the hood) both appear in docs; consumers can't tell which is theirs.
 
 This spec is **documentation only** — no source/API changes, no version bump required (optionally a 2.8.1 docs release).

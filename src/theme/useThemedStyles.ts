@@ -27,8 +27,8 @@ type NamedStyles<T> = { [P in keyof T]: ViewStyle | TextStyle | ImageStyle };
  * ```
  */
 export function useThemedStyles<T extends NamedStyles<T> | NamedStyles<unknown>>(
-    factory: (theme: Theme) => T,
+  factory: (theme: Theme) => T
 ): T {
-    const { theme } = useTheme();
-    return useMemo(() => StyleSheet.create(factory(theme)), [theme, factory]);
+  const { theme } = useTheme();
+  return useMemo(() => StyleSheet.create(factory(theme)), [theme, factory]);
 }

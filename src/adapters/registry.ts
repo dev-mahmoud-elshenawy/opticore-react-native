@@ -40,17 +40,14 @@ import {
 const _warnedFeatures = new Set<string>();
 
 function warnMemoryFallback(feature: string, peers: string): void {
-  const isDev =
-    typeof __DEV__ !== 'undefined'
-      ? __DEV__
-      : process.env.NODE_ENV !== 'production';
+  const isDev = typeof __DEV__ !== 'undefined' ? __DEV__ : process.env.NODE_ENV !== 'production';
   if (!isDev || _warnedFeatures.has(feature)) return;
   _warnedFeatures.add(feature);
   console.warn(
     `[OptiCore] ${feature}: optional peer (${peers}) not found — using a ` +
       `non-persistent in-memory fallback. Data will not survive app restarts ` +
       `and secure storage is NOT secure. Install it with ` +
-      `\`npx opticore-install-peers\` (or pass a custom adapter to OptiCoreProvider).`,
+      `\`npx opticore-install-peers\` (or pass a custom adapter to OptiCoreProvider).`
   );
 }
 
@@ -59,9 +56,7 @@ export function _resetAdapterWarnings(): void {
   _warnedFeatures.clear();
 }
 
-export function resolveSecureStorageAdapter(
-  override?: SecureStorageAdapter,
-): SecureStorageAdapter {
+export function resolveSecureStorageAdapter(override?: SecureStorageAdapter): SecureStorageAdapter {
   if (override) return override;
   const real = createExpoSecureStoreAdapter();
   if (real) return real;
@@ -69,9 +64,7 @@ export function resolveSecureStorageAdapter(
   return createMemorySecureStorageAdapter();
 }
 
-export function resolveLocalStorageAdapter(
-  override?: LocalStorageAdapter,
-): LocalStorageAdapter {
+export function resolveLocalStorageAdapter(override?: LocalStorageAdapter): LocalStorageAdapter {
   if (override) return override;
   const real = createAsyncStorageAdapter();
   if (real) return real;
@@ -79,9 +72,7 @@ export function resolveLocalStorageAdapter(
   return createMemoryLocalStorageAdapter();
 }
 
-export function resolveConnectivityAdapter(
-  override?: ConnectivityAdapter,
-): ConnectivityAdapter {
+export function resolveConnectivityAdapter(override?: ConnectivityAdapter): ConnectivityAdapter {
   if (override) return override;
   const real = createNetInfoAdapter();
   if (real) return real;
@@ -91,19 +82,15 @@ export function resolveConnectivityAdapter(
 
 export function resolveDeviceAdapter(override?: DeviceAdapter): DeviceAdapter {
   if (override) return override;
-  const real =
-    createExpoDeviceAdapter() ?? createReactNativeDeviceInfoAdapter();
+  const real = createExpoDeviceAdapter() ?? createReactNativeDeviceInfoAdapter();
   if (real) return real;
   warnMemoryFallback('Device', 'expo-device / react-native-device-info');
   return createMemoryDeviceAdapter();
 }
 
-export function resolveClipboardAdapter(
-  override?: ClipboardAdapter,
-): ClipboardAdapter {
+export function resolveClipboardAdapter(override?: ClipboardAdapter): ClipboardAdapter {
   if (override) return override;
-  const real =
-    createExpoClipboardAdapter() ?? createRNClipboardAdapter();
+  const real = createExpoClipboardAdapter() ?? createRNClipboardAdapter();
   if (real) return real;
   warnMemoryFallback('Clipboard', 'expo-clipboard / @react-native-clipboard/clipboard');
   return createMemoryClipboardAdapter();
