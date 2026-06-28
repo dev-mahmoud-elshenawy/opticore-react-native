@@ -165,44 +165,66 @@
     "node": ">=18"
   },
   "peerDependencies": {
-    "expo": ">=54.0.0",
-    "expo-router": ">=4.0.0",
-    "react": ">=19.0.0",
-    "react-native": ">=0.78.0",
-    "@tanstack/react-query": ">=5.0.0",
-    "typescript": ">=5.0.0",
     "@react-native-async-storage/async-storage": "*",
+    "@react-native-clipboard/clipboard": "*",
     "@react-native-community/netinfo": "*",
-    "expo-secure-store": "*",
+    "@tanstack/react-query": ">=5.0.0",
+    "expo": ">=54.0.0",
+    "expo-application": "*",
     "expo-clipboard": "*",
     "expo-device": "*",
-    "expo-application": "*",
-    "@react-native-clipboard/clipboard": "*",
-    "react-native-device-info": "*",
+    "expo-router": ">=4.0.0",
+    "expo-secure-store": "*",
     "nativewind": ">=4.0.0",
-    "tailwindcss": ">=3.4.0"
+    "react": ">=19.0.0",
+    "react-native": ">=0.78.0",
+    "react-native-device-info": "*",
+    "tailwindcss": ">=3.4.0",
+    "typescript": ">=5.0.0"
   },
   "peerDependenciesMeta": {
-    "typescript": { "optional": true },
-    "nativewind": { "optional": true },
-    "tailwindcss": { "optional": true },
-    "@react-native-async-storage/async-storage": { "optional": true },
-    "@react-native-community/netinfo": { "optional": true },
-    "expo-secure-store": { "optional": true },
-    "expo-clipboard": { "optional": true },
-    "expo-device": { "optional": true },
-    "expo-application": { "optional": true },
-    "@react-native-clipboard/clipboard": { "optional": true },
-    "react-native-device-info": { "optional": true }
+    "typescript": {
+      "optional": true
+    },
+    "nativewind": {
+      "optional": true
+    },
+    "tailwindcss": {
+      "optional": true
+    },
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    },
+    "@react-native-community/netinfo": {
+      "optional": true
+    },
+    "expo-secure-store": {
+      "optional": true
+    },
+    "expo-clipboard": {
+      "optional": true
+    },
+    "expo-device": {
+      "optional": true
+    },
+    "expo-application": {
+      "optional": true
+    },
+    "@react-native-clipboard/clipboard": {
+      "optional": true
+    },
+    "react-native-device-info": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-typescript": "^7.26.0",
-    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-native-async-storage/async-storage": "^3.1.1",
     "@react-native-clipboard/clipboard": "^1.16.3",
-    "@react-native-community/netinfo": "^11.5.1",
-    "@tanstack/react-query": "^5.90.20",
+    "@react-native-community/netinfo": "^12.0.1",
+    "@tanstack/react-query": "^5.101.2",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^14.0.0-beta.0",
     "@types/jest": "^29.5.0",
@@ -215,7 +237,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "expo": "54.0.32",
     "expo-router": "~6.0.0",
-    "expo-secure-store": "^15.0.8",
+    "expo-secure-store": "^56.0.4",
     "jest": "^29.7.0",
     "jest-expo": "^54.0.17",
     "prettier": "^3.4.0",
@@ -230,6 +252,9 @@
     "@hookform/resolvers": "^3.10.0",
     "axios": "^1.13.4",
     "date-fns": "^4.1.0",
+    "expo-application": "^56.0.3",
+    "expo-clipboard": "^56.0.4",
+    "expo-device": "^56.0.4",
     "immer": "^10.2.0",
     "react-hook-form": "^7.54.2",
     "zod": "^3.24.1",

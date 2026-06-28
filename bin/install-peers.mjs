@@ -71,11 +71,7 @@ function detectExpo(cwd) {
   if (!existsSync(pkgPath)) return false;
   try {
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-    return Boolean(
-      pkg.dependencies?.expo ||
-        pkg.devDependencies?.expo ||
-        pkg.peerDependencies?.expo,
-    );
+    return Boolean(pkg.dependencies?.expo);
   } catch {
     return false;
   }

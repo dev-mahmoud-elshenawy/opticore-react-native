@@ -1,5 +1,4 @@
 import type { SecureStorageAdapter } from '../interfaces';
-import { nativeModulePresent } from './nativeModulePresent';
 
 interface ExpoSecureStoreModule {
   setItemAsync(key: string, value: string): Promise<void>;
@@ -12,12 +11,14 @@ interface ExpoSecureStoreModule {
  * Resolves at runtime — returns null if the native module is absent (Expo Go)
  * or the peer is not installed, so the resolver chain can fall through.
  */
+// Expo modules register through ExpoModulesCore, not TurboModuleRegistry /
+// NativeModules, so nativeModulePresent() always returns false for them.
+// Use try-require + method-presence check instead.
 export function createExpoSecureStoreAdapter(): SecureStorageAdapter | null {
-  if (!nativeModulePresent('ExpoSecureStore')) return null;
-
   let mod: ExpoSecureStoreModule;
   try {
-    mod = require('expo-secure-store') as ExpoSecureStoreModule;
+    const imported = require('expo-secure-store');
+    mod = (imported?.default ?? imported) as ExpoSecureStoreModule;
   } catch {
     return null;
   }

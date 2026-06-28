@@ -35,25 +35,36 @@ function withOptiCoreMetroConfig(config, projectRoot) {
     appModules,
   ];
 
-  // Hard override: force React singletons to always resolve from the app's
+  // Hard override: force shared peers to always resolve from the app's
   // node_modules. extraNodeModules is a fallback — resolveRequest fires first,
   // before Metro's directory-walking finds a second copy of React inside
   // opticore's devDependencies (which breaks hooks with "Invalid hook call").
   // React and React Query both rely on a single shared instance across the
   // app + opticore boundary (shared context / hooks). Force them to the app's
   // copy so a second copy inside opticore's devDependencies can't break them.
-  const SINGLETONS = [
+  // Native optional peers must also resolve from the app: local file links can
+  // otherwise load opticore's devDependency JS wrapper while the app binary is
+  // linked against a different copy/version of the native module.
+  const APP_RESOLVED_PEERS = [
     'react',
     'react-native',
     'react-dom',
     '@tanstack/react-query',
     '@tanstack/query-core',
+    '@react-native-async-storage/async-storage',
+    '@react-native-clipboard/clipboard',
+    '@react-native-community/netinfo',
+    'expo-application',
+    'expo-clipboard',
+    'expo-device',
+    'expo-secure-store',
+    'react-native-device-info',
   ];
   config.resolver.resolveRequest = (context, moduleName, platform) => {
-    const isSingleton = SINGLETONS.some(
+    const shouldResolveFromApp = APP_RESOLVED_PEERS.some(
       s => moduleName === s || moduleName.startsWith(s + '/'),
     );
-    if (isSingleton) {
+    if (shouldResolveFromApp) {
       try {
         const filePath = require.resolve(moduleName, { paths: [projectRoot] });
         return { filePath, type: 'sourceFile' };

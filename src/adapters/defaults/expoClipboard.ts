@@ -1,5 +1,4 @@
 import type { ClipboardAdapter } from '../interfaces';
-import { nativeModulePresent } from './nativeModulePresent';
 
 interface ExpoClipboardModule {
   setStringAsync(value: string): Promise<boolean | void>;
@@ -15,13 +14,14 @@ interface ExpoClipboardModule {
  * `expo-clipboard` ships inside the Expo Go binary, so it works without a
  * custom development build.
  */
+// Expo modules register through ExpoModulesCore, not TurboModuleRegistry /
+// NativeModules, so nativeModulePresent() always returns false for them.
+// Use try-require + method-presence check instead.
 export function createExpoClipboardAdapter(): ClipboardAdapter | null {
-  // Gate on the native module like every other adapter (Expo Go-safe).
-  if (!nativeModulePresent('ExpoClipboard')) return null;
-
   let mod: ExpoClipboardModule;
   try {
-    mod = require('expo-clipboard') as ExpoClipboardModule;
+    const imported = require('expo-clipboard');
+    mod = (imported?.default ?? imported) as ExpoClipboardModule;
   } catch {
     return null;
   }
