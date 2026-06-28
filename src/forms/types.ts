@@ -11,7 +11,8 @@ import {
     UseFormRegister,
     Control,
     FieldValues,
-    DefaultValues
+    DefaultValues,
+    Path
 } from 'react-hook-form';
 import { ZodSchema, ZodType, ZodString, ZodRawShape } from 'zod';
 
@@ -78,22 +79,35 @@ export interface FormConfig<T extends FieldValues> {
     reValidateMode?: 'onBlur' | 'onChange' | 'onSubmit';
 }
 
+/** Ready-to-spread binding for a React Native `<TextInput>` (see {@link FormStateReturn.field}). */
+export interface FieldBinding {
+    value: string;
+    onChangeText: (text: string) => void;
+    onBlur: () => void;
+    error?: string;
+}
+
+/**
+ * The forms facade — a simple surface over React Hook Form. App code uses
+ * `field()` + `submit()` and never touches RHF's `control`/`register`/`handleSubmit`.
+ * For the rare advanced case, drop to the full RHF instance via `form`.
+ */
 export interface FormStateReturn<T extends FieldValues> {
-    form: UseFormReturn<T>;
+    /** RN binding for a text field: `<TextInput {...field('email')} />` (value/onChangeText/onBlur/error). */
+    field: (name: Path<T>) => FieldBinding;
+    /** Validate, then run `onValid` if valid. Call it: `onPress={() => submit(save)}` (or `await submit(save)`). */
+    submit: (onValid: SubmitHandler<T>, onInvalid?: SubmitErrorHandler<T>) => Promise<void>;
     errors: FieldErrors<T>;
     isValid: boolean;
     isSubmitting: boolean;
     isDirty: boolean;
-    handleSubmit: (onValid: SubmitHandler<T>, onInvalid?: SubmitErrorHandler<T>) => Promise<void>;
     /** RHF reset — accepts values AND a ResetOptions second arg (keepDirty/keepErrors/…). */
     reset: UseFormReset<T>;
     setValue: UseFormSetValue<T>;
     getValue: UseFormGetValues<T>;
     watch: UseFormWatch<T>;
-    /** RHF control object, for `<Controller>`-based fields. */
-    control: Control<T>;
-    /** RHF register, for uncontrolled inputs. */
-    register: UseFormRegister<T>;
+    /** Escape hatch: the full React Hook Form instance (control/register/trigger/handleSubmit). */
+    form: UseFormReturn<T>;
 }
 
 export type {

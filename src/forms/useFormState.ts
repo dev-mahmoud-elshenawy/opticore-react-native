@@ -1,18 +1,25 @@
-
-import { useForm, UseFormReturn, FieldValues, SubmitHandler, SubmitErrorHandler } from 'react-hook-form';
+import {
+    useForm,
+    UseFormReturn,
+    FieldValues,
+    Path,
+    PathValue,
+    SubmitHandler,
+    SubmitErrorHandler,
+} from 'react-hook-form';
 import { useCallback } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormConfig, FormStateReturn } from './types';
-
+import { FormConfig, FormStateReturn, FieldBinding } from './types';
 
 /**
- * useFormState
- * 
- * A wrapper around react-hook-form's useForm hook that provides
- * opinionated defaults and integrates with Zod validation.
- * 
+ * useFormState — a simple forms facade over React Hook Form.
+ *
+ * App code uses `field()` (input binding) and `submit()` (validate + run); it never
+ * touches RHF's `control`/`register`/`handleSubmit`. Drop to `form` only for advanced
+ * cases. Validation is Zod via `config.schema`.
+ *
  * @param config Form configuration
- * @returns Form state and handlers
+ * @returns The forms facade
  */
 export function useFormState<T extends FieldValues>(
     config: FormConfig<T>
@@ -24,7 +31,6 @@ export function useFormState<T extends FieldValues>(
         reValidateMode = 'onChange',
     } = config;
 
-    // Initialize useForm with zod resolver if schema is provided
     const form: UseFormReturn<T> = useForm<T>({
         defaultValues,
         mode,
@@ -39,30 +45,45 @@ export function useFormState<T extends FieldValues>(
         setValue,
         getValues, // Renamed to getValue in return interface for consistency
         watch,
-        control,
-        register,
+        trigger,
     } = form;
 
-    // Safe async submission wrapper
-    const handleSafeSubmit = useCallback(async (
-        onValid: SubmitHandler<T>,
-        onInvalid?: SubmitErrorHandler<T>
-    ): Promise<void> => {
-        return rhfHandleSubmit(onValid, onInvalid)();
-    }, [rhfHandleSubmit]);
+    // RN binding for a text field: `<TextInput {...field('email')} />`.
+    // `watch(name)` subscribes the component, so the value stays reactive.
+    const field = useCallback(
+        (name: Path<T>): FieldBinding => ({
+            value: String(watch(name) ?? ''),
+            onChangeText: (text: string) =>
+                setValue(name, text as PathValue<T, Path<T>>, {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                }),
+            onBlur: () => {
+                void trigger(name);
+            },
+            error: (errors as Record<string, { message?: string } | undefined>)[name]?.message,
+        }),
+        [watch, setValue, trigger, errors]
+    );
+
+    // Validate, then run onValid if valid. Call it (don't pre-call at render).
+    const submit = useCallback(
+        (onValid: SubmitHandler<T>, onInvalid?: SubmitErrorHandler<T>): Promise<void> =>
+            rhfHandleSubmit(onValid, onInvalid)(),
+        [rhfHandleSubmit]
+    );
 
     return {
-        form,
+        field,
+        submit,
         errors,
         isValid,
         isSubmitting,
         isDirty,
-        handleSubmit: handleSafeSubmit,
         reset,
         setValue,
         getValue: getValues,
         watch,
-        control,
-        register,
+        form,
     };
 }

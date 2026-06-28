@@ -36,27 +36,30 @@ interface FormConfig<T> {
 
 ### FormStateReturn
 
+A simple facade over React Hook Form — use `field()` + `submit()`; never touch RHF's
+`control`/`register`/`handleSubmit` directly.
+
 ```typescript
 interface FormStateReturn<T> {
-  form: UseFormReturn<T>;      // Full React Hook Form instance
+  // Spread onto a TextInput: <TextInput {...field('email')} /> — value/onChangeText/onBlur/error
+  field: (name: Path<T>) => { value: string; onChangeText: (t: string) => void; onBlur: () => void; error?: string };
+  // Validate, then run onValid if valid. Just call it (returns a Promise).
+  submit: (onValid: SubmitHandler<T>, onInvalid?: SubmitErrorHandler<T>) => Promise<void>;
   errors: FieldErrors<T>;     // Typed validation errors
   isValid: boolean;           // All fields pass validation
-  isSubmitting: boolean;      // True during async onSubmit
+  isSubmitting: boolean;      // True during async onValid
   isDirty: boolean;           // At least one field changed
-  // Runs validation, then awaits onValid (or onInvalid). Returns a Promise — NOT a thunk.
-  handleSubmit: (onValid: SubmitHandler<T>, onInvalid?: SubmitErrorHandler<T>) => Promise<void>;
   reset: UseFormReset<T>;     // RHF reset — accepts values AND a ResetOptions second arg
   setValue: UseFormSetValue<T>;
   getValue: UseFormGetValues<T>;
   watch: UseFormWatch<T>;
-  control: Control<T>;        // RHF control object, for <Controller>-based fields
-  register: UseFormRegister<T>; // RHF register, for uncontrolled inputs
+  form: UseFormReturn<T>;     // escape hatch: full RHF (control/register/trigger/clearErrors/…)
 }
 ```
 
-> `handleSubmit` returns a `Promise<void>` directly — call it as `handleSubmit(onSubmit)`, not
-> `handleSubmit(onSubmit)()`. Other field-level helpers (e.g. `clearErrors`) live on the
-> `form` instance: `form.clearErrors()`.
+> `field('name')` is for **text** inputs. `submit(onValid)` validates then runs `onValid` —
+> call it on press (`onPress={() => submit(save)}`), not at render. Anything RHF that the facade
+> doesn't surface lives on `form` (e.g. `form.clearErrors()`, `form.control` for `<Controller>`).
 
 ---
 
@@ -77,14 +80,7 @@ const schema = z.object({
 type LoginForm = z.infer<typeof schema>;
 
 function LoginScreen() {
-  const {
-    errors,
-    isValid,
-    isSubmitting,
-    handleSubmit,
-    setValue,
-    watch,
-  } = useFormState<LoginForm>({
+  const { field, submit, isValid, isSubmitting } = useFormState<LoginForm>({
     schema,
     defaultValues: { email: '', password: '', phone: '', age: 18 },
     mode: 'onChange',
@@ -94,34 +90,44 @@ function LoginScreen() {
     await api.post('/auth/login', data);
   };
 
+  // field('email') → { value, onChangeText, onBlur, error }
+  const email = field('email');
+  const password = field('password');
+
   return (
     <ScrollView>
       <TextInput
-        value={String(watch('email') ?? '')}
-        onChangeText={(v) => setValue('email', v)}
+        value={email.value}
+        onChangeText={email.onChangeText}
+        onBlur={email.onBlur}
         placeholder="Email"
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      {errors.email && <Text style={{ color: 'red' }}>{errors.email.message}</Text>}
+      {email.error && <Text style={{ color: 'red' }}>{email.error}</Text>}
 
       <TextInput
-        value={String(watch('password') ?? '')}
-        onChangeText={(v) => setValue('password', v)}
+        value={password.value}
+        onChangeText={password.onChangeText}
+        onBlur={password.onBlur}
         placeholder="Password"
         secureTextEntry
       />
-      {errors.password && <Text style={{ color: 'red' }}>{errors.password.message}</Text>}
+      {password.error && <Text style={{ color: 'red' }}>{password.error}</Text>}
 
       <Button
         title={isSubmitting ? 'Signing in...' : 'Sign In'}
-        onPress={handleSubmit(onSubmit)}
+        onPress={() => submit(onSubmit)}
         disabled={!isValid || isSubmitting}
       />
     </ScrollView>
   );
 }
 ```
+
+> **Tip:** with a small wrapper component that accepts an `error` prop (e.g. a `TextField`),
+> the binding is a one-liner — `<TextField {...field('email')} />` — since `field()`'s shape
+> (`value`/`onChangeText`/`onBlur`/`error`) is designed to spread straight onto it.
 
 ---
 
@@ -339,10 +345,11 @@ function SignUpFlow() {
     mode: 'onChange',
   });
 
-  const onAccountSubmit = accountForm.handleSubmit(async (data) => {
-    setFormData(prev => ({ ...prev, ...data }));
-    setStep('profile');
-  });
+  const onAccountSubmit = () =>
+    accountForm.submit(async (data) => {
+      setFormData(prev => ({ ...prev, ...data }));
+      setStep('profile');
+    });
 
   // ...
 }

@@ -34,7 +34,7 @@ describe('useFormState', () => {
         const onSubmit = jest.fn();
 
         await act(async () => {
-            await result.current.handleSubmit(onSubmit);
+            await result.current.submit(onSubmit);
         });
 
         expect(onSubmit).toHaveBeenCalledWith(defaultValues, undefined);
@@ -51,7 +51,7 @@ describe('useFormState', () => {
         const onSubmit = jest.fn();
 
         await act(async () => {
-            await result.current.handleSubmit(onSubmit);
+            await result.current.submit(onSubmit);
         });
 
         expect(onSubmit).not.toHaveBeenCalled();
@@ -94,17 +94,32 @@ describe('useFormState', () => {
         await waitFor(() => expect(result.current.isDirty).toBe(false));
     });
 
-    test('should maintain referential stability of handleSubmit', async () => {
+    test('should maintain referential stability of submit', async () => {
         const { result, rerender } = await renderHook(() => useFormState({
             defaultValues,
             schema,
         }));
 
-        const initialHandleSubmit = result.current.handleSubmit;
+        const initialSubmit = result.current.submit;
 
         // Force re-render
         rerender({});
 
-        expect(result.current.handleSubmit).toBe(initialHandleSubmit);
+        expect(result.current.submit).toBe(initialSubmit);
+    });
+
+    test('field() binds value/onChangeText/error and validates on change', async () => {
+        const { result } = await renderHook(() => useFormState({
+            defaultValues,
+            schema,
+        }));
+
+        expect(result.current.field('email').value).toBe(defaultValues.email);
+
+        await act(async () => {
+            result.current.field('email').onChangeText('not-an-email');
+        });
+
+        await waitFor(() => expect(result.current.field('email').error).toBe('Invalid email'));
     });
 });
