@@ -22,14 +22,6 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 - **`api` verbs now return the body (`T`) directly** — not `ApiResponse<T>`.
 
-  ```ts
-  // Before (2.x)
-  const { data } = await api.get<User[]>('/users');
-
-  // After (3.0)
-  const users = await api.get<User[]>('/users');
-  ```
-
   **Migrate:** remove `.data` from every `api.get/post/put/patch/delete` call.
 
 - **`api.request` and `api.data` removed.** Use verbs directly. If you need `status`/`headers`, reach the engine via `ApiClient.getInstance().request(...)`.
@@ -38,25 +30,6 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 Five new imperative facades join `api`, `storage`, and `logger`:
 
-```ts
-import { connectivity, offline, themeControl, lifecycle, stateObserver } from 'opticore-react-native';
-
-// connectivity
-if (connectivity.isConnected) await sync();
-
-// lifecycle
-const off = lifecycle.onChange(() => prefetch(), () => persist());
-
-// themeControl
-themeControl.setMode('dark');
-
-// offline
-offline.enqueue({ method: 'POST', url: '/notes', data: note });
-
-// stateObserver
-stateObserver.subscribe(myStore, (s) => logger.debug(s));
-```
-
 All facades are also available at `opticore-react-native/facades`, are lazy (side-effect-free on import), and delegate to the same singletons used by the hooks.
 
 ### 🧪 Testing utilities (`opticore-react-native/testing`)
@@ -64,7 +37,9 @@ All facades are also available at `opticore-react-native/facades`, are lazy (sid
 ```ts
 import { createMemoryAdapters, resetOptiCore } from 'opticore-react-native/testing';
 
-beforeEach(() => { /* configure with isolated in-memory adapters */ });
+beforeEach(() => {
+  /* configure with isolated in-memory adapters */
+});
 afterEach(resetOptiCore);
 ```
 

@@ -1,71 +1,55 @@
 import { useState, useEffect, useCallback } from 'react';
-import { OfflineSyncManager } from './OfflineSyncManager';
-import { ConnectivityManager } from '../infrastructure/connectivity/ConnectivityManager';
+import { offline } from '../facades/offline';
+import { connectivity } from '../facades/connectivity';
 import { QueuedRequest } from './types';
 
 /**
  * Hook to interact with the offline sync system
  */
 export function useOfflineSync() {
-  const manager = OfflineSyncManager.getInstance();
-  const connectivity = ConnectivityManager.getInstance();
-
-  // Subscribe to manager state (pending count, syncing status, paused status)
-
   const [state, setState] = useState({
     isOnline: connectivity.isConnected,
-    isSyncing: manager.isSyncing(),
+    isSyncing: offline.isSyncing(),
     pendingCount: 0,
   });
 
   useEffect(() => {
     const updateState = async () => {
-      const count = await manager.getPendingCount();
+      const count = await offline.getPendingCount();
       setState({
         isOnline: connectivity.isConnected,
-        isSyncing: manager.isSyncing(),
+        isSyncing: offline.isSyncing(),
         pendingCount: count,
       });
     };
 
-    const unsubscribeSync = manager.addListener(updateState);
+    const unsubscribeSync = offline.subscribe(updateState);
+    const unsubscribeConnectivity = connectivity.subscribe(() => updateState());
 
-    // Connectivity listener
-    const handleConnectivity = () => updateState();
-    connectivity.addListener(handleConnectivity);
-
-    // Initial update in case state changed between render and effect
     updateState();
 
     return () => {
       unsubscribeSync();
-      connectivity.removeListener(handleConnectivity);
+      unsubscribeConnectivity();
     };
-  }, [manager, connectivity]);
+  }, []);
 
-  const enqueue = useCallback(
-    async <T>(request: QueuedRequest<T>) => {
-      return manager.enqueue(request);
-    },
-    [manager]
-  );
+  const enqueue = useCallback(async <T>(request: QueuedRequest<T>) => {
+    return offline.enqueue(request);
+  }, []);
 
   const sync = useCallback(async () => {
-    return manager.sync();
-  }, [manager]);
+    return offline.sync();
+  }, []);
 
-  const remove = useCallback(
-    (id: string) => {
-      return manager.remove(id);
-    },
-    [manager]
-  );
+  const remove = useCallback((id: string) => {
+    return offline.remove(id);
+  }, []);
 
   const clearQueue = useCallback(() => {
-    manager.clearQueue();
-    // Force update state after clear since it might not emit event immediately
+    offline.clearQueue();
     setState((prev) => ({ ...prev, pendingCount: 0 }));
-  }, [manager]);
+  }, []);
 
   return {
     ...state,
