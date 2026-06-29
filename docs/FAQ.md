@@ -193,7 +193,7 @@ throw new RenderError('Could not load your profile');
 try {
   await trackAnalytics('event');
 } catch (cause) {
-  Logger.getInstance().error(
+  logger.error(
     'analytics dropped',
     new NonRenderError('Analytics event dropped', {
       isSilent: true,

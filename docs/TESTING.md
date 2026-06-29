@@ -152,7 +152,7 @@ function renderWithProviders(component: React.ReactElement) {
 describe('UserList', () => {
   it('displays users after fetch', async () => {
     // Mock the API — request() is the public entry point.
-    jest.spyOn(ApiClient.getInstance(), 'request').mockResolvedValue({
+    jest.spyOn(api, 'get').mockResolvedValue(
       data: [{ id: '1', name: 'Alice' }],
       status: 200,
       headers: {},
@@ -307,7 +307,7 @@ jest.mock('@react-native-async-storage/async-storage', () =>
 import { StorageManager } from 'opticore-react-native';
 
 describe('StorageManager', () => {
-  const storage = StorageManager.getInstance();
+  // storage facade already references the singleton; reset via resetOptiCore()
 
   afterEach(async () => {
     await storage.local.clear();

@@ -117,31 +117,30 @@ Most apps don't need these — auth and logging are already built in. When you d
 interceptors are registered on the client instance:
 
 ```typescript
-import { ApiClient } from 'opticore-react-native';
-const client = ApiClient.getInstance();
+import { api } from 'opticore-react-native';
 ```
 
 ```typescript
 // addRequestInterceptor / addResponseInterceptor
-const id = client.addRequestInterceptor({
+const id = api.onRequest({
   onRequest(config) {
     config.headers['X-Request-ID'] = uuid();
     return config;
   },
   onError(error) {
-    Logger.getInstance().error('Request error', error as Error);
+    logger.error('Request error', error as Error);
     return Promise.reject(error);
   },
 });
 
 // Remove by ID
-client.removeInterceptor(id);
+api.removeInterceptor(id);
 ```
 
 ```typescript
-const id = client.addResponseInterceptor({
+const id = api.onResponse({
   onResponse(response) {
-    Logger.getInstance().debug(`${response.config.url} → ${response.status}`);
+    logger.debug(`${response.config.url} → ${response.status}`);
     return response;
   },
   onError(error) {
@@ -223,8 +222,7 @@ Unified interface over AsyncStorage (local) and expo-secure-store (secure).
 ### Import
 
 ```typescript
-import { StorageManager } from 'opticore-react-native';
-const storage = StorageManager.getInstance();
+import { storage } from 'opticore-react-native';
 ```
 
 ### Local Storage (AsyncStorage)
@@ -268,7 +266,7 @@ await storage.secure.clear();
 
 ```typescript
 // Clears both local and secure storage
-await StorageManager.getInstance().clearAll();
+await storage.clearAll();
 ```
 
 ### IStorage Interface
@@ -293,8 +291,7 @@ Structured logging with level filtering and pluggable transports.
 ### Import
 
 ```typescript
-import { Logger, LogLevel } from 'opticore-react-native';
-const logger = Logger.getInstance();
+import { logger, LogLevel } from 'opticore-react-native';
 ```
 
 ### Logging Methods
@@ -320,7 +317,7 @@ logger: {
 }
 
 // Directly
-logger.configure({ level: LogLevel.DEBUG });
+logger.setLevel(LogLevel.DEBUG);
 ```
 
 Log levels (numeric, filter by minimum):
@@ -401,8 +398,7 @@ Real-time network monitoring via `@react-native-community/netinfo`.
 ### Import
 
 ```typescript
-import { ConnectivityManager } from 'opticore-react-native';
-const connectivity = ConnectivityManager.getInstance();
+import { connectivity } from 'opticore-react-native';
 ```
 
 ### Check Current State
@@ -415,7 +411,7 @@ const isOnline = connectivity.isConnected; // boolean
 ### Subscribe to Changes
 
 ```typescript
-const unsubscribe = connectivity.addListener((isConnected: boolean) => {
+const unsubscribe = connectivity.subscribe(() => {
   if (!isConnected) {
     showOfflineBanner();
   } else {
@@ -426,8 +422,6 @@ const unsubscribe = connectivity.addListener((isConnected: boolean) => {
 
 // Cleanup
 unsubscribe();
-// or
-connectivity.removeListener(callback);
 ```
 
 ### In React Components
@@ -452,14 +446,13 @@ Tracks app foreground/background state via React Native's `AppState`.
 ### Import
 
 ```typescript
-import { LifecycleManager } from 'opticore-react-native';
-const lifecycle = LifecycleManager.getInstance();
+import { lifecycle } from 'opticore-react-native';
 ```
 
 ### Subscribe to State Changes
 
 ```typescript
-const unsubscribe = lifecycle.addObserver(
+const unsubscribe = lifecycle.subscribe(
   () => {
     // App became active (foreground)
     refreshUserSession();

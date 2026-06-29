@@ -59,13 +59,11 @@ The foundation of the library. Handles I/O: network, storage, logging, and devic
 | `ConnectivityManager` | Real-time network state monitoring                            | Singleton + Observer |
 | `LifecycleManager`    | App foreground/background tracking                            | Singleton + Observer |
 
-**All services are singletons** — call `getInstance()` to get the same instance anywhere in your app.
+**All services are singletons** — the **facades** (`api`, `storage`, `logger`, etc.) give you the same instance without calling `getInstance()`.
 
 ```typescript
 // Same instance everywhere
-const api = ApiClient.getInstance();
-const storage = StorageManager.getInstance();
-const logger = Logger.getInstance();
+import { api, storage, logger } from 'opticore-react-native';
 ```
 
 ---
@@ -166,7 +164,7 @@ utils/
 ```
 Component
   └─► run(fetchUsers())                   ← useAsyncState tracks the promise (loading/error)
-        └─► ApiClient.getInstance().request() ← Singleton HTTP client
+        └─► api.get/post/put/patch/delete()   ← via api facade
               ├─► Request Interceptor     ← Attaches auth token
               ├─► HTTP Request → Server
               ├─► Response Interceptor    ← Logs response, handles errors
@@ -220,7 +218,7 @@ class ApiClient {
 Used by `ConnectivityManager`, `LifecycleManager`, `ThemeManager`, `OfflineSyncManager`.
 
 ```typescript
-const manager = ConnectivityManager.getInstance();
+import { connectivity } from 'opticore-react-native';
 manager.addListener((isConnected) => {
   // Called whenever network state changes
 });
@@ -303,7 +301,7 @@ const sentryTransport: LogTransport = {
   },
 };
 
-Logger.getInstance().addTransport(sentryTransport);
+logger.addTransport(sentryTransport);
 ```
 
 ### Custom Error Classification
@@ -334,7 +332,7 @@ const brandTheme = {
   colors: { ...lightTheme.colors, primary: '#6C63FF', background: '#FAFAFA' },
 };
 
-ThemeManager.getInstance().registerTheme('brand', brandTheme);
+themeControl.registerTheme('brand', brandTheme);
 ```
 
 ---

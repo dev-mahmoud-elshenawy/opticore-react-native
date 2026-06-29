@@ -133,10 +133,10 @@ export default function RootLayout() {
       config={{
         api: {
           baseURL: 'https://api.example.com',
-          getAuthToken: () => StorageManager.getInstance().secure.get<string>('token'),
+          getAuthToken: () => storage.secure.get<string>('token'),
           onTokenRefresh: async () => {
             const newToken = await refreshToken();
-            await StorageManager.getInstance().secure.set('token', newToken);
+            await storage.secure.set('token', newToken);
             return newToken;
           },
         },
@@ -182,10 +182,9 @@ const { data, isLoading, error, run } = useAsyncState<User[]>();
 run(() => api.get<User[]>('/users'));
 ```
 
-> **One approach: `api.*`.** The verbs are the whole HTTP API. If you ever need the
-> full response (`status`/`headers`), the internal engine is still there —
-> `ApiClient.getInstance().request({ method: HttpMethod.GET, url })` returns
-> `ApiResponse<T>` — but apps shouldn't need it.
+> **One approach: `api.*`.** The verbs are the whole HTTP API. If you need to
+> inspect `status`/`headers`, add a response interceptor:
+> `api.onResponse(r => { console.log(r.status, r.headers); return r; })`.
 
 **Where to import from**
 

@@ -137,7 +137,7 @@ Direct programmatic access outside React.
 
 ```typescript
 import { OfflineSyncManager } from 'opticore-react-native/offline';
-const manager = OfflineSyncManager.getInstance();
+import { offline } from 'opticore-react-native';
 ```
 
 ```typescript

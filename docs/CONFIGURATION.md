@@ -80,7 +80,7 @@ interface ApiConfig {
 // Simple Bearer token
 api: {
   baseURL: 'https://api.example.com',
-  getAuthToken: async () => StorageManager.getInstance().secure.get('token'),
+  getAuthToken: async () => storage.secure.get('token'),
   onTokenRefresh: async () => {
     const { data } = await axios.post('/auth/refresh');
     return data.token;
@@ -282,7 +282,7 @@ onError: (error: unknown) => {
   // Send to crash reporting
   Sentry.captureException(error);
   // or log
-  Logger.getInstance().error('Global error', error as Error);
+  logger.error('Global error', error as Error);
 };
 ```
 
@@ -304,11 +304,11 @@ const config: CoreConfig = {
       'X-Platform': Platform.OS,
     },
     getAuthToken: async () =>
-      StorageManager.getInstance().secure.get<string>('access_token'),
+      storage.secure.get<string>('access_token'),
     onTokenRefresh: async () => {
-      const refresh = await StorageManager.getInstance().secure.get<string>('refresh_token');
+      const refresh = await storage.secure.get<string>('refresh_token');
       const { data } = await axios.post('/auth/refresh', { refresh_token: refresh });
-      await StorageManager.getInstance().secure.set('access_token', data.access_token);
+      await storage.secure.set('access_token', data.access_token);
       return data.access_token;
     },
   },

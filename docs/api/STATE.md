@@ -301,8 +301,8 @@ Subscribe to Zustand store changes outside of React.
 ```typescript
 import { StateObserver } from 'opticore-react-native/state';
 
-// StateObserver is a singleton — use getInstance(), never `new`.
-const observer = StateObserver.getInstance();
+import { stateObserver } from 'opticore-react-native';
+// stateObserver is the facade — no getInstance() needed.
 
 // Subscribe to a store. The callback receives (newState, oldState, storeName).
 // Use the optional `filter` to only fire when a slice you care about changes.

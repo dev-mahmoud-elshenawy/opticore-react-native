@@ -518,7 +518,7 @@ try {
     metadata: { page: 'home' },
     cause: cause instanceof Error ? cause : undefined,
   });
-  Logger.getInstance().error('analytics failed', err);
+  logger.error('analytics failed', err);
   if (!err.isSilent) toast.error(err.metadata.userMessage as string);
 }
 
