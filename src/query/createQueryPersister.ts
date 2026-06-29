@@ -1,4 +1,4 @@
-import { StorageManager } from '../infrastructure/storage/StorageManager';
+import { storage } from '../facades/storage';
 
 /** Opaque persisted React Query cache snapshot (matches query-persist-client-core). */
 export interface PersistedClient {
@@ -27,12 +27,9 @@ export interface QueryPersister {
  * ```
  */
 export function createQueryPersister(key = 'opticore-react-query-cache'): QueryPersister {
-  // Look up `local` per call so it always reflects the adapter configured by
-  // OptiCoreProvider (no stale capture if a store is created before mount).
   return {
-    persistClient: (client) => StorageManager.getInstance().local.set(key, client),
-    restoreClient: async () =>
-      (await StorageManager.getInstance().local.get<PersistedClient>(key)) ?? undefined,
-    removeClient: () => StorageManager.getInstance().local.remove(key),
+    persistClient: (client) => storage.local.set(key, client),
+    restoreClient: async () => (await storage.local.get<PersistedClient>(key)) ?? undefined,
+    removeClient: () => storage.local.remove(key),
   };
 }

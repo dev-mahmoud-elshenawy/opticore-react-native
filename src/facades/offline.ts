@@ -9,6 +9,8 @@ import type { QueuedRequest, SyncResult, SyncListener } from '../offline/types';
  * await offline.enqueue({ ...mutation });   // queue while offline
  * const result = await offline.sync();       // replay when back online
  * const n = await offline.getPendingCount();
+ * offline.pause();                           // stop auto-sync (e.g. during bulk upload)
+ * offline.resume();                          // re-enable auto-sync
  * const unsubscribe = offline.subscribe((e) => logger.debug(e.type));
  * ```
  */
@@ -21,6 +23,7 @@ export const offline = {
   pause: (): void => OfflineSyncManager.getInstance().pause(),
   resume: (): void => OfflineSyncManager.getInstance().resume(),
   getPendingCount: (): Promise<number> => OfflineSyncManager.getInstance().getPendingCount(),
+  /** @returns `true` if a sync pass is currently running — synchronous, no `await` needed. */
   isSyncing: (): boolean => OfflineSyncManager.getInstance().isSyncing(),
   /** Subscribe to sync events; returns an unsubscribe function. */
   subscribe: (listener: SyncListener): (() => void) =>

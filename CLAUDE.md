@@ -1,8 +1,8 @@
 # Claude Development Guide for OptiCore React Native
 
 **Package**: `opticore-react-native`
-**Version**: 3.0.0
-**Last Updated**: 2026-06-29 (v3.0.0: facade-complete API — `api` verbs now return `T` directly (BREAKING: drop `.data`); `api.request`/`api.data` removed; five new facades: `connectivity`, `offline`, `themeControl`, `lifecycle`, `stateObserver` (root barrel + `opticore-react-native/facades`); `opticore-react-native/testing` subpath ships `createMemoryAdapters` + `resetOptiCore`. v2.8.0: ergonomic facades — `api`/`storage`/`logger` exported directly, `api` verb sugar. v2.7.0: error boundary RN alignment. v2.6.0: transient retry handling. v2.5.0: core-hardening round 2. v2.4.0: core-hardening pass.)
+**Version**: 3.1.0
+**Last Updated**: 2026-06-29 (v3.1.0: `createClientStore` — client-only zustand store returning a ready React hook, optional OptiCore-backed `persist`, plain `set` semantics (no immer); additive/non-breaking; demo migrated its stores to it. v3.0.0: facade-complete API — `api` verbs now return `T` directly (BREAKING: drop `.data`); `api.request`/`api.data` removed; five new facades: `connectivity`, `offline`, `themeControl`, `lifecycle`, `stateObserver` (root barrel + `opticore-react-native/facades`); `opticore-react-native/testing` subpath ships `createMemoryAdapters` + `resetOptiCore`. v2.8.0: ergonomic facades — `api`/`storage`/`logger` exported directly, `api` verb sugar. v2.7.0: error boundary RN alignment. v2.6.0: transient retry handling. v2.5.0: core-hardening round 2. v2.4.0: core-hardening pass.)
 **Target Platforms**: iOS & Android ONLY
 
 > **📖 Spec Kit Reference**: See [SPECKIT_GUIDE.md](.specify/SPECKIT_GUIDE.md) for complete specification-driven development guide
@@ -1602,6 +1602,7 @@ Browse `.specify/specs/` for examples of completed specs:
 - `033-dx-docs/` - DX docs: error-handling decision tree (`docs/ERROR_HANDLING.md`), consumer testing/mocking guide, init clarity (provider vs CoreSetup). Docs-only, no version bump
 - `034-response-data-convenience/` - SUPERSEDED by the facade-complete redesign below. (Interim `api.data.*` was removed; verbs now return `T` directly.)
 - `035-testing-utilities/` - `opticore-react-native/testing` subpath: `createMemoryAdapters()` + `resetOptiCore()` (the helpers spec 033 documented). Additive, subpath-only (out of main barrel). Implemented; **unreleased**
+- `036-client-store-factory/` - `createClientStore(config, initializer)` in `src/state/` — a thin factory returning a **ready-to-use React hook** for client-only UI state, with optional OptiCore-backed `persist` (via `createPersistStorage`) and plain `set` semantics (no immer). Distinct from `createBaseStore` (vanilla store + `StoreProvider`/`useStore`) and `createCrudStore` (CRUD-over-API). Additive/non-breaking → 3.1.0. Demo's `savedStore`/`preferencesStore`/`newsFilterStore` migrated to it.
 - **Facade-complete consumer API (unreleased → 3.0.0)** - the whole package is consumed via facades; **app code never calls `.getInstance()`**. `api` verbs now return the body (`T`) directly (BREAKING — `api.request`/`api.data` removed; full `ApiResponse` only via the internal `ApiClient.getInstance().request()` engine). Facades: `api` (verbs + `setHeader(s)`/`removeHeader` + `onRequest`/`onResponse`/`removeInterceptor` + `isReady`), `storage` (+`clearAll`), `logger` (+`setLevel`/transports), and new `connectivity`/`offline`/`themeControl`/`lifecycle`/`stateObserver`. All in the root barrel + `/facades`, lazy/side-effect-free. Hooks remain the reactive equivalent in components.
 
 ### Technology Stack
@@ -1643,7 +1644,7 @@ not necessarily in the store Expo Go if it has moved to a newer SDK.
 ---
 
 **Last Updated**: 2026-06-29
-**Version**: 3.0.0
+**Version**: 3.1.0
 **Maintained By**: Mahmoud El Shenawy
 
 **For questions or clarifications, always refer to:**

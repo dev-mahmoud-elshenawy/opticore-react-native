@@ -198,6 +198,63 @@ useCartStore.setState({ total: 0 });
 
 ---
 
+## ClientStore (`createClientStore`)
+
+A thin factory for **client-only UI state** (bookmarks, preferences, filters) that returns a
+**ready-to-use React hook** — no `StoreProvider`/`useStore` wiring. Persistence, when enabled,
+routes through OptiCore's storage layer, so you never hand-wire `zustand` + `persist` +
+`createPersistStorage()` yourself.
+
+```typescript
+function createClientStore<T extends object>(
+  config: ClientStoreConfig<T>,
+  initializer: StateCreator<T, [], []>
+): UseBoundStore<StoreApi<T>>;
+
+interface ClientStoreConfig<T> {
+  name: string; // devtools name + (when persisting) storage key
+  persist?: boolean; // default false — routes through OptiCore storage
+  partialize?: (state: T) => Partial<T>; // what to persist
+  devtools?: boolean; // default __DEV__
+}
+```
+
+### Example
+
+```typescript
+import { createClientStore } from 'opticore-react-native/state';
+
+interface SavedState {
+  items: Article[];
+  isSaved: (url: string) => boolean;
+  toggle: (article: Article) => void;
+}
+
+export const useSavedStore = createClientStore<SavedState>(
+  { name: 'saved-articles', persist: true, partialize: (s) => ({ items: s.items }) },
+  (set, get) => ({
+    items: [],
+    isSaved: (url) => get().items.some((a) => a.url === url),
+    toggle: (article) =>
+      set((state) => ({
+        items: state.items.some((a) => a.url === article.url)
+          ? state.items.filter((a) => a.url !== article.url)
+          : [article, ...state.items],
+      })),
+  })
+);
+
+// In a component:
+const items = useSavedStore((s) => s.items);
+const toggle = useSavedStore((s) => s.toggle);
+```
+
+> **Which factory?** `createClientStore` — client/UI state as a React hook (plain `set`, no
+> immer). `createCrudStore` — a CRUD-over-API resource. `createBaseStore` — a DI-scoped
+> `zustand/vanilla` store consumed via `StoreProvider` + `useStore`.
+
+---
+
 ## CrudStore (StoreFactory)
 
 Pre-built store for standard CRUD operations with async state management.
@@ -348,7 +405,8 @@ const queryClient = createQueryClient({
 ```
 
 `createQueryHook` and `useApiMutation` build on the same client and need no special handling for `429`/`503` —
-retries and backoff happen automatically.
+retries and backoff happen automatically. To override query config for a single query (and the retry caveat),
+see [React Query Integration](../REACT_QUERY.md).
 
 ```typescript
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';

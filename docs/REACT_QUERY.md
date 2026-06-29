@@ -56,6 +56,33 @@ export const queryClient = createQueryClient({
 });
 ```
 
+### Overriding config for a single query
+
+You rarely need a second `QueryClient`. React Query merges options by precedence — **later wins**, and
+an override affects **only that one query**, never the global client:
+
+`createQueryClient` defaults **<** `createQueryHook`'s 3rd `defaultOptions` arg **<** per-call options at the hook call site.
+
+```typescript
+import { isRetryable } from 'opticore-react-native';
+
+// 1) Per call — affects just this usage:
+const { data } = useThing(arg, { staleTime: 60_000 });
+
+// 2) Per hook — bake defaults via createQueryHook's 3rd arg:
+const useThing = createQueryHook((arg) => ['thing', arg], fetchThing, { staleTime: 60_000 });
+```
+
+> **Retry caveat.** Overriding `retry` with a plain number/boolean **drops** OptiCore's error-aware policy
+> (never retry actionable 4xx, honor `Retry-After`). To keep it, compose with the exported helpers — both
+> `isRetryable` and `retryDelay` are exported from the root barrel:
+>
+> ```typescript
+> useThing(arg, { retry: (n, e) => isRetryable(e) && n < 5 });
+> ```
+
+Only spin up a **separate `QueryClient`** for a genuinely separate cache boundary — not for per-query tweaks.
+
 ---
 
 ## Wiring it up

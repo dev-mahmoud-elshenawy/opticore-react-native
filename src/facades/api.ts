@@ -50,6 +50,8 @@ export const api = {
   setHeaders: (headers: Record<string, string>): void =>
     ApiClient.getInstance().setHeaders(headers),
   removeHeader: (name: string): void => ApiClient.getInstance().removeHeader(name),
+  removeHeaders: (names: string[]): void =>
+    names.forEach((name) => ApiClient.getInstance().removeHeader(name)),
 
   // --- interceptors (advanced) ---
   onRequest: (interceptor: Interceptor): InterceptorId =>

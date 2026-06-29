@@ -307,7 +307,7 @@ haptics?.trigger('impactLight'); // no-op in Expo Go, real haptics in a dev buil
 | Guide                                                              | Description                                                                                 |
 | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
 | 🏗 **[Infrastructure](docs/api/INFRASTRUCTURE.md)**                | ApiClient, Logger, StorageManager, ConnectivityManager, LifecycleManager                    |
-| 🗄 **[State Management](docs/api/STATE.md)**                       | AsyncState, BaseStore, CrudStore, StoreFactory, StateObserver                               |
+| 🗄 **[State Management](docs/api/STATE.md)**                       | AsyncState, BaseStore, CrudStore, ClientStore, StoreFactory, StateObserver                  |
 | 🪝 **[Hooks](docs/api/HOOKS.md)**                                  | 11 custom hooks — useAsyncState, useDebounce, useKeyboard, useConnectivity & more           |
 | ⚠️ **[Error Handling — Which Tool, When](docs/ERROR_HANDLING.md)** | Decision tree: `Result` vs throw `RenderError` vs `ApiError` vs `NonRenderError`            |
 | ⚠️ **[Error Handling API](docs/api/ERRORS.md)**                    | RenderError, NonRenderError, ApiError, Result\<T,E\>, ErrorBoundary                         |

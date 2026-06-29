@@ -14,6 +14,16 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ---
 
+## 🌟 [3.1.0] — `createClientStore`
+
+- **New `createClientStore`** — a thin factory for client-only UI state (bookmarks, preferences,
+  filters) that returns a ready-to-use React hook with optional OptiCore-backed `persist`. See
+  `docs/api/STATE.md`.
+- **`isRetryable` / `retryDelay` now exported** so you can keep OptiCore's error-aware retry policy
+  when overriding `retry` for a single query. See `docs/REACT_QUERY.md`.
+
+---
+
 ## 🚀 [3.0.0] — Facade-complete API
 
 > **Breaking release.** See migration steps below before upgrading.
@@ -28,20 +38,11 @@ Each section lists the changes in **chronological order**, with the **most recen
 
 ### ✨ New facades
 
-Five new imperative facades join `api`, `storage`, and `logger`:
-
-All facades are also available at `opticore-react-native/facades`, are lazy (side-effect-free on import), and delegate to the same singletons used by the hooks.
+Five new imperative facades join `api`, `storage`, and `logger`: `connectivity`, `offline`, `themeControl`, `lifecycle`, and `stateObserver`. They are available from the package root and at `opticore-react-native/facades`, are lazy (side-effect-free on import), and delegate to the same singletons used by the hooks.
 
 ### 🧪 Testing utilities (`opticore-react-native/testing`)
 
-```ts
-import { createMemoryAdapters, resetOptiCore } from 'opticore-react-native/testing';
-
-beforeEach(() => {
-  /* configure with isolated in-memory adapters */
-});
-afterEach(resetOptiCore);
-```
+New subpath exporting `createMemoryAdapters` and `resetOptiCore` — configure isolated in-memory adapters in `beforeEach` and call `resetOptiCore` in `afterEach`. See `docs` for usage.
 
 ---
 
@@ -51,13 +52,7 @@ Removes call-site friction. Purely additive — no breaking changes, no deprecat
 
 ### ✨ Added
 
-- **Ready-to-use facades — no more `.getInstance()`.** Import `api`, `storage`, and `logger` directly from the package root (or `opticore-react-native/facades`):
-  ```ts
-  import { api, storage, logger } from 'opticore-react-native';
-  await api.get<User[]>('/users'); // verb sugar over request()
-  await storage.secure.get<string>('token');
-  logger.info('ready');
-  ```
+- **Ready-to-use facades — no more `.getInstance()`.** Import `api`, `storage`, and `logger` directly from the package root (or `opticore-react-native/facades`) — e.g. `api.get`, `storage.secure.get`, `logger.info`.
 - **Verb sugar on `api`** — `get/post/put/patch/delete` over the enum-based `request()`. `get(url, cfg?)` / `delete(url, cfg?)`; `post/put/patch(url, data?, cfg?)` where `cfg` is `headers`/`params`/`signal`. The generic `T` is caller-controlled per call and defaults to `unknown` (never `any`); methods return `ApiResponse<T>`, consistent with `request()`.
 - **`opticore-react-native/facades` subpath** export.
 

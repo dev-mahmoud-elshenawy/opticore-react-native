@@ -9,3 +9,5 @@ export * from './useDebounce';
 export * from './useThrottle';
 export * from './usePrevious';
 export * from './useMount';
+export { useTheme, useThemedStyles } from '../theme';
+export { useOfflineSync } from '../offline';

@@ -41,7 +41,7 @@ describe('themeControl facade', () => {
     jest.spyOn(ThemeManager, 'getInstance').mockReturnValue(stub as never);
 
     themeControl.setMode('dark');
-    expect(themeControl.activeMode).toBe('dark');
+    expect(themeControl.resolvedMode).toBe('dark');
     const unsub = themeControl.subscribe(() => {});
 
     expect(stub.setMode).toHaveBeenCalledWith('dark');
@@ -52,18 +52,38 @@ describe('themeControl facade', () => {
 });
 
 describe('lifecycle facade', () => {
-  it('onChange delegates to LifecycleManager.addObserver and returns unsubscribe', () => {
+  it('subscribe delegates to LifecycleManager.addObserver and returns unsubscribe', () => {
     const unsubscribe = () => {};
     const addObserver = jest
       .spyOn(LifecycleManager.getInstance(), 'addObserver')
       .mockReturnValue(unsubscribe);
 
-    const onActive = jest.fn();
-    const onInactive = jest.fn();
-    const result = lifecycle.onChange(onActive, onInactive);
+    const cb = jest.fn();
+    const result = lifecycle.subscribe(cb);
 
-    expect(addObserver).toHaveBeenCalledWith(onActive, onInactive);
+    expect(addObserver).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
     expect(result).toBe(unsubscribe);
+  });
+
+  it('subscribe cb receives "active" on foreground and "inactive" on background', () => {
+    let capturedOnActive: (() => void) | undefined;
+    let capturedOnInactive: (() => void) | undefined;
+    jest
+      .spyOn(LifecycleManager.getInstance(), 'addObserver')
+      .mockImplementation((onActive, onInactive) => {
+        capturedOnActive = onActive;
+        capturedOnInactive = onInactive;
+        return () => {};
+      });
+
+    const cb = jest.fn();
+    lifecycle.subscribe(cb);
+
+    capturedOnActive?.();
+    expect(cb).toHaveBeenCalledWith('active');
+
+    capturedOnInactive?.();
+    expect(cb).toHaveBeenCalledWith('inactive');
   });
 });
 

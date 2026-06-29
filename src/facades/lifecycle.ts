@@ -1,5 +1,4 @@
 import { LifecycleManager } from '../infrastructure/lifecycle/LifecycleManager';
-import type { LifecycleCallback } from '../infrastructure/lifecycle/LifecycleObserver';
 
 /**
  * App foreground/background lifecycle for app code (imperative). In components,
@@ -7,14 +6,20 @@ import type { LifecycleCallback } from '../infrastructure/lifecycle/LifecycleObs
  * logic (e.g. flush a queue when the app backgrounds). No `.getInstance()`.
  *
  * ```ts
- * const unsubscribe = lifecycle.onChange(
- *   () => logger.info('active'),
- *   () => offline.sync(),   // on background/inactive
- * );
+ * const unsubscribe = lifecycle.subscribe((state) => {
+ *   if (state === 'active') logger.info('foregrounded');
+ *   else offline.sync();
+ * });
  * ```
  */
 export const lifecycle = {
-  /** Run callbacks when the app becomes active/inactive; returns an unsubscribe function. */
-  onChange: (onActive?: LifecycleCallback, onInactive?: LifecycleCallback): (() => void) =>
-    LifecycleManager.getInstance().addObserver(onActive, onInactive),
+  /**
+   * Subscribe to app state changes; `cb` is called with `'active'` on foreground
+   * and `'inactive'` on background/inactive. Returns an unsubscribe function.
+   */
+  subscribe: (cb: (state: 'active' | 'inactive') => void): (() => void) =>
+    LifecycleManager.getInstance().addObserver(
+      () => cb('active'),
+      () => cb('inactive')
+    ),
 } as const;

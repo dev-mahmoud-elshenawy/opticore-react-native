@@ -1,4 +1,4 @@
-import { createQueryClient } from '../../src/query/createQueryClient';
+import { createQueryClient, isRetryable, retryDelay } from '../../src/query/createQueryClient';
 import { ApiError } from '../../src/infrastructure/network/ApiError';
 
 describe('createQueryClient', () => {
@@ -115,5 +115,34 @@ describe('createQueryClient', () => {
     const queries = client.getDefaultOptions().queries;
     expect(queries?.staleTime).toBe(0);
     expect(queries?.retry).toBe(false);
+  });
+});
+
+describe('isRetryable (exported for composing per-query retry overrides)', () => {
+  it('returns false for an actionable 4xx ApiError', () => {
+    expect(isRetryable(new ApiError(404, 'not found'))).toBe(false);
+    expect(isRetryable(new ApiError(422, 'unprocessable'))).toBe(false);
+  });
+
+  it('returns true for transient failures', () => {
+    expect(isRetryable(new ApiError(503, 'unavailable'))).toBe(true);
+    expect(isRetryable(new ApiError(429, 'rate limited'))).toBe(true);
+  });
+});
+
+describe('retryDelay (exported)', () => {
+  it('respects ApiError.retryAfterMs, capped at the max backoff', () => {
+    // 6th positional arg is the Retry-After header (seconds) → 2000ms.
+    const withRetryAfter = new ApiError(429, 'rate limited', undefined, undefined, undefined, '2');
+    expect(retryDelay(0, withRetryAfter)).toBe(2000);
+
+    // A huge Retry-After is capped at 30s.
+    const huge = new ApiError(429, 'rate limited', undefined, undefined, undefined, '99999');
+    expect(retryDelay(0, huge)).toBe(30000);
+  });
+
+  it('falls back to exponential backoff when no Retry-After is present', () => {
+    expect(retryDelay(0, new ApiError(500, 'server error'))).toBe(1000);
+    expect(retryDelay(1, new ApiError(500, 'server error'))).toBe(2000);
   });
 });

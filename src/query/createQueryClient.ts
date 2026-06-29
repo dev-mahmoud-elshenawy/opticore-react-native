@@ -17,7 +17,7 @@ const MAX_BACKOFF_MS = 30000;
  * `RenderError` falls back to its `isActionable` flag; anything else (a
  * non-RenderError thrown from a queryFn) is retried up to the count limit.
  */
-const isRetryable = (error: unknown): boolean => {
+export const isRetryable = (error: unknown): boolean => {
   if (error instanceof ApiError) return error.isRetryable;
   if (error instanceof RenderError) return !error.isActionable;
   return true;
@@ -27,7 +27,7 @@ const isRetryable = (error: unknown): boolean => {
  * Exponential backoff capped at 30s, unless the error carries a server-provided
  * `Retry-After` delay (`ApiError.retryAfterMs`), which takes precedence.
  */
-const retryDelay = (attemptIndex: number, error: unknown): number => {
+export const retryDelay = (attemptIndex: number, error: unknown): number => {
   if (error instanceof ApiError && error.retryAfterMs !== undefined) {
     return Math.min(error.retryAfterMs, MAX_BACKOFF_MS);
   }
