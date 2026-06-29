@@ -301,7 +301,7 @@ haptics?.trigger('impactLight'); // no-op in Expo Go, real haptics in a dev buil
 | 🏛 **[Architecture](docs/ARCHITECTURE.md)**   | Library layers, data flow, design patterns, and extension points |
 | ⚙️ **[Configuration](docs/CONFIGURATION.md)** | Every `CoreConfig` option explained with examples                |
 | 📑 **[Full Docs Index](docs/INDEX.md)**       | Central navigation hub for all documentation                     |
-| 📱 **[Example App](https://github.com/dev-mahmoud-elshenawy/opticore-news-demo)** | Reference implementation — a news app using OptiCore's api, React Query, `createClientStore`, offline, and theme |
+| 📱 **[Example App](https://github.com/dev-mahmoud-elshenawy/opticore-news-demo)** | Reference implementation
 
 ### API Reference
 
